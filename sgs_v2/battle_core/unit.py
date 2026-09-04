@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .enums import LineupPosition
+from .enums import LineupPosition, TroopType
 
 
 @dataclass(slots=True)
@@ -15,6 +15,7 @@ class UnitRuntime:
     - troops 的实际增减只能由 TroopSystem 执行。
     - lineup_position 明确表示主将/第一副将/第二副将。
     - is_commander 仅保留为兼容字段，真实主将身份统一由 lineup_position 决定。
+    - level / morale / troop_type 供基础伤害公式读取；默认值保持旧构造调用兼容。
     """
 
     unit_id: str
@@ -31,6 +32,10 @@ class UnitRuntime:
     is_commander: bool = False
     lineup_position: LineupPosition | None = None
 
+    level: int = 50
+    morale: int = 100
+    troop_type: TroopType | None = None
+
     def __post_init__(self) -> None:
         if not self.unit_id:
             raise ValueError("unit_id cannot be empty")
@@ -40,12 +45,14 @@ class UnitRuntime:
             raise ValueError("max_troops must be > 0")
         if not 0 <= self.troops <= self.max_troops:
             raise ValueError("troops must be within [0, max_troops]")
+        if self.level <= 0:
+            raise ValueError("level must be > 0")
+        if not 0 <= self.morale <= 100:
+            raise ValueError("morale must be within [0, 100]")
 
-        # 兼容旧构造方式：显式 is_commander=True 且未给阵容位置时，视为主将。
         if self.lineup_position is None and self.is_commander:
             self.lineup_position = LineupPosition.COMMANDER
 
-        # 一旦指定阵容位置，主将身份只由阵容位置决定，避免出现两套真相。
         if self.lineup_position is not None:
             self.is_commander = self.lineup_position is LineupPosition.COMMANDER
 
@@ -67,5 +74,8 @@ class UnitRuntime:
             "lineup_position": (
                 self.lineup_position.name if self.lineup_position is not None else None
             ),
+            "level": self.level,
+            "morale": self.morale,
+            "troop_type": self.troop_type.value if self.troop_type is not None else None,
             "is_alive": self.is_alive,
         }

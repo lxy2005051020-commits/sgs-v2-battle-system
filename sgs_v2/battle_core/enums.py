@@ -29,6 +29,20 @@ class LineupPosition(IntEnum):
     DEPUTY_2 = 2
 
 
+class TroopType(str, Enum):
+    """单位当前兵种。
+
+    当前基础兵刃公式只确认了枪兵与骑兵之间的克制倍率；
+    其余已检验组合暂按 1.0 处理。
+    """
+
+    CAVALRY = "CAVALRY"
+    SHIELD = "SHIELD"
+    BOW = "BOW"
+    SPEAR = "SPEAR"
+    SIEGE = "SIEGE"
+
+
 class DamageType(str, Enum):
     """伤害性质，同时决定 DamageSystem 使用哪一种基础伤害公式。"""
 

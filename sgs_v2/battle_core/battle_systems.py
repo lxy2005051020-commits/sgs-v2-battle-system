@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
 
 from .action_order_system import ActionOrderSystem
@@ -22,6 +23,10 @@ class BattleSystems:
     victory_system: VictorySystem = field(default_factory=VictorySystem)
     damage_scale: float = 1.0
 
+    weapon_mid_troop_table: Mapping[int, int] | None = None
+    weapon_random_percent_range: tuple[int, int] = (86, 94)
+    weapon_low_damage_floor_range: tuple[int, int] = (5, 15)
+
     action_order_system: ActionOrderSystem = field(init=False)
     damage_system: DamageSystem = field(init=False)
     normal_attack_system: NormalAttackSystem = field(init=False)
@@ -30,7 +35,11 @@ class BattleSystems:
     def __post_init__(self) -> None:
         self.action_order_system = ActionOrderSystem(self.attribute_system)
         self.damage_system = DamageSystem(
-            self.attribute_system, damage_scale=self.damage_scale
+            self.attribute_system,
+            damage_scale=self.damage_scale,
+            weapon_mid_troop_table=self.weapon_mid_troop_table,
+            weapon_random_percent_range=self.weapon_random_percent_range,
+            weapon_low_damage_floor_range=self.weapon_low_damage_floor_range,
         )
         self.normal_attack_system = NormalAttackSystem(
             self.target_system, self.damage_system, self.troop_system
