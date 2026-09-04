@@ -75,6 +75,50 @@ def test_apply_validates_definition_owner_and_source() -> None:
         )
 
 
+def test_apply_rejects_unreachable_expiration_anchors() -> None:
+    lifecycle = StateLifecycleSystem()
+    context = make_context()
+
+    with pytest.raises(ValueError, match="future lifecycle node"):
+        lifecycle.apply(
+            context,
+            state_id="test_state",
+            owner_id="b1",
+            source_id="a1",
+            expires_round=1,
+            expires_phase=BattlePhase.ROUND_START.value,
+        )
+
+    context.current_round = 0
+    context.current_phase = "NOT_STARTED"
+    with pytest.raises(ValueError, match="expires_round must be >= 1"):
+        lifecycle.apply(
+            context,
+            state_id="test_state",
+            owner_id="b1",
+            source_id="a1",
+            expires_round=0,
+            expires_phase=BattlePhase.ROUND_START.value,
+        )
+
+
+def test_apply_allows_same_round_future_round_end_anchor() -> None:
+    lifecycle = StateLifecycleSystem()
+    context = make_context()
+
+    instance = lifecycle.apply(
+        context,
+        state_id="test_state",
+        owner_id="b1",
+        source_id="a1",
+        expires_round=1,
+        expires_phase=BattlePhase.ROUND_END.value,
+    )
+
+    assert instance.expires_round == 1
+    assert instance.expires_phase == BattlePhase.ROUND_END.value
+
+
 def test_apply_creates_deterministic_instance_and_event() -> None:
     lifecycle = StateLifecycleSystem()
     context = make_context()
