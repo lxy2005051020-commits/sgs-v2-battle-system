@@ -20,7 +20,7 @@ from sgs_v2.battle_core import (
 
 
 @dataclass(frozen=True, slots=True)
-class TestStateParams(StateRuntimeParams):
+class SampleStateParams(StateRuntimeParams):
     coefficient: float
     charges: int
 
@@ -72,10 +72,10 @@ def test_definition_schema_accepts_matching_frozen_runtime_params() -> None:
         StateDefinition(
             state_id="parameterized",
             name="参数测试状态",
-            runtime_params_type=TestStateParams,
+            runtime_params_type=SampleStateParams,
         )
     )
-    params = TestStateParams(coefficient=1.25, charges=2)
+    params = SampleStateParams(coefficient=1.25, charges=2)
 
     instance = StateLifecycleSystem().apply(
         context,
@@ -88,7 +88,7 @@ def test_definition_schema_accepts_matching_frozen_runtime_params() -> None:
 
     assert instance.runtime_params == params
     event = context.event_bus.history[-1]
-    assert event.payload["runtime_params_type"] == "TestStateParams"
+    assert event.payload["runtime_params_type"] == "SampleStateParams"
     assert event.payload["runtime_params"] == {
         "coefficient": 1.25,
         "charges": 2,
@@ -101,7 +101,7 @@ def test_definition_schema_rejects_wrong_or_missing_runtime_params() -> None:
         StateDefinition(
             state_id="parameterized",
             name="参数测试状态",
-            runtime_params_type=TestStateParams,
+            runtime_params_type=SampleStateParams,
         )
     )
     lifecycle = StateLifecycleSystem()
@@ -130,7 +130,7 @@ def test_same_state_multiple_instances_can_carry_different_typed_params() -> Non
         StateDefinition(
             state_id="parameterized",
             name="参数测试状态",
-            runtime_params_type=TestStateParams,
+            runtime_params_type=SampleStateParams,
         )
     )
     lifecycle = StateLifecycleSystem()
@@ -140,14 +140,14 @@ def test_same_state_multiple_instances_can_carry_different_typed_params() -> Non
         state_id="parameterized",
         owner_id="b1",
         source_id="a1",
-        runtime_params=TestStateParams(coefficient=1.0, charges=1),
+        runtime_params=SampleStateParams(coefficient=1.0, charges=1),
     )
     second = lifecycle.apply(
         context,
         state_id="parameterized",
         owner_id="b1",
         source_id="a1",
-        runtime_params=TestStateParams(coefficient=1.5, charges=3),
+        runtime_params=SampleStateParams(coefficient=1.5, charges=3),
     )
 
     assert context.states.states_of("b1") == [first, second]
@@ -155,6 +155,6 @@ def test_same_state_multiple_instances_can_carry_different_typed_params() -> Non
 
 
 def test_runtime_params_are_immutable() -> None:
-    params = TestStateParams(coefficient=1.0, charges=1)
+    params = SampleStateParams(coefficient=1.0, charges=1)
     with pytest.raises(Exception):
         params.charges = 2  # type: ignore[misc]
