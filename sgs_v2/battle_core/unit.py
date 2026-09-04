@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .enums import LineupPosition
+
 
 @dataclass(slots=True)
 class UnitRuntime:
@@ -9,10 +11,9 @@ class UnitRuntime:
     单位在“一场战斗内”的运行态。
 
     注意：
-    - attack / defense / speed 目前只是阶段 1 的基础值。
-    - 后续 AttributeSystem 上线后，最终属性必须由 AttributeSystem 计算，
-      不允许战法直接修改这些最终值。
-    - troops 是阶段 1 无战法验收所需的最小运行字段。
+    - attack / defense / speed 是基础值；最终属性由 AttributeSystem 统一计算。
+    - troops 的实际增减只能由 TroopSystem 执行。
+    - lineup_position 明确表示主将/第一副将/第二副将，用于固定阵容顺序与目标结算。
     """
 
     unit_id: str
@@ -27,6 +28,7 @@ class UnitRuntime:
     speed: float
 
     is_commander: bool = False
+    lineup_position: LineupPosition | None = None
 
     def __post_init__(self) -> None:
         if not self.unit_id:
@@ -37,6 +39,14 @@ class UnitRuntime:
             raise ValueError("max_troops must be > 0")
         if not 0 <= self.troops <= self.max_troops:
             raise ValueError("troops must be within [0, max_troops]")
+
+        # 向后兼容旧构造方式：显式 is_commander=True 时自动归为主将。
+        if self.lineup_position is None:
+            self.lineup_position = (
+                LineupPosition.COMMANDER if self.is_commander else LineupPosition.DEPUTY_1
+            )
+
+        self.is_commander = self.lineup_position is LineupPosition.COMMANDER
 
     @property
     def is_alive(self) -> bool:
@@ -53,5 +63,6 @@ class UnitRuntime:
             "defense": self.defense,
             "speed": self.speed,
             "is_commander": self.is_commander,
+            "lineup_position": self.lineup_position.name,
             "is_alive": self.is_alive,
         }
