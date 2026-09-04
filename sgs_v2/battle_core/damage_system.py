@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 
 from .attribute_system import AttributeSystem
 from .context import BattleContext
 from .enums import DamageSourceType, DamageType
 from .unit import UnitRuntime
+from .weapon_damage_formula import WeaponBaseDamageFormula
 
 
 @dataclass(frozen=True, slots=True)
@@ -53,21 +55,37 @@ class DamageResult:
 class DamageSystem:
     """统一计算伤害；不直接改变目标兵力。
 
-    当前只完成伤害结算骨架：
-    - WEAPON -> 基础兵刃伤害
-    - STRATEGY -> 基础谋略伤害
-    - 基础伤害 × coefficient -> scaled_damage
-    - 后续增减伤等修正再作用于 scaled_damage
-
-    基础兵刃/谋略的真实公式尚未封版。
+    - WEAPON 已接入 NORMAL_ATTACK_FORMULA_V1.md 的基础兵刃伤害公式。
+    - STRATEGY 仍等待基础谋略公式。
+    - 基础伤害先由 DamageType 决定，再由 coefficient 做战法倍率缩放。
+    - TroopSystem 仍是唯一实际扣兵入口，因此击杀封顶不在这里重复实现。
     """
 
-    def __init__(self, attribute_system: AttributeSystem, *, damage_scale: float = 1.0) -> None:
+    def __init__(
+        self,
+        attribute_system: AttributeSystem,
+        *,
+        damage_scale: float = 1.0,
+        weapon_mid_troop_table: Mapping[int, int] | None = None,
+        weapon_random_percent_range: tuple[int, int] = (86, 94),
+        weapon_low_damage_floor_range: tuple[int, int] = (5, 15),
+    ) -> None:
         if damage_scale < 0:
             raise ValueError("damage_scale must be >= 0")
         self._attributes = attribute_system
-        # 暂时保留阶段 2 的全局占位倍率，仅用于兼容现有无战法测试。
+        self._weapon_formula = WeaponBaseDamageFormula(
+            attribute_system,
+            mid_troop_table=weapon_mid_troop_table,
+            random_percent_range=weapon_random_percent_range,
+            low_damage_floor_range=weapon_low_damage_floor_range,
+        )
+        # 旧阶段全局倍率继续保留在 coefficient 之后，仅用于兼容现有测试/调用。
+        # 正式增减伤系统完成后应移除，而不是并入基础公式。
         self.damage_scale = damage_scale
+
+    def weapon_troop_function(self, troops: int) -> int:
+        """暴露 F(N) 便于公式回归测试。"""
+        return self._weapon_formula.troop_function(troops)
 
     def calculate(
         self,
@@ -85,8 +103,6 @@ class DamageSystem:
             raise ValueError(f"unsupported damage type: {request.damage_type}")
 
         scaled_damage = base_damage * request.coefficient
-
-        # 阶段 2 兼容倍率仍保留在最终取整前；待真实基础伤害公式确定后移除。
         modified_damage = scaled_damage * self.damage_scale
         final_damage = max(1, int(modified_damage))
 
@@ -125,11 +141,8 @@ class DamageSystem:
         context: BattleContext,
         source: UnitRuntime,
         target: UnitRuntime,
-    ) -> float:
-        """基础兵刃伤害占位公式；下一阶段再替换为实测/校准公式。"""
-        attack = self._attributes.get_attack(context, source)
-        defense = self._attributes.get_defense(context, target)
-        return attack * 100.0 / max(1.0, 100.0 + defense)
+    ) -> int:
+        return self._weapon_formula.calculate(context, source, target)
 
     def _calculate_strategy_base_damage(
         self,
@@ -137,11 +150,6 @@ class DamageSystem:
         source: UnitRuntime,
         target: UnitRuntime,
     ) -> float:
-        """基础谋略伤害占位入口。
-
-        当前 UnitRuntime 尚未接入智力属性，因此不能伪造真实谋略伤害公式。
-        在基础伤害模型封版前，显式拒绝谋略伤害结算。
-        """
         raise NotImplementedError(
             "strategy base damage is not implemented yet; "
             "the intelligence-based base formula must be defined first"
