@@ -51,7 +51,7 @@ TroopSystem unique troop mutation        PASS
 RecoverEffect production routing         PASS
 State provenance                         PASS
 Damage formula freeze boundary           PASS
-Stage 6 SkillRuntime boundary             PASS
+Stage 6 SkillRuntime boundary            PASS
 EventBus non-rule-engine boundary        PASS
 Evidence Matrix hard gate                PASS
 Official periodic-state DEFER discipline PASS
@@ -168,23 +168,110 @@ strategy_lifesteal
 
 Synthetic periodic states are used to validate trigger/recovery infrastructure and do not claim official behavior for deferred states.
 
-## Merge / freeze gate
+## Final audit document commit
 
-At the time of this audit document, Stage 7 is:
+The final audit document was added to the Stage 7 branch in:
+
+`b144e6f76272971dbd469502adbcddaed6747063`
+
+The PR-triggered workflow for that exact branch HEAD completed successfully:
 
 ```text
-READY TO MERGE = YES
-FROZEN         = NO
+Run #115
+run_id = 33911399143
+conclusion = success
 ```
 
-Freeze requires all of the following:
+No production code changed after the independently audited implementation HEAD; the post-audit delta consisted only of `STAGE7_FINAL_AUDIT.md`.
+
+## Merge verification
+
+Formal merge:
 
 ```text
-Stage 7 implementation + this final audit enter main
-main exact HEAD GitHub Actions succeeds
-pytest -q succeeds on main exact HEAD
-python demo.py succeeds on main exact HEAD
+PR #5
+Stage 7: Trigger/Recovery final merge
+```
+
+Stage 7 implementation and this final audit entered `main` in merge commit:
+
+`199585c25b7db46d5c008fab46ab21fb7957ebb0`
+
+Main exact-head GitHub Actions:
+
+```text
+Run #116
+run_id = 33911442223
+head_sha = 199585c25b7db46d5c008fab46ab21fb7957ebb0
+status = completed
+conclusion = success
+```
+
+The run explicitly checked out the merge commit and produced:
+
+```text
+pytest -q
+234 passed in 0.84s
+
+python demo.py
+PASS
+```
+
+The workflow also successfully produced an audit snapshot for the merge commit.
+
+## Freeze verdict
+
+The Stage 7 freeze conditions are now satisfied:
+
+```text
+Stage 7 implementation audited
++
+BLOCKER = 0
++
+MAJOR = 0
++
+STAGE7_FINAL_AUDIT.md entered main
++
+main exact HEAD pytest passed
++
+main exact HEAD demo passed
++
+main exact HEAD GitHub Actions passed
++
 PROJECT_STATUS.md records Stage 7 as FROZEN
 ```
 
-The post-merge exact main SHA and freeze verification are to be appended after merge validation.
+Final Stage 7 state:
+
+```text
+READY TO MERGE = COMPLETED
+MERGED TO MAIN = YES
+FROZEN         = YES
+```
+
+## Final summary
+
+```text
+BLOCKER   = 0
+MAJOR     = 0
+MINOR     = 0
+HARDENING = 1 accepted
+
+Implementation audit HEAD:
+a459ca876b034509b2d13ab725d65df50a070aa1
+
+Final audit doc branch HEAD:
+b144e6f76272971dbd469502adbcddaed6747063
+
+Merge PR:
+#5
+
+Main merge commit:
+199585c25b7db46d5c008fab46ab21fb7957ebb0
+
+Main verification:
+Run #116 / 234 passed / demo PASS
+
+FINAL VERDICT:
+STAGE 7 FROZEN
+```
