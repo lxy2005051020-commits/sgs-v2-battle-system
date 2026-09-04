@@ -27,6 +27,10 @@ class BattleSystems:
     weapon_random_percent_range: tuple[int, int] = (86, 94)
     weapon_low_damage_floor_range: tuple[int, int] = (5, 15)
 
+    strategy_troop_function_table: Mapping[int, int] | None = None
+    strategy_random_percent_range: tuple[int, int] = (86, 94)
+    strategy_low_damage_floor_range: tuple[int, int] = (5, 15)
+
     action_order_system: ActionOrderSystem = field(init=False)
     damage_system: DamageSystem = field(init=False)
     normal_attack_system: NormalAttackSystem = field(init=False)
@@ -40,6 +44,9 @@ class BattleSystems:
             weapon_troop_function_table=self.weapon_troop_function_table,
             weapon_random_percent_range=self.weapon_random_percent_range,
             weapon_low_damage_floor_range=self.weapon_low_damage_floor_range,
+            strategy_troop_function_table=self.strategy_troop_function_table,
+            strategy_random_percent_range=self.strategy_random_percent_range,
+            strategy_low_damage_floor_range=self.strategy_low_damage_floor_range,
         )
         self.normal_attack_system = NormalAttackSystem(
             self.target_system, self.damage_system, self.troop_system
