@@ -15,7 +15,7 @@ Stage 3 BattleState       ✅ 稳定
 Stage 4 官方状态接入       ✅ FROZEN
 Stage 5 Effect            ✅ FROZEN
 Stage 6 Skill Runtime     ✅ FROZEN
-Stage 7 Trigger/Recovery  📝 规划完成，待设计审计
+Stage 7 Trigger/Recovery  📝 规划已修订，待第二轮设计复审
 Stage 8+                  ⏳ 尚未开始
 ```
 
@@ -191,10 +191,46 @@ Stage 6 FROZEN
 STAGE7.md
 ```
 
-规划同步提交：
+初始规划同步提交：
 
 ```text
 495b5239b1ae0691b9479511d79831d7bfb826de
+```
+
+第一轮独立设计审计基线：
+
+```text
+e9a5f118e887ddada6401c1590738cac87791f1a
+```
+
+第一轮设计审计结论：
+
+```text
+BLOCKER   = 0
+MAJOR     = 4
+MINOR     = 2
+HARDENING = 2
+
+VERDICT = NOT READY FOR STAGE 7 BUILD
+```
+
+规划修订提交：
+
+```text
+d2b686595a43294b622359574a24422cd1d83329
+```
+
+本次规划修订已补齐：
+
+```text
+1. source_skill_id / source_state_id / source_state_instance_id provenance 全链
+2. RecoverEffect / RecoveryRequest / TroopSystem.restore 恢复输入类型安全
+3. Hook atomic batch + batch 后 Victory check
+4. UNIT_ACTION_START 击杀 actor 后的完整 UNIT_ACTION_END lifecycle
+5. RecoveryResolvedResult / RecoveryPreventedResult 联合类型
+6. actual_recovery == 0 的事件语义
+7. RuleHook round / actor 输入一致性验证
+8. 官方状态 evidence matrix 的 PASS_STAGE7 / DEFER 硬 gate
 ```
 
 Stage 7 当前目标：
@@ -203,11 +239,22 @@ Stage 7 当前目标：
 Explicit Rule Hook
 → TriggerSystem
 → ordered Effect(s)
+→ RuleHookSystem
 → EffectExecutor
 
 RecoverEffect
 → RecoverySystem
 → TroopSystem
+```
+
+并新增来源审计链：
+
+```text
+StateInstance
+→ source_skill_id
+→ source_state_id
+→ source_state_instance_id
+→ Effect / Request / Result / Event
 ```
 
 Stage 7 第一版重点：
@@ -221,6 +268,8 @@ RecoverEffect 正式恢复执行
 恢复事实事件
 ROUND_START / UNIT_ACTION_START 最小 hook
 周期 Damage / Recovery StateRuntimeParams
+Hook atomic batch
+State provenance
 ```
 
 基于当前架构与证据，Stage 7 不强行一次实现旧 Roadmap 中全部 11 个候选状态。
@@ -228,8 +277,11 @@ ROUND_START / UNIT_ACTION_START 最小 hook
 当前正式规划：
 
 ```text
-可在 Stage 7 evidence gate 后接入：
-burn / flood / poison / rout / sandstorm / recuperation / healing_ban
+可进入 Stage 7 evidence gate：
+burn / flood / poison / rout / sandstorm / recuperation
+
+可直接进入 Stage 7 Recovery policy：
+healing_ban
 
 明确 DEFER：
 rebellion
@@ -242,7 +294,8 @@ first_aid / weapon_lifesteal / strategy_lifesteal
 Stage 7 当前状态：
 
 ```text
-📝 PLANNING COMPLETE
+📝 PLAN REVISED
+PENDING SECOND DESIGN AUDIT
 NOT IMPLEMENTED
 NOT FROZEN
 ```
@@ -250,10 +303,17 @@ NOT FROZEN
 下一步必须先：
 
 ```text
-独立 Stage 7 设计审计
+第二轮独立 Stage 7 设计复审
 ```
 
-设计审计通过后再建立：
+只有复审达到：
+
+```text
+BLOCKER = 0
+MAJOR = 0
+```
+
+才建立：
 
 ```text
 prompts/STAGE7_BUILD_PROMPT.md
@@ -265,14 +325,15 @@ prompts/STAGE7_BUILD_PROMPT.md
 
 # 下一阶段动作
 
-当前不得直接开始 Stage 8。
+当前不得直接开始 Stage 8，也不得跳过 Stage 7 第二轮设计复审直接施工。
 
 Stage 7 正确流程：
 
 ```text
 STAGE7.md
-→ 独立设计审计
-→ 必要修订
+→ 第一轮独立设计审计
+→ 修订 STAGE7.md
+→ 第二轮独立设计复审
 → STAGE7_BUILD_PROMPT.md
 → Stage 7 施工
 → pytest / demo / CI
