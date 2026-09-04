@@ -8,6 +8,9 @@ from sgs_v2.battle_core import (
     BattleEndReason,
     BattleEngine,
     BattleSystems,
+    DamageRequest,
+    DamageSourceType,
+    DamageType,
     EventBus,
     LineupPosition,
     RandomSystem,
@@ -111,6 +114,56 @@ def test_action_order_uses_final_speed_and_seeded_tie_breakers() -> None:
     ]
 
 
+def test_damage_request_weapon_coefficient_scales_base_damage() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    result = systems.damage_system.calculate(
+        context,
+        DamageRequest(
+            source_id="a",
+            target_id="b",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.SKILL,
+            coefficient=1.8,
+            source_skill_id="test_skill",
+        ),
+    )
+
+    assert result.damage_type is DamageType.WEAPON
+    assert result.source_type is DamageSourceType.SKILL
+    assert result.coefficient == 1.8
+    assert result.scaled_damage == pytest.approx(result.base_damage * 1.8)
+    assert result.final_damage == max(1, int(result.scaled_damage))
+    assert result.source_skill_id == "test_skill"
+
+
+def test_damage_request_strategy_uses_separate_base_damage_path() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    with pytest.raises(NotImplementedError, match="strategy base damage"):
+        systems.damage_system.calculate(
+            context,
+            DamageRequest(
+                source_id="a",
+                target_id="b",
+                damage_type=DamageType.STRATEGY,
+                source_type=DamageSourceType.SKILL,
+                coefficient=1.5,
+            ),
+        )
+
+
+def test_damage_request_rejects_negative_coefficient() -> None:
+    with pytest.raises(ValueError, match="coefficient"):
+        DamageRequest(
+            source_id="a",
+            target_id="b",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.SKILL,
+            coefficient=-0.1,
+        )
+
+
 def test_damage_calculation_does_not_change_troops_until_troop_system_applies_it() -> None:
     context = make_context()
     systems = BattleSystems(damage_scale=2.0)
@@ -119,9 +172,26 @@ def test_damage_calculation_does_not_change_troops_until_troop_system_applies_it
     )
     target = context.get_unit("b")
     assert target.troops == 100
-    change = systems.troop_system.apply_damage(target, damage.requested_damage)
-    assert change.actual_change == damage.requested_damage
+    change = systems.troop_system.apply_damage(target, damage.final_damage)
+    assert change.actual_change == damage.final_damage
     assert target.troops == 0
+
+
+def test_normal_attack_routes_through_weapon_damage_request() -> None:
+    context = BattleContext(
+        battle_id="normal-attack-request",
+        units={
+            "a": UnitRuntime("a", "A", "A", 100, 100, 100, 100, 100, lineup_position=LineupPosition.COMMANDER),
+            "b": UnitRuntime("b", "B", "B", 100, 100, 100, 100, 90, lineup_position=LineupPosition.COMMANDER),
+        },
+        event_bus=EventBus(),
+        random=RandomSystem(1),
+    )
+    result = BattleSystems().normal_attack_system.execute(context, context.get_unit("a"))
+    assert result.damage is not None
+    assert result.damage.damage_type is DamageType.WEAPON
+    assert result.damage.source_type is DamageSourceType.NORMAL_ATTACK
+    assert result.damage.coefficient == 1.0
 
 
 def test_troop_system_clamps_damage_and_recovery() -> None:
