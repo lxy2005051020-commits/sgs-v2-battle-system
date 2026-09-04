@@ -12,6 +12,18 @@ class StrategyBaseDamageFormula(WeaponBaseDamageFormula):
     随机层和低伤害下限；属性对抗改为攻击者智力 vs 防守者智力。
     """
 
+    def calculate(
+        self,
+        context: BattleContext,
+        source: UnitRuntime,
+        target: UnitRuntime,
+    ) -> int:
+        if source.intelligence is None or target.intelligence is None:
+            raise NotImplementedError(
+                "strategy base damage requires intelligence values for both source and target"
+            )
+        return super().calculate(context, source, target)
+
     def _source_combat_attribute(
         self,
         context: BattleContext,
