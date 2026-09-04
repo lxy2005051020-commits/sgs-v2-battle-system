@@ -36,7 +36,7 @@ class UnitRuntime:
     level: int = 50
     morale: int = 100
     troop_type: TroopType | None = None
-    intelligence: float = field(default=0.0, kw_only=True)
+    intelligence: float | None = field(default=None, kw_only=True)
 
     def __post_init__(self) -> None:
         if not self.unit_id:
@@ -51,7 +51,7 @@ class UnitRuntime:
             raise ValueError("level must be > 0")
         if not 0 <= self.morale <= 100:
             raise ValueError("morale must be within [0, 100]")
-        if self.intelligence < 0:
+        if self.intelligence is not None and self.intelligence < 0:
             raise ValueError("intelligence must be >= 0")
 
         if self.lineup_position is None and self.is_commander:
