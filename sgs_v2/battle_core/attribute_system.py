@@ -39,6 +39,8 @@ class AttributeSystem:
         return self._get(context, unit, "defense", unit.defense)
 
     def get_intelligence(self, context: BattleContext, unit: UnitRuntime) -> float:
+        if unit.intelligence is None:
+            raise ValueError(f"unit {unit.unit_id} has no intelligence value")
         return self._get(context, unit, "intelligence", unit.intelligence)
 
     def get_speed(self, context: BattleContext, unit: UnitRuntime) -> float:
