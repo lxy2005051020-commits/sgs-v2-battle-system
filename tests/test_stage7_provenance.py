@@ -286,3 +286,25 @@ def test_damage_result_rejects_partial_state_provenance(kwargs) -> None:
             final_damage=10,
             **kwargs,
         )
+
+
+def test_damage_result_preserves_stage6_positional_constructor_contract() -> None:
+    result = DamageResult(
+        "a1",
+        "b1",
+        DamageType.WEAPON,
+        DamageSourceType.SKILL,
+        1.0,
+        100.0,
+        100.0,
+        100,
+        "legacy-skill",
+        True,
+        OfficialStateId.WEAKNESS.value,
+    )
+
+    assert result.source_skill_id == "legacy-skill"
+    assert result.prevented is True
+    assert result.prevented_by_state_id == OfficialStateId.WEAKNESS.value
+    assert result.source_state_id is None
+    assert result.source_state_instance_id is None
