@@ -10,6 +10,7 @@ from .damage_resolution_system import DamageResolutionSystem
 from .damage_system import DamageSystem
 from .effect_executor import EffectExecutor
 from .normal_attack_system import NormalAttackSystem
+from .skill_resolver import SkillResolver
 from .state_lifecycle_system import StateLifecycleSystem
 from .target_system import TargetSystem
 from .troop_system import TroopSystem
@@ -43,6 +44,7 @@ class BattleSystems:
     normal_attack_system: NormalAttackSystem = field(init=False)
     action_system: ActionSystem = field(init=False)
     effect_executor: EffectExecutor = field(init=False)
+    skill_resolver: SkillResolver = field(init=False)
 
     def __post_init__(self) -> None:
         self.action_order_system = ActionOrderSystem(self.attribute_system)
@@ -68,3 +70,4 @@ class BattleSystems:
             self.damage_resolution_system,
             self.state_lifecycle_system,
         )
+        self.skill_resolver = SkillResolver(self.target_system)
