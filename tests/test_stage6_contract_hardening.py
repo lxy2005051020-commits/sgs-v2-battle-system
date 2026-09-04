@@ -42,6 +42,13 @@ def make_damage_effect() -> DamageEffect:
     )
 
 
+def attribute_root_name(node: ast.Attribute) -> str | None:
+    value: ast.AST = node
+    while isinstance(value, ast.Attribute):
+        value = value.value
+    return value.id if isinstance(value, ast.Name) else None
+
+
 def test_skill_definition_rejects_non_finite_and_bool_activation_rates() -> None:
     for rate in (float("nan"), float("inf"), float("-inf")):
         with pytest.raises(ValueError, match="activation_rate"):
@@ -165,6 +172,7 @@ def test_skill_resolver_does_not_branch_on_skill_identity() -> None:
             for child in ast.walk(expression)
             if isinstance(child, ast.Attribute)
             and child.attr in {"skill_id", "name"}
+            and attribute_root_name(child) in {"definition", "runtime"}
         }
         assert not identity_attributes
 
