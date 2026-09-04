@@ -35,10 +35,12 @@ class SkillResolutionResult:
     effects: tuple[Effect, ...]
 
     def __post_init__(self) -> None:
-        if not self.skill_id:
+        if not isinstance(self.skill_id, str) or not self.skill_id.strip():
             raise ValueError("skill_id cannot be empty")
-        if not self.owner_id:
+        if not isinstance(self.owner_id, str) or not self.owner_id.strip():
             raise ValueError("owner_id cannot be empty")
+        if not isinstance(self.status, SkillResolutionStatus):
+            raise TypeError("status must be a SkillResolutionStatus")
 
         target_ids = tuple(self.target_ids)
         effects = tuple(self.effects)
