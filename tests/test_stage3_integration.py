@@ -22,11 +22,11 @@ def make_context(seed: int = 7) -> BattleContext:
         battle_id=f"stage3-integration-{seed}",
         units={
             "a1": UnitRuntime(
-                "a1", "A", "A", 100000, 100000, 1, 100000, 100,
+                "a1", "A", "A", 10000, 10000, 1, 10000, 100,
                 lineup_position=LineupPosition.COMMANDER,
             ),
             "b1": UnitRuntime(
-                "b1", "B", "B", 100000, 100000, 1, 100000, 90,
+                "b1", "B", "B", 10000, 10000, 1, 10000, 90,
                 lineup_position=LineupPosition.COMMANDER,
             ),
         },
