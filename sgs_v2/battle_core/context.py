@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 
 from .events import EventBus
 from .random_system import RandomSystem
+from .state_registry import StateRegistry
 from .unit import UnitRuntime
 from .enums import BattleEndReason, LineupPosition
 
@@ -30,6 +31,7 @@ class BattleContext:
     event_bus: EventBus
     random: RandomSystem
     max_rounds: int = 8
+    states: StateRegistry = field(default_factory=StateRegistry)
 
     current_round: int = 0
     current_phase: str = "NOT_STARTED"
