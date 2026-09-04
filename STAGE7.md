@@ -2,21 +2,38 @@
 
 > 本文是 Stage 7 的正式规划与未来施工边界。它建立在当前 `main` 的 Stage 6 FROZEN 基线上。
 > 本文不是施工结果，也不是 FINAL AUDIT。任何 Stage 7 生产代码施工前，都必须再次读取最新 `main` 并完成独立设计审计。
+>
+> 本版已经吸收第一轮 Stage 7 独立设计审计发现的 4 个 MAJOR、2 个 MINOR 与 2 个 HARDENING，重点补齐：State provenance、恢复输入类型安全、Hook terminal policy、UNIT_ACTION lifecycle、RecoveryResult、0 恢复事件语义与 evidence gate。
 
 ---
 
 # 0. 当前基线
 
-Stage 7 规划时重新确认的 `main` HEAD：
+Stage 7 初始规划基线：
 
 ```text
 15bde039fd4521a36f76224731e82cceb9846c19
+docs: mark Stage 6 frozen
 ```
 
-对应提交：
+第一轮 Stage 7 独立设计审计 / 本次修订基线：
 
 ```text
-docs: mark Stage 6 frozen
+e9a5f118e887ddada6401c1590738cac87791f1a
+docs: mark Stage 7 planning ready
+```
+
+该修订基线验证：
+
+```text
+pytest -q
+→ 151 passed
+
+python demo.py
+→ success
+
+GitHub Actions
+→ success
 ```
 
 当前正式状态：
@@ -28,7 +45,7 @@ Stage 3 BattleState       稳定
 Stage 4 官方状态接入       FROZEN
 Stage 5 Effect            FROZEN
 Stage 6 Skill Runtime     FROZEN
-Stage 7                   规划阶段
+Stage 7                   规划修订 / 待复审
 ```
 
 Stage 6 已具备：
@@ -44,7 +61,7 @@ SkillDefinition
 
 且 `STAGE6_FINAL_AUDIT.md` 已完成独立最终审计，Stage 6 实现与审计均已进入 `main`，对应 main CI 成功。
 
-如果 Stage 7 实际施工时 `main` 已变化，施工者必须重新确认 Stage 6 冻结边界仍成立，以新的 HEAD 作为实际施工基线。
+如果 Stage 7 实际施工时 `main` 已变化，施工者必须重新确认 Stage 6 冻结边界仍成立，并以新的 HEAD 作为实际施工基线。
 
 ---
 
@@ -89,6 +106,8 @@ explicit Rule Hook
 TriggerSystem
         ↓
 ordered Effect(s)
+        ↓
+RuleHookSystem
         ↓
 EffectExecutor
         ↓
@@ -146,6 +165,8 @@ TriggerSystem 直接写 StateRegistry
 TriggerSystem 自己计算基础伤害公式
 TriggerSystem import random
 RecoverySystem 直接 target.troops += ...
+RuleHookSystem 认识具体 state_id
+BattleEngine 认识具体 Effect 类型
 ```
 
 ---
@@ -179,6 +200,8 @@ SkillResolver
 ```
 
 不得以 Stage 7 为理由重新设计 SkillRuntime 或把具体战法逻辑塞进 TriggerSystem。
+
+Stage 7 允许对 Stage 5/6 数据合同做**向后兼容、仅为 Stage 7 正式消费者服务的最小扩展**，但不得改变已冻结的核心业务语义。
 
 ---
 
@@ -241,7 +264,7 @@ healing_ban / 禁疗
 = 无法恢复兵力
 ```
 
-`research/state_catalog_v1/STATE_CATALOG_V1.md` 还提供了战法描述 / 战报级研究：
+`research/state_catalog_v1/STATE_CATALOG_V1.md` 还提供战法描述 / 战报级研究：
 
 ```text
 灼烧 / 水攻 / 中毒 / 沙暴
@@ -257,14 +280,14 @@ healing_ban / 禁疗
 → 恢复兵力结算阶段阻止
 ```
 
-但以下规则仍不能凭当前资料完整冻结：
+以下规则仍不能凭当前资料完整冻结：
 
 ```text
 持续状态同名多实例的覆盖 / 刷新 / 最高来源政策
-持续伤害精确 tick 相对事件顺序
+持续伤害精确 tick 相对官方事件顺序
 持续伤害是否快照来源属性
 来源死亡后持续状态的计算方式
-休整精确发生在回合哪个节点
+休整官方精确发生节点
 急救具体恢复公式
 倒戈 / 攻心使用 requested damage 还是 actual damage
 禁疗对所有吸血 / 急救交互的完整事件顺序
@@ -280,7 +303,7 @@ healing_ban / 禁疗
 Stage 7 第一版正式建设：
 
 ```text
-RuleHook 数据合同
+RuleHook 强类型数据合同
 TriggerSystem
 RuleHookSystem
 RecoveryRequest / RecoveryResult
@@ -290,8 +313,10 @@ RecoverEffect → RecoverySystem 正式接入
 周期 Damage / Recovery StateRuntimeParams
 ROUND_START / UNIT_ACTION_START 最小显式 hook
 确定性 trigger ordering
+Hook 原子批次执行合同
+State provenance 全链追踪
 Stage 7 synthetic trigger tests
-官方状态证据门槛与可接入子集
+官方状态 evidence matrix 与 PASS / DEFER gate
 ```
 
 Stage 7 不要求一次解决所有后续反应式机制。
@@ -309,28 +334,50 @@ ROUND_START
 UNIT_ACTION_START
 ```
 
-推荐使用不可变强类型 hook：
+使用不可变强类型 hook：
 
 ```text
 RoundStartHook
 UnitActionStartHook
 ```
 
-而不是：
+禁止：
 
 ```python
 hook_payload: dict[str, Any]
 ```
 
-概念：
+正式最小合同：
 
 ```text
 RoundStartHook
-- round_no
+- round_no: int
 
 UnitActionStartHook
-- round_no
-- actor_id
+- round_no: int
+- actor_id: str
+```
+
+运行时验证：
+
+```text
+round_no 必须是 int
+bool reject
+round_no >= 1
+actor_id 必须是非空、非纯空白 str
+```
+
+`RuleHookSystem.process(context, hook)` 必须验证：
+
+```text
+hook.round_no == context.current_round
+```
+
+若不一致：
+
+```text
+明确失败
+不得静默处理历史 / 未来 round hook
 ```
 
 未来：
@@ -368,14 +415,14 @@ DamageResolutionSystem
 → DamageResolutionSystem
 ```
 
-会形成明显循环依赖，并提前引入递归触发风险。
+会形成循环依赖，并提前引入递归触发风险。
 
 因此 Stage 7 v1：
 
 ```text
 建立 RecoverySystem
 建立周期 hook
-但不把 AFTER_DAMAGE 反应链硬塞进 DamageResolutionSystem。
+但不把 AFTER_DAMAGE 反应链硬塞进 DamageResolutionSystem
 ```
 
 `急救 / 倒戈 / 攻心` 正式行为继续 DEFER，建议与 Stage 9 Reaction / Queue 一并研究接入。
@@ -398,7 +445,10 @@ DamageResolutionSystem
 ```text
 读取 StateRegistry
 读取 StateInstance.runtime_params
-读取 StateInstance.source_id / source_skill_id
+读取 StateInstance.source_id
+读取 StateInstance.source_skill_id
+读取 StateInstance.state_id
+读取 StateInstance.instance_id
 根据 hook 判断哪些 state instance 应产生 Effect
 按确定顺序构造 Effect
 ```
@@ -436,13 +486,25 @@ RuleHookSystem
 ```text
 RuleHook
 ↓
+输入一致性验证
+↓
 TriggerSystem.collect(...)
 ↓
 ordered Effect(s)
 ↓
 EffectExecutor.execute(...)
 ↓
-返回 typed hook resolution result
+返回 typed HookResolutionResult
+```
+
+`RuleHookSystem` 不负责：
+
+```text
+Victory 判定
+状态识别
+伤害计算
+恢复政策
+RNG
 ```
 
 `BattleEngine` 只调用：
@@ -463,11 +525,11 @@ DamageEffect
 
 ---
 
-# 11. Rule Hook 的 Engine 接入点
+# 11. Rule Hook 的 Engine 接入点与行动生命周期
 
-Stage 7 推荐工程顺序：
+Stage 7 冻结以下 D = ENGINEERING DECISION。
 
-## ROUND_START
+## 11.1 ROUND_START
 
 ```text
 enter ROUND_START
@@ -480,7 +542,8 @@ RuleHookSystem.process(RoundStartHook)
 ↓
 VictorySystem.check
 ↓
-ACTION_ORDER
+若 terminal → BATTLE_END
+否则 → ACTION_ORDER
 ```
 
 工程理由：
@@ -490,9 +553,11 @@ ACTION_ORDER
 周期伤害可以在行动排序前结束战斗。
 ```
 
-这是 D = 工程设计决定，不冒充官方所有状态的精确结算时序。
+这不是官方所有状态精确结算时序的声明。
 
-## UNIT_ACTION_START
+## 11.2 UNIT_ACTION_START
+
+正式流程：
 
 ```text
 enter UNIT_ACTION_START
@@ -503,24 +568,48 @@ RuleHookSystem.process(UnitActionStartHook(actor_id))
 ↓
 VictorySystem.check
 ↓
-若 actor 已死亡则不进入 ActionSystem
+如果 result is None 且 actor.is_alive
+    → enter UNIT_ACTION
+    → ActionSystem.execute
+    → VictorySystem.check
+否则
+    → 跳过 UNIT_ACTION / ActionSystem
 ↓
-否则进入 UNIT_ACTION
+enter UNIT_ACTION_END
+↓
+UNIT_ACTION_ENDED fact
+↓
+如果 result != None
+    → BATTLE_END
+否则
+    → 下一个 actor
 ```
 
-如果 hook 使副将死亡但战斗未结束：
+因此：
 
 ```text
-该 actor 本次不再执行 ActionSystem
+hook 击杀副将
+→ 跳过该 actor 的 ActionSystem
+→ 仍发布 UNIT_ACTION_ENDED
+
+hook 击杀主将并形成 terminal result
+→ 跳过该 actor 的 ActionSystem
+→ 仍进入 UNIT_ACTION_END
+→ 发布 UNIT_ACTION_ENDED
+→ 再进入 BATTLE_END
 ```
 
-这保持现有“死亡单位不能行动”的工程不变量。
+这里继承当前 Engine 已有语义：
 
-连续伤害与 stun / disarm 等状态的精确交互顺序仍应作为单独研究项，不因为这个 hook 顺序宣称已证明官方规则。
+> 行动生命周期开始后，即使本次行动中形成终局，也先闭合 `UNIT_ACTION_END / UNIT_ACTION_ENDED`，再结束战斗。
+
+`UNIT_ACTION_ENDED` 表示本次 action lifecycle 已结束，不代表 actor 一定成功执行过普通攻击。
+
+连续伤害与 stun / disarm 等状态的官方精确交互顺序仍需单独研究。
 
 ---
 
-# 12. Trigger 确定性顺序
+# 12. Trigger 确定性顺序与 Hook 原子批次合同
 
 Stage 7 必须冻结工程确定性：
 
@@ -535,15 +624,149 @@ RuleHookSystem
 → 严格按 TriggerSystem 返回 tuple 顺序执行
 ```
 
-这是 D = 工程确定性合同。
+## 12.1 Hook atomic batch policy
 
-真实游戏中同名持续状态的覆盖 / 刷新 / 强度择优不是由这个顺序解决，仍需未来 StateApplicationPolicy / 研究证据。
+Stage 7 v1 采用：
+
+```text
+一个 RuleHook
+→ collect 一次 ordered Effect tuple
+→ tuple 内全部 Effect 按顺序执行
+→ batch 完成后
+→ BattleEngine 调用 VictorySystem.check
+```
+
+即：
+
+```text
+同一个 Hook batch 中
+即使较早 Effect 已击杀主将
+也不在 RuleHookSystem 内中断后续 Effect
+```
+
+这是：
+
+```text
+D = ENGINEERING DECISION
+```
+
+理由：
+
+```text
+RuleHookSystem 保持只协调 TriggerSystem + EffectExecutor；
+不反向依赖 VictorySystem；
+不在 Stage 7 提前建立可递归 / 可中断 Reaction Queue。
+```
+
+该规则必须写明确测试。
+
+如果未来官方证据证明某类规则需要 effect-level terminal short-circuit，则在正式 queue / resolution policy 中扩展，不靠临时 `if battle ended` 分支破坏 Stage 7 合同。
+
+真实游戏中同名持续状态的覆盖 / 刷新 / 强度择优不是由 instance_id 顺序解决，仍需未来 StateApplicationPolicy / 研究证据。
 
 ---
 
-# 13. 周期伤害参数合同
+# 13. State provenance 全链合同
 
-Stage 5 已经建立 `StateRuntimeParams`。
+Stage 7 第一次正式引入“StateInstance 触发新的 Effect”。
+
+因此仅保留：
+
+```text
+source_id
+source_skill_id
+```
+
+已经不足以完整审计来源。
+
+Stage 7 必须冻结以下可选 provenance 字段：
+
+```text
+source_state_id: str | None
+source_state_instance_id: str | None
+```
+
+语义：
+
+```text
+source_state_id
+= 触发该 Effect 的状态种类
+
+source_state_instance_id
+= 触发该 Effect 的具体 StateInstance
+```
+
+二者只记录来源，不承载行为。
+
+对于由状态触发的周期 Effect：
+
+```text
+source_state_id
+= state.state_id
+
+source_state_instance_id
+= state.instance_id
+```
+
+Stage 7 至少要求以下链路保留 provenance：
+
+```text
+StateInstance
+→ TriggerSystem
+→ DamageEffect / RecoverEffect
+→ DamageRequest / RecoveryRequest
+→ DamageResult / RecoveryResult
+→ 对应事实 Event payload
+```
+
+`source_skill_id` 继续保留原始施加该状态的技能来源。
+
+因此同一个周期伤害至少可以回答：
+
+```text
+谁施加 / 造成？
+哪个 skill？
+哪个 state_id？
+哪个具体 StateInstance？
+```
+
+## 13.1 对 Damage 链的最小扩展
+
+Stage 7 允许对：
+
+```text
+DamageEffect
+DamageRequest
+DamageResult
+DamageResolutionSystem event payload
+```
+
+增加：
+
+```text
+source_state_id
+source_state_instance_id
+```
+
+仅做 provenance 元数据透传。
+
+禁止借此修改：
+
+```text
+基础兵刃公式
+基础谋略公式
+DamageType 语义
+weakness 既有阻止逻辑
+伤害随机逻辑
+```
+
+这不是 Stage 8 Damage Pipeline。
+
+---
+
+# 14. 周期伤害参数合同
+
+Stage 5 已建立 `StateRuntimeParams`。
 
 Stage 7 可以正式增加：
 
@@ -551,7 +774,7 @@ Stage 7 可以正式增加：
 PeriodicDamageStateParams
 ```
 
-推荐最小字段：
+最小字段：
 
 ```text
 damage_type: DamageType
@@ -563,22 +786,27 @@ coefficient: float
 ```text
 frozen dataclass
 slots
+damage_type 必须是 DamageType
+coefficient 必须是 int / float
+bool reject
 coefficient finite
 coefficient >= 0
-bool reject
+最终规范化为 float
 ```
 
-来源与归属继续使用 StateInstance 已有：
+来源与归属继续使用 StateInstance：
 
 ```text
 source_id
 source_skill_id
+state_id
+instance_id
 owner_id
 ```
 
 不得复制到万能 payload。
 
-TriggerSystem 产生：
+TriggerSystem 产生概念：
 
 ```text
 DamageEffect(
@@ -588,18 +816,20 @@ DamageEffect(
     source_type=CONTINUOUS,
     coefficient=params.coefficient,
     source_skill_id=state.source_skill_id,
+    source_state_id=state.state_id,
+    source_state_instance_id=state.instance_id,
 )
 ```
 
-如果正式周期伤害状态缺少合法 source_id：
+如果正式周期伤害状态缺少合法 `source_id`：
 
 ```text
-必须明确失败或被数据校验拒绝，不能静默改成 owner 自伤来源。
+必须明确失败或被数据校验拒绝，不能静默改成 owner 自伤来源
 ```
 
 ---
 
-# 14. 周期恢复参数合同
+# 15. 周期恢复参数合同
 
 增加：
 
@@ -607,17 +837,18 @@ DamageEffect(
 PeriodicRecoveryStateParams
 ```
 
-Stage 7 第一版推荐字段：
+Stage 7 第一版字段：
 
 ```text
 amount: int
 ```
 
-要求：
+正式运行时要求：
 
 ```text
-amount >= 0
+必须是 int
 bool reject
+amount >= 0
 frozen dataclass
 slots
 ```
@@ -628,24 +859,169 @@ slots
 
 ---
 
-# 15. RecoverySystem
+# 16. RecoverEffect 激活前的类型安全修订
+
+Stage 5 / 6 的 `RecoverEffect` 只处于 DEFERRED 路径，因此旧运行时验证尚未成为真实兵力写入风险。
+
+Stage 7 将正式执行恢复，所以必须在接入 RecoverySystem 前同步加固 `RecoverEffect`。
+
+正式合同：
+
+```text
+source_id: str | None
+target_id: str
+amount: int
+source_skill_id: str | None
+source_state_id: str | None
+source_state_instance_id: str | None
+```
+
+验证：
+
+```text
+target_id 必须非空、非纯空白
+source_id 提供时必须非空、非纯空白
+source_skill_id 提供时必须非空、非纯空白
+source_state_id 提供时必须非空、非纯空白
+source_state_instance_id 提供时必须非空、非纯空白
+amount 必须是 int
+bool reject
+amount >= 0
+```
+
+`RecoverEffect` 本身仍然：
+
+```text
+无副作用
+不调用 RecoverySystem
+不调用 TroopSystem
+```
+
+---
+
+# 17. RecoveryRequest
+
+正式表达：
+
+```text
+source_id: str | None
+target_id: str
+amount: int
+source_skill_id: str | None
+source_state_id: str | None
+source_state_instance_id: str | None
+```
+
+验证必须与 RecoverEffect 的身份 / amount 合同一致：
+
+```text
+amount 必须是 int
+bool reject
+amount >= 0
+ID 字段提供时不得为空或纯空白
+```
+
+`source_state_id` / `source_state_instance_id` 用于周期恢复 / 未来反应式恢复的审计来源，不承载行为。
+
+---
+
+# 18. RecoveryResult 正式冻结方案
+
+Stage 7 采用**独立结果类型组成联合类型**，不使用塞满 Optional 字段的万能单一 dataclass。
+
+正式结构：
+
+```text
+RecoveryResolvedResult
+RecoveryPreventedResult
+
+RecoveryResult
+= RecoveryResolvedResult | RecoveryPreventedResult
+```
+
+## 18.1 RecoveryResolvedResult
+
+至少保存：
+
+```text
+request: RecoveryRequest
+troop_change: TroopChangeResult
+```
+
+因此可得到：
+
+```text
+requested amount
+actual recovery
+remaining troops
+全部 source provenance
+```
+
+## 18.2 RecoveryPreventedResult
+
+至少保存：
+
+```text
+request: RecoveryRequest
+reason_state_id: str
+```
+
+不得伪造 `TroopChangeResult`。
+
+被阻止时：
+
+```text
+不调用 TroopSystem.restore
+```
+
+## 18.3 EffectExecutionStatus 语义
+
+`RecoveryPreventedResult` 表示：
+
+```text
+RecoverEffect 已被正式规则成功解析
+只是恢复结果被规则阻止
+```
+
+因此：
+
+```text
+Recovery PREVENTED
+≠ EffectExecutionStatus.DEFERRED
+≠ Effect 执行失败
+```
+
+正式：
+
+```text
+RecoverEffectResult
+- effect: RecoverEffect
+- resolution: RecoveryResult
+- status = EffectExecutionStatus.RESOLVED
+```
+
+这与现有 DamageEffectResult / DamageResult.prevented 的分层保持一致。
+
+---
+
+# 19. RecoverySystem
 
 Stage 7 建立正式：
 
 ```text
-RecoveryRequest
-RecoveryResult
 RecoverySystem
 ```
 
 职责：
 
 ```text
-RecoverySystem
-= 恢复规则裁决
-+ 禁疗判定
-+ 调用 TroopSystem.restore
-+ 发布恢复结果事实
+RecoveryRequest 输入验证
+恢复规则裁决
+禁疗判定
+死亡目标禁止普通恢复
+调用 TroopSystem.restore
+发布恢复结果事实
+返回 RecoveryResult
 ```
 
 `TroopSystem` 继续：
@@ -662,52 +1038,44 @@ target.troops += amount
 
 出现在 RecoverySystem 或 TriggerSystem。
 
----
-
-# 16. RecoveryRequest
-
-推荐表达：
+RecoverySystem 不负责：
 
 ```text
-source_id
- target_id
- amount
- source_skill_id
- source_state_id
+Victory
+复活
+Trigger
+Skill
+Effect routing
 ```
-
-字段必须类型明确。
-
-`source_state_id` 用于周期恢复 / 未来吸血恢复的审计来源，不承载行为。
 
 ---
 
-# 17. RecoveryResult
+# 20. TroopSystem.restore 防御性合同
 
-结果至少要能区分：
+Stage 7 不把禁疗等恢复政策塞进 `TroopSystem.restore()`。
 
-```text
-RESOLVED
-PREVENTED
-```
-
-并保留：
+但由于 `restore()` 是最终兵力写入口，Stage 7 可以增加输入层防御性类型验证：
 
 ```text
-requested amount
-actual troop change
-remaining troops
-prevented reason / state
-source / target
+requested_recovery 必须是 int
+bool reject
+requested_recovery >= 0
 ```
 
-不要建立塞满几十个 Optional 字段的万能 Result。
+这只是兵力写入类型安全，不属于恢复政策。
 
-可以使用独立结果类型或严格不变量的单一 dataclass；施工前设计审计必须选择并冻结其中一个方案。
+禁止 TroopSystem 判断：
+
+```text
+healing_ban
+source state
+skill type
+复活规则
+```
 
 ---
 
-# 18. Healing Ban / 禁疗
+# 21. Healing Ban / 禁疗
 
 当前官方语义明确：
 
@@ -716,7 +1084,7 @@ healing_ban
 = 无法恢复兵力
 ```
 
-Stage 7 可以正式由 RecoverySystem 解释：
+Stage 7 正式由 RecoverySystem 解释：
 
 ```text
 RecoveryRequest
@@ -725,7 +1093,9 @@ RecoverySystem
 ↓
 context.states.has(target_id, healing_ban)
 ↓
-PREVENTED
+RecoveryPreventedResult(reason_state_id="healing_ban")
+↓
+RECOVERY_PREVENTED fact
 ↓
 不调用 TroopSystem.restore
 ```
@@ -740,42 +1110,88 @@ TroopSystem.restore
 
 ---
 
-# 19. 恢复事件
+# 22. 恢复事件与 0 实际恢复语义
 
-Stage 7 推荐增加事实事件：
+Stage 7 增加事实事件：
 
 ```text
 RECOVERY_PREVENTED
 TROOPS_RECOVERED
 ```
+
+## RECOVERY_PREVENTED
 
 语义：
 
 ```text
-RECOVERY_PREVENTED
-= 一次恢复请求已被正式规则阻止
-
-TROOPS_RECOVERED
-= 一次恢复请求已经实际修改兵力（actual_change 可为明确值）
+一次恢复请求已被正式规则阻止
 ```
 
-payload 至少包含：
+至少包含：
 
 ```text
 source_id
 source_skill_id
 source_state_id
+source_state_instance_id
+target_id
+requested_recovery
+reason_state_id
+```
+
+## TROOPS_RECOVERED
+
+语义：
+
+```text
+一次恢复请求已经实际增加目标兵力
+```
+
+至少包含：
+
+```text
+source_id
+source_skill_id
+source_state_id
+source_state_instance_id
+target_id
 requested_recovery
 actual_recovery
 remaining_troops
-reason_state_id（prevented 时）
 ```
 
-EventBus 仍只记录事实。
+## 22.1 满兵 / actual_recovery == 0
+
+Stage 7 冻结：
+
+```text
+RecoverySystem 可以返回 RecoveryResolvedResult
+且 troop_change.actual_change == 0
+```
+
+但：
+
+```text
+actual_change == 0
+→ 不发布 TROOPS_RECOVERED
+```
+
+理由：
+
+```text
+EventBus 记录已经发生的事实；
+0 实际恢复没有发生兵力增加。
+```
+
+这属于：
+
+```text
+D = ENGINEERING DECISION
+```
 
 ---
 
-# 20. RecoverEffect 正式接入
+# 23. RecoverEffect 正式接入
 
 Stage 5 / 6：
 
@@ -792,18 +1208,14 @@ RecoverEffect
 ↓
 EffectExecutor
 ↓
+构造 / 转换 RecoveryRequest
+↓
 RecoverySystem.resolve
 ↓
-TroopSystem.restore / RECOVERY_PREVENTED
-```
-
-需要新增正式 typed：
-
-```text
+RecoveryResolvedResult / RecoveryPreventedResult
+↓
 RecoverEffectResult
 ```
-
-并从 `EffectExecutionResult` 联合类型纳入。
 
 完成后：
 
@@ -817,7 +1229,7 @@ RECOVERY_SYSTEM_NOT_AVAILABLE
 
 ---
 
-# 21. 官方持续状态接入策略
+# 24. 官方持续状态 evidence matrix 与硬 Gate
 
 Stage 7 不允许“看到状态名就全部 hardcode”。
 
@@ -835,23 +1247,81 @@ unknowns
 implementation verdict
 ```
 
-候选状态：
+`implementation verdict` 只能是：
+
+```text
+PASS_STAGE7
+DEFER
+```
+
+## 24.1 硬 Gate
+
+如果仍存在会改变**单实例基础行为**的关键 UNKNOWN，例如：
+
+```text
+trigger node 无法确定
+damage type 无法确定
+基础公式 / coefficient 语义无法确定
+source attribution 无法确定
+恢复 amount 的工程来源无法确定
+```
+
+则：
+
+```text
+implementation verdict = DEFER
+```
+
+不得：
+
+```text
+UNKNOWN
++ 自行猜一个规则
++ 宣布官方状态已实现
+```
+
+以下未知项如果 Stage 7 明确不声称解决，则可以继续 DEFER 而不必阻止单实例基础行为测试：
+
+```text
+同名 stacking
+refresh
+最高值覆盖
+同源 / 异源竞争
+```
+
+但测试与文档必须明确：
+
+```text
+多实例 deterministic execution
+≠ 官方 stacking 规则
+```
+
+当前候选状态：
 
 | state | Stage 7 candidate | 当前判断 |
 |---|---|---|
-| burn / 灼烧 | YES, evidence gate | 有持续伤害高证据，但精确 tick / stacking 仍需记录 |
-| flood / 水攻 | YES, evidence gate | 官方明确 owner action 时伤害 |
-| poison / 中毒 | YES, evidence gate | 官方明确 owner action 时伤害 |
-| rout / 溃逃 | YES, evidence gate | 官方明确 owner action 时伤害；damage type 需由 params 提供 |
-| sandstorm / 沙暴 | YES, evidence gate | 官方明确 owner action 时伤害 |
-| recuperation / 休整 | YES, evidence gate | 官方明确每回合恢复；精确 round node 需工程冻结 |
-| healing_ban / 禁疗 | YES | RecoverySystem policy 证据足够 |
+| burn / 灼烧 | evidence gate | 有持续伤害证据；只有 matrix PASS 后接入 |
+| flood / 水攻 | evidence gate | 官方明确 owner action 时伤害；其余关键项需 matrix |
+| poison / 中毒 | evidence gate | 官方明确 owner action 时伤害；其余关键项需 matrix |
+| rout / 溃逃 | evidence gate | owner action 时伤害；damage type 等需 matrix |
+| sandstorm / 沙暴 | evidence gate | owner action 时伤害；其余关键项需 matrix |
+| recuperation / 休整 | evidence gate | 每回合恢复；工程 hook 与 amount 来源需 matrix |
+| healing_ban / 禁疗 | PASS_STAGE7 | RecoverySystem policy 证据足够 |
+
+Stage 7 **基础设施施工不以全部周期官方状态必须 PASS 为前提**。
+
+如果某个周期状态 evidence matrix 不能 PASS：
+
+```text
+该状态 DEFER
+但 RuleHook / Trigger / Recovery 基础设施仍可施工与验收
+```
 
 真实状态接入时仍不把“伤害率、恢复量、持续回合、目标数量”写成状态固定常量；这些来自来源技能 / StateRuntimeParams。
 
 ---
 
-# 22. Stage 7 明确 DEFER 的 4 个候选
+# 25. Stage 7 明确 DEFER 的 4 个候选
 
 ## rebellion / 叛逃
 
@@ -863,22 +1333,16 @@ implementation verdict
 无视防御
 ```
 
-当前 DamageSystem 只有 WEAPON / STRATEGY 正常基础公式，没有正式：
+当前 DamageSystem 没有正式 ignore-defense / modifier pipeline。
 
-```text
-ignore defense
-```
-
-裁决合同。
-
-如果 Stage 7 为叛逃单独增加：
+如果 Stage 7 单独增加：
 
 ```text
 if state == rebellion:
     bypass defense
 ```
 
-会提前破坏 Stage 8 Modifier / Damage Pipeline。
+会提前破坏 Stage 8 Damage Pipeline。
 
 因此：
 
@@ -924,7 +1388,7 @@ first_aid
 
 ---
 
-# 23. 对旧 Roadmap 的阶段数量调整
+# 26. 对旧 Roadmap 的阶段数量调整
 
 旧 `PROJECT_ROADMAP.md` 把 Stage 7 候选粗略列为 11 个状态。
 
@@ -934,8 +1398,11 @@ first_aid
 Stage 7 v1 核心
 = Trigger / Rule Hook / Recovery 基础设施
 
-可接入官方状态候选
-= burn / flood / poison / rout / sandstorm / recuperation / healing_ban
+可进入 evidence gate 的官方状态
+= burn / flood / poison / rout / sandstorm / recuperation
+
+Recovery policy 可直接进入 Stage 7
+= healing_ban
 
 明确不在 Stage 7 v1 强行实现
 = rebellion / first_aid / weapon_lifesteal / strategy_lifesteal
@@ -947,17 +1414,17 @@ Stage 7 v1 核心
 
 ---
 
-# 24. State Definition 参数 schema
+# 27. State Definition 参数 schema
 
 Stage 7 若正式启用参数化官方状态，必须更新对应 `StateDefinition.runtime_params_type`。
 
 例如：
 
 ```text
-周期伤害状态
+通过 evidence gate 的周期伤害状态
 → PeriodicDamageStateParams
 
-recuperation
+recuperation（仅在 evidence gate PASS 后）
 → PeriodicRecoveryStateParams
 
 healing_ban
@@ -974,7 +1441,7 @@ healing_ban
 
 ---
 
-# 25. 多状态 / 多实例问题
+# 28. 多状态 / 多实例问题
 
 StateRegistry 当前允许多实例共存。
 
@@ -982,6 +1449,7 @@ Stage 7 只冻结：
 
 ```text
 TriggerSystem 对当前实际 StateInstance 集合进行确定性处理
+State provenance 能精确追踪到 instance_id
 ```
 
 不声称已经解决：
@@ -999,7 +1467,7 @@ Stage 7 测试可验证多实例执行顺序稳定，但不得把该测试描述
 
 ---
 
-# 26. RandomSystem 边界
+# 29. RandomSystem 边界
 
 Stage 7 周期触发本身第一版不额外做概率裁决。
 
@@ -1017,24 +1485,17 @@ import random
 
 当前第一版不为了“以后可能需要”提前加入 probability 字段。
 
-DamageEffect 的基础伤害随机仍由：
-
-```text
-DamageSystem
-→ 现有公式
-→ RandomSystem
-```
-
-产生。
+DamageEffect 的基础伤害随机仍由现有 DamageSystem / formula / RandomSystem 路径产生。
 
 ---
 
-# 27. BattleEngine 边界
+# 30. BattleEngine 边界
 
 Stage 7 允许 BattleEngine 新增：
 
 ```text
 显式 RuleHookSystem 调用
+Victory check 的新流程位置
 ```
 
 但不允许：
@@ -1050,14 +1511,15 @@ Engine 只认识：
 ```text
 流程阶段
 RuleHook 类型
+RuleHookSystem
 VictorySystem
 ```
 
-不认识具体状态。
+不认识具体状态或 Effect 类型。
 
 ---
 
-# 28. EventBus 边界
+# 31. EventBus 边界
 
 严格禁止：
 
@@ -1078,9 +1540,11 @@ EventBus.subscribe(DAMAGE_DEALT, trigger_state_rules)
 
 但不能反向改变战斗规则。
 
+Stage 7 新增 provenance 只允许进入事实 payload，不改变 EventBus 的职责。
+
 ---
 
-# 29. SkillRuntime 边界
+# 32. SkillRuntime 边界
 
 Stage 7 不修改 Stage 6 核心命题：
 
@@ -1102,7 +1566,7 @@ SkillRuntime 不负责：
 
 ---
 
-# 30. 推荐生产文件
+# 33. 推荐生产文件
 
 新增候选：
 
@@ -1121,6 +1585,9 @@ sgs_v2/battle_core/effects.py
 sgs_v2/battle_core/effect_result.py
 sgs_v2/battle_core/effect_executor.py
 sgs_v2/battle_core/events.py
+sgs_v2/battle_core/damage_system.py                 # provenance 透传，不改公式
+sgs_v2/battle_core/damage_resolution_system.py      # provenance event payload
+sgs_v2/battle_core/troop_system.py                  # restore 输入类型加固
 sgs_v2/battle_core/official_state_catalog.py
 sgs_v2/battle_core/battle_systems.py
 sgs_v2/battle_core/engine.py
@@ -1130,15 +1597,24 @@ sgs_v2/battle_core/__init__.py
 不得为了 Stage 7 无关目标重构：
 
 ```text
-DamageSystem
+基础伤害公式
 TargetSystem
 SkillResolver
 ActionOrderSystem
+NormalAttackSystem 既有语义
 ```
+
+`DamageSystem` 的 Stage 7 修改只允许：
+
+```text
+source_state provenance 元数据透传
+```
+
+不得改伤害计算规则。
 
 ---
 
-# 31. BattleSystems 推荐组合
+# 34. BattleSystems 推荐组合
 
 建议：
 
@@ -1175,23 +1651,28 @@ TargetSystem
 ```text
 TriggerSystem(BattleSystems)
 RuleHookSystem(BattleSystems)
+RecoverySystem(BattleSystems)
 ```
 
 万能依赖。
 
+`RuleHookSystem` 不注入 `VictorySystem`；Victory 继续由 Engine 在 Hook atomic batch 完成后检查。
+
 ---
 
-# 32. Recovery 与 Victory
+# 35. Recovery 与 Victory
 
 周期 DamageEffect 可能击杀武将。
 
-因此 RuleHook 执行后必须由已有：
+Stage 7 v1 冻结：
 
 ```text
-VictorySystem
+RuleHookSystem 完整执行当前 hook atomic batch
+↓
+返回 HookResolutionResult
+↓
+BattleEngine 调用 VictorySystem.check
 ```
-
-重新检查战斗结果。
 
 RecoverySystem 不自行判断胜负。
 
@@ -1200,14 +1681,20 @@ Stage 7 不实现复活。
 对已死亡单位的恢复：
 
 ```text
-默认工程规则：不得通过普通 RecoverySystem 复活。
+默认工程规则：不得通过普通 RecoverySystem 复活
 ```
 
-该行为必须写测试，并标记为 D = 工程决定；未来如游戏存在正式复活机制，建立独立机制，不把它偷偷塞进 RecoverySystem。
+该行为必须写测试并标记：
+
+```text
+D = ENGINEERING DECISION
+```
+
+未来如游戏存在正式复活机制，建立独立机制，不把它偷偷塞进 RecoverySystem。
 
 ---
 
-# 33. Stage 7 测试要求
+# 36. Stage 7 测试要求
 
 至少新增：
 
@@ -1216,14 +1703,16 @@ tests/test_recovery_system.py
 tests/test_trigger_system.py
 tests/test_rule_hook_system.py
 tests/test_stage7_engine_hooks.py
+tests/test_stage7_provenance.py
+tests/test_stage7_state_params.py
 tests/test_stage7_architecture.py
 ```
 
-以及必要的 Stage 7 state params / integration tests。
+以及必要 evidence matrix / integration tests。
 
 ---
 
-# 34. RecoverySystem 测试
+# 37. RecoverySystem 测试
 
 必须覆盖：
 
@@ -1234,14 +1723,31 @@ healing_ban 阻止恢复
 被阻止时不调用 TroopSystem.restore
 RECOVERY_PREVENTED payload
 TROOPS_RECOVERED payload
-source_skill_id / source_state_id 保留
+source_skill_id 保留
+source_state_id 保留
+source_state_instance_id 保留
 死亡单位不会通过普通恢复复活
 RecoverySystem 不直接写 troops
+满兵恢复返回 Resolved(actual=0)
+满兵恢复不发布 TROOPS_RECOVERED
+```
+
+反例：
+
+```text
+RecoverEffect.amount = True → reject
+RecoverEffect.amount = 1.5 → reject
+RecoverEffect.amount < 0 → reject
+RecoveryRequest.amount = True → reject
+RecoveryRequest.amount = 1.5 → reject
+RecoveryRequest.amount < 0 → reject
+TroopSystem.restore(True) → reject
+TroopSystem.restore(1.5) → reject
 ```
 
 ---
 
-# 35. RecoverEffect 测试
+# 38. RecoverEffect 测试
 
 Stage 5 旧语义：
 
@@ -1263,23 +1769,32 @@ RecoverEffect
 ```text
 EffectExecutor 不直接修改 troops
 RecoverEffect 本身无副作用
+Recovery PREVENTED 仍返回 EffectExecutionStatus.RESOLVED
+provenance 完整传入 RecoveryRequest / Result / Event
 ```
 
 ---
 
-# 36. TriggerSystem 测试
+# 39. TriggerSystem 测试
 
 至少覆盖：
 
 ```text
 typed RoundStartHook
- typed UnitActionStartHook
+typed UnitActionStartHook
+round_no < 1 reject
+bool round_no reject
+空 / 纯空白 actor_id reject
+hook.round_no != context.current_round reject
 不相关 hook 不产生 Effect
 只读取当前有效 StateInstance
 按 instance_id 确定顺序
 周期伤害产生 DamageEffect(CONTINUOUS)
 周期恢复产生 RecoverEffect
-source / source_skill 追踪正确
+source_id 追踪正确
+source_skill_id 追踪正确
+source_state_id 追踪正确
+source_state_instance_id 追踪正确
 TriggerSystem 不执行 Effect
 TriggerSystem 不修改 troops
 TriggerSystem 不写 StateRegistry
@@ -1288,29 +1803,110 @@ TriggerSystem 不 import random
 
 ---
 
-# 37. Engine Hook 集成测试
+# 40. Provenance 集成测试
+
+必须分别证明：
+
+```text
+StateInstance
+→ DamageEffect
+→ DamageRequest
+→ DamageResult
+→ DAMAGE_DEALT / DAMAGE_PREVENTED
+```
+
+以及：
+
+```text
+StateInstance
+→ RecoverEffect
+→ RecoveryRequest
+→ RecoveryResult
+→ TROOPS_RECOVERED / RECOVERY_PREVENTED
+```
+
+全过程保留：
+
+```text
+source_skill_id
+source_state_id
+source_state_instance_id
+```
+
+不得只验证 Effect 层然后假定后续仍存在。
+
+---
+
+# 41. Hook atomic batch 测试
+
+必须构造 synthetic hook：
+
+```text
+Effect 1
+→ lethal DamageEffect
+
+Effect 2
+→ 另一合法 Effect
+```
+
+验证：
+
+```text
+Effect 1 执行
+Effect 2 仍执行
+Effect 执行顺序与 tuple 顺序一致
+RuleHookSystem 内不调用 VictorySystem
+batch 完成后才由 Engine Victory check
+```
+
+该测试只证明 Stage 7 工程 atomic batch contract，不冒充官方持续状态 terminal 顺序。
+
+---
+
+# 42. Engine Hook 生命周期集成测试
 
 必须覆盖：
 
 ```text
 ROUND_START 生命周期到期先于 Stage 7 hook
-ROUND_START hook 后进行 Victory check
-UNIT_ACTION_STARTED fact 后触发 UnitActionStartHook
-hook 击杀 actor 后 actor 不再执行 ActionSystem
-hook 击杀主将可立即结束战斗
+ROUND_STARTED fact 后进入 RoundStartHook
+ROUND_START hook batch 后进行 Victory check
+
+UNIT_ACTION_STARTED fact 后进入 UnitActionStartHook
+hook 击杀 actor 后 actor 不进入 ActionSystem
+hook 击杀副将后仍发布 UNIT_ACTION_ENDED
+hook 击杀主将后仍发布 UNIT_ACTION_ENDED，再 BATTLE_ENDED
+hook 未击杀 actor 时保持既有 UNIT_ACTION 流程
 hook 产生的 recovery / damage 事件顺序确定
-BattleEngine 不出现具体 state_id 判断
+BattleEngine 不出现具体 state_id / Effect 类型判断
+```
+
+事件顺序至少验证：
+
+```text
+UNIT_ACTION_STARTED
+→ hook effect facts
+→ UNIT_ACTION_ENDED
+```
+
+若形成终局：
+
+```text
+UNIT_ACTION_STARTED
+→ hook effect facts
+→ UNIT_ACTION_ENDED
+→ BATTLE_ENDED
 ```
 
 对于尚未研究的真实状态交互：
 
 ```text
-不要写测试假装官方规则已确定。
+不要写测试假装官方规则已确定
 ```
 
 ---
 
-# 38. Architecture Tests
+# 43. Architecture Tests
 
 静态架构测试必须尽量使用 AST / import inspection，而不是粗暴注释字符串匹配。
 
@@ -1328,17 +1924,51 @@ TriggerSystem
 RecoverySystem
 - no direct UnitRuntime.troops assignment
 - only TroopSystem is troop mutation dependency
+- no TriggerSystem
+- no EffectExecutor
+
+RuleHookSystem
+- no VictorySystem
+- no OfficialStateId / specific state string
+- only coordinates TriggerSystem + EffectExecutor
 
 BattleEngine
 - no OfficialStateId / specific state string branches
+- no DamageEffect / RecoverEffect type branches
 
 EventBus
 - no rule-specific handler registration added by production composition
+
+DamageSystem Stage 7 diff
+- provenance only
+- no formula semantic change
 ```
 
 ---
 
-# 39. Stage 1～6 全回归
+# 44. Evidence Matrix Tests / Review Gate
+
+在任何官方周期状态进入生产映射前，测试或审计资料必须确认其 matrix：
+
+```text
+implementation verdict = PASS_STAGE7
+```
+
+如果：
+
+```text
+implementation verdict = DEFER
+```
+
+则生产 TriggerSystem 不得为该 state_id 增加正式行为分支。
+
+`healing_ban` 可作为 RecoverySystem policy 的正式 Stage 7 状态。
+
+周期状态若证据不足，使用 synthetic StateDefinition / StateInstance 验证基础设施，不得拿真实状态名称填补未知规则。
+
+---
+
+# 45. Stage 1～6 全回归
 
 Stage 7 必须保持：
 
@@ -1369,9 +1999,11 @@ SkillResolver
 RNG non-consumption
 ```
 
+对 `DamageRequest / DamageResult / DamageEffect` 的 provenance 扩展必须向后兼容，不得破坏 Stage 1～6 既有调用方。
+
 ---
 
-# 40. Stage 7 OUT OF SCOPE
+# 46. Stage 7 OUT OF SCOPE
 
 第一版明确不做：
 
@@ -1404,55 +2036,76 @@ BattleReport / Replay
 API / 批量模拟 / 性能优化
 ```
 
+Stage 7 provenance 字段不是 BattleReport/Replay 实现，只是为未来可审计性保留必要来源事实。
+
 ---
 
-# 41. Stage 7 必须回答的 20 个问题
+# 47. Stage 7 必须回答的 26 个问题
 
-正式施工前设计审计必须逐项确认：
+正式施工前复审必须逐项确认：
 
 ```text
 1. 为什么 Stage 7 现在需要 Rule Hook？
 2. 为什么不能用 EventBus 当 TriggerSystem？
 3. RuleHook 与 BattleEvent 的区别是什么？
 4. Stage 7 第一版需要哪些 hook，为什么只需要这些？
-5. TriggerSystem 的输入 / 输出是什么？
-6. TriggerSystem 为什么不能执行 Effect？
-7. RuleHookSystem 的精确协调职责是什么？
-8. 周期伤害参数存在哪里？
-9. 周期恢复参数存在哪里？
-10. source / source_skill 如何保留？
-11. Trigger 顺序如何确定？
-12. RecoverEffect 如何正式接入 RecoverySystem？
-13. 禁疗由谁阻止？
-14. 实际恢复兵力由谁写？
-15. 恢复事实由谁发布？
-16. Hook 造成死亡后何时检查 Victory？
-17. 哪些官方状态证据足够接入？
-18. 哪些规则仍 NEEDS_RESEARCH？
-19. 为什么叛逃 / 急救 / 倒戈 / 攻心本阶段 DEFER？
-20. 如何证明没有第二套伤害 / 恢复 / 状态 / RNG 路径？
+5. RuleHook 如何验证 round / actor 输入一致性？
+6. TriggerSystem 的输入 / 输出是什么？
+7. TriggerSystem 为什么不能执行 Effect？
+8. RuleHookSystem 的精确协调职责是什么？
+9. 为什么 RuleHookSystem 不依赖 VictorySystem？
+10. Hook atomic batch 的 terminal policy 是什么？
+11. 周期伤害参数存在哪里？
+12. 周期恢复参数存在哪里？
+13. source / source_skill / source_state / instance provenance 如何保留？
+14. Trigger 顺序如何确定？
+15. RecoverEffect 如何正式接入 RecoverySystem？
+16. RecoverEffect / RecoveryRequest 的 amount 如何保证类型安全？
+17. RecoveryResult 为什么采用 resolved / prevented 两个类型？
+18. 禁疗由谁阻止？
+19. 实际恢复兵力由谁写？
+20. actual_recovery == 0 时事件语义是什么？
+21. Hook 击杀 actor 后 UNIT_ACTION lifecycle 如何闭合？
+22. Hook batch 后何时检查 Victory？
+23. 哪些官方状态 evidence matrix 足够接入？
+24. 哪些规则仍 NEEDS_RESEARCH？
+25. 为什么叛逃 / 急救 / 倒戈 / 攻心本阶段 DEFER？
+26. 如何证明没有第二套伤害 / 恢复 / 状态 / RNG 路径？
 ```
 
 ---
 
-# 42. Stage 7 验收条件
+# 48. Stage 7 验收条件
 
 只有以下全部成立，Stage 7 才可进入最终审计：
 
 ```text
 [ ] RuleHook 强类型合同建立
+[ ] Hook 与 BattleContext round 一致性验证建立
 [ ] TriggerSystem 建立且只产生 Effect
 [ ] RuleHookSystem 建立且职责单一
+[ ] RuleHookSystem 不依赖 VictorySystem
+[ ] Hook atomic batch policy 实现并测试
 [ ] RecoverySystem 建立
 [ ] RecoverEffect 正式接入 RecoverySystem
+[ ] RecoverEffect / RecoveryRequest amount 强类型
+[ ] RecoveryResolvedResult / RecoveryPreventedResult 建立
+[ ] RecoverEffectResult 正确包装 RecoveryResult
 [ ] TroopSystem 仍为唯一兵力写入口
+[ ] TroopSystem.restore 输入类型防御建立
 [ ] healing_ban 正确阻止恢复
+[ ] actual_recovery == 0 不发布 TROOPS_RECOVERED
 [ ] 周期 Damage / Recovery params 类型安全
+[ ] source_skill_id 全链保留
+[ ] source_state_id 全链保留
+[ ] source_state_instance_id 全链保留
+[ ] Damage provenance 仅元数据透传，不改公式
 [ ] ROUND_START hook 接入
 [ ] UNIT_ACTION_START hook 接入
 [ ] hook effect ordering 确定
-[ ] hook 后 Victory check 正确
-[ ] BattleEngine 无具体状态判断
+[ ] hook 杀死 actor 后 lifecycle 正确闭合
+[ ] hook batch 后 Victory check 正确
+[ ] BattleEngine 无具体状态 / Effect 判断
 [ ] EventBus 仍只记录事实
 [ ] TriggerSystem 不使用 Python random
 [ ] DamageEffect 仍走 DamageResolutionSystem
@@ -1460,6 +2113,7 @@ API / 批量模拟 / 性能优化
 [ ] Stage 6 Skill → Effect 边界未破坏
 [ ] 未提前加入 reaction queue / damage modifier
 [ ] 官方状态接入均有 evidence matrix
+[ ] evidence matrix 使用 PASS_STAGE7 / DEFER gate
 [ ] UNKNOWN 项没有被伪装成官方规则
 [ ] Stage 1～6 全回归
 [ ] pytest -q success
@@ -1471,14 +2125,16 @@ API / 批量模拟 / 性能优化
 
 ---
 
-# 43. Stage 7 封版流程
+# 49. Stage 7 封版流程
 
 ```text
 STAGE7.md
 ↓
-独立设计审计
+第一轮独立设计审计
 ↓
-必要修订 STAGE7.md
+修订 STAGE7.md
+↓
+第二轮独立设计复审
 ↓
 prompts/STAGE7_BUILD_PROMPT.md
 ↓
@@ -1505,7 +2161,7 @@ Stage 7 FROZEN
 
 ---
 
-# 44. Stage 7 最终目标
+# 50. Stage 7 最终目标
 
 Stage 7 成功不是“状态数量突然暴涨”。
 
@@ -1518,7 +2174,9 @@ Explicit Rule Hook
 ↓
 TriggerSystem
 ↓
-Effect
+ordered Effect(s)
+↓
+RuleHookSystem
 ↓
 EffectExecutor
 ↓
@@ -1535,4 +2193,16 @@ RecoverySystem
 TroopSystem
 ```
 
-只要这两条路径保持单向、可测试、可审计，后续 Stage 8 Damage Modifier、Stage 9 Reaction / Redirect 和真实技能接入才不会靠 EventBus 回调、状态对象 execute() 或散落 if 分支勉强拼起来。
+同时冻结：
+
+```text
+StateInstance
+↓
+source_skill_id
+source_state_id
+source_state_instance_id
+↓
+Effect / Request / Result / Event
+```
+
+只要这些路径保持单向、类型安全、来源可追踪、确定可测试，后续 Stage 8 Damage Modifier、Stage 9 Reaction / Redirect 和真实技能接入才不需要靠 EventBus 回调、状态对象 execute()、丢失来源的事件或散落 if 分支勉强拼起来。
