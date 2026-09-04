@@ -5,6 +5,11 @@ from typing import TYPE_CHECKING
 from .enums import BattlePhase
 from .events import EventType
 from .state_instance import StateInstance
+from .state_runtime_params import (
+    EmptyStateRuntimeParams,
+    StateRuntimeParams,
+    state_runtime_params_event_payload,
+)
 
 if TYPE_CHECKING:
     from .context import BattleContext
@@ -43,8 +48,9 @@ class StateLifecycleSystem:
         source_skill_id: str | None = None,
         expires_round: int | None = None,
         expires_phase: str | None = None,
+        runtime_params: StateRuntimeParams | None = None,
     ) -> StateInstance:
-        context.states.get_definition(state_id)
+        definition = context.states.get_definition(state_id)
         context.get_unit(owner_id)
         if source_id is not None:
             context.get_unit(source_id)
@@ -56,6 +62,18 @@ class StateLifecycleSystem:
             expires_phase=expires_phase,
         )
 
+        actual_runtime_params = (
+            EmptyStateRuntimeParams()
+            if runtime_params is None
+            else runtime_params
+        )
+        if not isinstance(actual_runtime_params, definition.runtime_params_type):
+            raise TypeError(
+                "runtime_params type mismatch for state "
+                f"{state_id}: expected {definition.runtime_params_type.__name__}, "
+                f"got {type(actual_runtime_params).__name__}"
+            )
+
         instance = StateInstance(
             instance_id=context.states.next_instance_id(),
             state_id=state_id,
@@ -66,6 +84,7 @@ class StateLifecycleSystem:
             applied_phase=context.current_phase,
             expires_round=expires_round,
             expires_phase=expires_phase,
+            runtime_params=actual_runtime_params,
         )
         context.states.add(instance)
 
@@ -168,6 +187,9 @@ class StateLifecycleSystem:
 
     @staticmethod
     def _event_payload(instance: StateInstance) -> dict[str, object]:
+        params_type, params_payload = state_runtime_params_event_payload(
+            instance.runtime_params
+        )
         return {
             "instance_id": instance.instance_id,
             "state_id": instance.state_id,
@@ -178,4 +200,6 @@ class StateLifecycleSystem:
             "applied_phase": instance.applied_phase,
             "expires_round": instance.expires_round,
             "expires_phase": instance.expires_phase,
+            "runtime_params_type": params_type,
+            "runtime_params": params_payload,
         }
