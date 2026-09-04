@@ -15,7 +15,8 @@ Stage 3 BattleState       ✅ 稳定
 Stage 4 官方状态接入       ✅ FROZEN
 Stage 5 Effect            ✅ FROZEN
 Stage 6 Skill Runtime     ✅ FROZEN
-Stage 7+                  ⏳ 尚未开始
+Stage 7 Trigger/Recovery  📝 规划完成，待设计审计
+Stage 8+                  ⏳ 尚未开始
 ```
 
 ---
@@ -182,14 +183,101 @@ Stage 6 FROZEN
 
 ---
 
-# 下一阶段
+# Stage 7 当前规划
 
-Stage 6 已正式 FROZEN。
-
-下一阶段为：
+正式规划文档：
 
 ```text
-Stage 7
+STAGE7.md
 ```
 
-进入 Stage 7 前必须重新读取 `main` 最新 HEAD、当前代码、测试、正式审计文件与 GitHub Actions 状态，并先建立正式 `STAGE7.md` 后再施工，不得仅根据历史路线图或旧聊天直接实现。
+规划同步提交：
+
+```text
+495b5239b1ae0691b9479511d79831d7bfb826de
+```
+
+Stage 7 当前目标：
+
+```text
+Explicit Rule Hook
+→ TriggerSystem
+→ ordered Effect(s)
+→ EffectExecutor
+
+RecoverEffect
+→ RecoverySystem
+→ TroopSystem
+```
+
+Stage 7 第一版重点：
+
+```text
+RuleHook 强类型合同
+TriggerSystem
+RuleHookSystem
+RecoverySystem
+RecoverEffect 正式恢复执行
+恢复事实事件
+ROUND_START / UNIT_ACTION_START 最小 hook
+周期 Damage / Recovery StateRuntimeParams
+```
+
+基于当前架构与证据，Stage 7 不强行一次实现旧 Roadmap 中全部 11 个候选状态。
+
+当前正式规划：
+
+```text
+可在 Stage 7 evidence gate 后接入：
+burn / flood / poison / rout / sandstorm / recuperation / healing_ban
+
+明确 DEFER：
+rebellion
+→ 需要 Stage 8 Damage Pipeline 的无视防御合同
+
+first_aid / weapon_lifesteal / strategy_lifesteal
+→ 需要 AFTER_DAMAGE reaction / queue 设计
+```
+
+Stage 7 当前状态：
+
+```text
+📝 PLANNING COMPLETE
+NOT IMPLEMENTED
+NOT FROZEN
+```
+
+下一步必须先：
+
+```text
+独立 Stage 7 设计审计
+```
+
+设计审计通过后再建立：
+
+```text
+prompts/STAGE7_BUILD_PROMPT.md
+```
+
+然后进入独立施工分支。
+
+---
+
+# 下一阶段动作
+
+当前不得直接开始 Stage 8。
+
+Stage 7 正确流程：
+
+```text
+STAGE7.md
+→ 独立设计审计
+→ 必要修订
+→ STAGE7_BUILD_PROMPT.md
+→ Stage 7 施工
+→ pytest / demo / CI
+→ 最终独立审计
+→ merge main
+→ main CI success
+→ Stage 7 FROZEN
+```
