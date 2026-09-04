@@ -12,6 +12,18 @@ _AUTO_EXPIRE_PHASES = frozenset(
     }
 )
 
+_PHASE_ORDER = {
+    "NOT_STARTED": -1,
+    BattlePhase.PRE_BATTLE.value: 0,
+    BattlePhase.ROUND_START.value: 1,
+    BattlePhase.ACTION_ORDER.value: 2,
+    BattlePhase.UNIT_ACTION_START.value: 3,
+    BattlePhase.UNIT_ACTION.value: 4,
+    BattlePhase.UNIT_ACTION_END.value: 5,
+    BattlePhase.ROUND_END.value: 6,
+    BattlePhase.BATTLE_END.value: 7,
+}
+
 
 @dataclass(frozen=True, slots=True)
 class StateInstance:
@@ -56,9 +68,27 @@ class StateInstance:
         if self.expires_round is None:
             return
 
+        if self.expires_round < 1:
+            raise ValueError("expires_round must be >= 1")
         if self.expires_round < self.applied_round:
             raise ValueError("expires_round must be >= applied_round")
         if self.expires_phase not in _AUTO_EXPIRE_PHASES:
             raise ValueError(
                 "expires_phase must be ROUND_START or ROUND_END"
             )
+
+        # 同回合过期时，过期节点必须位于施加节点之后，否则 Engine 已经
+        # 不可能再次到达该自动过期节点，实例会永久残留在 Registry 中。
+        if self.expires_round == self.applied_round:
+            try:
+                applied_phase_order = _PHASE_ORDER[self.applied_phase]
+            except KeyError as exc:
+                raise ValueError(
+                    f"unknown applied_phase for expiration validation: {self.applied_phase}"
+                ) from exc
+
+            expires_phase_order = _PHASE_ORDER[self.expires_phase]
+            if expires_phase_order <= applied_phase_order:
+                raise ValueError(
+                    "expiration anchor must be a future lifecycle node"
+                )
