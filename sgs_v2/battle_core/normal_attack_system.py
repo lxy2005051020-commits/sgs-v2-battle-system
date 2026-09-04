@@ -3,7 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .context import BattleContext
-from .damage_system import DamageResult, DamageSystem
+from .damage_system import DamageRequest, DamageResult, DamageSystem
+from .enums import DamageSourceType, DamageType
 from .events import EventType
 from .target_system import TargetSystem
 from .troop_system import TroopChangeResult, TroopSystem
@@ -19,7 +20,7 @@ class NormalAttackResult:
 
 
 class NormalAttackSystem:
-    """组织一次普通攻击的选目标、算伤害、扣兵与事件发出。"""
+    """组织一次普通攻击的选目标、伤害请求、扣兵与事件发出。"""
 
     def __init__(
         self,
@@ -36,16 +37,32 @@ class NormalAttackSystem:
         if target is None:
             return NormalAttackResult(actor.unit_id, None, None, None)
 
-        damage = self._damage.calculate_normal_attack(context, actor, target)
+        request = DamageRequest(
+            source_id=actor.unit_id,
+            target_id=target.unit_id,
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+        damage = self._damage.calculate(context, request)
+
         context.event_bus.publish(
             event_type=EventType.NORMAL_ATTACK,
             phase=context.current_phase,
             round_no=context.current_round,
             actor_id=actor.unit_id,
             target_id=target.unit_id,
-            payload={"requested_damage": damage.requested_damage},
+            payload={
+                "damage_type": damage.damage_type.value,
+                "source_type": damage.source_type.value,
+                "coefficient": damage.coefficient,
+                "base_damage": damage.base_damage,
+                "scaled_damage": damage.scaled_damage,
+                "requested_damage": damage.final_damage,
+            },
         )
-        troop_change = self._troops.apply_damage(target, damage.requested_damage)
+
+        troop_change = self._troops.apply_damage(target, damage.final_damage)
         context.event_bus.publish(
             event_type=EventType.DAMAGE_DEALT,
             phase=context.current_phase,
@@ -54,6 +71,12 @@ class NormalAttackSystem:
             target_id=target.unit_id,
             payload={
                 "damage": troop_change.actual_change,
+                "requested_damage": damage.final_damage,
+                "damage_type": damage.damage_type.value,
+                "source_type": damage.source_type.value,
+                "coefficient": damage.coefficient,
+                "base_damage": damage.base_damage,
+                "scaled_damage": damage.scaled_damage,
                 "target_remaining_troops": troop_change.remaining_troops,
             },
         )
