@@ -196,10 +196,15 @@ def test_troop_system_remains_the_only_kill_cap_layer() -> None:
         weapon_low_damage_floor_range=(5, 5),
     )
 
-    result = systems.damage_system.calculate_normal_attack(
+    result = systems.damage_system.calculate(
         context,
-        context.get_unit("a"),
-        context.get_unit("b"),
+        DamageRequest(
+            source_id="a",
+            target_id="b",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        ),
     )
     assert result.final_damage == 621
     assert context.get_unit("b").troops == 10

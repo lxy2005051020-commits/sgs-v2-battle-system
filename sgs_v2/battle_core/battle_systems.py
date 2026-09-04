@@ -21,7 +21,6 @@ class BattleSystems:
     target_system: TargetSystem = field(default_factory=TargetSystem)
     troop_system: TroopSystem = field(default_factory=TroopSystem)
     victory_system: VictorySystem = field(default_factory=VictorySystem)
-    damage_scale: float = 1.0
 
     weapon_troop_function_table: Mapping[int, int] | None = None
     weapon_random_percent_range: tuple[int, int] = (86, 94)
@@ -40,7 +39,6 @@ class BattleSystems:
         self.action_order_system = ActionOrderSystem(self.attribute_system)
         self.damage_system = DamageSystem(
             self.attribute_system,
-            damage_scale=self.damage_scale,
             weapon_troop_function_table=self.weapon_troop_function_table,
             weapon_random_percent_range=self.weapon_random_percent_range,
             weapon_low_damage_floor_range=self.weapon_low_damage_floor_range,

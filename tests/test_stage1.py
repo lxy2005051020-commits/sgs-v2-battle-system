@@ -51,7 +51,7 @@ def run_once(seed: int = 7):
     context = make_context(seed)
     engine = BattleEngine(
         context=context,
-        systems=BattleSystems(damage_scale=5.0),
+        systems=BattleSystems(),
     )
     result = engine.run()
     return context, result
@@ -148,7 +148,7 @@ def test_defeated_unit_does_not_act_after_death() -> None:
     )
     BattleEngine(
         context=context,
-        systems=BattleSystems(damage_scale=10.0),
+        systems=BattleSystems(),
     ).run()
 
     started_actor_ids = [

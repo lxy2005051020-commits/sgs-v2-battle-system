@@ -54,19 +54,18 @@ class DamageResult:
 
 
 class DamageSystem:
-    """统一计算伤害；不直接改变目标兵力。
+    """统一计算理论伤害；不直接改变目标兵力。
 
     - WEAPON 使用武力对统率的基础兵刃伤害。
     - STRATEGY 使用智力对智力的基础谋略伤害。
-    - 两类基础伤害均使用完整 F(N) 查表，再由 coefficient 做战法倍率缩放。
-    - TroopSystem 仍是唯一实际扣兵入口，因此击杀封顶不在这里重复实现。
+    - 两类基础伤害均先计算 100% 基础伤害，再由 coefficient 缩放。
+    - TroopSystem 是唯一实际扣兵入口，因此击杀封顶不在这里实现。
     """
 
     def __init__(
         self,
         attribute_system: AttributeSystem,
         *,
-        damage_scale: float = 1.0,
         weapon_troop_function_table: Mapping[int, int] | None = None,
         weapon_random_percent_range: tuple[int, int] = (86, 94),
         weapon_low_damage_floor_range: tuple[int, int] = (5, 15),
@@ -74,8 +73,6 @@ class DamageSystem:
         strategy_random_percent_range: tuple[int, int] = (86, 94),
         strategy_low_damage_floor_range: tuple[int, int] = (5, 15),
     ) -> None:
-        if damage_scale < 0:
-            raise ValueError("damage_scale must be >= 0")
         self._attributes = attribute_system
         self._weapon_formula = WeaponBaseDamageFormula(
             attribute_system,
@@ -89,9 +86,6 @@ class DamageSystem:
             random_percent_range=strategy_random_percent_range,
             low_damage_floor_range=strategy_low_damage_floor_range,
         )
-        # 旧阶段全局倍率继续保留在 coefficient 之后，仅用于兼容现有测试/调用。
-        # 正式增减伤系统完成后应移除，而不是并入基础公式。
-        self.damage_scale = damage_scale
 
     def weapon_troop_function(self, troops: int) -> int:
         """暴露兵刃 F(N) 便于查表回归测试。"""
@@ -117,8 +111,7 @@ class DamageSystem:
             raise ValueError(f"unsupported damage type: {request.damage_type}")
 
         scaled_damage = base_damage * request.coefficient
-        modified_damage = scaled_damage * self.damage_scale
-        final_damage = max(1, int(modified_damage))
+        final_damage = max(1, int(scaled_damage))
 
         return DamageResult(
             source_id=request.source_id,
@@ -130,24 +123,6 @@ class DamageSystem:
             scaled_damage=scaled_damage,
             final_damage=final_damage,
             source_skill_id=request.source_skill_id,
-        )
-
-    def calculate_normal_attack(
-        self,
-        context: BattleContext,
-        attacker: UnitRuntime,
-        target: UnitRuntime,
-    ) -> DamageResult:
-        """兼容旧接口；普通攻击正式走 DamageRequest。"""
-        return self.calculate(
-            context,
-            DamageRequest(
-                source_id=attacker.unit_id,
-                target_id=target.unit_id,
-                damage_type=DamageType.WEAPON,
-                source_type=DamageSourceType.NORMAL_ATTACK,
-                coefficient=1.0,
-            ),
         )
 
     def _calculate_weapon_base_damage(

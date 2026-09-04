@@ -140,7 +140,7 @@ def main() -> None:
     }
 
     context = BattleContext(
-        battle_id="stage1-demo",
+        battle_id="stage2-demo",
         units=units,
         event_bus=event_bus,
         random=RandomSystem(seed=20260904),
@@ -149,7 +149,7 @@ def main() -> None:
 
     engine = BattleEngine(
         context=context,
-        systems=BattleSystems(damage_scale=4.0),
+        systems=BattleSystems(),
     )
     result = engine.run()
 
@@ -167,8 +167,8 @@ def main() -> None:
     print(f"最终兵力：{result.final_troops}")
     print(f"事件总数：{len(event_bus.history)}")
 
-    print("\n=== 前 20 条战报事件 ===")
-    for event in event_bus.history[:]:
+    print("\n=== 战报事件 ===")
+    for event in event_bus.history:
         print(format_event(event, context))
 
 
