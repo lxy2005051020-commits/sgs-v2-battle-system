@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
 
 from .damage_resolution_system import DamageResolutionResult
@@ -17,28 +17,40 @@ class EffectExecutionStatus(str, Enum):
 class DamageEffectResult:
     effect: DamageEffect
     resolution: DamageResolutionResult
-    status: EffectExecutionStatus = EffectExecutionStatus.RESOLVED
+    status: EffectExecutionStatus = field(
+        default=EffectExecutionStatus.RESOLVED,
+        init=False,
+    )
 
 
 @dataclass(frozen=True, slots=True)
 class ApplyStateEffectResult:
     effect: ApplyStateEffect
     state_instance: StateInstance
-    status: EffectExecutionStatus = EffectExecutionStatus.RESOLVED
+    status: EffectExecutionStatus = field(
+        default=EffectExecutionStatus.RESOLVED,
+        init=False,
+    )
 
 
 @dataclass(frozen=True, slots=True)
 class RemoveStateEffectResult:
     effect: RemoveStateEffect
     removed_state: StateInstance
-    status: EffectExecutionStatus = EffectExecutionStatus.RESOLVED
+    status: EffectExecutionStatus = field(
+        default=EffectExecutionStatus.RESOLVED,
+        init=False,
+    )
 
 
 @dataclass(frozen=True, slots=True)
 class DeferredEffectResult:
     effect: RecoverEffect
     reason: str
-    status: EffectExecutionStatus = EffectExecutionStatus.DEFERRED
+    status: EffectExecutionStatus = field(
+        default=EffectExecutionStatus.DEFERRED,
+        init=False,
+    )
 
 
 EffectExecutionResult = (
