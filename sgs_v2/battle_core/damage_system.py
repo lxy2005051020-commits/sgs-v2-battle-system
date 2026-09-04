@@ -77,10 +77,10 @@ class DamageResult:
     scaled_damage: float
     final_damage: int
     source_skill_id: str | None = None
-    source_state_id: str | None = None
-    source_state_instance_id: str | None = None
     prevented: bool = False
     prevented_by_state_id: str | None = None
+    source_state_id: str | None = None
+    source_state_instance_id: str | None = None
 
     def __post_init__(self) -> None:
         _validate_optional_state_id(self.source_state_id, "source_state_id")
