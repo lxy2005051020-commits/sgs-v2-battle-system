@@ -122,3 +122,50 @@ def test_instance_requires_complete_valid_expiration_anchor() -> None:
             expires_round=2,
             expires_phase="UNIT_ACTION_END",
         )
+
+
+def test_instance_rejects_expiration_round_zero() -> None:
+    with pytest.raises(ValueError, match="expires_round must be >= 1"):
+        StateInstance(
+            instance_id="state-000001",
+            state_id="test_state",
+            owner_id="b1",
+            source_id=None,
+            source_skill_id=None,
+            applied_round=0,
+            applied_phase="NOT_STARTED",
+            expires_round=0,
+            expires_phase="ROUND_START",
+        )
+
+
+def test_instance_rejects_same_round_expiration_node_that_has_already_passed() -> None:
+    with pytest.raises(ValueError, match="future lifecycle node"):
+        StateInstance(
+            instance_id="state-000001",
+            state_id="test_state",
+            owner_id="b1",
+            source_id="a1",
+            source_skill_id=None,
+            applied_round=1,
+            applied_phase="ACTION_ORDER",
+            expires_round=1,
+            expires_phase="ROUND_START",
+        )
+
+
+def test_instance_allows_same_round_future_round_end_node() -> None:
+    instance = StateInstance(
+        instance_id="state-000001",
+        state_id="test_state",
+        owner_id="b1",
+        source_id="a1",
+        source_skill_id=None,
+        applied_round=1,
+        applied_phase="ACTION_ORDER",
+        expires_round=1,
+        expires_phase="ROUND_END",
+    )
+
+    assert instance.expires_round == 1
+    assert instance.expires_phase == "ROUND_END"
