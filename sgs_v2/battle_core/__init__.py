@@ -1,6 +1,6 @@
 from .context import BattleContext, BattleResult
 from .engine import BattleEngine
-from .enums import BattlePhase, BattleEndReason
+from .enums import BattlePhase, BattleEndReason, LineupPosition
 from .events import BattleEvent, EventBus, EventType
 from .random_system import RandomSystem
 from .unit import UnitRuntime
@@ -20,6 +20,7 @@ __all__ = [
     "BattleEngine",
     "BattlePhase",
     "BattleEndReason",
+    "LineupPosition",
     "BattleEvent",
     "EventBus",
     "EventType",
