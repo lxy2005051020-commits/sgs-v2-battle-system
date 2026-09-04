@@ -127,6 +127,16 @@ def test_event_bus_does_not_import_stage7_rule_execution_modules() -> None:
         assert not any(forbidden in module for module in imports)
 
 
+def test_no_production_module_subscribes_event_bus_to_execute_rules() -> None:
+    offenders: list[str] = []
+    for path in CORE_DIR.glob("*.py"):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        calls = called_attributes(tree)
+        if "subscribe" in calls or "subscribe_all" in calls:
+            offenders.append(path.name)
+    assert offenders == []
+
+
 def test_damage_system_stage7_boundary_does_not_gain_recovery_or_trigger_execution() -> None:
     tree = module_ast("damage_system.py")
     imports = imported_modules(tree)

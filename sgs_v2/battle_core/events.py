@@ -41,7 +41,14 @@ EventHandler = Callable[[BattleEvent], None]
 
 
 class EventBus:
-    """同步事件总线，只记录/分发已经发生的事实。"""
+    """
+    同步事件总线。
+
+    约束：
+    - EventBus 只记录/分发“已经发生”的事实。
+    - EventBus 不反向决定战斗结果。
+    - history 是 BattleReport 的原始事件源，正式 Report 层后续再接。
+    """
 
     def __init__(self) -> None:
         self._handlers: dict[EventType, list[EventHandler]] = {}

@@ -45,7 +45,6 @@ class DamageEffect:
             raise ValueError("target_id cannot be empty")
         if self.coefficient < 0:
             raise ValueError("coefficient must be >= 0")
-        _validate_optional_id(self.source_skill_id, "source_skill_id")
         _validate_optional_id(self.source_state_id, "source_state_id")
         _validate_optional_id(
             self.source_state_instance_id,
@@ -103,6 +102,8 @@ class RemoveStateEffect:
 
 @dataclass(frozen=True, slots=True)
 class RecoverEffect:
+    """Stage 7 正式恢复意图合同；Effect 本身保持纯数据、无副作用。"""
+
     source_id: str | None
     target_id: str
     amount: int

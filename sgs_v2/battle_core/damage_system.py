@@ -12,7 +12,7 @@ from .unit import UnitRuntime
 from .weapon_damage_formula import WeaponBaseDamageFormula
 
 
-def _validate_optional_id(value: str | None, field_name: str) -> None:
+def _validate_optional_state_id(value: str | None, field_name: str) -> None:
     if value is None:
         return
     if not isinstance(value, str):
@@ -55,9 +55,8 @@ class DamageRequest:
             raise ValueError("target_id cannot be empty")
         if self.coefficient < 0:
             raise ValueError("coefficient must be >= 0")
-        _validate_optional_id(self.source_skill_id, "source_skill_id")
-        _validate_optional_id(self.source_state_id, "source_state_id")
-        _validate_optional_id(
+        _validate_optional_state_id(self.source_state_id, "source_state_id")
+        _validate_optional_state_id(
             self.source_state_instance_id,
             "source_state_instance_id",
         )
@@ -84,9 +83,8 @@ class DamageResult:
     prevented_by_state_id: str | None = None
 
     def __post_init__(self) -> None:
-        _validate_optional_id(self.source_skill_id, "source_skill_id")
-        _validate_optional_id(self.source_state_id, "source_state_id")
-        _validate_optional_id(
+        _validate_optional_state_id(self.source_state_id, "source_state_id")
+        _validate_optional_state_id(
             self.source_state_instance_id,
             "source_state_instance_id",
         )
@@ -102,7 +100,14 @@ class DamageResult:
 
 
 class DamageSystem:
-    """统一计算理论伤害；不直接改变目标兵力。"""
+    """统一计算理论伤害；不直接改变目标兵力。
+
+    - WEAPON 使用武力对统率的基础兵刃伤害。
+    - STRATEGY 使用智力对智力的基础谋略伤害。
+    - 两类基础伤害均先计算 100% 基础伤害，再由 coefficient 缩放。
+    - 被状态明确阻止的伤害是合法 0 伤害，不进入基础公式。
+    - TroopSystem 是唯一实际扣兵入口，因此击杀封顶不在这里实现。
+    """
 
     def __init__(
         self,
@@ -130,9 +135,11 @@ class DamageSystem:
         )
 
     def weapon_troop_function(self, troops: int) -> int:
+        """暴露兵刃 F(N) 便于查表回归测试。"""
         return self._weapon_formula.troop_function(troops)
 
     def strategy_troop_function(self, troops: int) -> int:
+        """暴露谋略 F(N) 便于查表回归测试。"""
         return self._strategy_formula.troop_function(troops)
 
     def calculate(
