@@ -8,6 +8,7 @@ from sgs_v2.battle_core import (
     BattleContext,
     DamageEffect,
     DamageSkillEffectSpec,
+    DamageSourceType,
     DamageType,
     EventBus,
     LineupPosition,
@@ -274,9 +275,7 @@ def test_skill_resolution_result_enforces_status_payload_contract() -> None:
         source_id="a1",
         target_id="b1",
         damage_type=DamageType.WEAPON,
-        source_type=damage_definition(1.0).effect_specs[0].damage_type and __import__(
-            "sgs_v2.battle_core", fromlist=["DamageSourceType"]
-        ).DamageSourceType.SKILL,
+        source_type=DamageSourceType.SKILL,
     )
 
     with pytest.raises(ValueError, match="must not contain"):
