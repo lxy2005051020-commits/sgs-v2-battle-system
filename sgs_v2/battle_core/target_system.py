@@ -35,7 +35,12 @@ class TargetSystem:
         unit: UnitRuntime,
     ) -> UnitRuntime | None:
         enemies = self.enemies(context, unit, alive_only=True)
-        return context.random.choice(enemies) if enemies else None
+        if not enemies:
+            return None
+        # 结果唯一时不消耗随机流。
+        if len(enemies) == 1:
+            return enemies[0]
+        return context.random.choice(enemies)
 
     def random_allies(
         self,
@@ -59,7 +64,17 @@ class TargetSystem:
     ) -> list[UnitRuntime]:
         if count < 0:
             raise ValueError("count must be >= 0")
-        return context.random.sample(candidates, min(count, len(candidates)))
+
+        actual_count = min(count, len(candidates))
+        if actual_count == 0:
+            return []
+
+        # 所有候选都会被选中时，目标集合已经唯一，不应消耗随机流。
+        # 使用 unit_id 作为规范顺序，避免结果依赖 context.units 的插入顺序。
+        if actual_count == len(candidates):
+            return sorted(candidates, key=lambda unit: unit.unit_id)
+
+        return context.random.sample(candidates, actual_count)
 
     @staticmethod
     def _filter_by_team(
