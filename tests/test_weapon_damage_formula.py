@@ -181,7 +181,7 @@ def test_formula_uses_current_troops_at_the_moment_of_each_attack() -> None:
     )
 
     first = calculate_base(context, systems)
-    context.get_unit("a").troops = 5000
+    systems.troop_system.apply_damage(context.get_unit("a"), 5000)
     second = calculate_base(context, systems)
 
     assert first == 621
