@@ -150,6 +150,8 @@ def test_apply_creates_deterministic_instance_and_event() -> None:
         "applied_phase": BattlePhase.ACTION_ORDER.value,
         "expires_round": 3,
         "expires_phase": BattlePhase.ROUND_START.value,
+        "runtime_params_type": "EmptyStateRuntimeParams",
+        "runtime_params": {},
     }
 
 
