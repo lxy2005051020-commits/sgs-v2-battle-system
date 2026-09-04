@@ -27,3 +27,21 @@ jobs:
 
       - name: Run demo smoke test
         run: python demo.py > /dev/null
+
+      - name: Prepare independent audit snapshot
+        run: printf '%s\n' "$GITHUB_SHA" > AUDIT_SOURCE_SHA.txt
+
+      - name: Upload independent audit snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage7-independent-audit-${{ github.sha }}
+          path: |
+            AUDIT_SOURCE_SHA.txt
+            pyproject.toml
+            demo.py
+            sgs_v2
+            tests
+            data
+            research
+          if-no-files-found: error
+          retention-days: 1
