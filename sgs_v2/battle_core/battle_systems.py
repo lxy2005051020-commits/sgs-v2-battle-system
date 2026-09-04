@@ -8,6 +8,7 @@ from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
 from .damage_system import DamageSystem
 from .normal_attack_system import NormalAttackSystem
+from .state_lifecycle_system import StateLifecycleSystem
 from .target_system import TargetSystem
 from .troop_system import TroopSystem
 from .victory_system import VictorySystem
@@ -15,12 +16,15 @@ from .victory_system import VictorySystem
 
 @dataclass(slots=True)
 class BattleSystems:
-    """阶段 2 BattleSystem 组合根，供 BattleEngine 使用。"""
+    """BattleSystem 组合根，供 BattleEngine 统一调用。"""
 
     attribute_system: AttributeSystem = field(default_factory=AttributeSystem)
     target_system: TargetSystem = field(default_factory=TargetSystem)
     troop_system: TroopSystem = field(default_factory=TroopSystem)
     victory_system: VictorySystem = field(default_factory=VictorySystem)
+    state_lifecycle_system: StateLifecycleSystem = field(
+        default_factory=StateLifecycleSystem
+    )
 
     weapon_troop_function_table: Mapping[int, int] | None = None
     weapon_random_percent_range: tuple[int, int] = (86, 94)
