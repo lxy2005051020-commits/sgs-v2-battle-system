@@ -17,6 +17,7 @@ from .attribute_system import AttributeSystem, AttributeModifierProvider
 from .battle_systems import BattleSystems
 from .damage_system import DamageRequest, DamageResult, DamageSystem
 from .normal_attack_system import NormalAttackResult, NormalAttackSystem
+from .strategy_damage_formula import StrategyBaseDamageFormula
 from .target_system import TargetSystem
 from .troop_system import TroopChangeResult, TroopSystem
 from .victory_system import VictorySystem
@@ -47,6 +48,7 @@ __all__ = [
     "DamageSystem",
     "NormalAttackResult",
     "NormalAttackSystem",
+    "StrategyBaseDamageFormula",
     "TargetSystem",
     "TroopChangeResult",
     "TroopSystem",
