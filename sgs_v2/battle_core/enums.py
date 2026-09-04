@@ -27,3 +27,19 @@ class LineupPosition(IntEnum):
     COMMANDER = 0
     DEPUTY_1 = 1
     DEPUTY_2 = 2
+
+
+class DamageType(str, Enum):
+    """伤害性质，同时决定 DamageSystem 使用哪一种基础伤害公式。"""
+
+    WEAPON = "WEAPON"          # 兵刃伤害：基础兵刃伤害 × coefficient
+    STRATEGY = "STRATEGY"      # 谋略伤害：基础谋略伤害 × coefficient
+
+
+class DamageSourceType(str, Enum):
+    """伤害来源维度，与兵刃/谋略的伤害性质相互独立。"""
+
+    NORMAL_ATTACK = "NORMAL_ATTACK"
+    SKILL = "SKILL"
+    CONTINUOUS = "CONTINUOUS"
+    COUNTER = "COUNTER"
