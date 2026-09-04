@@ -16,6 +16,9 @@ class EventType(str, Enum):
     UNIT_DEFEATED = "UNIT_DEFEATED"
     UNIT_ACTION_ENDED = "UNIT_ACTION_ENDED"
     ROUND_ENDED = "ROUND_ENDED"
+    STATE_APPLIED = "STATE_APPLIED"
+    STATE_REMOVED = "STATE_REMOVED"
+    STATE_EXPIRED = "STATE_EXPIRED"
     BATTLE_ENDED = "BATTLE_ENDED"
 
 
@@ -35,7 +38,7 @@ EventHandler = Callable[[BattleEvent], None]
 
 class EventBus:
     """
-    阶段 1 的同步事件总线。
+    同步事件总线。
 
     约束：
     - EventBus 只记录/分发“已经发生”的事实。
