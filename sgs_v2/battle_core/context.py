@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from .events import EventBus
 from .random_system import RandomSystem
 from .unit import UnitRuntime
-from .enums import BattleEndReason
+from .enums import BattleEndReason, LineupPosition
 
 
 @dataclass(frozen=True, slots=True)
@@ -57,11 +57,69 @@ class BattleContext:
         if len(team_ids) < 2:
             raise ValueError("battle must contain at least two teams")
 
+        for team_id in team_ids:
+            team_units = [u for u in self.units.values() if u.team_id == team_id]
+            if not 1 <= len(team_units) <= 3:
+                raise ValueError("each team must contain between 1 and 3 units")
+
+            commanders = [
+                u for u in team_units
+                if u.lineup_position is LineupPosition.COMMANDER
+            ]
+            if len(commanders) != 1:
+                raise ValueError(
+                    f"team '{team_id}' must contain exactly one commander"
+                )
+
+            used_positions: set[LineupPosition] = set()
+            for unit in team_units:
+                if unit.lineup_position is None:
+                    raise ValueError(
+                        f"unit '{unit.unit_id}' must define lineup_position"
+                    )
+                if unit.lineup_position in used_positions:
+                    raise ValueError(
+                        f"team '{team_id}' has duplicate lineup position "
+                        f"{unit.lineup_position.name}"
+                    )
+                used_positions.add(unit.lineup_position)
+
+            expected_positions = {
+                LineupPosition.COMMANDER,
+                *(
+                    [LineupPosition.DEPUTY_1]
+                    if len(team_units) >= 2 else []
+                ),
+                *(
+                    [LineupPosition.DEPUTY_2]
+                    if len(team_units) >= 3 else []
+                ),
+            }
+            if used_positions != expected_positions:
+                raise ValueError(
+                    f"team '{team_id}' lineup positions must be contiguous from commander"
+                )
+
     def get_unit(self, unit_id: str) -> UnitRuntime:
         try:
             return self.units[unit_id]
         except KeyError as exc:
             raise KeyError(f"unknown unit_id: {unit_id}") from exc
+
+    def commander_of(self, team_id: str) -> UnitRuntime:
+        return self.unit_at_position(team_id, LineupPosition.COMMANDER)
+
+    def unit_at_position(
+        self,
+        team_id: str,
+        position: LineupPosition,
+    ) -> UnitRuntime:
+        for unit in self.units.values():
+            if unit.team_id == team_id and unit.lineup_position is position:
+                return unit
+        raise KeyError(
+            f"team '{team_id}' has no unit at position {position.name}"
+        )
 
     def alive_team_ids(self) -> set[str]:
         return {u.team_id for u in self.units.values() if u.is_alive}
