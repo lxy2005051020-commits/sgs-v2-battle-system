@@ -20,7 +20,7 @@ class BattleEngine:
     - 在关键节点检查战斗是否结束
     - 发出明确 Event
 
-    Engine 不认识任何具体战法名称。
+    Engine 不认识任何具体战法名称或具体状态名称。
     """
 
     context: BattleContext
@@ -52,6 +52,11 @@ class BattleEngine:
             self.context.current_round = round_no
 
             self._enter_phase(BattlePhase.ROUND_START)
+            self.systems.state_lifecycle_system.expire_at(
+                self.context,
+                round_no=round_no,
+                phase=BattlePhase.ROUND_START.value,
+            )
             self.context.event_bus.publish(
                 event_type=EventType.ROUND_STARTED,
                 phase=self.context.current_phase,
@@ -102,6 +107,11 @@ class BattleEngine:
                 phase=self.context.current_phase,
                 round_no=round_no,
                 payload={"team_troops": self.context.troop_totals_by_team()},
+            )
+            self.systems.state_lifecycle_system.expire_at(
+                self.context,
+                round_no=round_no,
+                phase=BattlePhase.ROUND_END.value,
             )
 
             result = self.systems.victory_system.check(self.context)
