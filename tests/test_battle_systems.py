@@ -39,7 +39,40 @@ def test_target_system_filters_living_units_and_uses_random_system() -> None:
     assert [unit.unit_id for unit in targets.enemies(context, actor)] == ["b", "b2"]
     assert [unit.unit_id for unit in targets.random_units(
         context, targets.enemies(context, actor), count=5
-    )] == ["b2", "b"]
+    )] == ["b", "b2"]
+
+
+def test_target_system_does_not_consume_randomness_when_only_one_enemy_exists() -> None:
+    context = BattleContext(
+        battle_id="single-enemy",
+        units={
+            "a": UnitRuntime("a", "A", "A", 100, 100, 1, 1, 1),
+            "b": UnitRuntime("b", "B", "B", 100, 100, 1, 1, 1),
+        },
+        event_bus=EventBus(),
+        random=RandomSystem(123),
+    )
+    target = TargetSystem().random_enemy(context, context.get_unit("a"))
+    assert target is context.get_unit("b")
+    assert context.random.random() == RandomSystem(123).random()
+
+
+def test_target_system_full_selection_does_not_consume_randomness_and_is_stable() -> None:
+    context = make_context(seed=321)
+    targets = TargetSystem()
+    candidates = [context.get_unit("b2"), context.get_unit("b")]
+
+    selected = targets.random_units(context, candidates, count=99)
+
+    assert [unit.unit_id for unit in selected] == ["b", "b2"]
+    assert context.random.random() == RandomSystem(321).random()
+
+
+def test_target_system_empty_selection_does_not_consume_randomness() -> None:
+    context = make_context(seed=654)
+    selected = TargetSystem().random_units(context, [], count=3)
+    assert selected == []
+    assert context.random.random() == RandomSystem(654).random()
 
 
 def test_attribute_system_is_the_source_of_final_attributes() -> None:
