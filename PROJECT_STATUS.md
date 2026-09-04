@@ -15,7 +15,7 @@ Stage 3 BattleState       ✅ 稳定
 Stage 4 官方状态接入       ✅ FROZEN
 Stage 5 Effect            ✅ FROZEN
 Stage 6 Skill Runtime     ✅ FROZEN
-Stage 7 Trigger/Recovery  📝 第二轮问题已修复，待第三轮快速设计复审
+Stage 7 Trigger/Recovery  🚧 设计审计通过，READY FOR BUILD
 Stage 8+                  ⏳ 尚未开始
 ```
 
@@ -249,7 +249,7 @@ d2b686595a43294b622359574a24422cd1d83329
 a8f8d5651445c880560f21fa028785acb7d1d714
 ```
 
-第二轮确认第一轮 4 个 MAJOR 已关闭，但新发现：
+结论：
 
 ```text
 BLOCKER   = 0
@@ -283,7 +283,7 @@ Evidence Matrix 应固定仓库交付位置。
 4cad61709c3bbf5dee87f831d1986432a5189a87
 ```
 
-本次修订正式冻结：
+第二轮修订正式冻结：
 
 ```text
 1. RecoveryPreventionReason:
@@ -315,6 +315,61 @@ Evidence Matrix 应固定仓库交付位置。
 
 7. Evidence Matrix 固定交付：
    research/stage7_evidence_matrix/STAGE7_EVIDENCE_MATRIX.md
+```
+
+## 第三轮快速设计复审
+
+审计基线：
+
+```text
+65d66d9e5fd0116337fa04a0d8c2fac431a733a1
+```
+
+exact HEAD 验证：
+
+```text
+pytest -q
+→ 151 passed
+
+python demo.py
+→ success
+
+GitHub Actions run #101
+→ success
+```
+
+第三轮结论：
+
+```text
+BLOCKER   = 0
+MAJOR     = 0
+MINOR     = 1
+HARDENING = 2
+
+VERDICT = READY FOR STAGE 7 BUILD
+```
+
+第三轮剩余非阻断项已经直接吸收进施工 Prompt：
+
+```text
+MINOR
+- 显式冻结 RuleHook = RoundStartHook | UnitActionStartHook
+
+HARDENING
+- UnitActionStartHook 在 RuleHookSystem 边界防御性检查 actor alive
+- HookResolutionResult.effect_results tuple canonicalization + result variant validation
+```
+
+正式施工 Prompt：
+
+```text
+prompts/STAGE7_BUILD_PROMPT.md
+```
+
+Prompt 同步提交：
+
+```text
+e42641413b5039d83af2b41f7deb946382bc35a1
 ```
 
 Stage 7 当前目标：
@@ -390,38 +445,18 @@ first_aid / weapon_lifesteal / strategy_lifesteal
 Stage 7 当前状态：
 
 ```text
-📝 PLAN REVISED AFTER ROUND 2
-PENDING THIRD QUICK DESIGN AUDIT
+✅ DESIGN AUDIT PASSED
+READY FOR BUILD
+BUILD PROMPT AVAILABLE
 NOT IMPLEMENTED
 NOT FROZEN
 ```
-
-下一步必须先：
-
-```text
-第三轮快速 Stage 7 设计复审
-```
-
-只有复审达到：
-
-```text
-BLOCKER = 0
-MAJOR = 0
-```
-
-才建立：
-
-```text
-prompts/STAGE7_BUILD_PROMPT.md
-```
-
-然后进入独立施工分支。
 
 ---
 
 # 下一阶段动作
 
-当前不得直接开始 Stage 8，也不得跳过 Stage 7 第三轮快速设计复审直接施工。
+当前可以开始 Stage 7 独立施工，但仍不得开始 Stage 8，也不得提前标记 Stage 7 FROZEN。
 
 Stage 7 正确流程：
 
@@ -433,10 +468,12 @@ STAGE7.md
 → 第二次修订 STAGE7.md
 → 第三轮快速设计复审
 → STAGE7_BUILD_PROMPT.md
-→ Stage 7 施工
+→ Stage 7 独立施工分支
 → pytest / demo / CI
-→ 最终独立审计
+→ 独立实现审计
+→ 修复 / 再审计
+→ STAGE7_FINAL_AUDIT.md
 → merge main
-→ main CI success
+→ main exact HEAD CI success
 → Stage 7 FROZEN
 ```
