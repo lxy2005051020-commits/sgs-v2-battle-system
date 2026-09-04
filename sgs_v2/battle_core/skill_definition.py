@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from enum import Enum
 
@@ -22,8 +23,16 @@ class DamageSkillEffectSpec:
     def __post_init__(self) -> None:
         if not isinstance(self.damage_type, DamageType):
             raise TypeError("damage_type must be a DamageType")
+        if isinstance(self.coefficient, bool) or not isinstance(
+            self.coefficient, (int, float)
+        ):
+            raise TypeError("coefficient must be an int or float")
+        if not math.isfinite(self.coefficient):
+            raise ValueError("coefficient must be finite")
         if self.coefficient < 0:
             raise ValueError("coefficient must be >= 0")
+
+        object.__setattr__(self, "coefficient", float(self.coefficient))
 
 
 @dataclass(frozen=True, slots=True)
@@ -59,6 +68,12 @@ class SkillDefinition:
             raise ValueError("skill_id cannot be empty")
         if not isinstance(self.name, str) or not self.name.strip():
             raise ValueError("name cannot be empty")
+        if isinstance(self.activation_rate, bool) or not isinstance(
+            self.activation_rate, (int, float)
+        ):
+            raise TypeError("activation_rate must be an int or float")
+        if not math.isfinite(self.activation_rate):
+            raise ValueError("activation_rate must be finite")
         if not 0.0 <= self.activation_rate <= 1.0:
             raise ValueError("activation_rate must be in [0.0, 1.0]")
         if not isinstance(self.target_mode, SkillTargetMode):
@@ -76,4 +91,5 @@ class SkillDefinition:
         ):
             raise TypeError("effect_specs contains an unsupported spec type")
 
+        object.__setattr__(self, "activation_rate", float(self.activation_rate))
         object.__setattr__(self, "effect_specs", specs)
