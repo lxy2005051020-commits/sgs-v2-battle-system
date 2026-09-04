@@ -6,10 +6,6 @@ from .official_state_catalog import OfficialStateId
 from .unit import UnitRuntime
 
 
-class UnresolvedStateInteractionError(RuntimeError):
-    """官方资料不足以确定多个状态组合的最终规则时抛出。"""
-
-
 class ActionOrderSystem:
     """按状态优先级层、最终速度和必要的随机裁决生成行动顺序。"""
 
@@ -41,24 +37,19 @@ class ActionOrderSystem:
         return result
 
     def _priority_tier(self, context: BattleContext, unit: UnitRuntime) -> int:
-        has_first_strike = context.states.has(
+        priority = self.NORMAL_PRIORITY
+
+        if context.states.has(
             owner_id=unit.unit_id,
             state_id=OfficialStateId.FIRST_STRIKE.value,
-        )
-        has_ambush = context.states.has(
+        ):
+            priority += self.FIRST_STRIKE_PRIORITY
+
+        if context.states.has(
             owner_id=unit.unit_id,
             state_id=OfficialStateId.AMBUSH.value,
-        )
+        ):
+            priority += self.AMBUSH_PRIORITY
 
-        if has_first_strike and has_ambush:
-            raise UnresolvedStateInteractionError(
-                "unresolved state interaction: "
-                f"unit {unit.unit_id!r} has both "
-                f"{OfficialStateId.FIRST_STRIKE.value!r} and "
-                f"{OfficialStateId.AMBUSH.value!r}"
-            )
-        if has_first_strike:
-            return self.FIRST_STRIKE_PRIORITY
-        if has_ambush:
-            return self.AMBUSH_PRIORITY
-        return self.NORMAL_PRIORITY
+        # 先攻(+1)与遇袭(-1)同时存在时自然抵消为普通层(0)。
+        return priority
