@@ -107,4 +107,10 @@ U in {5, ..., 15}
 
 ## 与当前战斗框架的关系
 
-仓库当前 `DamageSystem` 的兵刃伤害仍是阶段性占位模型。本文件先作为公式契约保留，后续接入时应通过 `DamageSystem` 计算请求伤害，并保持 `TroopSystem` 作为唯一实际扣兵入口。
+当前实现已通过 `WeaponBaseDamageFormula` 接入 `DamageSystem`：
+
+- `DamageType.WEAPON` 先计算本文件定义的 `DamageBase`，再由 `DamageRequest.coefficient` 做兵刃战法倍率缩放。
+- `UnitRuntime` 已提供公式所需的 `level`、`morale` 和 `troop_type`；武力、统率仍统一通过 `AttributeSystem` 读取最终属性。
+- `R` 使用战斗唯一 `RandomSystem` 在 `86..94` 的离散整数中取值；`U` 也通过可配置离散范围生成。
+- `TroopSystem` 仍是唯一实际扣兵入口，因此 `DamageSystem` 不重复执行击杀封顶。
+- `F(N)` 的低段、高段以及 `2001..4999` 中段都已严格实现；中段默认读取仓库内的 `mid_troop_table_2001_4999.csv`。
