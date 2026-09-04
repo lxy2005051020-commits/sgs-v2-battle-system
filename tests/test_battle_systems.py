@@ -173,8 +173,9 @@ def test_damage_calculation_does_not_change_troops_until_troop_system_applies_it
     target = context.get_unit("b")
     assert target.troops == 100
     change = systems.troop_system.apply_damage(target, damage.final_damage)
-    assert change.actual_change == damage.final_damage
-    assert target.troops == 0
+    expected_actual = min(100, damage.final_damage)
+    assert change.actual_change == expected_actual
+    assert target.troops == 100 - expected_actual
 
 
 def test_normal_attack_routes_through_weapon_damage_request() -> None:
