@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from .state_runtime_params import EmptyStateRuntimeParams, StateRuntimeParams
+from .state_runtime_params import (
+    EmptyStateRuntimeParams,
+    StateRuntimeParams,
+    validate_state_runtime_params_type,
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -19,11 +23,6 @@ class StateDefinition:
             raise ValueError("state_id cannot be empty")
         if not self.name:
             raise ValueError("state name cannot be empty")
-        if not isinstance(self.runtime_params_type, type) or not issubclass(
-            self.runtime_params_type, StateRuntimeParams
-        ):
-            raise TypeError(
-                "runtime_params_type must be a StateRuntimeParams subclass"
-            )
 
+        validate_state_runtime_params_type(self.runtime_params_type)
         object.__setattr__(self, "tags", frozenset(self.tags))
