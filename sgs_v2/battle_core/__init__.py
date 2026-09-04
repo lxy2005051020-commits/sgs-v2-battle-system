@@ -1,6 +1,12 @@
 from .context import BattleContext, BattleResult
 from .engine import BattleEngine
-from .enums import BattlePhase, BattleEndReason, LineupPosition
+from .enums import (
+    BattlePhase,
+    BattleEndReason,
+    DamageSourceType,
+    DamageType,
+    LineupPosition,
+)
 from .events import BattleEvent, EventBus, EventType
 from .random_system import RandomSystem
 from .unit import UnitRuntime
@@ -8,7 +14,7 @@ from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem, AttributeModifierProvider
 from .battle_systems import BattleSystems
-from .damage_system import DamageResult, DamageSystem
+from .damage_system import DamageRequest, DamageResult, DamageSystem
 from .normal_attack_system import NormalAttackResult, NormalAttackSystem
 from .target_system import TargetSystem
 from .troop_system import TroopChangeResult, TroopSystem
@@ -20,6 +26,8 @@ __all__ = [
     "BattleEngine",
     "BattlePhase",
     "BattleEndReason",
+    "DamageSourceType",
+    "DamageType",
     "LineupPosition",
     "BattleEvent",
     "EventBus",
@@ -31,6 +39,7 @@ __all__ = [
     "AttributeSystem",
     "AttributeModifierProvider",
     "BattleSystems",
+    "DamageRequest",
     "DamageResult",
     "DamageSystem",
     "NormalAttackResult",
