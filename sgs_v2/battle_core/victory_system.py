@@ -5,9 +5,32 @@ from .enums import BattleEndReason
 
 
 class VictorySystem:
-    """统一判定全军、主将、最大回合和战平。"""
+    """统一判定主将阵亡、全军、最大回合和战平。"""
 
     def check(self, context: BattleContext) -> BattleResult | None:
+        team_ids = {unit.team_id for unit in context.units.values()}
+
+        # 主将阵亡是最高优先级结束条件。
+        defeated_commander_teams = {
+            team_id
+            for team_id in team_ids
+            if not context.commander_of(team_id).is_alive
+        }
+
+        if defeated_commander_teams:
+            surviving_teams = team_ids - defeated_commander_teams
+            if len(surviving_teams) == 1:
+                return self._build_result(
+                    context,
+                    winner_team_id=next(iter(surviving_teams)),
+                    reason=BattleEndReason.COMMANDER_DEFEATED,
+                )
+            return self._build_result(
+                context,
+                winner_team_id=None,
+                reason=BattleEndReason.DRAW,
+            )
+
         alive_teams = context.alive_team_ids()
         if len(alive_teams) == 0:
             return self._build_result(
@@ -22,25 +45,6 @@ class VictorySystem:
                 reason=BattleEndReason.TEAM_ELIMINATED,
             )
 
-        teams_with_commanders = {
-            unit.team_id for unit in context.units.values() if unit.is_commander
-        }
-        for team_id in teams_with_commanders:
-            commanders = [
-                unit for unit in context.units.values()
-                if unit.team_id == team_id and unit.is_commander
-            ]
-            if commanders and not any(unit.is_alive for unit in commanders):
-                surviving_enemies = {
-                    unit.team_id for unit in context.units.values()
-                    if unit.team_id != team_id and unit.is_alive
-                }
-                if len(surviving_enemies) == 1:
-                    return self._build_result(
-                        context,
-                        winner_team_id=next(iter(surviving_enemies)),
-                        reason=BattleEndReason.COMMANDER_DEFEATED,
-                    )
         return None
 
     def resolve_max_rounds(self, context: BattleContext) -> BattleResult:
