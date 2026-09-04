@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from .attribute_system import AttributeSystem
 from .context import BattleContext
 from .enums import DamageSourceType, DamageType
+from .strategy_damage_formula import StrategyBaseDamageFormula
 from .unit import UnitRuntime
 from .weapon_damage_formula import WeaponBaseDamageFormula
 
@@ -55,9 +56,9 @@ class DamageResult:
 class DamageSystem:
     """统一计算伤害；不直接改变目标兵力。
 
-    - WEAPON 已接入 NORMAL_ATTACK_FORMULA_V1.md 的基础兵刃伤害公式。
-    - STRATEGY 仍等待基础谋略公式。
-    - 基础伤害先由 DamageType 决定，再由 coefficient 做战法倍率缩放。
+    - WEAPON 使用武力对统率的基础兵刃伤害。
+    - STRATEGY 使用智力对智力的基础谋略伤害。
+    - 两类基础伤害均使用完整 F(N) 查表，再由 coefficient 做战法倍率缩放。
     - TroopSystem 仍是唯一实际扣兵入口，因此击杀封顶不在这里重复实现。
     """
 
@@ -69,6 +70,9 @@ class DamageSystem:
         weapon_troop_function_table: Mapping[int, int] | None = None,
         weapon_random_percent_range: tuple[int, int] = (86, 94),
         weapon_low_damage_floor_range: tuple[int, int] = (5, 15),
+        strategy_troop_function_table: Mapping[int, int] | None = None,
+        strategy_random_percent_range: tuple[int, int] = (86, 94),
+        strategy_low_damage_floor_range: tuple[int, int] = (5, 15),
     ) -> None:
         if damage_scale < 0:
             raise ValueError("damage_scale must be >= 0")
@@ -79,13 +83,23 @@ class DamageSystem:
             random_percent_range=weapon_random_percent_range,
             low_damage_floor_range=weapon_low_damage_floor_range,
         )
+        self._strategy_formula = StrategyBaseDamageFormula(
+            attribute_system,
+            troop_function_table=strategy_troop_function_table,
+            random_percent_range=strategy_random_percent_range,
+            low_damage_floor_range=strategy_low_damage_floor_range,
+        )
         # 旧阶段全局倍率继续保留在 coefficient 之后，仅用于兼容现有测试/调用。
         # 正式增减伤系统完成后应移除，而不是并入基础公式。
         self.damage_scale = damage_scale
 
     def weapon_troop_function(self, troops: int) -> int:
-        """暴露 F(N) 便于查表回归测试。"""
+        """暴露兵刃 F(N) 便于查表回归测试。"""
         return self._weapon_formula.troop_function(troops)
+
+    def strategy_troop_function(self, troops: int) -> int:
+        """暴露谋略 F(N) 便于查表回归测试。"""
+        return self._strategy_formula.troop_function(troops)
 
     def calculate(
         self,
@@ -149,8 +163,5 @@ class DamageSystem:
         context: BattleContext,
         source: UnitRuntime,
         target: UnitRuntime,
-    ) -> float:
-        raise NotImplementedError(
-            "strategy base damage is not implemented yet; "
-            "the intelligence-based base formula must be defined first"
-        )
+    ) -> int:
+        return self._strategy_formula.calculate(context, source, target)

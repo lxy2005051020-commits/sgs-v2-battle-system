@@ -35,7 +35,7 @@ def _load_repository_troop_function_table() -> dict[int, int]:
 
 
 class WeaponBaseDamageFormula:
-    """NORMAL_ATTACK_FORMULA_V1.md 的基础兵刃伤害实现。
+    """完整查表驱动的基础兵刃伤害实现。
 
     F(N) 在运行时完全由查表得到，不再分段计算公式。
     默认表为 data/normal_attack/troop_function_table_1_10000.csv。
@@ -69,17 +69,17 @@ class WeaponBaseDamageFormula:
         source: UnitRuntime,
         target: UnitRuntime,
     ) -> int:
-        """计算文档中的 DamageBase，不执行扣兵封顶。"""
+        """计算 DamageBase，不执行扣兵封顶。"""
         troops = source.troops
-        weapon_attack = self._attributes.get_attack(context, source)
-        defense = self._attributes.get_defense(context, target)
+        offense = self._source_combat_attribute(context, source)
+        defense = self._target_combat_attribute(context, target)
 
         source_level_scale = 0.6 + 0.02 * source.level
         target_level_scale = 0.6 + 0.02 * target.level
 
         x = (
             self.troop_function(troops)
-            + weapon_attack * source_level_scale
+            + offense * source_level_scale
             - defense * target_level_scale
         )
         troop_floor = min(100, ceil(troops / 50))
@@ -95,6 +95,20 @@ class WeaponBaseDamageFormula:
 
         low_damage_floor = context.random.randint(*self.low_damage_floor_range)
         return max(d0, low_damage_floor)
+
+    def _source_combat_attribute(
+        self,
+        context: BattleContext,
+        source: UnitRuntime,
+    ) -> float:
+        return self._attributes.get_attack(context, source)
+
+    def _target_combat_attribute(
+        self,
+        context: BattleContext,
+        target: UnitRuntime,
+    ) -> float:
+        return self._attributes.get_defense(context, target)
 
     def troop_function(self, troops: int) -> int:
         """通过完整查表返回 F(N)。"""
