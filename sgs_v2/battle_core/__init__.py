@@ -6,6 +6,7 @@ from .enums import (
     DamageSourceType,
     DamageType,
     LineupPosition,
+    TroopType,
 )
 from .events import BattleEvent, EventBus, EventType
 from .random_system import RandomSystem
@@ -19,6 +20,7 @@ from .normal_attack_system import NormalAttackResult, NormalAttackSystem
 from .target_system import TargetSystem
 from .troop_system import TroopChangeResult, TroopSystem
 from .victory_system import VictorySystem
+from .weapon_damage_formula import WeaponBaseDamageFormula
 
 __all__ = [
     "BattleContext",
@@ -29,6 +31,7 @@ __all__ = [
     "DamageSourceType",
     "DamageType",
     "LineupPosition",
+    "TroopType",
     "BattleEvent",
     "EventBus",
     "EventType",
@@ -48,4 +51,5 @@ __all__ = [
     "TroopChangeResult",
     "TroopSystem",
     "VictorySystem",
+    "WeaponBaseDamageFormula",
 ]
