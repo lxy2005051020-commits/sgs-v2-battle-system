@@ -3,7 +3,7 @@ from __future__ import annotations
 import csv
 from collections.abc import Mapping
 from functools import lru_cache
-from math import ceil, floor, log2
+from math import ceil
 from pathlib import Path
 
 from .attribute_system import AttributeSystem
@@ -12,19 +12,19 @@ from .enums import TroopType
 from .unit import UnitRuntime
 
 
-_MID_TROOP_TABLE_PATH = (
+_TROOP_FUNCTION_TABLE_PATH = (
     Path(__file__).resolve().parents[2]
     / "data"
     / "normal_attack"
-    / "mid_troop_table_2001_4999.csv"
+    / "troop_function_table_1_10000.csv"
 )
 
 
 @lru_cache(maxsize=1)
-def _load_repository_mid_troop_table() -> dict[int, int]:
-    """读取仓库中的 2001..4999 精确单调查表。"""
+def _load_repository_troop_function_table() -> dict[int, int]:
+    """读取仓库中的完整 F(N) 查表，覆盖 N=1..10000。"""
     table: dict[int, int] = {}
-    with _MID_TROOP_TABLE_PATH.open("r", encoding="utf-8", newline="") as file:
+    with _TROOP_FUNCTION_TABLE_PATH.open("r", encoding="utf-8", newline="") as file:
         reader = csv.reader(file)
         next(reader, None)
         for row in reader:
@@ -35,16 +35,20 @@ def _load_repository_mid_troop_table() -> dict[int, int]:
 
 
 class WeaponBaseDamageFormula:
-    """NORMAL_ATTACK_FORMULA_V1.md 的基础兵刃伤害实现。"""
+    """NORMAL_ATTACK_FORMULA_V1.md 的基础兵刃伤害实现。
 
-    _MID_TROOP_MIN = 2001
-    _MID_TROOP_MAX = 4999
+    F(N) 在运行时完全由查表得到，不再分段计算公式。
+    默认表为 data/normal_attack/troop_function_table_1_10000.csv。
+    """
+
+    _TROOP_MIN = 1
+    _TROOP_MAX = 10000
 
     def __init__(
         self,
         attribute_system: AttributeSystem,
         *,
-        mid_troop_table: Mapping[int, int] | None = None,
+        troop_function_table: Mapping[int, int] | None = None,
         random_percent_range: tuple[int, int] = (86, 94),
         low_damage_floor_range: tuple[int, int] = (5, 15),
     ) -> None:
@@ -53,10 +57,10 @@ class WeaponBaseDamageFormula:
         self._attributes = attribute_system
         self.random_percent_range = random_percent_range
         self.low_damage_floor_range = low_damage_floor_range
-        self._mid_troop_table = self._validate_mid_troop_table(
-            _load_repository_mid_troop_table()
-            if mid_troop_table is None
-            else mid_troop_table
+        self._troop_function_table = self._validate_troop_function_table(
+            _load_repository_troop_function_table()
+            if troop_function_table is None
+            else troop_function_table
         )
 
     def calculate(
@@ -93,17 +97,12 @@ class WeaponBaseDamageFormula:
         return max(d0, low_damage_floor)
 
     def troop_function(self, troops: int) -> int:
-        """严格计算公式中的 F(N)。"""
-        if troops < 0:
-            raise ValueError("troops must be >= 0")
-
-        if troops <= 2000:
-            return ceil(troops / 10) + ceil(troops / 50)
-
-        if troops < 5000:
-            return self._mid_troop_table[troops]
-
-        return self._round_half_up(429.27105 + 100 * log2(troops / 5000))
+        """通过完整查表返回 F(N)。"""
+        if not isinstance(troops, int):
+            raise TypeError("troops must be an integer")
+        if not self._TROOP_MIN <= troops <= self._TROOP_MAX:
+            raise ValueError("troops must be within lookup-table range [1, 10000]")
+        return self._troop_function_table[troops]
 
     @staticmethod
     def _counter_multiplier(source: UnitRuntime, target: UnitRuntime) -> float:
@@ -114,16 +113,16 @@ class WeaponBaseDamageFormula:
         return 1.0
 
     @classmethod
-    def _validate_mid_troop_table(
+    def _validate_troop_function_table(
         cls,
         table: Mapping[int, int],
     ) -> dict[int, int]:
         copied = dict(table)
-        expected_keys = set(range(cls._MID_TROOP_MIN, cls._MID_TROOP_MAX + 1))
+        expected_keys = set(range(cls._TROOP_MIN, cls._TROOP_MAX + 1))
         if set(copied) != expected_keys:
-            raise ValueError("mid_troop_table must contain exactly keys 2001..4999")
+            raise ValueError("troop_function_table must contain exactly keys 1..10000")
         if any(value < 0 for value in copied.values()):
-            raise ValueError("mid_troop_table values must be >= 0")
+            raise ValueError("troop_function_table values must be >= 0")
         return copied
 
     @staticmethod
@@ -135,9 +134,3 @@ class WeaponBaseDamageFormula:
             raise TypeError(f"{name} values must be integers")
         if low > high:
             raise ValueError(f"{name} lower bound cannot exceed upper bound")
-
-    @staticmethod
-    def _round_half_up(value: float) -> int:
-        if value < 0:
-            raise ValueError("round_half_up only supports non-negative values")
-        return floor(value + 0.5)
