@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, is_dataclass
+from dataclasses import asdict, dataclass
 from typing import Any
 
 
@@ -18,16 +18,29 @@ class EmptyStateRuntimeParams(StateRuntimeParams):
     """不需要额外运行参数的状态使用的默认参数。"""
 
 
+def validate_state_runtime_params_type(
+    params_type: type[StateRuntimeParams],
+) -> None:
+    """要求参数 schema 本身就是显式声明的 frozen dataclass。"""
+    if not isinstance(params_type, type) or not issubclass(
+        params_type, StateRuntimeParams
+    ):
+        raise TypeError("runtime_params_type must be a StateRuntimeParams subclass")
+
+    # 使用类自身 __dict__，避免未加 @dataclass 的普通子类仅靠继承
+    # __dataclass_params__ 冒充正式参数 schema。
+    dataclass_params = params_type.__dict__.get("__dataclass_params__")
+    if dataclass_params is None:
+        raise TypeError("runtime_params_type must be an explicit dataclass")
+    if not dataclass_params.frozen:
+        raise TypeError("runtime_params_type dataclass must be frozen")
+
+
 def validate_state_runtime_params(params: StateRuntimeParams) -> None:
-    """保证正式状态参数是不可变 dataclass，而不是任意行为对象。"""
+    """保证正式状态参数实例符合不可变强类型合同。"""
     if not isinstance(params, StateRuntimeParams):
         raise TypeError("runtime_params must be a StateRuntimeParams instance")
-    if not is_dataclass(params):
-        raise TypeError("runtime_params must be a dataclass instance")
-
-    dataclass_params = getattr(type(params), "__dataclass_params__", None)
-    if dataclass_params is None or not dataclass_params.frozen:
-        raise TypeError("runtime_params dataclass must be frozen")
+    validate_state_runtime_params_type(type(params))
 
 
 def state_runtime_params_event_payload(
