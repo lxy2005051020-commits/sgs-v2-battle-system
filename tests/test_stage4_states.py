@@ -19,7 +19,6 @@ from sgs_v2.battle_core import (
     RandomSystem,
     TargetSystem,
     TroopSystem,
-    UnresolvedStateInteractionError,
     UnitRuntime,
     register_official_state_definitions,
 )
@@ -173,14 +172,24 @@ def test_action_order_only_exact_same_tier_and_speed_consumes_shuffle_and_is_see
     assert run_once(2026) == run_once(2026)
 
 
-def test_first_strike_and_ambush_on_same_unit_is_explicitly_unresolved() -> None:
+def test_first_strike_and_ambush_on_same_unit_cancel_to_normal_tier() -> None:
     context = make_order_context()
     apply_state(context, OfficialStateId.FIRST_STRIKE, "a1")
     apply_state(context, OfficialStateId.AMBUSH, "a1")
+    apply_state(context, OfficialStateId.FIRST_STRIKE, "a2")
 
-    with pytest.raises(UnresolvedStateInteractionError, match="unresolved state interaction"):
-        BattleSystems().action_order_system.determine_order(context)
+    order = BattleSystems().action_order_system.determine_order(context)
+    assert [unit.unit_id for unit in order] == ["a2", "b1", "a1"]
     assert context.random.shuffle_calls == 0
+
+    second = make_order_context(seed=12)
+    apply_state(second, OfficialStateId.FIRST_STRIKE, "a1")
+    apply_state(second, OfficialStateId.AMBUSH, "a1")
+    apply_state(second, OfficialStateId.AMBUSH, "b1")
+
+    second_order = BattleSystems().action_order_system.determine_order(second)
+    assert [unit.unit_id for unit in second_order] == ["a2", "a1", "b1"]
+    assert second.random.shuffle_calls == 0
 
 
 def test_disarm_blocks_before_target_damage_rng_and_troop_system() -> None:
