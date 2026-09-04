@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from sgs_v2.battle_core import (
     ApplyStateEffect,
     ApplyStateSkillEffectSpec,
@@ -11,6 +13,7 @@ from sgs_v2.battle_core import (
     LineupPosition,
     RandomSystem,
     SkillDefinition,
+    SkillResolutionResult,
     SkillResolutionStatus,
     SkillResolver,
     SkillRuntime,
@@ -264,3 +267,32 @@ def test_same_resolver_changes_effects_from_typed_definition_data_not_skill_id_l
 
     assert isinstance(damage_result.effects[0], DamageEffect)
     assert isinstance(state_result.effects[0], ApplyStateEffect)
+
+
+def test_skill_resolution_result_enforces_status_payload_contract() -> None:
+    effect = DamageEffect(
+        source_id="a1",
+        target_id="b1",
+        damage_type=DamageType.WEAPON,
+        source_type=damage_definition(1.0).effect_specs[0].damage_type and __import__(
+            "sgs_v2.battle_core", fromlist=["DamageSourceType"]
+        ).DamageSourceType.SKILL,
+    )
+
+    with pytest.raises(ValueError, match="must not contain"):
+        SkillResolutionResult(
+            skill_id="synthetic.invalid",
+            owner_id="a1",
+            status=SkillResolutionStatus.ACTIVATION_FAILED,
+            target_ids=("b1",),
+            effects=(effect,),
+        )
+
+    with pytest.raises(ValueError, match="target_ids"):
+        SkillResolutionResult(
+            skill_id="synthetic.invalid",
+            owner_id="a1",
+            status=SkillResolutionStatus.RESOLVED,
+            target_ids=(),
+            effects=(effect,),
+        )
