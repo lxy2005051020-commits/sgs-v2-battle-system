@@ -27,7 +27,7 @@ class RecordingTroopSystem(TroopSystem):
         return super().apply_damage(target, requested_damage)
 
 
-def make_context(*, target_troops: int = 1000, seed: int = 11) -> BattleContext:
+def make_context(*, target_troops: int = 10000, seed: int = 11) -> BattleContext:
     context = BattleContext(
         battle_id=f"stage5-damage-resolution-{seed}",
         units={
@@ -72,6 +72,7 @@ def test_damage_resolution_routes_actual_damage_through_troop_system() -> None:
 
     assert result.damage.final_damage > 0
     assert result.troop_change is not None
+    assert result.target_defeated is False
     assert troops.apply_damage_calls == 1
     assert context.get_unit("b1").troops == before - result.troop_change.actual_change
     assert context.event_bus.history[-1].event_type is EventType.DAMAGE_DEALT
