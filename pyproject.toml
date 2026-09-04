@@ -3,9 +3,12 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sgs-v2-stage1"
+name = "sgs-v2-battle-system"
 version = "0.1.0"
 requires-python = ">=3.11"
+
+[tool.setuptools.packages.find]
+include = ["sgs_v2*"]
 
 [tool.pytest.ini_options]
 pythonpath = ["."]
