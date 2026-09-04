@@ -13,7 +13,8 @@ class UnitRuntime:
     注意：
     - attack / defense / speed 是基础值；最终属性由 AttributeSystem 统一计算。
     - troops 的实际增减只能由 TroopSystem 执行。
-    - lineup_position 明确表示主将/第一副将/第二副将，用于固定阵容顺序与目标结算。
+    - lineup_position 明确表示主将/第一副将/第二副将。
+    - is_commander 仅保留为兼容字段，真实主将身份统一由 lineup_position 决定。
     """
 
     unit_id: str
@@ -40,13 +41,13 @@ class UnitRuntime:
         if not 0 <= self.troops <= self.max_troops:
             raise ValueError("troops must be within [0, max_troops]")
 
-        # 向后兼容旧构造方式：显式 is_commander=True 时自动归为主将。
-        if self.lineup_position is None:
-            self.lineup_position = (
-                LineupPosition.COMMANDER if self.is_commander else LineupPosition.DEPUTY_1
-            )
+        # 兼容旧构造方式：显式 is_commander=True 且未给阵容位置时，视为主将。
+        if self.lineup_position is None and self.is_commander:
+            self.lineup_position = LineupPosition.COMMANDER
 
-        self.is_commander = self.lineup_position is LineupPosition.COMMANDER
+        # 一旦指定阵容位置，主将身份只由阵容位置决定，避免出现两套真相。
+        if self.lineup_position is not None:
+            self.is_commander = self.lineup_position is LineupPosition.COMMANDER
 
     @property
     def is_alive(self) -> bool:
@@ -63,6 +64,8 @@ class UnitRuntime:
             "defense": self.defense,
             "speed": self.speed,
             "is_commander": self.is_commander,
-            "lineup_position": self.lineup_position.name,
+            "lineup_position": (
+                self.lineup_position.name if self.lineup_position is not None else None
+            ),
             "is_alive": self.is_alive,
         }
