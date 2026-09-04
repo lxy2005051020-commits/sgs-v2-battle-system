@@ -6,7 +6,9 @@ from dataclasses import dataclass, field
 from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
+from .damage_resolution_system import DamageResolutionSystem
 from .damage_system import DamageSystem
+from .effect_executor import EffectExecutor
 from .normal_attack_system import NormalAttackSystem
 from .state_lifecycle_system import StateLifecycleSystem
 from .target_system import TargetSystem
@@ -16,7 +18,7 @@ from .victory_system import VictorySystem
 
 @dataclass(slots=True)
 class BattleSystems:
-    """BattleSystem 组合根，供 BattleEngine 使用。"""
+    """BattleSystem 组合根，供 BattleEngine 与后续规则层使用。"""
 
     attribute_system: AttributeSystem = field(default_factory=AttributeSystem)
     target_system: TargetSystem = field(default_factory=TargetSystem)
@@ -37,8 +39,10 @@ class BattleSystems:
 
     action_order_system: ActionOrderSystem = field(init=False)
     damage_system: DamageSystem = field(init=False)
+    damage_resolution_system: DamageResolutionSystem = field(init=False)
     normal_attack_system: NormalAttackSystem = field(init=False)
     action_system: ActionSystem = field(init=False)
+    effect_executor: EffectExecutor = field(init=False)
 
     def __post_init__(self) -> None:
         self.action_order_system = ActionOrderSystem(self.attribute_system)
@@ -51,7 +55,16 @@ class BattleSystems:
             strategy_random_percent_range=self.strategy_random_percent_range,
             strategy_low_damage_floor_range=self.strategy_low_damage_floor_range,
         )
+        self.damage_resolution_system = DamageResolutionSystem(
+            self.damage_system,
+            self.troop_system,
+        )
         self.normal_attack_system = NormalAttackSystem(
-            self.target_system, self.damage_system, self.troop_system
+            self.target_system,
+            self.damage_resolution_system,
         )
         self.action_system = ActionSystem(self.normal_attack_system)
+        self.effect_executor = EffectExecutor(
+            self.damage_resolution_system,
+            self.state_lifecycle_system,
+        )
