@@ -27,7 +27,10 @@ class TroopSystem:
         )
 
     def restore(self, target: UnitRuntime, requested_recovery: int) -> TroopChangeResult:
-        """为后续治疗保留同一兵力写入入口。"""
+        if isinstance(requested_recovery, bool) or not isinstance(
+            requested_recovery, int
+        ):
+            raise TypeError("requested_recovery must be an int")
         if requested_recovery < 0:
             raise ValueError("requested_recovery must be >= 0")
         actual_recovery = min(target.max_troops - target.troops, requested_recovery)

@@ -16,12 +16,7 @@ class DamageResolutionResult:
 
 
 class DamageResolutionSystem:
-    """统一协调理论伤害、实际扣兵与伤害结果事件。
-
-    DamageSystem 继续只负责计算；TroopSystem 继续是唯一兵力写入口。
-    两阶段 API 允许 NormalAttackSystem 在 DAMAGE_* 事实之前保留
-    Stage 4 已冻结的 NORMAL_ATTACK 事件顺序。
-    """
+    """统一协调理论伤害、实际扣兵与伤害结果事件。"""
 
     def __init__(
         self,
@@ -51,6 +46,12 @@ class DamageResolutionSystem:
         context: BattleContext,
         damage: DamageResult,
     ) -> DamageResolutionResult:
+        provenance_payload = {
+            "source_skill_id": damage.source_skill_id,
+            "source_state_id": damage.source_state_id,
+            "source_state_instance_id": damage.source_state_instance_id,
+        }
+
         if damage.prevented:
             context.event_bus.publish(
                 event_type=EventType.DAMAGE_PREVENTED,
@@ -66,6 +67,7 @@ class DamageResolutionSystem:
                     "scaled_damage": damage.scaled_damage,
                     "requested_damage": damage.final_damage,
                     "reason_state_id": damage.prevented_by_state_id,
+                    **provenance_payload,
                 },
             )
             return DamageResolutionResult(
@@ -93,6 +95,7 @@ class DamageResolutionSystem:
                 "base_damage": damage.base_damage,
                 "scaled_damage": damage.scaled_damage,
                 "target_remaining_troops": troop_change.remaining_troops,
+                **provenance_payload,
             },
         )
 

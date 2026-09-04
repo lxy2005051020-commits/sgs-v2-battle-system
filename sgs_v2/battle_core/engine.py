@@ -2,26 +2,16 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .battle_systems import BattleSystems
 from .context import BattleContext, BattleResult
 from .enums import BattlePhase
 from .events import EventType
-from .battle_systems import BattleSystems
+from .rule_hooks import RoundStartHook, UnitActionStartHook
 
 
 @dataclass(slots=True)
 class BattleEngine:
-    """
-    战斗推进器。
-
-    Engine 只负责：
-    - 推进阶段
-    - 推进回合
-    - 调用规则/系统
-    - 在关键节点检查战斗是否结束
-    - 发出明确 Event
-
-    Engine 不认识任何具体战法名称或具体状态名称。
-    """
+    """战斗推进器；不认识具体状态或具体 Effect 类型。"""
 
     context: BattleContext
     systems: BattleSystems
@@ -62,6 +52,13 @@ class BattleEngine:
                 phase=self.context.current_phase,
                 round_no=round_no,
             )
+            self.systems.rule_hook_system.process(
+                self.context,
+                RoundStartHook(round_no=round_no),
+            )
+            result = self.systems.victory_system.check(self.context)
+            if result is not None:
+                return self._finish(result)
 
             self._enter_phase(BattlePhase.ACTION_ORDER)
             order = self.systems.action_order_system.determine_order(self.context)
@@ -73,7 +70,6 @@ class BattleEngine:
             )
 
             for actor in order:
-                # 顺序表生成后，单位可能已经被前一个单位击败。
                 if not actor.is_alive:
                     continue
 
@@ -84,11 +80,19 @@ class BattleEngine:
                     round_no=round_no,
                     actor_id=actor.unit_id,
                 )
-
-                self._enter_phase(BattlePhase.UNIT_ACTION)
-                self.systems.action_system.execute(self.context, actor)
-
+                self.systems.rule_hook_system.process(
+                    self.context,
+                    UnitActionStartHook(
+                        round_no=round_no,
+                        actor_id=actor.unit_id,
+                    ),
+                )
                 result = self.systems.victory_system.check(self.context)
+
+                if result is None and actor.is_alive:
+                    self._enter_phase(BattlePhase.UNIT_ACTION)
+                    self.systems.action_system.execute(self.context, actor)
+                    result = self.systems.victory_system.check(self.context)
 
                 self._enter_phase(BattlePhase.UNIT_ACTION_END)
                 self.context.event_bus.publish(
