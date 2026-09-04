@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from .attribute_system import AttributeSystem
 from .context import BattleContext
 from .enums import DamageSourceType, DamageType
+from .official_state_catalog import OfficialStateId
 from .strategy_damage_formula import StrategyBaseDamageFormula
 from .unit import UnitRuntime
 from .weapon_damage_formula import WeaponBaseDamageFormula
@@ -46,6 +47,8 @@ class DamageResult:
     scaled_damage: float
     final_damage: int
     source_skill_id: str | None = None
+    prevented: bool = False
+    prevented_by_state_id: str | None = None
 
     @property
     def requested_damage(self) -> int:
@@ -59,6 +62,7 @@ class DamageSystem:
     - WEAPON 使用武力对统率的基础兵刃伤害。
     - STRATEGY 使用智力对智力的基础谋略伤害。
     - 两类基础伤害均先计算 100% 基础伤害，再由 coefficient 缩放。
+    - 被状态明确阻止的伤害是合法 0 伤害，不进入基础公式。
     - TroopSystem 是唯一实际扣兵入口，因此击杀封顶不在这里实现。
     """
 
@@ -102,6 +106,22 @@ class DamageSystem:
     ) -> DamageResult:
         source = context.get_unit(request.source_id)
         target = context.get_unit(request.target_id)
+
+        weakness_state_id = OfficialStateId.WEAKNESS.value
+        if context.states.has(owner_id=source.unit_id, state_id=weakness_state_id):
+            return DamageResult(
+                source_id=request.source_id,
+                target_id=request.target_id,
+                damage_type=request.damage_type,
+                source_type=request.source_type,
+                coefficient=request.coefficient,
+                base_damage=0,
+                scaled_damage=0,
+                final_damage=0,
+                source_skill_id=request.source_skill_id,
+                prevented=True,
+                prevented_by_state_id=weakness_state_id,
+            )
 
         if request.damage_type is DamageType.WEAPON:
             base_damage = self._calculate_weapon_base_damage(context, source, target)

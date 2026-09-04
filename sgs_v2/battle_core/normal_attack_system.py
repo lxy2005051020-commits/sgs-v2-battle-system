@@ -6,6 +6,7 @@ from .context import BattleContext
 from .damage_system import DamageRequest, DamageResult, DamageSystem
 from .enums import DamageSourceType, DamageType
 from .events import EventType
+from .official_state_catalog import OfficialStateId
 from .target_system import TargetSystem
 from .troop_system import TroopChangeResult, TroopSystem
 from .unit import UnitRuntime
@@ -20,7 +21,7 @@ class NormalAttackResult:
 
 
 class NormalAttackSystem:
-    """组织一次普通攻击的选目标、伤害请求、扣兵与事件发出。"""
+    """组织一次普通攻击的状态门控、选目标、伤害请求、扣兵与事件发出。"""
 
     def __init__(
         self,
@@ -33,6 +34,20 @@ class NormalAttackSystem:
         self._troops = troop_system
 
     def execute(self, context: BattleContext, actor: UnitRuntime) -> NormalAttackResult:
+        disarm_state_id = OfficialStateId.DISARM.value
+        if context.states.has(owner_id=actor.unit_id, state_id=disarm_state_id):
+            context.event_bus.publish(
+                event_type=EventType.ACTION_BLOCKED,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=actor.unit_id,
+                payload={
+                    "action_type": "NORMAL_ATTACK",
+                    "reason_state_id": disarm_state_id,
+                },
+            )
+            return NormalAttackResult(actor.unit_id, None, None, None)
+
         target = self._targets.random_enemy(context, actor)
         if target is None:
             return NormalAttackResult(actor.unit_id, None, None, None)
@@ -59,8 +74,29 @@ class NormalAttackSystem:
                 "base_damage": damage.base_damage,
                 "scaled_damage": damage.scaled_damage,
                 "requested_damage": damage.final_damage,
+                "prevented": damage.prevented,
+                "prevented_by_state_id": damage.prevented_by_state_id,
             },
         )
+
+        if damage.prevented:
+            context.event_bus.publish(
+                event_type=EventType.DAMAGE_PREVENTED,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=actor.unit_id,
+                target_id=target.unit_id,
+                payload={
+                    "damage_type": damage.damage_type.value,
+                    "source_type": damage.source_type.value,
+                    "coefficient": damage.coefficient,
+                    "base_damage": damage.base_damage,
+                    "scaled_damage": damage.scaled_damage,
+                    "requested_damage": damage.final_damage,
+                    "reason_state_id": damage.prevented_by_state_id,
+                },
+            )
+            return NormalAttackResult(actor.unit_id, target.unit_id, damage, None)
 
         troop_change = self._troops.apply_damage(target, damage.final_damage)
         context.event_bus.publish(

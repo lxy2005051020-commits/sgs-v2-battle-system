@@ -11,12 +11,19 @@ from .enums import (
 from .events import BattleEvent, EventBus, EventType
 from .random_system import RandomSystem
 from .unit import UnitRuntime
-from .action_order_system import ActionOrderSystem
+from .action_order_system import ActionOrderSystem, UnresolvedStateInteractionError
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem, AttributeModifierProvider
 from .battle_systems import BattleSystems
 from .damage_system import DamageRequest, DamageResult, DamageSystem
 from .normal_attack_system import NormalAttackResult, NormalAttackSystem
+from .official_state_catalog import (
+    OFFICIAL_STATE_CATALOG,
+    OfficialStateCategory,
+    OfficialStateEntry,
+    OfficialStateId,
+    register_official_state_definitions,
+)
 from .state_definition import StateDefinition
 from .state_instance import StateInstance
 from .state_lifecycle_system import StateLifecycleSystem
@@ -43,6 +50,7 @@ __all__ = [
     "RandomSystem",
     "UnitRuntime",
     "ActionOrderSystem",
+    "UnresolvedStateInteractionError",
     "ActionSystem",
     "AttributeSystem",
     "AttributeModifierProvider",
@@ -52,6 +60,11 @@ __all__ = [
     "DamageSystem",
     "NormalAttackResult",
     "NormalAttackSystem",
+    "OFFICIAL_STATE_CATALOG",
+    "OfficialStateCategory",
+    "OfficialStateEntry",
+    "OfficialStateId",
+    "register_official_state_definitions",
     "StateDefinition",
     "StateInstance",
     "StateLifecycleSystem",
