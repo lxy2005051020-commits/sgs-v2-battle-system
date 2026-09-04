@@ -15,6 +15,8 @@ class EventType(str, Enum):
     NORMAL_ATTACK = "NORMAL_ATTACK"
     DAMAGE_PREVENTED = "DAMAGE_PREVENTED"
     DAMAGE_DEALT = "DAMAGE_DEALT"
+    RECOVERY_PREVENTED = "RECOVERY_PREVENTED"
+    TROOPS_RECOVERED = "TROOPS_RECOVERED"
     UNIT_DEFEATED = "UNIT_DEFEATED"
     UNIT_ACTION_ENDED = "UNIT_ACTION_ENDED"
     ROUND_ENDED = "ROUND_ENDED"
@@ -39,14 +41,7 @@ EventHandler = Callable[[BattleEvent], None]
 
 
 class EventBus:
-    """
-    同步事件总线。
-
-    约束：
-    - EventBus 只记录/分发“已经发生”的事实。
-    - EventBus 不反向决定战斗结果。
-    - history 是 BattleReport 的原始事件源，正式 Report 层后续再接。
-    """
+    """同步事件总线，只记录/分发已经发生的事实。"""
 
     def __init__(self) -> None:
         self._handlers: dict[EventType, list[EventHandler]] = {}

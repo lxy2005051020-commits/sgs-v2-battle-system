@@ -7,17 +7,16 @@ from .effect_result import (
     DamageEffectResult,
     DeferredEffectResult,
     EffectExecutionResult,
+    RecoverEffectResult,
     RemoveStateEffectResult,
 )
 from .effects import ApplyStateEffect, DamageEffect, Effect, RecoverEffect, RemoveStateEffect
+from .recovery_system import RecoverySystem
 from .state_lifecycle_system import StateLifecycleSystem
 
 
 class EffectExecutor:
-    """把纯数据 Effect 路由到已有 BattleSystem。
-
-    本类不计算伤害、不修改兵力、不直接写 StateRegistry，也不消费 RNG。
-    """
+    """把纯数据 Effect 路由到已有 BattleSystem。"""
 
     RECOVERY_DEFERRED_REASON = "RECOVERY_SYSTEM_NOT_AVAILABLE"
 
@@ -25,9 +24,11 @@ class EffectExecutor:
         self,
         damage_resolution_system: DamageResolutionSystem,
         state_lifecycle_system: StateLifecycleSystem,
+        recovery_system: RecoverySystem | None = None,
     ) -> None:
         self._damage_resolution = damage_resolution_system
         self._state_lifecycle = state_lifecycle_system
+        self._recovery = recovery_system
 
     def execute(
         self,
@@ -65,9 +66,15 @@ class EffectExecutor:
             )
 
         if isinstance(effect, RecoverEffect):
-            return DeferredEffectResult(
+            if self._recovery is None:
+                return DeferredEffectResult(
+                    effect=effect,
+                    reason=self.RECOVERY_DEFERRED_REASON,
+                )
+            resolution = self._recovery.resolve(context, effect.to_request())
+            return RecoverEffectResult(
                 effect=effect,
-                reason=self.RECOVERY_DEFERRED_REASON,
+                resolution=resolution,
             )
 
         raise TypeError(f"unsupported effect type: {type(effect).__name__}")

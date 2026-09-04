@@ -5,6 +5,7 @@ from enum import Enum
 
 from .damage_resolution_system import DamageResolutionResult
 from .effects import ApplyStateEffect, DamageEffect, RecoverEffect, RemoveStateEffect
+from .recovery_system import RecoveryResult
 from .state_instance import StateInstance
 
 
@@ -44,7 +45,19 @@ class RemoveStateEffectResult:
 
 
 @dataclass(frozen=True, slots=True)
+class RecoverEffectResult:
+    effect: RecoverEffect
+    resolution: RecoveryResult
+    status: EffectExecutionStatus = field(
+        default=EffectExecutionStatus.RESOLVED,
+        init=False,
+    )
+
+
+@dataclass(frozen=True, slots=True)
 class DeferredEffectResult:
+    """保留 Stage 5 兼容合同；production BattleSystems 不再用于 RecoverEffect。"""
+
     effect: RecoverEffect
     reason: str
     status: EffectExecutionStatus = field(
@@ -57,5 +70,6 @@ EffectExecutionResult = (
     DamageEffectResult
     | ApplyStateEffectResult
     | RemoveStateEffectResult
+    | RecoverEffectResult
     | DeferredEffectResult
 )

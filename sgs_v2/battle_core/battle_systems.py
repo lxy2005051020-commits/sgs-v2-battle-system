@@ -10,16 +10,19 @@ from .damage_resolution_system import DamageResolutionSystem
 from .damage_system import DamageSystem
 from .effect_executor import EffectExecutor
 from .normal_attack_system import NormalAttackSystem
+from .recovery_system import RecoverySystem
+from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .state_lifecycle_system import StateLifecycleSystem
 from .target_system import TargetSystem
+from .trigger_system import TriggerSystem
 from .troop_system import TroopSystem
 from .victory_system import VictorySystem
 
 
 @dataclass(slots=True)
 class BattleSystems:
-    """BattleSystem 组合根，供 BattleEngine 与后续规则层使用。"""
+    """BattleSystem 组合根，供 BattleEngine 与显式规则层使用。"""
 
     attribute_system: AttributeSystem = field(default_factory=AttributeSystem)
     target_system: TargetSystem = field(default_factory=TargetSystem)
@@ -43,8 +46,11 @@ class BattleSystems:
     damage_resolution_system: DamageResolutionSystem = field(init=False)
     normal_attack_system: NormalAttackSystem = field(init=False)
     action_system: ActionSystem = field(init=False)
+    recovery_system: RecoverySystem = field(init=False)
     effect_executor: EffectExecutor = field(init=False)
     skill_resolver: SkillResolver = field(init=False)
+    trigger_system: TriggerSystem = field(init=False)
+    rule_hook_system: RuleHookSystem = field(init=False)
 
     def __post_init__(self) -> None:
         self.action_order_system = ActionOrderSystem(self.attribute_system)
@@ -66,8 +72,15 @@ class BattleSystems:
             self.damage_resolution_system,
         )
         self.action_system = ActionSystem(self.normal_attack_system)
+        self.recovery_system = RecoverySystem(self.troop_system)
         self.effect_executor = EffectExecutor(
             self.damage_resolution_system,
             self.state_lifecycle_system,
+            self.recovery_system,
         )
         self.skill_resolver = SkillResolver(self.target_system)
+        self.trigger_system = TriggerSystem()
+        self.rule_hook_system = RuleHookSystem(
+            self.trigger_system,
+            self.effect_executor,
+        )

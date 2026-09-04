@@ -12,6 +12,25 @@ from .unit import UnitRuntime
 from .weapon_damage_formula import WeaponBaseDamageFormula
 
 
+def _validate_optional_id(value: str | None, field_name: str) -> None:
+    if value is None:
+        return
+    if not isinstance(value, str):
+        raise TypeError(f"{field_name} must be a str when provided")
+    if not value.strip():
+        raise ValueError(f"{field_name} cannot be empty or whitespace when provided")
+
+
+def _validate_state_provenance_pair(
+    source_state_id: str | None,
+    source_state_instance_id: str | None,
+) -> None:
+    if (source_state_id is None) != (source_state_instance_id is None):
+        raise ValueError(
+            "source_state_id and source_state_instance_id must both be set or both be None"
+        )
+
+
 @dataclass(frozen=True, slots=True)
 class DamageRequest:
     """一次伤害结算请求。
@@ -26,6 +45,8 @@ class DamageRequest:
     source_type: DamageSourceType
     coefficient: float = 1.0
     source_skill_id: str | None = None
+    source_state_id: str | None = None
+    source_state_instance_id: str | None = None
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -34,6 +55,16 @@ class DamageRequest:
             raise ValueError("target_id cannot be empty")
         if self.coefficient < 0:
             raise ValueError("coefficient must be >= 0")
+        _validate_optional_id(self.source_skill_id, "source_skill_id")
+        _validate_optional_id(self.source_state_id, "source_state_id")
+        _validate_optional_id(
+            self.source_state_instance_id,
+            "source_state_instance_id",
+        )
+        _validate_state_provenance_pair(
+            self.source_state_id,
+            self.source_state_instance_id,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,8 +78,22 @@ class DamageResult:
     scaled_damage: float
     final_damage: int
     source_skill_id: str | None = None
+    source_state_id: str | None = None
+    source_state_instance_id: str | None = None
     prevented: bool = False
     prevented_by_state_id: str | None = None
+
+    def __post_init__(self) -> None:
+        _validate_optional_id(self.source_skill_id, "source_skill_id")
+        _validate_optional_id(self.source_state_id, "source_state_id")
+        _validate_optional_id(
+            self.source_state_instance_id,
+            "source_state_instance_id",
+        )
+        _validate_state_provenance_pair(
+            self.source_state_id,
+            self.source_state_instance_id,
+        )
 
     @property
     def requested_damage(self) -> int:
@@ -57,14 +102,7 @@ class DamageResult:
 
 
 class DamageSystem:
-    """统一计算理论伤害；不直接改变目标兵力。
-
-    - WEAPON 使用武力对统率的基础兵刃伤害。
-    - STRATEGY 使用智力对智力的基础谋略伤害。
-    - 两类基础伤害均先计算 100% 基础伤害，再由 coefficient 缩放。
-    - 被状态明确阻止的伤害是合法 0 伤害，不进入基础公式。
-    - TroopSystem 是唯一实际扣兵入口，因此击杀封顶不在这里实现。
-    """
+    """统一计算理论伤害；不直接改变目标兵力。"""
 
     def __init__(
         self,
@@ -92,11 +130,9 @@ class DamageSystem:
         )
 
     def weapon_troop_function(self, troops: int) -> int:
-        """暴露兵刃 F(N) 便于查表回归测试。"""
         return self._weapon_formula.troop_function(troops)
 
     def strategy_troop_function(self, troops: int) -> int:
-        """暴露谋略 F(N) 便于查表回归测试。"""
         return self._strategy_formula.troop_function(troops)
 
     def calculate(
@@ -119,6 +155,8 @@ class DamageSystem:
                 scaled_damage=0,
                 final_damage=0,
                 source_skill_id=request.source_skill_id,
+                source_state_id=request.source_state_id,
+                source_state_instance_id=request.source_state_instance_id,
                 prevented=True,
                 prevented_by_state_id=weakness_state_id,
             )
@@ -143,6 +181,8 @@ class DamageSystem:
             scaled_damage=scaled_damage,
             final_damage=final_damage,
             source_skill_id=request.source_skill_id,
+            source_state_id=request.source_state_id,
+            source_state_instance_id=request.source_state_instance_id,
         )
 
     def _calculate_weapon_base_damage(
