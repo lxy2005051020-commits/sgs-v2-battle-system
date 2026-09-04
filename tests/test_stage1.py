@@ -7,6 +7,7 @@ from sgs_v2.battle_core import (
     BattlePhase,
     EventBus,
     EventType,
+    LineupPosition,
     RandomSystem,
     UnitRuntime,
 )
@@ -23,7 +24,7 @@ def make_context(seed: int = 7) -> BattleContext:
             attack=220,
             defense=100,
             speed=100,
-            is_commander=True,
+            lineup_position=LineupPosition.COMMANDER,
         ),
         "b": UnitRuntime(
             unit_id="b",
@@ -34,7 +35,7 @@ def make_context(seed: int = 7) -> BattleContext:
             attack=210,
             defense=100,
             speed=100,
-            is_commander=True,
+            lineup_position=LineupPosition.COMMANDER,
         ),
     }
     return BattleContext(
@@ -127,7 +128,7 @@ def test_defeated_unit_does_not_act_after_death() -> None:
                 attack=1000,
                 defense=100,
                 speed=200,
-                is_commander=True,
+                lineup_position=LineupPosition.COMMANDER,
             ),
             "slow": UnitRuntime(
                 unit_id="slow",
@@ -138,7 +139,7 @@ def test_defeated_unit_does_not_act_after_death() -> None:
                 attack=100,
                 defense=0,
                 speed=1,
-                is_commander=True,
+                lineup_position=LineupPosition.COMMANDER,
             ),
         },
         event_bus=EventBus(),
