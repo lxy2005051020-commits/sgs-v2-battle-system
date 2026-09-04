@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from sgs_v2.battle_core import (
     BattleContext,
     BattleSystems,
@@ -75,9 +77,12 @@ def calculate_base(context: BattleContext, systems: BattleSystems) -> float:
     ).base_damage
 
 
-def test_weapon_troop_function_matches_exact_low_mid_and_high_segments() -> None:
+def test_weapon_troop_function_uses_full_lookup_table() -> None:
     damage = BattleSystems().damage_system
 
+    assert damage.weapon_troop_function(1) == 2
+    assert damage.weapon_troop_function(10) == 2
+    assert damage.weapon_troop_function(11) == 3
     assert damage.weapon_troop_function(2000) == 240
     assert damage.weapon_troop_function(2001) == 238
     assert damage.weapon_troop_function(2005) == 238
@@ -91,12 +96,23 @@ def test_weapon_troop_function_matches_exact_low_mid_and_high_segments() -> None
     assert damage.weapon_troop_function(10000) == 529
 
 
-def test_complete_mid_table_can_be_injected_for_formula_regression() -> None:
-    exact_table = {troops: 999 for troops in range(2001, 5000)}
-    damage = BattleSystems(weapon_mid_troop_table=exact_table).damage_system
+def test_complete_troop_function_table_can_be_injected_for_regression() -> None:
+    exact_table = {troops: 999 for troops in range(1, 10001)}
+    damage = BattleSystems(weapon_troop_function_table=exact_table).damage_system
 
+    assert damage.weapon_troop_function(1) == 999
     assert damage.weapon_troop_function(2001) == 999
     assert damage.weapon_troop_function(4999) == 999
+    assert damage.weapon_troop_function(10000) == 999
+
+
+def test_weapon_troop_function_rejects_values_outside_full_table() -> None:
+    damage = BattleSystems().damage_system
+
+    with pytest.raises(ValueError, match="lookup-table range"):
+        damage.weapon_troop_function(0)
+    with pytest.raises(ValueError, match="lookup-table range"):
+        damage.weapon_troop_function(10001)
 
 
 def test_weapon_base_damage_matches_formula_with_fixed_random_layers() -> None:
@@ -106,7 +122,7 @@ def test_weapon_base_damage_matches_formula_with_fixed_random_layers() -> None:
         weapon_low_damage_floor_range=(5, 5),
     )
 
-    # F(10000)=529; Sa=Sd=1.6; X=529+300*1.6-200*1.6=689.
+    # 查表 F(10000)=529; Sa=Sd=1.6; X=529+300*1.6-200*1.6=689.
     # B0=B1=B2=689; ceil(689*90/100)=621.
     assert calculate_base(context, systems) == 621
 
