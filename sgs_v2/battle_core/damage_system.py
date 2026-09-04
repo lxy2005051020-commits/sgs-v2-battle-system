@@ -66,7 +66,7 @@ class DamageSystem:
         attribute_system: AttributeSystem,
         *,
         damage_scale: float = 1.0,
-        weapon_mid_troop_table: Mapping[int, int] | None = None,
+        weapon_troop_function_table: Mapping[int, int] | None = None,
         weapon_random_percent_range: tuple[int, int] = (86, 94),
         weapon_low_damage_floor_range: tuple[int, int] = (5, 15),
     ) -> None:
@@ -75,7 +75,7 @@ class DamageSystem:
         self._attributes = attribute_system
         self._weapon_formula = WeaponBaseDamageFormula(
             attribute_system,
-            mid_troop_table=weapon_mid_troop_table,
+            troop_function_table=weapon_troop_function_table,
             random_percent_range=weapon_random_percent_range,
             low_damage_floor_range=weapon_low_damage_floor_range,
         )
@@ -84,7 +84,7 @@ class DamageSystem:
         self.damage_scale = damage_scale
 
     def weapon_troop_function(self, troops: int) -> int:
-        """暴露 F(N) 便于公式回归测试。"""
+        """暴露 F(N) 便于查表回归测试。"""
         return self._weapon_formula.troop_function(troops)
 
     def calculate(
