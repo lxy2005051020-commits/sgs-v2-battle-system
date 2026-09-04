@@ -10,14 +10,14 @@ from sgs_v2.battle_core import (
     DamageEffectResult,
     DamageSkillEffectSpec,
     DamageType,
-    DeferredEffectResult,
-    EffectExecutionStatus,
     EventBus,
     EventType,
     LineupPosition,
     OfficialStateId,
     RandomSystem,
     RecoverEffect,
+    RecoverEffectResult,
+    RecoveryResolvedResult,
     SkillDefinition,
     SkillResolutionStatus,
     SkillRuntime,
@@ -192,7 +192,8 @@ def test_battle_systems_composes_resolver_with_shared_target_system_only() -> No
     assert not hasattr(systems.skill_resolver, "_battle_systems")
 
 
-def test_stage5_recover_effect_remains_deferred() -> None:
+def test_stage7_promotes_recover_effect_from_deferred_to_recovery_system() -> None:
+    """Stage 6 keeps SkillResolver side-effect free; Stage 7 upgrades executor recovery."""
     context = make_context(seed=34)
     systems = BattleSystems()
     context.get_unit("b1").troops = 5000
@@ -208,7 +209,7 @@ def test_stage5_recover_effect_remains_deferred() -> None:
         ),
     )
 
-    assert isinstance(result, DeferredEffectResult)
-    assert result.status is EffectExecutionStatus.DEFERRED
-    assert result.reason == "RECOVERY_SYSTEM_NOT_AVAILABLE"
-    assert context.get_unit("b1").troops == before
+    assert isinstance(result, RecoverEffectResult)
+    assert isinstance(result.resolution, RecoveryResolvedResult)
+    assert result.resolution.troop_change.actual_change == 1000
+    assert context.get_unit("b1").troops == before + 1000
