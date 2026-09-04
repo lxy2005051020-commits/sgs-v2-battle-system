@@ -11,7 +11,7 @@ from .enums import (
 from .events import BattleEvent, EventBus, EventType
 from .random_system import RandomSystem
 from .unit import UnitRuntime
-from .action_order_system import ActionOrderSystem, UnresolvedStateInteractionError
+from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem, AttributeModifierProvider
 from .battle_systems import BattleSystems
@@ -50,7 +50,6 @@ __all__ = [
     "RandomSystem",
     "UnitRuntime",
     "ActionOrderSystem",
-    "UnresolvedStateInteractionError",
     "ActionSystem",
     "AttributeSystem",
     "AttributeModifierProvider",
