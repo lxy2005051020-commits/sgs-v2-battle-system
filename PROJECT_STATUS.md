@@ -15,7 +15,7 @@ Stage 3 BattleState       ✅ 稳定
 Stage 4 官方状态接入       ✅ FROZEN
 Stage 5 Effect            ✅ FROZEN
 Stage 6 Skill Runtime     ✅ FROZEN
-Stage 7 Trigger/Recovery  📝 规划已修订，待第二轮设计复审
+Stage 7 Trigger/Recovery  📝 第二轮问题已修复，待第三轮快速设计复审
 Stage 8+                  ⏳ 尚未开始
 ```
 
@@ -41,6 +41,12 @@ success
 
 ```text
 STAGE4_FINAL_AUDIT.md
+```
+
+当前状态：
+
+```text
+✅ FROZEN
 ```
 
 ---
@@ -197,13 +203,15 @@ STAGE7.md
 495b5239b1ae0691b9479511d79831d7bfb826de
 ```
 
-第一轮独立设计审计基线：
+## 第一轮设计审计
+
+审计基线：
 
 ```text
 e9a5f118e887ddada6401c1590738cac87791f1a
 ```
 
-第一轮设计审计结论：
+结论：
 
 ```text
 BLOCKER   = 0
@@ -214,13 +222,13 @@ HARDENING = 2
 VERDICT = NOT READY FOR STAGE 7 BUILD
 ```
 
-规划修订提交：
+第一次规划修订提交：
 
 ```text
 d2b686595a43294b622359574a24422cd1d83329
 ```
 
-本次规划修订已补齐：
+第一轮修订补齐：
 
 ```text
 1. source_skill_id / source_state_id / source_state_instance_id provenance 全链
@@ -233,6 +241,82 @@ d2b686595a43294b622359574a24422cd1d83329
 8. 官方状态 evidence matrix 的 PASS_STAGE7 / DEFER 硬 gate
 ```
 
+## 第二轮设计复审
+
+审计基线：
+
+```text
+a8f8d5651445c880560f21fa028785acb7d1d714
+```
+
+第二轮确认第一轮 4 个 MAJOR 已关闭，但新发现：
+
+```text
+BLOCKER   = 0
+MAJOR     = 2
+MINOR     = 1
+HARDENING = 2
+
+VERDICT = NOT READY FOR STAGE 7 BUILD
+```
+
+第二轮发现：
+
+```text
+MAJOR-01
+RecoveryPreventedResult 无法表达 TARGET_DEFEATED，且恢复阻止优先级未冻结。
+
+MAJOR-02
+HookResolutionResult 只有名称，没有正式 schema。
+
+MINOR
+source_state_id / source_state_instance_id 缺少配对不变量。
+
+HARDENING
+UnitActionStartHook 应验证 actor 存在。
+Evidence Matrix 应固定仓库交付位置。
+```
+
+第二轮问题修订提交：
+
+```text
+4cad61709c3bbf5dee87f831d1986432a5189a87
+```
+
+本次修订正式冻结：
+
+```text
+1. RecoveryPreventionReason:
+   HEALING_BAN / TARGET_DEFEATED
+
+2. Recovery precedence:
+   target existence
+   → TARGET_DEFEATED
+   → HEALING_BAN
+   → TroopSystem.restore
+
+3. RecoveryPreventedResult:
+   request
+   reason
+   reason_state_id
+   + 严格 reason/state 不变量
+
+4. HookResolutionResult:
+   hook
+   effect_results: tuple[EffectExecutionResult, ...]
+   无 Effect 时返回空 tuple，不返回 None
+
+5. provenance pair invariant:
+   source_state_id / source_state_instance_id
+   必须 both None 或 both non-None
+
+6. UnitActionStartHook:
+   actor_id 必须存在于 context.units
+
+7. Evidence Matrix 固定交付：
+   research/stage7_evidence_matrix/STAGE7_EVIDENCE_MATRIX.md
+```
+
 Stage 7 当前目标：
 
 ```text
@@ -240,21 +324,30 @@ Explicit Rule Hook
 → TriggerSystem
 → ordered Effect(s)
 → RuleHookSystem
+→ HookResolutionResult
 → EffectExecutor
 
 RecoverEffect
 → RecoverySystem
+→ RecoveryResolvedResult / RecoveryPreventedResult
 → TroopSystem
 ```
 
-并新增来源审计链：
+来源审计链：
 
 ```text
 StateInstance
 → source_skill_id
-→ source_state_id
-→ source_state_instance_id
+→ source_state_id + source_state_instance_id
 → Effect / Request / Result / Event
+```
+
+恢复阻止确定性：
+
+```text
+TARGET_DEFEATED
+→ HEALING_BAN
+→ restore
 ```
 
 Stage 7 第一版重点：
@@ -263,13 +356,16 @@ Stage 7 第一版重点：
 RuleHook 强类型合同
 TriggerSystem
 RuleHookSystem
+HookResolutionResult
 RecoverySystem
+RecoveryPreventionReason
 RecoverEffect 正式恢复执行
 恢复事实事件
 ROUND_START / UNIT_ACTION_START 最小 hook
 周期 Damage / Recovery StateRuntimeParams
 Hook atomic batch
 State provenance
+Evidence Matrix PASS_STAGE7 / DEFER gate
 ```
 
 基于当前架构与证据，Stage 7 不强行一次实现旧 Roadmap 中全部 11 个候选状态。
@@ -294,8 +390,8 @@ first_aid / weapon_lifesteal / strategy_lifesteal
 Stage 7 当前状态：
 
 ```text
-📝 PLAN REVISED
-PENDING SECOND DESIGN AUDIT
+📝 PLAN REVISED AFTER ROUND 2
+PENDING THIRD QUICK DESIGN AUDIT
 NOT IMPLEMENTED
 NOT FROZEN
 ```
@@ -303,7 +399,7 @@ NOT FROZEN
 下一步必须先：
 
 ```text
-第二轮独立 Stage 7 设计复审
+第三轮快速 Stage 7 设计复审
 ```
 
 只有复审达到：
@@ -325,15 +421,17 @@ prompts/STAGE7_BUILD_PROMPT.md
 
 # 下一阶段动作
 
-当前不得直接开始 Stage 8，也不得跳过 Stage 7 第二轮设计复审直接施工。
+当前不得直接开始 Stage 8，也不得跳过 Stage 7 第三轮快速设计复审直接施工。
 
 Stage 7 正确流程：
 
 ```text
 STAGE7.md
 → 第一轮独立设计审计
-→ 修订 STAGE7.md
+→ 第一次修订 STAGE7.md
 → 第二轮独立设计复审
+→ 第二次修订 STAGE7.md
+→ 第三轮快速设计复审
 → STAGE7_BUILD_PROMPT.md
 → Stage 7 施工
 → pytest / demo / CI
