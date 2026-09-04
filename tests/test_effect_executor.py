@@ -15,7 +15,6 @@ from sgs_v2.battle_core import (
     DamageEffectResult,
     DamageSourceType,
     DamageType,
-    DeferredEffectResult,
     EffectExecutionStatus,
     EventBus,
     EventType,
@@ -23,6 +22,8 @@ from sgs_v2.battle_core import (
     OfficialStateId,
     RandomSystem,
     RecoverEffect,
+    RecoverEffectResult,
+    RecoveryResolvedResult,
     RemoveStateEffect,
     RemoveStateEffectResult,
     UnitRuntime,
@@ -92,10 +93,7 @@ def test_apply_and_remove_state_effects_route_through_lifecycle() -> None:
 
     applied = systems.effect_executor.execute(context, apply_effect)
     assert isinstance(applied, ApplyStateEffectResult)
-    assert context.states.has(
-        owner_id="b1",
-        state_id=OfficialStateId.DISARM.value,
-    )
+    assert context.states.has(owner_id="b1", state_id=OfficialStateId.DISARM.value)
     assert context.event_bus.history[-1].event_type is EventType.STATE_APPLIED
 
     removed = systems.effect_executor.execute(
@@ -104,18 +102,14 @@ def test_apply_and_remove_state_effects_route_through_lifecycle() -> None:
     )
     assert isinstance(removed, RemoveStateEffectResult)
     assert removed.removed_state == applied.state_instance
-    assert not context.states.has(
-        owner_id="b1",
-        state_id=OfficialStateId.DISARM.value,
-    )
+    assert not context.states.has(owner_id="b1", state_id=OfficialStateId.DISARM.value)
     assert context.event_bus.history[-1].event_type is EventType.STATE_REMOVED
 
 
-def test_recover_effect_is_deferred_without_modifying_troops() -> None:
+def test_recover_effect_routes_through_recovery_system() -> None:
     context = make_context(seed=23)
     context.get_unit("b1").troops = 5000
     systems = BattleSystems()
-    before = context.get_unit("b1").troops
 
     result = systems.effect_executor.execute(
         context,
@@ -127,10 +121,12 @@ def test_recover_effect_is_deferred_without_modifying_troops() -> None:
         ),
     )
 
-    assert isinstance(result, DeferredEffectResult)
-    assert result.status is EffectExecutionStatus.DEFERRED
-    assert result.reason == "RECOVERY_SYSTEM_NOT_AVAILABLE"
-    assert context.get_unit("b1").troops == before
+    assert isinstance(result, RecoverEffectResult)
+    assert result.status is EffectExecutionStatus.RESOLVED
+    assert isinstance(result.resolution, RecoveryResolvedResult)
+    assert result.resolution.troop_change.actual_change == 1200
+    assert context.get_unit("b1").troops == 6200
+    assert context.event_bus.history[-1].event_type is EventType.TROOPS_RECOVERED
 
 
 def test_effect_objects_are_immutable() -> None:
