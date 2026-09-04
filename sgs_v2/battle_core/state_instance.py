@@ -1,8 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .enums import BattlePhase
+from .state_runtime_params import (
+    EmptyStateRuntimeParams,
+    StateRuntimeParams,
+    validate_state_runtime_params,
+)
 
 
 _AUTO_EXPIRE_PHASES = frozenset(
@@ -41,6 +46,9 @@ class StateInstance:
 
     expires_round: int | None = None
     expires_phase: str | None = None
+    runtime_params: StateRuntimeParams = field(
+        default_factory=EmptyStateRuntimeParams
+    )
 
     def __post_init__(self) -> None:
         if not self.instance_id:
@@ -57,6 +65,8 @@ class StateInstance:
             raise ValueError("applied_round must be >= 0")
         if not self.applied_phase:
             raise ValueError("applied_phase cannot be empty")
+
+        validate_state_runtime_params(self.runtime_params)
 
         has_expires_round = self.expires_round is not None
         has_expires_phase = self.expires_phase is not None
