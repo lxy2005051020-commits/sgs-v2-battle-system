@@ -9,6 +9,7 @@ from sgs_v2.battle_core import (
     BattleEngine,
     BattleSystems,
     EventBus,
+    LineupPosition,
     RandomSystem,
     TargetSystem,
     TroopSystem,
@@ -21,10 +22,10 @@ def make_context(seed: int = 7) -> BattleContext:
     return BattleContext(
         battle_id=f"systems-{seed}",
         units={
-            "a": UnitRuntime("a", "A", "A", 100, 100, 100, 100, 10),
-            "a2": UnitRuntime("a2", "A2", "A", 100, 0, 100, 100, 20),
-            "b": UnitRuntime("b", "B", "B", 100, 100, 100, 100, 10),
-            "b2": UnitRuntime("b2", "B2", "B", 100, 100, 100, 100, 20),
+            "a": UnitRuntime("a", "A", "A", 100, 100, 100, 100, 10, lineup_position=LineupPosition.COMMANDER),
+            "a2": UnitRuntime("a2", "A2", "A", 100, 0, 100, 100, 20, lineup_position=LineupPosition.DEPUTY_1),
+            "b": UnitRuntime("b", "B", "B", 100, 100, 100, 100, 10, lineup_position=LineupPosition.COMMANDER),
+            "b2": UnitRuntime("b2", "B2", "B", 100, 100, 100, 100, 20, lineup_position=LineupPosition.DEPUTY_1),
         },
         event_bus=EventBus(),
         random=RandomSystem(seed),
@@ -46,8 +47,8 @@ def test_target_system_does_not_consume_randomness_when_only_one_enemy_exists() 
     context = BattleContext(
         battle_id="single-enemy",
         units={
-            "a": UnitRuntime("a", "A", "A", 100, 100, 1, 1, 1),
-            "b": UnitRuntime("b", "B", "B", 100, 100, 1, 1, 1),
+            "a": UnitRuntime("a", "A", "A", 100, 100, 1, 1, 1, lineup_position=LineupPosition.COMMANDER),
+            "b": UnitRuntime("b", "B", "B", 100, 100, 1, 1, 1, lineup_position=LineupPosition.COMMANDER),
         },
         event_bus=EventBus(),
         random=RandomSystem(123),
@@ -57,14 +58,24 @@ def test_target_system_does_not_consume_randomness_when_only_one_enemy_exists() 
     assert context.random.random() == RandomSystem(123).random()
 
 
-def test_target_system_full_selection_does_not_consume_randomness_and_is_stable() -> None:
-    context = make_context(seed=321)
+def test_target_system_full_selection_does_not_consume_randomness_and_uses_lineup_order() -> None:
+    context = BattleContext(
+        battle_id="full-selection",
+        units={
+            "a": UnitRuntime("a", "A", "A", 100, 100, 1, 1, 1, lineup_position=LineupPosition.COMMANDER),
+            "b2": UnitRuntime("b2", "B2", "B", 100, 100, 1, 1, 1, lineup_position=LineupPosition.DEPUTY_1),
+            "b3": UnitRuntime("b3", "B3", "B", 100, 100, 1, 1, 1, lineup_position=LineupPosition.DEPUTY_2),
+            "b1": UnitRuntime("b1", "B1", "B", 100, 100, 1, 1, 1, lineup_position=LineupPosition.COMMANDER),
+        },
+        event_bus=EventBus(),
+        random=RandomSystem(321),
+    )
     targets = TargetSystem()
-    candidates = [context.get_unit("b2"), context.get_unit("b")]
+    candidates = [context.get_unit("b3"), context.get_unit("b1"), context.get_unit("b2")]
 
     selected = targets.random_units(context, candidates, count=99)
 
-    assert [unit.unit_id for unit in selected] == ["b", "b2"]
+    assert [unit.unit_id for unit in selected] == ["b1", "b2", "b3"]
     assert context.random.random() == RandomSystem(321).random()
 
 
@@ -114,7 +125,7 @@ def test_damage_calculation_does_not_change_troops_until_troop_system_applies_it
 
 
 def test_troop_system_clamps_damage_and_recovery() -> None:
-    unit = UnitRuntime("x", "X", "A", 100, 10, 1, 1, 1)
+    unit = UnitRuntime("x", "X", "A", 100, 10, 1, 1, 1, lineup_position=LineupPosition.COMMANDER)
     troops = TroopSystem()
     assert troops.apply_damage(unit, 99).actual_change == 10
     assert unit.troops == 0
@@ -132,8 +143,37 @@ def test_context_rejects_mismatched_unit_key() -> None:
         BattleContext(
             battle_id="mismatched-key",
             units={
-                "wrong": UnitRuntime("real", "A", "A", 100, 100, 1, 1, 1),
-                "enemy": UnitRuntime("enemy", "B", "B", 100, 100, 1, 1, 1),
+                "wrong": UnitRuntime("real", "A", "A", 100, 100, 1, 1, 1, lineup_position=LineupPosition.COMMANDER),
+                "enemy": UnitRuntime("enemy", "B", "B", 100, 100, 1, 1, 1, lineup_position=LineupPosition.COMMANDER),
+            },
+            event_bus=EventBus(),
+            random=RandomSystem(1),
+        )
+
+
+def test_context_rejects_duplicate_lineup_positions() -> None:
+    with pytest.raises(ValueError, match="duplicate lineup position"):
+        BattleContext(
+            battle_id="duplicate-position",
+            units={
+                "a1": UnitRuntime("a1", "A1", "A", 100, 100, 1, 1, 1, lineup_position=LineupPosition.COMMANDER),
+                "a2": UnitRuntime("a2", "A2", "A", 100, 100, 1, 1, 1, lineup_position=LineupPosition.DEPUTY_1),
+                "a3": UnitRuntime("a3", "A3", "A", 100, 100, 1, 1, 1, lineup_position=LineupPosition.DEPUTY_1),
+                "b1": UnitRuntime("b1", "B1", "B", 100, 100, 1, 1, 1, lineup_position=LineupPosition.COMMANDER),
+            },
+            event_bus=EventBus(),
+            random=RandomSystem(1),
+        )
+
+
+def test_context_requires_contiguous_lineup_positions() -> None:
+    with pytest.raises(ValueError, match="contiguous"):
+        BattleContext(
+            battle_id="missing-deputy-one",
+            units={
+                "a1": UnitRuntime("a1", "A1", "A", 100, 100, 1, 1, 1, lineup_position=LineupPosition.COMMANDER),
+                "a3": UnitRuntime("a3", "A3", "A", 100, 100, 1, 1, 1, lineup_position=LineupPosition.DEPUTY_2),
+                "b1": UnitRuntime("b1", "B1", "B", 100, 100, 1, 1, 1, lineup_position=LineupPosition.COMMANDER),
             },
             event_bus=EventBus(),
             random=RandomSystem(1),
@@ -144,8 +184,8 @@ def test_battle_with_no_alive_units_ends_immediately_as_draw() -> None:
     context = BattleContext(
         battle_id="all-dead",
         units={
-            "a": UnitRuntime("a", "A", "A", 100, 0, 100, 100, 100, True),
-            "b": UnitRuntime("b", "B", "B", 100, 0, 100, 100, 100, True),
+            "a": UnitRuntime("a", "A", "A", 100, 0, 100, 100, 100, lineup_position=LineupPosition.COMMANDER),
+            "b": UnitRuntime("b", "B", "B", 100, 0, 100, 100, 100, lineup_position=LineupPosition.COMMANDER),
         },
         event_bus=EventBus(),
         random=RandomSystem(1),
@@ -157,13 +197,32 @@ def test_battle_with_no_alive_units_ends_immediately_as_draw() -> None:
     assert not any(event.round_no > 0 for event in context.event_bus.history)
 
 
+def test_commander_defeat_ends_battle_even_if_deputy_is_alive() -> None:
+    context = BattleContext(
+        battle_id="commander-defeat",
+        units={
+            "a1": UnitRuntime("a1", "A主将", "A", 100, 100, 1000, 0, 200, lineup_position=LineupPosition.COMMANDER),
+            "a2": UnitRuntime("a2", "A副将", "A", 100, 100, 1, 1, 1, lineup_position=LineupPosition.DEPUTY_1),
+            "b1": UnitRuntime("b1", "B主将", "B", 10, 10, 1, 0, 100, lineup_position=LineupPosition.COMMANDER),
+            "b2": UnitRuntime("b2", "B副将", "B", 100, 100, 1, 1, 1, lineup_position=LineupPosition.DEPUTY_1),
+        },
+        event_bus=EventBus(),
+        random=RandomSystem(1),
+        max_rounds=1,
+    )
+    result = BattleEngine(context=context, systems=BattleSystems(damage_scale=10.0)).run()
+    assert result.winner_team_id == "A"
+    assert result.reason is BattleEndReason.COMMANDER_DEFEATED
+    assert context.get_unit("b2").is_alive
+
+
 def test_action_order_does_not_consume_randomness_for_unique_speeds() -> None:
     context = BattleContext(
         battle_id="unique-speeds",
         units={
-            "a": UnitRuntime("a", "A", "A", 10, 10, 1, 1, 100),
-            "b": UnitRuntime("b", "B", "B", 10, 10, 1, 1, 90),
-            "c": UnitRuntime("c", "C", "B", 10, 10, 1, 1, 80),
+            "a": UnitRuntime("a", "A", "A", 10, 10, 1, 1, 100, lineup_position=LineupPosition.COMMANDER),
+            "b": UnitRuntime("b", "B", "B", 10, 10, 1, 1, 90, lineup_position=LineupPosition.COMMANDER),
+            "c": UnitRuntime("c", "C", "B", 10, 10, 1, 1, 80, lineup_position=LineupPosition.DEPUTY_1),
         },
         event_bus=EventBus(),
         random=RandomSystem(123),
@@ -179,10 +238,12 @@ def test_action_order_does_not_consume_randomness_for_unique_speeds() -> None:
 
 def test_action_order_shuffle_is_stable_across_unit_dict_insertion_order() -> None:
     def make_tied_context(unit_order: list[str]) -> BattleContext:
-        all_units = {
-            unit_id: UnitRuntime(unit_id, unit_id, "A" if unit_id < "c" else "B", 10, 10, 1, 1, 100)
-            for unit_id in unit_order
+        all_units_map = {
+            "a": UnitRuntime("a", "a", "A", 10, 10, 1, 1, 100, lineup_position=LineupPosition.COMMANDER),
+            "b": UnitRuntime("b", "b", "A", 10, 10, 1, 1, 100, lineup_position=LineupPosition.DEPUTY_1),
+            "c": UnitRuntime("c", "c", "B", 10, 10, 1, 1, 100, lineup_position=LineupPosition.COMMANDER),
         }
+        all_units = {unit_id: all_units_map[unit_id] for unit_id in unit_order}
         return BattleContext("tied-order", all_units, EventBus(), RandomSystem(77))
 
     first = make_tied_context(["a", "b", "c"])
