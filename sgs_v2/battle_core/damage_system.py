@@ -5,8 +5,20 @@ from dataclasses import dataclass
 
 from .attribute_system import AttributeSystem
 from .context import BattleContext
+from .damage_formula_context import DamageDefensePolicy, DamageFormulaContext
+from .damage_formula_policy_system import DamageFormulaPolicySystem
+from .damage_modifier_system import DamageModifierSystem
+from .damage_pipeline_trace import DamagePipelineTrace, StageEvaluationStatus
+from .damage_prevention_system import (
+    DamageAllowedResult,
+    DamagePreventedResult,
+    DamagePreventionSystem,
+)
+from .damage_rule_provider import DamageRuleProvider, StateDamageRuleProvider
+from .damage_state_rule_bindings import DEFAULT_STAGE8_STATE_RULE_BINDINGS
 from .enums import DamageSourceType, DamageType
-from .official_state_catalog import OfficialStateId
+from .hit_resolution_system import HitPreventedResult, HitResolutionSystem
+from .numeric_validation import validate_nonnegative_finite
 from .strategy_damage_formula import StrategyBaseDamageFormula
 from .unit import UnitRuntime
 from .weapon_damage_formula import WeaponBaseDamageFormula
@@ -31,6 +43,10 @@ def _validate_state_provenance_pair(
         )
 
 
+class InvalidDamageParticipantError(ValueError):
+    """DamageRequest source/target is missing or already dead before rule discovery."""
+
+
 @dataclass(frozen=True, slots=True)
 class DamageRequest:
     """一次伤害结算请求。
@@ -53,8 +69,8 @@ class DamageRequest:
             raise ValueError("source_id cannot be empty")
         if not self.target_id:
             raise ValueError("target_id cannot be empty")
-        if self.coefficient < 0:
-            raise ValueError("coefficient must be >= 0")
+        coefficient = validate_nonnegative_finite(self.coefficient, "coefficient")
+        object.__setattr__(self, "coefficient", coefficient)
         _validate_optional_state_id(self.source_state_id, "source_state_id")
         _validate_optional_state_id(
             self.source_state_instance_id,
@@ -81,6 +97,7 @@ class DamageResult:
     prevented_by_state_id: str | None = None
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
+    pipeline_trace: DamagePipelineTrace | None = None
 
     def __post_init__(self) -> None:
         _validate_optional_state_id(self.source_state_id, "source_state_id")
@@ -100,14 +117,7 @@ class DamageResult:
 
 
 class DamageSystem:
-    """统一计算理论伤害；不直接改变目标兵力。
-
-    - WEAPON 使用武力对统率的基础兵刃伤害。
-    - STRATEGY 使用智力对智力的基础谋略伤害。
-    - 两类基础伤害均先计算 100% 基础伤害，再由 coefficient 缩放。
-    - 被状态明确阻止的伤害是合法 0 伤害，不进入基础公式。
-    - TroopSystem 是唯一实际扣兵入口，因此击杀封顶不在这里实现。
-    """
+    """统一计算理论伤害；不直接改变目标兵力。"""
 
     def __init__(
         self,
@@ -119,6 +129,11 @@ class DamageSystem:
         strategy_troop_function_table: Mapping[int, int] | None = None,
         strategy_random_percent_range: tuple[int, int] = (86, 94),
         strategy_low_damage_floor_range: tuple[int, int] = (5, 15),
+        rule_provider: DamageRuleProvider | None = None,
+        prevention_system: DamagePreventionSystem | None = None,
+        hit_resolution_system: HitResolutionSystem | None = None,
+        formula_policy_system: DamageFormulaPolicySystem | None = None,
+        modifier_system: DamageModifierSystem | None = None,
     ) -> None:
         self._attributes = attribute_system
         self._weapon_formula = WeaponBaseDamageFormula(
@@ -133,6 +148,13 @@ class DamageSystem:
             random_percent_range=strategy_random_percent_range,
             low_damage_floor_range=strategy_low_damage_floor_range,
         )
+        self._rule_provider = rule_provider or StateDamageRuleProvider(
+            DEFAULT_STAGE8_STATE_RULE_BINDINGS
+        )
+        self._prevention = prevention_system or DamagePreventionSystem()
+        self._hit = hit_resolution_system or HitResolutionSystem()
+        self._formula_policy = formula_policy_system or DamageFormulaPolicySystem()
+        self._modifiers = modifier_system or DamageModifierSystem()
 
     def weapon_troop_function(self, troops: int) -> int:
         """暴露兵刃 F(N) 便于查表回归测试。"""
@@ -147,37 +169,97 @@ class DamageSystem:
         context: BattleContext,
         request: DamageRequest,
     ) -> DamageResult:
-        source = context.get_unit(request.source_id)
-        target = context.get_unit(request.target_id)
+        source, target = self._validate_participants(context, request)
+        rules = self._rule_provider.collect(context, request)
 
-        weakness_state_id = OfficialStateId.WEAKNESS.value
-        if context.states.has(owner_id=source.unit_id, state_id=weakness_state_id):
-            return DamageResult(
-                source_id=request.source_id,
-                target_id=request.target_id,
-                damage_type=request.damage_type,
-                source_type=request.source_type,
-                coefficient=request.coefficient,
-                base_damage=0,
-                scaled_damage=0,
-                final_damage=0,
-                source_skill_id=request.source_skill_id,
-                source_state_id=request.source_state_id,
-                source_state_instance_id=request.source_state_instance_id,
-                prevented=True,
-                prevented_by_state_id=weakness_state_id,
+        prevention_result = self._prevention.resolve(rules)
+        if isinstance(prevention_result, DamagePreventedResult):
+            trace = DamagePipelineTrace(
+                prevention_status=StageEvaluationStatus.EXECUTED,
+                prevention_result=prevention_result,
+                hit_status=StageEvaluationStatus.NOT_EVALUATED,
+                hit_result=None,
+                formula_policy_status=StageEvaluationStatus.NOT_EVALUATED,
+                formula_policy_result=None,
+                modifier_status=StageEvaluationStatus.NOT_EVALUATED,
+                modifier_result=None,
+            )
+            return self._prevented_result(
+                request,
+                trace,
+                prevention_result.decisive_source.source_state_id,
+            )
+        if not isinstance(prevention_result, DamageAllowedResult):
+            raise TypeError("DamagePreventionSystem returned an invalid result")
+
+        hit_result = self._hit.resolve(context, request, rules)
+        if isinstance(hit_result, HitPreventedResult):
+            trace = DamagePipelineTrace(
+                prevention_status=StageEvaluationStatus.EXECUTED,
+                prevention_result=prevention_result,
+                hit_status=StageEvaluationStatus.EXECUTED,
+                hit_result=hit_result,
+                formula_policy_status=StageEvaluationStatus.NOT_EVALUATED,
+                formula_policy_result=None,
+                modifier_status=StageEvaluationStatus.NOT_EVALUATED,
+                modifier_result=None,
+            )
+            prevented_by_state_id = (
+                None
+                if hit_result.decisive_source is None
+                else hit_result.decisive_source.source_state_id
+            )
+            return self._prevented_result(
+                request,
+                trace,
+                prevented_by_state_id,
             )
 
+        formula_policy_result = self._formula_policy.resolve(request, rules)
+        formula_context = formula_policy_result.formula_context
         if request.damage_type is DamageType.WEAPON:
-            base_damage = self._calculate_weapon_base_damage(context, source, target)
+            base_damage = self._calculate_weapon_base_damage(
+                context,
+                source,
+                target,
+                formula_context=formula_context,
+            )
         elif request.damage_type is DamageType.STRATEGY:
-            base_damage = self._calculate_strategy_base_damage(context, source, target)
+            base_damage = self._calculate_strategy_base_damage(
+                context,
+                source,
+                target,
+                formula_context=formula_context,
+            )
         else:
             raise ValueError(f"unsupported damage type: {request.damage_type}")
 
-        scaled_damage = base_damage * request.coefficient
-        final_damage = max(1, int(scaled_damage))
+        scaled_damage = validate_nonnegative_finite(
+            base_damage * request.coefficient,
+            "scaled_damage",
+        )
+        modifier_result = self._modifiers.resolve(
+            context,
+            request,
+            rules,
+            scaled_damage,
+        )
+        modified_damage = validate_nonnegative_finite(
+            modifier_result.output_damage,
+            "modified_damage",
+        )
+        final_damage = max(1, int(modified_damage))
 
+        trace = DamagePipelineTrace(
+            prevention_status=StageEvaluationStatus.EXECUTED,
+            prevention_result=prevention_result,
+            hit_status=StageEvaluationStatus.EXECUTED,
+            hit_result=hit_result,
+            formula_policy_status=StageEvaluationStatus.EXECUTED,
+            formula_policy_result=formula_policy_result,
+            modifier_status=StageEvaluationStatus.EXECUTED,
+            modifier_result=modifier_result,
+        )
         return DamageResult(
             source_id=request.source_id,
             target_id=request.target_id,
@@ -190,6 +272,57 @@ class DamageSystem:
             source_skill_id=request.source_skill_id,
             source_state_id=request.source_state_id,
             source_state_instance_id=request.source_state_instance_id,
+            pipeline_trace=trace,
+        )
+
+    @staticmethod
+    def _validate_participants(
+        context: BattleContext,
+        request: DamageRequest,
+    ) -> tuple[UnitRuntime, UnitRuntime]:
+        try:
+            source = context.get_unit(request.source_id)
+        except KeyError as exc:
+            raise InvalidDamageParticipantError(
+                f"damage source does not exist: {request.source_id}"
+            ) from exc
+        try:
+            target = context.get_unit(request.target_id)
+        except KeyError as exc:
+            raise InvalidDamageParticipantError(
+                f"damage target does not exist: {request.target_id}"
+            ) from exc
+        if source.troops <= 0:
+            raise InvalidDamageParticipantError(
+                f"damage source is dead: {request.source_id}"
+            )
+        if target.troops <= 0:
+            raise InvalidDamageParticipantError(
+                f"damage target is dead: {request.target_id}"
+            )
+        return source, target
+
+    @staticmethod
+    def _prevented_result(
+        request: DamageRequest,
+        trace: DamagePipelineTrace,
+        prevented_by_state_id: str | None,
+    ) -> DamageResult:
+        return DamageResult(
+            source_id=request.source_id,
+            target_id=request.target_id,
+            damage_type=request.damage_type,
+            source_type=request.source_type,
+            coefficient=request.coefficient,
+            base_damage=0,
+            scaled_damage=0,
+            final_damage=0,
+            source_skill_id=request.source_skill_id,
+            prevented=True,
+            prevented_by_state_id=prevented_by_state_id,
+            source_state_id=request.source_state_id,
+            source_state_instance_id=request.source_state_instance_id,
+            pipeline_trace=trace,
         )
 
     def _calculate_weapon_base_damage(
@@ -197,13 +330,37 @@ class DamageSystem:
         context: BattleContext,
         source: UnitRuntime,
         target: UnitRuntime,
+        *,
+        formula_context: DamageFormulaContext | None = None,
     ) -> int:
-        return self._weapon_formula.calculate(context, source, target)
+        if (
+            formula_context is None
+            or formula_context.defense_policy is DamageDefensePolicy.NORMAL
+        ):
+            return self._weapon_formula.calculate(context, source, target)
+        return self._weapon_formula.calculate(
+            context,
+            source,
+            target,
+            formula_context=formula_context,
+        )
 
     def _calculate_strategy_base_damage(
         self,
         context: BattleContext,
         source: UnitRuntime,
         target: UnitRuntime,
+        *,
+        formula_context: DamageFormulaContext | None = None,
     ) -> int:
-        return self._strategy_formula.calculate(context, source, target)
+        if (
+            formula_context is None
+            or formula_context.defense_policy is DamageDefensePolicy.NORMAL
+        ):
+            return self._strategy_formula.calculate(context, source, target)
+        return self._strategy_formula.calculate(
+            context,
+            source,
+            target,
+            formula_context=formula_context,
+        )
