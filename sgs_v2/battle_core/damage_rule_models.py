@@ -36,6 +36,23 @@ def _canonicalize_enum_scope(
     return canonical
 
 
+def _validate_canonical_enum_scope(
+    value: object,
+    enum_type: type[Enum],
+    field_name: str,
+    *,
+    allow_none: bool,
+) -> None:
+    if value is None:
+        if allow_none:
+            return
+        raise TypeError(f"{field_name} must be a frozenset of {enum_type.__name__}")
+    if not isinstance(value, frozenset):
+        raise TypeError(f"{field_name} must be a frozenset of {enum_type.__name__}")
+    for item in value:
+        _validate_enum(item, enum_type, f"{field_name} item")
+
+
 class DamageRuleFamily(str, Enum):
     PREVENTION = "PREVENTION"
     HIT = "HIT"
@@ -146,14 +163,24 @@ class HitRuleContribution:
         _validate_nonempty_string(self.order_key, "order_key")
         if self.category is not None:
             _validate_enum(self.category, HitPreventionCategory, "category")
-        for item in self.bypass_categories:
-            _validate_enum(item, HitPreventionCategory, "bypass_categories item")
-        if self.damage_types is not None:
-            for item in self.damage_types:
-                _validate_enum(item, DamageType, "damage_types item")
-        if self.source_types is not None:
-            for item in self.source_types:
-                _validate_enum(item, DamageSourceType, "source_types item")
+        _validate_canonical_enum_scope(
+            self.bypass_categories,
+            HitPreventionCategory,
+            "bypass_categories",
+            allow_none=False,
+        )
+        _validate_canonical_enum_scope(
+            self.damage_types,
+            DamageType,
+            "damage_types",
+            allow_none=True,
+        )
+        _validate_canonical_enum_scope(
+            self.source_types,
+            DamageSourceType,
+            "source_types",
+            allow_none=True,
+        )
         probability = validate_probability(self.probability)
 
         if self.kind is HitRuleKind.BYPASS:
@@ -207,12 +234,18 @@ class DamageFormulaPolicyContribution:
         if not isinstance(self.source, RuleContributionSource):
             raise TypeError("source must be a RuleContributionSource")
         _validate_nonempty_string(self.order_key, "order_key")
-        if self.damage_types is not None:
-            for item in self.damage_types:
-                _validate_enum(item, DamageType, "damage_types item")
-        if self.source_types is not None:
-            for item in self.source_types:
-                _validate_enum(item, DamageSourceType, "source_types item")
+        _validate_canonical_enum_scope(
+            self.damage_types,
+            DamageType,
+            "damage_types",
+            allow_none=True,
+        )
+        _validate_canonical_enum_scope(
+            self.source_types,
+            DamageSourceType,
+            "source_types",
+            allow_none=True,
+        )
 
     def applies_to(self, damage_type: DamageType, source_type: DamageSourceType) -> bool:
         return (
