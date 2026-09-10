@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .context import BattleContext
+from .damage_formula_context import DamageDefensePolicy, DamageFormulaContext
 from .unit import UnitRuntime
 from .weapon_damage_formula import WeaponBaseDamageFormula
 
@@ -17,12 +18,27 @@ class StrategyBaseDamageFormula(WeaponBaseDamageFormula):
         context: BattleContext,
         source: UnitRuntime,
         target: UnitRuntime,
+        *,
+        formula_context: DamageFormulaContext | None = None,
     ) -> int:
-        if source.intelligence is None or target.intelligence is None:
+        formula_context = formula_context or DamageFormulaContext()
+        if source.intelligence is None:
             raise NotImplementedError(
-                "strategy base damage requires intelligence values for both source and target"
+                "strategy base damage requires an intelligence value for source"
             )
-        return super().calculate(context, source, target)
+        if (
+            formula_context.defense_policy is DamageDefensePolicy.NORMAL
+            and target.intelligence is None
+        ):
+            raise NotImplementedError(
+                "strategy base damage requires an intelligence value for target"
+            )
+        return super().calculate(
+            context,
+            source,
+            target,
+            formula_context=formula_context,
+        )
 
     def _source_combat_attribute(
         self,
