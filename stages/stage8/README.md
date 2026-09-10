@@ -1,6 +1,8 @@
 # Stage 8 · Damage Pipeline
 
-状态：`IMPLEMENTATION REPAIRED / PENDING SECOND INDEPENDENT RE-AUDIT`
+状态：`FINAL AUDIT PASSED / APPROVED FOR MERGE TO MAIN`
+
+Stage 8 当前尚未 FROZEN；Stage 9 尚未开始。
 
 从 Stage 8 开始，阶段资料统一按“一阶段一目录”管理。production code 继续按职责放在 `sgs_v2/`，测试继续放在 `tests/`；阶段目录只收纳设计合同、Evidence、施工 Prompt、审计与封版材料。别把源码也按 Stage 切成考古层，那会把整洁从美德变成事故。
 
@@ -13,7 +15,8 @@ stages/stage8/
 ├── STAGE8_DESIGN_FREEZE.md
 ├── STAGE8_EVIDENCE_MATRIX.md
 ├── STAGE8_BUILD_PROMPT.md
-└── STAGE8_IMPLEMENTATION_REPORT.md
+├── STAGE8_IMPLEMENTATION_REPORT.md
+└── STAGE8_FINAL_AUDIT.md
 ```
 
 含义：
@@ -22,14 +25,8 @@ stages/stage8/
 - `STAGE8_DESIGN_FREEZE.md`：DESIGN FROZEN 的 normative freeze-prep addendum；只补充 numeric validation ownership 与 typed StageEvaluationStatus，两者与主设计共同构成冻结合同。
 - `STAGE8_EVIDENCE_MATRIX.md`：官方状态 production mapping 的 Evidence Gate。
 - `STAGE8_BUILD_PROMPT.md`：Stage 8 正式施工 Prompt。
-- `STAGE8_IMPLEMENTATION_REPORT.md`：production implementation 施工报告与独立实现审计入口记录；不是 FINAL_AUDIT。
-
-后续 Stage 8 产生的实现审计、最终审计也放入本目录，例如：
-
-```text
-STAGE8_IMPLEMENTATION_AUDIT.md
-STAGE8_FINAL_AUDIT.md
-```
+- `STAGE8_IMPLEMENTATION_REPORT.md`：production implementation 施工报告与独立实现审计入口记录；保留其历史时间点描述，不作为当前状态文档。
+- `STAGE8_FINAL_AUDIT.md`：锁定 Final Audit approved exact SHA、审计 findings、CI 与 artifact provenance 的正式 Final Audit 记录。
 
 ## Frozen design authority
 
@@ -68,7 +65,7 @@ rebellion                 DEFER
 
 `weakness` 的 PASS 仅允许迁移既有冻结行为；其余 DEFER 状态不得出现 official production binding。
 
-## Current implementation state
+## Current process state
 
 Stage 8 production implementation 位于：
 
@@ -76,17 +73,84 @@ Stage 8 production implementation 位于：
 stage8-damage-pipeline
 ```
 
-第一次 Independent Re-Audit 后，`S8-M-02` 被 reopened，`S8-N-01` 保持 PARTIAL，并发现 README process-state mismatch。第二轮 findings repair 已补强 typed scope runtime boundary：constructor 继续 canonicalize 合法 iterable，resolver runtime validation 则只接受冻结合同规定的 canonical immutable representation，并在 scope filtering 与 RNG 之前 fail-fast。
-
-当前状态为：
+完成顺序：
 
 ```text
-IMPLEMENTATION REPAIRED / PENDING SECOND INDEPENDENT RE-AUDIT
+Second Independent Re-Audit
+→ PASSED
+
+Third Independent Re-Audit
+→ PASSED
+
+Stage 8 Final Audit
+→ PASSED
+
+S8-RN-01
+→ CLOSED by docs-only correction
+
+next:
+merge stage8-damage-pipeline → main
 ```
 
-`S8-N-01` 仅可记为 addressed / pending independent verification，不在本轮自行宣布 CLOSED。
+Final Audit approved exact SHA：
 
-这不等于 `READY FOR FINAL AUDIT`，更不等于 `Stage 8 FROZEN`。只有第二次独立 re-audit 确认 findings 后，才有资格决定是否进入 FINAL_AUDIT。
+```text
+446ac5a9d4ae595dcc79abc3c03873cad22893f8
+```
+
+Final Audit 结论：
+
+```text
+BLOCKER   = 0
+MAJOR     = 0
+MINOR     = 1
+HARDENING = 0
+
+VERDICT = APPROVED FOR MERGE TO MAIN
+```
+
+唯一 remaining finding `S8-RN-01` 属于 documentation / process，要求在 merge 前修复 current-state chronology。本次 Post-Final-Audit docs-only correction 只修改当前状态文档并保存正式 Final Audit 报告，不触碰 runtime、tests、workflow、Frozen Design 或 Evidence Matrix。
+
+Final Audit baseline verification：
+
+```text
+Run #161
+run_id = 34497232784
+head_sha = 446ac5a9d4ae595dcc79abc3c03873cad22893f8
+pytest -q = 326 passed
+demo.py = success
+workflow conclusion = success
+```
+
+本次 docs-only correction 产生的新 exact HEAD 必须取得自己的 CI 与 audit artifact provenance，验证通过后才是最终 merge source。
+
+当前状态仍然不是：
+
+```text
+Stage 8 FROZEN
+```
+
+Stage 8 只有在后续完成以下独立流程后才能 FROZEN：
+
+```text
+merge stage8-damage-pipeline → main
+↓
+resolve main exact merge SHA
+↓
+main exact-head pytest
+↓
+main exact-head demo
+↓
+main exact-head GitHub Actions
+↓
+main exact-head artifact provenance
+↓
+final freeze docs/status
+↓
+Stage 8 FROZEN
+```
+
+Stage 9 在此之前不得开始。
 
 ## Folder convention
 

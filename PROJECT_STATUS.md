@@ -14,9 +14,11 @@ Stage 4 官方状态接入       ✅ FROZEN
 Stage 5 Effect            ✅ FROZEN
 Stage 6 Skill Runtime     ✅ FROZEN
 Stage 7 Trigger/Recovery  ✅ FROZEN
-Stage 8 Damage Pipeline   🟡 IMPLEMENTATION REPAIRED / PENDING SECOND INDEPENDENT RE-AUDIT
-Stage 9+                  ⏳ 尚未施工
+Stage 8 Damage Pipeline   ✅ FINAL AUDIT PASSED / APPROVED FOR MERGE
+Stage 9+                  ⏳ NOT STARTED
 ```
+
+Stage 8 当前尚未 FROZEN。只有完成 `stage8-damage-pipeline → main` 合并并取得 main exact-head 的 pytest / demo / GitHub Actions / artifact provenance 后，才允许执行最终 freeze docs/status。
 
 ---
 
@@ -267,6 +269,10 @@ Stage 8 实现报告：
 
 `stages/stage8/STAGE8_IMPLEMENTATION_REPORT.md`
 
+Stage 8 正式 Final Audit：
+
+`stages/stage8/STAGE8_FINAL_AUDIT.md`
+
 旧路径仅保留兼容入口，不再作为新阶段资料的正式存放位置。
 
 Stage 8 v1 设计提交：
@@ -450,15 +456,52 @@ S8-N-01  必须覆盖 noncanonical frozenset subclass / mutable semantic alias r
 S8-RN-01 PROJECT_STATUS 必须明确记录 SECOND INDEPENDENT RE-AUDIT
 ```
 
-当前修复已将 Hit / FormulaPolicy / Modifier runtime scope validator 收紧为 exact built-in `frozenset`，并新增相应 subclass、pre-RNG 与 mutable semantic alias 回归。
+随后完成的 findings repair、第二次独立 Re-Audit、第三次独立 Re-Audit 与 Stage 8 Final Audit 已确认 production findings 收束。Final Audit 锁定 exact SHA：
+
+```text
+446ac5a9d4ae595dcc79abc3c03873cad22893f8
+```
+
+Final Audit 结论：
+
+```text
+BLOCKER   = 0
+MAJOR     = 0
+MINOR     = 1
+HARDENING = 0
+
+S8-M-01 = CLOSED
+S8-M-02 = CLOSED
+S8-M-03 = CLOSED
+S8-N-01 = CLOSED
+S8-H-01 = CLOSED
+
+S8-RN-01 = documentation / process only
+Disposition = MUST FIX BEFORE MERGE
+
+VERDICT = APPROVED FOR MERGE TO MAIN
+```
+
+Final Audit exact-head verification baseline：
+
+```text
+Run #161
+run_id = 34497232784
+head_sha = 446ac5a9d4ae595dcc79abc3c03873cad22893f8
+pytest -q = 326 passed
+demo.py = success
+workflow conclusion = success
+```
+
+当前 Post-Final-Audit closure 只修正 current-state documentation 并保存正式 Final Audit 报告，不修改 production、tests、workflow、Frozen Design 或 Evidence Matrix。`S8-RN-01` 由该 docs-only correction 关闭；该 docs-only exact HEAD 仍必须取得自己的 GitHub Actions 与 artifact provenance 后，才可作为最终 merge source。
 
 当前状态：
 
 ```text
-IMPLEMENTATION REPAIRED / PENDING SECOND INDEPENDENT RE-AUDIT
+FINAL AUDIT PASSED / APPROVED FOR MERGE TO MAIN
+Stage 8 = NOT YET FROZEN
+Stage 9 = NOT STARTED
 ```
-
-这不是 `READY FOR FINAL AUDIT`，更不是 `Stage 8 FROZEN`。新的 repair exact-head GitHub Actions 与 audit artifact 必须对最终 repair HEAD 再次确认。
 
 Stage 8 当前 Evidence Gate 保持不变：
 
@@ -482,33 +525,26 @@ rebellion                 DEFER
 
 # 下一阶段动作
 
-Stage 8 当前不得进入 Final Audit，更不得开始 Stage 9。
+Stage 8 Final Audit 已通过，但 Stage 8 尚未 FROZEN，Stage 9 不得开始。
 
-下一步必须对修复后的：
-
-```text
-stage8-damage-pipeline
-```
-
-执行第二次独立 re-audit，并继续严格以：
+当前必须先完成 Post-Final-Audit docs-only exact-head verification。验证通过后，下一独立动作才是：
 
 ```text
-stages/stage8/STAGE8.md
-+ stages/stage8/STAGE8_DESIGN_FREEZE.md
-+ stages/stage8/STAGE8_EVIDENCE_MATRIX.md
-+ stages/stage8/STAGE8_IMPLEMENTATION_REPORT.md
+merge stage8-damage-pipeline → main
+↓
+resolve main exact merge SHA
+↓
+main exact-head pytest
+↓
+main exact-head demo
+↓
+main exact-head GitHub Actions
+↓
+main exact-head artifact provenance
+↓
+final freeze docs/status
+↓
+Stage 8 FROZEN
 ```
 
-为审计基准。
-
-后续流程仍是：
-
-```text
-findings repair exact-head CI
-→ second independent re-audit
-→ 如 re-audit 通过，再执行 stages/stage8/STAGE8_FINAL_AUDIT.md
-→ merge main
-→ main exact-head pytest/demo/CI
-→ PROJECT_STATUS final update
-→ Stage 8 FROZEN
-```
+本轮不得自动 merge，也不得提前写 `Stage 8 FROZEN`。
