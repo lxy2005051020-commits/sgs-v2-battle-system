@@ -14,11 +14,11 @@ Stage 4 官方状态接入       ✅ FROZEN
 Stage 5 Effect            ✅ FROZEN
 Stage 6 Skill Runtime     ✅ FROZEN
 Stage 7 Trigger/Recovery  ✅ FROZEN
-Stage 8 Damage Pipeline   ✅ FINAL AUDIT PASSED / APPROVED FOR MERGE
-Stage 9+                  ⏳ NOT STARTED
+Stage 8 Damage Pipeline   ✅ FROZEN
+Stage 9+                  ⏳ NOT STARTED / READY FOR DESIGN
 ```
 
-Stage 8 当前尚未 FROZEN。只有完成 `stage8-damage-pipeline → main` 合并并取得 main exact-head 的 pytest / demo / GitHub Actions / artifact provenance 后，才允许执行最终 freeze docs/status。
+Stage 8 已完成 Final Audit、S8-RN-01 docs-only closure、main 合并、main exact-head pytest / demo / GitHub Actions / artifact provenance 与最终 freeze docs/status，因此正式进入 `FROZEN`。Stage 9 尚未开始，但现在可以按新的独立阶段合同进入设计流程。
 
 ---
 
@@ -241,7 +241,7 @@ strategy_lifesteal
 
 ---
 
-# Stage 8 设计冻结与实现基线
+# Stage 8 设计冻结、实现与封版基线
 
 从 Stage 8 开始采用“一阶段一目录”组织阶段资料：
 
@@ -272,6 +272,10 @@ Stage 8 实现报告：
 Stage 8 正式 Final Audit：
 
 `stages/stage8/STAGE8_FINAL_AUDIT.md`
+
+Stage 8 最终封版证据：
+
+`stages/stage8/STAGE8_FREEZE_RECORD.md`
 
 旧路径仅保留兼容入口，不再作为新阶段资料的正式存放位置。
 
@@ -456,7 +460,9 @@ S8-N-01  必须覆盖 noncanonical frozenset subclass / mutable semantic alias r
 S8-RN-01 PROJECT_STATUS 必须明确记录 SECOND INDEPENDENT RE-AUDIT
 ```
 
-随后完成的 findings repair、第二次独立 Re-Audit、第三次独立 Re-Audit 与 Stage 8 Final Audit 已确认 production findings 收束。Final Audit 锁定 exact SHA：
+随后完成 findings repair、第三次 Independent Re-Audit 与 Stage 8 Final Audit，production findings 全部收束。
+
+Third Independent Re-Audit / Final Audit approved implementation SHA：
 
 ```text
 446ac5a9d4ae595dcc79abc3c03873cad22893f8
@@ -493,14 +499,104 @@ demo.py = success
 workflow conclusion = success
 ```
 
-当前 Post-Final-Audit closure 只修正 current-state documentation 并保存正式 Final Audit 报告，不修改 production、tests、workflow、Frozen Design 或 Evidence Matrix。`S8-RN-01` 由该 docs-only correction 关闭；该 docs-only exact HEAD 仍必须取得自己的 GitHub Actions 与 artifact provenance 后，才可作为最终 merge source。
+## Stage 8 post-Final-Audit docs closure
 
-当前状态：
+S8-RN-01 通过纯文档提交关闭：
 
 ```text
-FINAL AUDIT PASSED / APPROVED FOR MERGE TO MAIN
-Stage 8 = NOT YET FROZEN
-Stage 9 = NOT STARTED
+202647135f97db31e08b6ad1d917d7e5a8e6ce15
+docs(stage8): close final-audit process finding
+```
+
+该 commit 的直接 parent 为 Final Audit approved SHA：
+
+```text
+446ac5a9d4ae595dcc79abc3c03873cad22893f8
+```
+
+仅修改：
+
+```text
+PROJECT_STATUS.md
+stages/stage8/README.md
+stages/stage8/STAGE8_FINAL_AUDIT.md
+```
+
+branch exact-head verification：
+
+```text
+Run #163
+run_id = 34502709262
+head_sha = 202647135f97db31e08b6ad1d917d7e5a8e6ce15
+pytest -q = 326 passed
+demo.py = success
+workflow conclusion = success
+```
+
+S8-RN-01：
+
+```text
+✅ CLOSED
+```
+
+## Stage 8 merge and main freeze verification
+
+starting main：
+
+```text
+ec9b2fa8e2ca801632e3228c9727f612bf0d989a
+```
+
+最终 merge source：
+
+```text
+202647135f97db31e08b6ad1d917d7e5a8e6ce15
+```
+
+merge 前 compare：
+
+```text
+ahead_by  = 37
+behind_by = 0
+```
+
+因此采用 fast-forward 合并，`main` 直接前进到：
+
+```text
+202647135f97db31e08b6ad1d917d7e5a8e6ce15
+```
+
+main exact-head GitHub Actions：
+
+```text
+Run #164
+run_id = 34503212432
+head_sha = 202647135f97db31e08b6ad1d917d7e5a8e6ce15
+Python = 3.11.16
+pytest -q = 326 passed in 1.30s
+demo.py = success
+workflow conclusion = success
+```
+
+main exact-head audit artifact：
+
+```text
+name = stage8-independent-audit-202647135f97db31e08b6ad1d917d7e5a8e6ce15
+Artifact ID = 10162718752
+SHA-256 = ca4af39fe3c069f3b050416c1b52e136560e20270dd31a085d024fbd421ee531
+AUDIT_SOURCE_SHA = 202647135f97db31e08b6ad1d917d7e5a8e6ce15
+```
+
+因此 main 封版证据链成立：
+
+```text
+main exact HEAD
+=
+workflow head SHA
+=
+artifact source SHA
+=
+202647135f97db31e08b6ad1d917d7e5a8e6ce15
 ```
 
 Stage 8 当前 Evidence Gate 保持不变：
@@ -510,10 +606,10 @@ weakness                  PASS_STAGE8
 
 evasion                   DEFER
 barrier                   DEFER
-sure_hit                  DEFER
+sure_hit                   DEFER
 defense_pierce            DEFER
 vigilance                 DEFER
-critical                   DEFER
+critical                  DEFER
 strategy_critical         DEFER
 damage_reduction_pierce   DEFER
 rebellion                 DEFER
@@ -521,30 +617,56 @@ rebellion                 DEFER
 
 `weakness` 的 PASS 只用于迁移既有冻结行为；其余 DEFER 状态没有 official Stage 8 production binding。
 
+Stage 8 封版条件：
+
+```text
+Final Audit PASSED
++
+all blocking findings CLOSED
++
+S8-RN-01 CLOSED before merge
++
+verified merge source entered main
++
+main exact-head pytest / demo / GitHub Actions PASS
++
+main exact-head artifact provenance PASS
++
+STAGE8_FREEZE_RECORD.md persisted
+=
+Stage 8 FROZEN
+```
+
+当前状态：
+
+```text
+✅ FROZEN
+```
+
 ---
 
 # 下一阶段动作
 
-Stage 8 Final Audit 已通过，但 Stage 8 尚未 FROZEN，Stage 9 不得开始。
+Stage 8 已正式 FROZEN。
 
-当前必须先完成 Post-Final-Audit docs-only exact-head verification。验证通过后，下一独立动作才是：
+下一阶段允许进入：
 
 ```text
-merge stage8-damage-pipeline → main
-↓
-resolve main exact merge SHA
-↓
-main exact-head pytest
-↓
-main exact-head demo
-↓
-main exact-head GitHub Actions
-↓
-main exact-head artifact provenance
-↓
-final freeze docs/status
-↓
-Stage 8 FROZEN
+Stage 9 design / evidence / boundary definition
 ```
 
-本轮不得自动 merge，也不得提前写 `Stage 8 FROZEN`。
+Stage 9 必须作为新的独立阶段执行：
+
+```text
+需求与证据梳理
+↓
+STAGE9.md 设计
+↓
+独立设计审计
+↓
+DESIGN FROZEN
+↓
+施工
+```
+
+Stage 9 不得为了方便反向修改 Stage 8 frozen contracts。若未来发现真正的 Stage 8 freeze-breaking defect，必须走正式 reopen 流程，而不是把“顺手改一下”包装成下一阶段施工。
