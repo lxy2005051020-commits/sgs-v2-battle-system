@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from .damage_rule_models import (
     DamagePreventionContribution,
     DamagePreventionRuleKind,
@@ -7,15 +9,17 @@ from .damage_rule_models import (
     RuleContributionSource,
 )
 from .damage_rule_provider import StateRuleAdapter, StateRuleBinding
-from .damage_system import DamageRequest
 from .official_state_catalog import OfficialStateId
 from .state_instance import StateInstance
+
+if TYPE_CHECKING:
+    from .damage_system import DamageRequest
 
 
 def _build_weakness_prevention(
     instance: StateInstance,
     source: RuleContributionSource,
-    request: DamageRequest,
+    request: "DamageRequest",
 ) -> DamagePreventionContribution | None:
     if instance.owner_id != request.source_id:
         return None
