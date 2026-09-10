@@ -36,6 +36,19 @@ def _canonicalize_enum_scope(
     return canonical
 
 
+def _validate_canonical_enum_scope(
+    value: object,
+    enum_type: type[Enum],
+    field_name: str,
+) -> None:
+    if value is None:
+        return
+    if not isinstance(value, frozenset):
+        raise TypeError(f"{field_name} must be a frozenset of {enum_type.__name__}")
+    for item in value:
+        _validate_enum(item, enum_type, f"{field_name} item")
+
+
 class DamageModifierKind(str, Enum):
     CRITICAL_MULTIPLIER = "CRITICAL_MULTIPLIER"
     OUTGOING_INCREASE = "OUTGOING_INCREASE"
@@ -106,12 +119,8 @@ class DamageModifierContribution:
         if not isinstance(self.source, RuleContributionSource):
             raise TypeError("source must be a RuleContributionSource")
         _validate_nonempty_string(self.order_key, "order_key")
-        if self.damage_types is not None:
-            for item in self.damage_types:
-                _validate_enum(item, DamageType, "damage_types item")
-        if self.source_types is not None:
-            for item in self.source_types:
-                _validate_enum(item, DamageSourceType, "source_types item")
+        _validate_canonical_enum_scope(self.damage_types, DamageType, "damage_types")
+        _validate_canonical_enum_scope(self.source_types, DamageSourceType, "source_types")
         operand = validate_nonnegative_finite(self.operand, "modifier operand")
         validate_probability(self.probability)
 
