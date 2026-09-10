@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .attribute_system import AttributeSystem
 from .context import BattleContext
+from .damage_formula_context import DamageDefensePolicy, DamageFormulaContext
 from .enums import TroopType
 from .unit import UnitRuntime
 
@@ -68,11 +69,19 @@ class WeaponBaseDamageFormula:
         context: BattleContext,
         source: UnitRuntime,
         target: UnitRuntime,
+        *,
+        formula_context: DamageFormulaContext | None = None,
     ) -> int:
         """计算 DamageBase，不执行扣兵封顶。"""
+        formula_context = formula_context or DamageFormulaContext()
         troops = source.troops
         offense = self._source_combat_attribute(context, source)
-        defense = self._target_combat_attribute(context, target)
+        defense = (
+            0.0
+            if formula_context.defense_policy
+            is DamageDefensePolicy.IGNORE_RELEVANT_TARGET_DEFENSE
+            else self._target_combat_attribute(context, target)
+        )
 
         source_level_scale = 0.6 + 0.02 * source.level
         target_level_scale = 0.6 + 0.02 * target.level
