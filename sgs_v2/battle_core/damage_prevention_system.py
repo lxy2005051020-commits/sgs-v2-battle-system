@@ -35,6 +35,8 @@ class DamagePreventionSystem:
     """Resolve typed prevention contributions without knowing concrete state ids."""
 
     def resolve(self, rules: DamageRuleCollection) -> DamagePermissionResult:
+        for contribution in rules.prevention_contributions:
+            contribution.validate_runtime_contract()
         contributions = tuple(
             sorted(
                 rules.prevention_contributions,
@@ -54,6 +56,9 @@ class DamagePreventionSystem:
 
     @staticmethod
     def _reason_for(contribution: DamagePreventionContribution) -> DamagePreventionReason:
+        contribution.validate_runtime_contract()
         if contribution.kind is DamagePreventionRuleKind.SOURCE_CANNOT_DEAL_DAMAGE:
             return DamagePreventionReason.SOURCE_CANNOT_DEAL_DAMAGE
-        return DamagePreventionReason.RULE_PREVENTED
+        if contribution.kind is DamagePreventionRuleKind.GENERIC_PREVENTION:
+            return DamagePreventionReason.RULE_PREVENTED
+        raise ValueError(f"unsupported prevention rule kind: {contribution.kind}")

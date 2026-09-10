@@ -44,6 +44,10 @@ class DamageEffect:
             raise ValueError("source_id cannot be empty")
         if not self.target_id:
             raise ValueError("target_id cannot be empty")
+        if not isinstance(self.damage_type, DamageType):
+            raise TypeError("damage_type must be a DamageType")
+        if not isinstance(self.source_type, DamageSourceType):
+            raise TypeError("source_type must be a DamageSourceType")
         coefficient = validate_nonnegative_finite(self.coefficient, "coefficient")
         object.__setattr__(self, "coefficient", coefficient)
         _validate_optional_id(self.source_state_id, "source_state_id")

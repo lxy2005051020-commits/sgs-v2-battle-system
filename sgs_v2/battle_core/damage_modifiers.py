@@ -8,6 +8,34 @@ from .enums import DamageSourceType, DamageType
 from .numeric_validation import validate_nonnegative_finite, validate_probability
 
 
+def _validate_nonempty_string(value: object, field_name: str) -> None:
+    if not isinstance(value, str):
+        raise TypeError(f"{field_name} must be a str")
+    if not value.strip():
+        raise ValueError(f"{field_name} cannot be empty or whitespace")
+
+
+def _validate_enum(value: object, enum_type: type[Enum], field_name: str) -> None:
+    if not isinstance(value, enum_type):
+        raise TypeError(f"{field_name} must be a {enum_type.__name__}")
+
+
+def _canonicalize_enum_scope(
+    value: object,
+    enum_type: type[Enum],
+    field_name: str,
+) -> frozenset | None:
+    if value is None:
+        return None
+    try:
+        canonical = frozenset(value)  # type: ignore[arg-type]
+    except TypeError as exc:
+        raise TypeError(f"{field_name} must be an iterable of {enum_type.__name__}") from exc
+    for item in canonical:
+        _validate_enum(item, enum_type, f"{field_name} item")
+    return canonical
+
+
 class DamageModifierKind(str, Enum):
     CRITICAL_MULTIPLIER = "CRITICAL_MULTIPLIER"
     OUTGOING_INCREASE = "OUTGOING_INCREASE"
@@ -51,12 +79,41 @@ class DamageModifierContribution:
     source_types: frozenset[DamageSourceType] | None = None
 
     def __post_init__(self) -> None:
-        if not self.order_key:
-            raise ValueError("order_key cannot be empty")
+        object.__setattr__(
+            self,
+            "damage_types",
+            _canonicalize_enum_scope(self.damage_types, DamageType, "damage_types"),
+        )
+        object.__setattr__(
+            self,
+            "source_types",
+            _canonicalize_enum_scope(
+                self.source_types,
+                DamageSourceType,
+                "source_types",
+            ),
+        )
         operand = validate_nonnegative_finite(self.operand, "modifier operand")
         probability = validate_probability(self.probability)
         object.__setattr__(self, "operand", operand)
         object.__setattr__(self, "probability", probability)
+        self.validate_runtime_contract()
+
+    def validate_runtime_contract(self) -> None:
+        _validate_enum(self.phase, DamageModifierPhase, "phase")
+        _validate_enum(self.kind, DamageModifierKind, "kind")
+        _validate_enum(self.operation, DamageModifierOperation, "operation")
+        if not isinstance(self.source, RuleContributionSource):
+            raise TypeError("source must be a RuleContributionSource")
+        _validate_nonempty_string(self.order_key, "order_key")
+        if self.damage_types is not None:
+            for item in self.damage_types:
+                _validate_enum(item, DamageType, "damage_types item")
+        if self.source_types is not None:
+            for item in self.source_types:
+                _validate_enum(item, DamageSourceType, "source_types item")
+        operand = validate_nonnegative_finite(self.operand, "modifier operand")
+        validate_probability(self.probability)
 
         if self.operation is DamageModifierOperation.REDUCTION_PIERCE:
             if self.kind is not DamageModifierKind.REDUCTION_PIERCE:

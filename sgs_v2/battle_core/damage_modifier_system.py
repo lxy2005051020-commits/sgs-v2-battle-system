@@ -29,6 +29,19 @@ class DamageModifierSystem:
         scaled_damage: float,
     ) -> DamageModifierResult:
         current = validate_nonnegative_finite(scaled_damage, "scaled_damage")
+
+        # Validate every typed contribution before scope filtering or probability resolution.
+        # Malformed input must never become RNG-dependent behavior.
+        for contribution in rules.modifier_contributions:
+            contribution.validate_runtime_contract()
+            if contribution.operation not in {
+                DamageModifierOperation.MULTIPLY_FACTOR,
+                DamageModifierOperation.REDUCTION_PIERCE,
+            }:
+                raise ValueError(
+                    f"unsupported damage modifier operation: {contribution.operation}"
+                )
+
         applicable = tuple(
             contribution
             for contribution in rules.modifier_contributions

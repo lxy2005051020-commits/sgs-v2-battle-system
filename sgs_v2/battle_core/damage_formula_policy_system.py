@@ -25,6 +25,8 @@ class DamageFormulaPolicySystem:
         request: "DamageRequest",
         rules: DamageRuleCollection,
     ) -> DamageFormulaPolicyResult:
+        for contribution in rules.formula_policy_contributions:
+            contribution.validate_runtime_contract()
         contributions = tuple(
             sorted(
                 (

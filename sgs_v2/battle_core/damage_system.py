@@ -14,7 +14,11 @@ from .damage_prevention_system import (
     DamagePreventedResult,
     DamagePreventionSystem,
 )
-from .damage_rule_provider import DamageRuleProvider, StateDamageRuleProvider
+from .damage_rule_provider import (
+    DamageRuleCollection,
+    DamageRuleProvider,
+    StateDamageRuleProvider,
+)
 from .damage_state_rule_bindings import DEFAULT_STAGE8_STATE_RULE_BINDINGS
 from .enums import DamageSourceType, DamageType
 from .hit_resolution_system import HitPreventedResult, HitResolutionSystem
@@ -69,6 +73,10 @@ class DamageRequest:
             raise ValueError("source_id cannot be empty")
         if not self.target_id:
             raise ValueError("target_id cannot be empty")
+        if not isinstance(self.damage_type, DamageType):
+            raise TypeError("damage_type must be a DamageType")
+        if not isinstance(self.source_type, DamageSourceType):
+            raise TypeError("source_type must be a DamageSourceType")
         coefficient = validate_nonnegative_finite(self.coefficient, "coefficient")
         object.__setattr__(self, "coefficient", coefficient)
         _validate_optional_state_id(self.source_state_id, "source_state_id")
@@ -100,6 +108,10 @@ class DamageResult:
     pipeline_trace: DamagePipelineTrace | None = None
 
     def __post_init__(self) -> None:
+        if not isinstance(self.damage_type, DamageType):
+            raise TypeError("damage_type must be a DamageType")
+        if not isinstance(self.source_type, DamageSourceType):
+            raise TypeError("source_type must be a DamageSourceType")
         _validate_optional_state_id(self.source_state_id, "source_state_id")
         _validate_optional_state_id(
             self.source_state_instance_id,
@@ -185,6 +197,8 @@ class DamageSystem:
     ) -> DamageResult:
         source, target = self._validate_participants(context, request)
         rules = self._rule_provider.collect(context, request)
+        if not isinstance(rules, DamageRuleCollection):
+            raise TypeError("DamageRuleProvider.collect() must return DamageRuleCollection")
 
         prevention_result = self._prevention.resolve(rules)
         if isinstance(prevention_result, DamagePreventedResult):

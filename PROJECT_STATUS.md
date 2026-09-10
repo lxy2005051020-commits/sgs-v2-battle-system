@@ -14,7 +14,7 @@ Stage 4 官方状态接入       ✅ FROZEN
 Stage 5 Effect            ✅ FROZEN
 Stage 6 Skill Runtime     ✅ FROZEN
 Stage 7 Trigger/Recovery  ✅ FROZEN
-Stage 8 Damage Pipeline   🟡 IMPLEMENTATION COMPLETE / PENDING INDEPENDENT AUDIT
+Stage 8 Damage Pipeline   🟡 IMPLEMENTATION REPAIRED / PENDING INDEPENDENT RE-AUDIT
 Stage 9+                  ⏳ 尚未施工
 ```
 
@@ -354,7 +354,7 @@ TroopSystem
 ✅ DESIGN FROZEN
 ```
 
-## Stage 8 implementation
+## Stage 8 original implementation
 
 施工分支：
 
@@ -394,15 +394,62 @@ demo.py = success
 Stage 8 audit artifact = success
 ```
 
-Stage 8 当前 implementation 状态：
+独立实现审计 repair base：
 
 ```text
-IMPLEMENTATION COMPLETE / PENDING INDEPENDENT AUDIT
+87fcd424cd25a96710ec297285b88206e84bb4ef
 ```
 
-这不是 `Stage 8 FROZEN`。独立实现审计、finding 修复/re-audit、FINAL_AUDIT、merge main 与 main exact-head verification 尚未完成。
+独立实现审计结论：
 
-Stage 8 当前 Evidence Gate：
+```text
+BLOCKER   = 0
+MAJOR     = 3
+MINOR     = 1
+HARDENING = 1
+VERDICT   = FIX REQUIRED BEFORE FINAL AUDIT
+```
+
+## Stage 8 independent-audit findings repair
+
+本轮只修复审计 findings，不改变 Stage 8 frozen design：
+
+```text
+S8-M-01  immutable rule snapshot / binding alias safety
+S8-M-02  typed runtime boundaries + pre-RNG malformed operation rejection
+S8-M-03  DamagePipelineTrace typed status/result invariants
+S8-N-01  audit reproduction regression coverage
+S8-H-01  applicable duplicate order_key construction-time guard
+```
+
+新增正式回归：
+
+```text
+tests/test_stage8_independent_audit_regressions.py
+```
+
+回归复现证据：
+
+```text
+旧 SHA 87fcd424... + 新 regression tests
+→ 28 failed / 8 passed
+
+修复代码 + 完整 suite（提交前本地 artifact 验证）
+→ 297 passed
+
+python demo.py
+→ success
+```
+
+当前状态：
+
+```text
+IMPLEMENTATION REPAIRED / PENDING INDEPENDENT RE-AUDIT
+```
+
+这不是 `READY FOR FINAL AUDIT`，更不是 `Stage 8 FROZEN`。新的 repair exact-head GitHub Actions 与 audit artifact 必须对最终 repair HEAD 再次确认。
+
+Stage 8 当前 Evidence Gate 保持不变：
 
 ```text
 weakness                  PASS_STAGE8
@@ -412,7 +459,7 @@ barrier                   DEFER
 sure_hit                  DEFER
 defense_pierce            DEFER
 vigilance                 DEFER
-critical                  DEFER
+critical                   DEFER
 strategy_critical         DEFER
 damage_reduction_pierce   DEFER
 rebellion                 DEFER
@@ -424,15 +471,15 @@ rebellion                 DEFER
 
 # 下一阶段动作
 
-Stage 8 production implementation 已完成施工并进入独立实现审计入口。
+Stage 8 当前不得进入 Final Audit，更不得开始 Stage 9。
 
-下一步必须对：
+下一步必须对修复后的：
 
 ```text
 stage8-damage-pipeline
 ```
 
-执行独立 implementation audit，并继续严格以：
+执行独立 re-audit，并继续严格以：
 
 ```text
 stages/stage8/STAGE8.md
@@ -446,10 +493,9 @@ stages/stage8/STAGE8.md
 后续流程仍是：
 
 ```text
-独立实现审计
-→ findings 修复
-→ re-audit
-→ stages/stage8/STAGE8_FINAL_AUDIT.md
+findings repair exact-head CI
+→ independent re-audit
+→ 如 re-audit 通过，再执行 stages/stage8/STAGE8_FINAL_AUDIT.md
 → merge main
 → main exact-head pytest/demo/CI
 → PROJECT_STATUS final update

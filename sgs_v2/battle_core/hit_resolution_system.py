@@ -48,6 +48,8 @@ class HitResolutionSystem:
         request: "DamageRequest",
         rules: DamageRuleCollection,
     ) -> HitResolutionResult:
+        for contribution in rules.hit_contributions:
+            contribution.validate_runtime_contract()
         applicable = tuple(
             sorted(
                 (
@@ -88,6 +90,7 @@ class HitResolutionSystem:
         contribution: HitRuleContribution,
         contributors: tuple[RuleContributionSource, ...],
     ) -> HitPreventedResult:
+        contribution.validate_runtime_contract()
         if contribution.category is HitPreventionCategory.IMMUNITY_LIKE:
             reason = HitPreventionReason.IMMUNITY_LIKE
         elif contribution.category is HitPreventionCategory.EVASION_LIKE:

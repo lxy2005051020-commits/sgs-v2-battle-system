@@ -8,6 +8,34 @@ from .enums import DamageSourceType, DamageType
 from .numeric_validation import validate_probability
 
 
+def _validate_nonempty_string(value: object, field_name: str) -> None:
+    if not isinstance(value, str):
+        raise TypeError(f"{field_name} must be a str")
+    if not value.strip():
+        raise ValueError(f"{field_name} cannot be empty or whitespace")
+
+
+def _validate_enum(value: object, enum_type: type[Enum], field_name: str) -> None:
+    if not isinstance(value, enum_type):
+        raise TypeError(f"{field_name} must be a {enum_type.__name__}")
+
+
+def _canonicalize_enum_scope(
+    value: object,
+    enum_type: type[Enum],
+    field_name: str,
+) -> frozenset | None:
+    if value is None:
+        return None
+    try:
+        canonical = frozenset(value)  # type: ignore[arg-type]
+    except TypeError as exc:
+        raise TypeError(f"{field_name} must be an iterable of {enum_type.__name__}") from exc
+    for item in canonical:
+        _validate_enum(item, enum_type, f"{field_name} item")
+    return canonical
+
+
 class DamageRuleFamily(str, Enum):
     PREVENTION = "PREVENTION"
     HIT = "HIT"
@@ -55,8 +83,13 @@ class DamagePreventionContribution:
     order_key: str
 
     def __post_init__(self) -> None:
-        if not self.order_key:
-            raise ValueError("order_key cannot be empty")
+        self.validate_runtime_contract()
+
+    def validate_runtime_contract(self) -> None:
+        _validate_enum(self.kind, DamagePreventionRuleKind, "kind")
+        if not isinstance(self.source, RuleContributionSource):
+            raise TypeError("source must be a RuleContributionSource")
+        _validate_nonempty_string(self.order_key, "order_key")
 
 
 class HitPreventionCategory(str, Enum):
@@ -82,10 +115,46 @@ class HitRuleContribution:
     source_types: frozenset[DamageSourceType] | None = None
 
     def __post_init__(self) -> None:
-        if not self.order_key:
-            raise ValueError("order_key cannot be empty")
+        try:
+            bypass_categories = frozenset(self.bypass_categories)
+        except TypeError as exc:
+            raise TypeError(
+                "bypass_categories must be an iterable of HitPreventionCategory"
+            ) from exc
+        damage_types = _canonicalize_enum_scope(
+            self.damage_types,
+            DamageType,
+            "damage_types",
+        )
+        source_types = _canonicalize_enum_scope(
+            self.source_types,
+            DamageSourceType,
+            "source_types",
+        )
+        object.__setattr__(self, "bypass_categories", bypass_categories)
+        object.__setattr__(self, "damage_types", damage_types)
+        object.__setattr__(self, "source_types", source_types)
+
         probability = validate_probability(self.probability)
         object.__setattr__(self, "probability", probability)
+        self.validate_runtime_contract()
+
+    def validate_runtime_contract(self) -> None:
+        _validate_enum(self.kind, HitRuleKind, "kind")
+        if not isinstance(self.source, RuleContributionSource):
+            raise TypeError("source must be a RuleContributionSource")
+        _validate_nonempty_string(self.order_key, "order_key")
+        if self.category is not None:
+            _validate_enum(self.category, HitPreventionCategory, "category")
+        for item in self.bypass_categories:
+            _validate_enum(item, HitPreventionCategory, "bypass_categories item")
+        if self.damage_types is not None:
+            for item in self.damage_types:
+                _validate_enum(item, DamageType, "damage_types item")
+        if self.source_types is not None:
+            for item in self.source_types:
+                _validate_enum(item, DamageSourceType, "source_types item")
+        probability = validate_probability(self.probability)
 
         if self.kind is HitRuleKind.BYPASS:
             if not self.bypass_categories:
@@ -117,8 +186,33 @@ class DamageFormulaPolicyContribution:
     source_types: frozenset[DamageSourceType] | None = None
 
     def __post_init__(self) -> None:
-        if not self.order_key:
-            raise ValueError("order_key cannot be empty")
+        object.__setattr__(
+            self,
+            "damage_types",
+            _canonicalize_enum_scope(self.damage_types, DamageType, "damage_types"),
+        )
+        object.__setattr__(
+            self,
+            "source_types",
+            _canonicalize_enum_scope(
+                self.source_types,
+                DamageSourceType,
+                "source_types",
+            ),
+        )
+        self.validate_runtime_contract()
+
+    def validate_runtime_contract(self) -> None:
+        _validate_enum(self.defense_policy, DamageDefensePolicy, "defense_policy")
+        if not isinstance(self.source, RuleContributionSource):
+            raise TypeError("source must be a RuleContributionSource")
+        _validate_nonempty_string(self.order_key, "order_key")
+        if self.damage_types is not None:
+            for item in self.damage_types:
+                _validate_enum(item, DamageType, "damage_types item")
+        if self.source_types is not None:
+            for item in self.source_types:
+                _validate_enum(item, DamageSourceType, "source_types item")
 
     def applies_to(self, damage_type: DamageType, source_type: DamageSourceType) -> bool:
         return (
