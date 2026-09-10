@@ -14,7 +14,7 @@ Stage 4 官方状态接入       ✅ FROZEN
 Stage 5 Effect            ✅ FROZEN
 Stage 6 Skill Runtime     ✅ FROZEN
 Stage 7 Trigger/Recovery  ✅ FROZEN
-Stage 8 Damage Pipeline   ✅ DESIGN FROZEN / implementation 尚未开始
+Stage 8 Damage Pipeline   ✅ DESIGN FROZEN / BUILD Prompt 已生成 / implementation 尚未开始
 Stage 9+                  ⏳ 尚未施工
 ```
 
@@ -241,13 +241,29 @@ strategy_lifesteal
 
 # Stage 8 设计冻结基线
 
+从 Stage 8 开始采用“一阶段一目录”组织阶段资料：
+
+`stages/stage8/`
+
+目录规范：`stages/README.md`
+
 Stage 8 主设计文档：
 
-`STAGE8.md`
+`stages/stage8/STAGE8.md`
+
+Stage 8 设计冻结记录 / normative freeze-prep addendum：
+
+`stages/stage8/STAGE8_DESIGN_FREEZE.md`
 
 Stage 8 Evidence Matrix：
 
-`research/stage8_evidence_matrix/STAGE8_EVIDENCE_MATRIX.md`
+`stages/stage8/STAGE8_EVIDENCE_MATRIX.md`
+
+Stage 8 正式施工 Prompt：
+
+`stages/stage8/STAGE8_BUILD_PROMPT.md`
+
+旧路径仅保留兼容入口，不再作为新阶段资料的正式存放位置。
 
 Stage 8 v1 设计提交：
 
@@ -282,10 +298,6 @@ VERDICT   = DESIGN READY
 ```
 
 第二轮确认第一轮 `M-01 ~ M-07` 全部 CLOSED。
-
-设计冻结记录 / normative freeze-prep addendum：
-
-`STAGE8_DESIGN_FREEZE.md`
 
 冻结记录提交：
 
@@ -362,20 +374,21 @@ rebellion                 DEFER
 
 # 下一阶段动作
 
-Stage 8 的设计审计阶段已经关闭。
+Stage 8 的设计审计已经关闭，正式 BUILD Prompt 已生成。
 
-下一步允许生成：
+下一步建立 Stage 8 implementation branch：
 
 ```text
-prompts/STAGE8_BUILD_PROMPT.md
+stage8-damage-pipeline
 ```
 
-随后建立 Stage 8 implementation branch，并严格按照：
+并严格按照：
 
 ```text
-STAGE8.md
-+ STAGE8_DESIGN_FREEZE.md
-+ research/stage8_evidence_matrix/STAGE8_EVIDENCE_MATRIX.md
+stages/stage8/STAGE8.md
++ stages/stage8/STAGE8_DESIGN_FREEZE.md
++ stages/stage8/STAGE8_EVIDENCE_MATRIX.md
++ stages/stage8/STAGE8_BUILD_PROMPT.md
 ```
 
 进行施工。
@@ -386,7 +399,7 @@ STAGE8.md
 pytest + demo + CI
 → 独立实现审计
 → 修复 / 再审计
-→ STAGE8_FINAL_AUDIT.md
+→ stages/stage8/STAGE8_FINAL_AUDIT.md
 → merge main
 → main exact-head CI
 → Stage 8 FROZEN
