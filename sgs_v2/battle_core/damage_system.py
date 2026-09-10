@@ -148,13 +148,27 @@ class DamageSystem:
             random_percent_range=strategy_random_percent_range,
             low_damage_floor_range=strategy_low_damage_floor_range,
         )
-        self._rule_provider = rule_provider or StateDamageRuleProvider(
-            DEFAULT_STAGE8_STATE_RULE_BINDINGS
+        self._rule_provider = (
+            StateDamageRuleProvider(DEFAULT_STAGE8_STATE_RULE_BINDINGS)
+            if rule_provider is None
+            else rule_provider
         )
-        self._prevention = prevention_system or DamagePreventionSystem()
-        self._hit = hit_resolution_system or HitResolutionSystem()
-        self._formula_policy = formula_policy_system or DamageFormulaPolicySystem()
-        self._modifiers = modifier_system or DamageModifierSystem()
+        self._prevention = (
+            DamagePreventionSystem() if prevention_system is None else prevention_system
+        )
+        self._hit = (
+            HitResolutionSystem()
+            if hit_resolution_system is None
+            else hit_resolution_system
+        )
+        self._formula_policy = (
+            DamageFormulaPolicySystem()
+            if formula_policy_system is None
+            else formula_policy_system
+        )
+        self._modifiers = (
+            DamageModifierSystem() if modifier_system is None else modifier_system
+        )
 
     def weapon_troop_function(self, troops: int) -> int:
         """暴露兵刃 F(N) 便于查表回归测试。"""
