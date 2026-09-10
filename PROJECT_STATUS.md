@@ -14,7 +14,7 @@ Stage 4 官方状态接入       ✅ FROZEN
 Stage 5 Effect            ✅ FROZEN
 Stage 6 Skill Runtime     ✅ FROZEN
 Stage 7 Trigger/Recovery  ✅ FROZEN
-Stage 8 Damage Pipeline   ✅ DESIGN FROZEN / BUILD Prompt 已生成 / implementation 尚未开始
+Stage 8 Damage Pipeline   🟡 IMPLEMENTATION COMPLETE / PENDING INDEPENDENT AUDIT
 Stage 9+                  ⏳ 尚未施工
 ```
 
@@ -239,7 +239,7 @@ strategy_lifesteal
 
 ---
 
-# Stage 8 设计冻结基线
+# Stage 8 设计冻结与实现基线
 
 从 Stage 8 开始采用“一阶段一目录”组织阶段资料：
 
@@ -262,6 +262,10 @@ Stage 8 Evidence Matrix：
 Stage 8 正式施工 Prompt：
 
 `stages/stage8/STAGE8_BUILD_PROMPT.md`
+
+Stage 8 实现报告：
+
+`stages/stage8/STAGE8_IMPLEMENTATION_REPORT.md`
 
 旧路径仅保留兼容入口，不再作为新阶段资料的正式存放位置。
 
@@ -350,7 +354,53 @@ TroopSystem
 ✅ DESIGN FROZEN
 ```
 
-注意：Stage 8 目前只是设计冻结，production implementation 尚未开始，因此不得将其写成完整 `Stage 8 FROZEN`。
+## Stage 8 implementation
+
+施工分支：
+
+```text
+stage8-damage-pipeline
+```
+
+starting main exact HEAD：
+
+```text
+ec9b2fa8e2ca801632e3228c9727f612bf0d989a
+```
+
+starting main exact-head verification：
+
+```text
+Run #124
+run_id = 34467373980
+pytest -q = 234 passed in 0.96s
+demo.py = success
+workflow conclusion = success
+```
+
+核心 implementation + tests + Stage 8 independent-audit snapshot CI 配置验证 SHA：
+
+```text
+ea524e7b16bb9fa7372760f745336a94cecdfc29
+```
+
+对应 branch verification：
+
+```text
+Run #149
+run_id = 34469417926
+pytest -q = 261 passed in 1.18s
+demo.py = success
+Stage 8 audit artifact = success
+```
+
+Stage 8 当前 implementation 状态：
+
+```text
+IMPLEMENTATION COMPLETE / PENDING INDEPENDENT AUDIT
+```
+
+这不是 `Stage 8 FROZEN`。独立实现审计、finding 修复/re-audit、FINAL_AUDIT、merge main 与 main exact-head verification 尚未完成。
 
 Stage 8 当前 Evidence Gate：
 
@@ -368,39 +418,40 @@ damage_reduction_pierce   DEFER
 rebellion                 DEFER
 ```
 
-`weakness` 的 PASS 仅允许迁移既有冻结行为；其余 DEFER 状态不得出现 official production binding。
+`weakness` 的 PASS 只用于迁移既有冻结行为；其余 DEFER 状态没有 official Stage 8 production binding。
 
 ---
 
 # 下一阶段动作
 
-Stage 8 的设计审计已经关闭，正式 BUILD Prompt 已生成。
+Stage 8 production implementation 已完成施工并进入独立实现审计入口。
 
-下一步建立 Stage 8 implementation branch：
+下一步必须对：
 
 ```text
 stage8-damage-pipeline
 ```
 
-并严格按照：
+执行独立 implementation audit，并继续严格以：
 
 ```text
 stages/stage8/STAGE8.md
 + stages/stage8/STAGE8_DESIGN_FREEZE.md
 + stages/stage8/STAGE8_EVIDENCE_MATRIX.md
-+ stages/stage8/STAGE8_BUILD_PROMPT.md
++ stages/stage8/STAGE8_IMPLEMENTATION_REPORT.md
 ```
 
-进行施工。
+为审计基准。
 
-施工完成后仍必须经过：
+后续流程仍是：
 
 ```text
-pytest + demo + CI
-→ 独立实现审计
-→ 修复 / 再审计
+独立实现审计
+→ findings 修复
+→ re-audit
 → stages/stage8/STAGE8_FINAL_AUDIT.md
 → merge main
-→ main exact-head CI
+→ main exact-head pytest/demo/CI
+→ PROJECT_STATUS final update
 → Stage 8 FROZEN
 ```
