@@ -34,7 +34,7 @@ jobs:
       - name: Upload independent audit snapshot
         uses: actions/upload-artifact@v4
         with:
-          name: stage7-independent-audit-${{ github.sha }}
+          name: stage8-independent-audit-${{ github.sha }}
           path: |
             AUDIT_SOURCE_SHA.txt
             pyproject.toml
@@ -43,5 +43,6 @@ jobs:
             tests
             data
             research
+            stages/stage8
           if-no-files-found: error
           retention-days: 1
