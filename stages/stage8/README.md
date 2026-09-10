@@ -1,6 +1,6 @@
 # Stage 8 · Damage Pipeline
 
-状态：`IMPLEMENTATION COMPLETE / PENDING INDEPENDENT AUDIT`
+状态：`IMPLEMENTATION REPAIRED / PENDING SECOND INDEPENDENT RE-AUDIT`
 
 从 Stage 8 开始，阶段资料统一按“一阶段一目录”管理。production code 继续按职责放在 `sgs_v2/`，测试继续放在 `tests/`；阶段目录只收纳设计合同、Evidence、施工 Prompt、审计与封版材料。别把源码也按 Stage 切成考古层，那会把整洁从美德变成事故。
 
@@ -57,7 +57,7 @@ weakness                  PASS_STAGE8
 
 evasion                   DEFER
 barrier                   DEFER
-sure_hit                  DEFER
+sure_hit                   DEFER
 defense_pierce            DEFER
 vigilance                 DEFER
 critical                  DEFER
@@ -70,19 +70,23 @@ rebellion                 DEFER
 
 ## Current implementation state
 
-Stage 8 production implementation 已在：
+Stage 8 production implementation 位于：
 
 ```text
 stage8-damage-pipeline
 ```
 
-完成施工并通过 branch pytest / demo / GitHub Actions 验证，当前状态为：
+第一次 Independent Re-Audit 后，`S8-M-02` 被 reopened，`S8-N-01` 保持 PARTIAL，并发现 README process-state mismatch。第二轮 findings repair 已补强 typed scope runtime boundary：constructor 继续 canonicalize 合法 iterable，resolver runtime validation 则只接受冻结合同规定的 canonical immutable representation，并在 scope filtering 与 RNG 之前 fail-fast。
+
+当前状态为：
 
 ```text
-IMPLEMENTATION COMPLETE / PENDING INDEPENDENT AUDIT
+IMPLEMENTATION REPAIRED / PENDING SECOND INDEPENDENT RE-AUDIT
 ```
 
-这不等于 `Stage 8 FROZEN`。只有独立实现审计、finding 修复与复审、FINAL_AUDIT、合并 main、main exact-head 回归与最终状态更新全部完成后，才允许封版。
+`S8-N-01` 仅可记为 addressed / pending independent verification，不在本轮自行宣布 CLOSED。
+
+这不等于 `READY FOR FINAL AUDIT`，更不等于 `Stage 8 FROZEN`。只有第二次独立 re-audit 确认 findings 后，才有资格决定是否进入 FINAL_AUDIT。
 
 ## Folder convention
 
