@@ -262,3 +262,125 @@ def test_invalid_participant_short_circuits_entire_pipeline(mode: str) -> None:
     elif mode == "dead_source": context.get_unit("a").troops = 0
     else: context.get_unit("b").troops = 0
     assert_invalid_participant(context, damage_request)
+
+
+def _hit_prevention(key: str = "hit") -> HitRuleContribution:
+    return HitRuleContribution(
+        HitRuleKind.DETERMINISTIC_PREVENTION,
+        src(key),
+        key,
+        category=HitPreventionCategory.IMMUNITY_LIKE,
+    )
+
+
+def test_hit_runtime_rejects_mutable_damage_type_scope() -> None:
+    context = make_context(806)
+    contribution = _hit_prevention("hit-damage")
+    object.__setattr__(contribution, "damage_types", [DamageType.WEAPON])
+    rules = DamageRuleCollection(hit_contributions=[contribution])
+    with pytest.raises(TypeError, match="damage_types must be a frozenset"):
+        HitResolutionSystem().resolve(context, req(), rules)
+    assert context.random.chance_calls == context.random.randint_calls == 0
+
+
+def test_hit_runtime_rejects_mutable_source_type_scope() -> None:
+    context = make_context(807)
+    contribution = _hit_prevention("hit-source")
+    object.__setattr__(contribution, "source_types", [DamageSourceType.SKILL])
+    rules = DamageRuleCollection(hit_contributions=[contribution])
+    with pytest.raises(TypeError, match="source_types must be a frozenset"):
+        HitResolutionSystem().resolve(context, req(), rules)
+    assert context.random.chance_calls == context.random.randint_calls == 0
+
+
+def test_hit_runtime_rejects_mutable_bypass_categories() -> None:
+    context = make_context(808)
+    contribution = HitRuleContribution(
+        HitRuleKind.BYPASS,
+        src("hit-bypass"),
+        "hit-bypass",
+        bypass_categories=[HitPreventionCategory.EVASION_LIKE],
+    )
+    object.__setattr__(
+        contribution,
+        "bypass_categories",
+        [HitPreventionCategory.EVASION_LIKE],
+    )
+    rules = DamageRuleCollection(hit_contributions=[contribution])
+    with pytest.raises(TypeError, match="bypass_categories must be a frozenset"):
+        HitResolutionSystem().resolve(context, req(), rules)
+    assert context.random.chance_calls == context.random.randint_calls == 0
+
+
+def _formula_policy(key: str = "formula") -> DamageFormulaPolicyContribution:
+    return DamageFormulaPolicyContribution(
+        DamageDefensePolicy.NORMAL,
+        src(key),
+        key,
+    )
+
+
+def test_formula_policy_runtime_rejects_mutable_damage_type_scope() -> None:
+    contribution = _formula_policy("formula-damage")
+    object.__setattr__(contribution, "damage_types", [DamageType.STRATEGY])
+    rules = DamageRuleCollection(formula_policy_contributions=[contribution])
+    with pytest.raises(TypeError, match="damage_types must be a frozenset"):
+        DamageFormulaPolicySystem().resolve(req(), rules)
+
+
+def test_formula_policy_runtime_rejects_mutable_source_type_scope() -> None:
+    contribution = _formula_policy("formula-source")
+    object.__setattr__(contribution, "source_types", [DamageSourceType.NORMAL_ATTACK])
+    rules = DamageRuleCollection(formula_policy_contributions=[contribution])
+    with pytest.raises(TypeError, match="source_types must be a frozenset"):
+        DamageFormulaPolicySystem().resolve(req(), rules)
+
+
+@pytest.mark.parametrize("probability", [0.0, 1.0, 0.5])
+def test_modifier_runtime_rejects_mutable_damage_type_scope(probability: float) -> None:
+    context = make_context(809)
+    contribution = modifier(probability, key=f"modifier-damage-{probability}")
+    object.__setattr__(contribution, "damage_types", [DamageType.WEAPON])
+    rules = DamageRuleCollection(modifier_contributions=[contribution])
+    with pytest.raises(TypeError, match="damage_types must be a frozenset"):
+        DamageModifierSystem().resolve(context, req(), rules, 100.0)
+    assert context.random.chance_calls == context.random.randint_calls == 0
+
+
+@pytest.mark.parametrize("probability", [0.0, 1.0, 0.5])
+def test_modifier_runtime_rejects_mutable_source_type_scope(probability: float) -> None:
+    context = make_context(810)
+    contribution = modifier(probability, key=f"modifier-source-{probability}")
+    object.__setattr__(contribution, "source_types", [DamageSourceType.SKILL])
+    rules = DamageRuleCollection(modifier_contributions=[contribution])
+    with pytest.raises(TypeError, match="source_types must be a frozenset"):
+        DamageModifierSystem().resolve(context, req(), rules, 100.0)
+    assert context.random.chance_calls == context.random.randint_calls == 0
+
+
+def test_modifier_runtime_rejects_mutable_alias_after_mutation() -> None:
+    context = make_context(811)
+    scope = [DamageType.WEAPON]
+    contribution = modifier(key="modifier-alias")
+    object.__setattr__(contribution, "damage_types", scope)
+    rules = DamageRuleCollection(modifier_contributions=[contribution])
+    scope.clear()
+    with pytest.raises(TypeError, match="damage_types must be a frozenset"):
+        DamageModifierSystem().resolve(context, req(), rules, 100.0)
+    assert context.random.chance_calls == context.random.randint_calls == 0
+
+
+def test_modifier_constructor_canonicalizes_mutable_scope_alias() -> None:
+    scope = [DamageType.WEAPON]
+    contribution = DamageModifierContribution(
+        phase=DamageModifierPhase.CRITICAL,
+        kind=DamageModifierKind.CRITICAL_MULTIPLIER,
+        operation=DamageModifierOperation.MULTIPLY_FACTOR,
+        operand=2.0,
+        source=src("constructor-alias"),
+        order_key="constructor-alias",
+        damage_types=scope,
+    )
+    scope.clear()
+    assert contribution.damage_types == frozenset({DamageType.WEAPON})
+    assert isinstance(contribution.damage_types, frozenset)
