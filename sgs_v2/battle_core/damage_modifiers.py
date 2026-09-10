@@ -43,7 +43,7 @@ def _validate_canonical_enum_scope(
 ) -> None:
     if value is None:
         return
-    if not isinstance(value, frozenset):
+    if type(value) is not frozenset:
         raise TypeError(f"{field_name} must be a frozenset of {enum_type.__name__}")
     for item in value:
         _validate_enum(item, enum_type, f"{field_name} item")
