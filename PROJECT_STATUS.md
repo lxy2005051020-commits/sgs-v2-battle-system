@@ -14,7 +14,7 @@ Stage 4 官方状态接入       ✅ FROZEN
 Stage 5 Effect            ✅ FROZEN
 Stage 6 Skill Runtime     ✅ FROZEN
 Stage 7 Trigger/Recovery  ✅ FROZEN
-Stage 8 Damage Pipeline   🟡 IMPLEMENTATION REPAIRED / PENDING INDEPENDENT RE-AUDIT
+Stage 8 Damage Pipeline   🟡 IMPLEMENTATION REPAIRED / PENDING SECOND INDEPENDENT RE-AUDIT
 Stage 9+                  ⏳ 尚未施工
 ```
 
@@ -426,6 +426,7 @@ S8-H-01  applicable duplicate order_key construction-time guard
 
 ```text
 tests/test_stage8_independent_audit_regressions.py
+tests/test_stage8_second_reaudit_regressions.py
 ```
 
 回归复现证据：
@@ -441,10 +442,20 @@ python demo.py
 → success
 ```
 
+第二次独立复审重新打开了：
+
+```text
+S8-M-02  runtime scope 必须为 exact built-in frozenset，不能接受 frozenset subclass
+S8-N-01  必须覆盖 noncanonical frozenset subclass / mutable semantic alias regression
+S8-RN-01 PROJECT_STATUS 必须明确记录 SECOND INDEPENDENT RE-AUDIT
+```
+
+当前修复已将 Hit / FormulaPolicy / Modifier runtime scope validator 收紧为 exact built-in `frozenset`，并新增相应 subclass、pre-RNG 与 mutable semantic alias 回归。
+
 当前状态：
 
 ```text
-IMPLEMENTATION REPAIRED / PENDING INDEPENDENT RE-AUDIT
+IMPLEMENTATION REPAIRED / PENDING SECOND INDEPENDENT RE-AUDIT
 ```
 
 这不是 `READY FOR FINAL AUDIT`，更不是 `Stage 8 FROZEN`。新的 repair exact-head GitHub Actions 与 audit artifact 必须对最终 repair HEAD 再次确认。
@@ -479,7 +490,7 @@ Stage 8 当前不得进入 Final Audit，更不得开始 Stage 9。
 stage8-damage-pipeline
 ```
 
-执行独立 re-audit，并继续严格以：
+执行第二次独立 re-audit，并继续严格以：
 
 ```text
 stages/stage8/STAGE8.md
@@ -494,7 +505,7 @@ stages/stage8/STAGE8.md
 
 ```text
 findings repair exact-head CI
-→ independent re-audit
+→ second independent re-audit
 → 如 re-audit 通过，再执行 stages/stage8/STAGE8_FINAL_AUDIT.md
 → merge main
 → main exact-head pytest/demo/CI
