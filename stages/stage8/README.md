@@ -1,6 +1,6 @@
 # Stage 8 · Damage Pipeline
 
-状态：`DESIGN FROZEN / implementation 尚未开始`
+状态：`IMPLEMENTATION COMPLETE / PENDING INDEPENDENT AUDIT`
 
 从 Stage 8 开始，阶段资料统一按“一阶段一目录”管理。production code 继续按职责放在 `sgs_v2/`，测试继续放在 `tests/`；阶段目录只收纳设计合同、Evidence、施工 Prompt、审计与封版材料。别把源码也按 Stage 切成考古层，那会把整洁从美德变成事故。
 
@@ -12,7 +12,8 @@ stages/stage8/
 ├── STAGE8.md
 ├── STAGE8_DESIGN_FREEZE.md
 ├── STAGE8_EVIDENCE_MATRIX.md
-└── STAGE8_BUILD_PROMPT.md
+├── STAGE8_BUILD_PROMPT.md
+└── STAGE8_IMPLEMENTATION_REPORT.md
 ```
 
 含义：
@@ -21,18 +22,18 @@ stages/stage8/
 - `STAGE8_DESIGN_FREEZE.md`：DESIGN FROZEN 的 normative freeze-prep addendum；只补充 numeric validation ownership 与 typed StageEvaluationStatus，两者与主设计共同构成冻结合同。
 - `STAGE8_EVIDENCE_MATRIX.md`：官方状态 production mapping 的 Evidence Gate。
 - `STAGE8_BUILD_PROMPT.md`：Stage 8 正式施工 Prompt。
+- `STAGE8_IMPLEMENTATION_REPORT.md`：production implementation 施工报告与独立实现审计入口记录；不是 FINAL_AUDIT。
 
-后续 Stage 8 产生的施工记录、实现审计、最终审计也放入本目录，例如：
+后续 Stage 8 产生的实现审计、最终审计也放入本目录，例如：
 
 ```text
-STAGE8_IMPLEMENTATION_REPORT.md
 STAGE8_IMPLEMENTATION_AUDIT.md
 STAGE8_FINAL_AUDIT.md
 ```
 
 ## Frozen design authority
 
-Stage 8 施工必须同时遵守：
+Stage 8 施工与实现审计必须同时遵守：
 
 ```text
 STAGE8.md
@@ -66,6 +67,22 @@ rebellion                 DEFER
 ```
 
 `weakness` 的 PASS 仅允许迁移既有冻结行为；其余 DEFER 状态不得出现 official production binding。
+
+## Current implementation state
+
+Stage 8 production implementation 已在：
+
+```text
+stage8-damage-pipeline
+```
+
+完成施工并通过 branch pytest / demo / GitHub Actions 验证，当前状态为：
+
+```text
+IMPLEMENTATION COMPLETE / PENDING INDEPENDENT AUDIT
+```
+
+这不等于 `Stage 8 FROZEN`。只有独立实现审计、finding 修复与复审、FINAL_AUDIT、合并 main、main exact-head 回归与最终状态更新全部完成后，才允许封版。
 
 ## Folder convention
 
