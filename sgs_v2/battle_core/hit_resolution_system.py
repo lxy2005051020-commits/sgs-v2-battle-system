@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from typing import TYPE_CHECKING
 
 from .context import BattleContext
 from .damage_probability import resolve_probability
@@ -12,7 +13,9 @@ from .damage_rule_models import (
     RuleContributionSource,
 )
 from .damage_rule_provider import DamageRuleCollection
-from .damage_system import DamageRequest
+
+if TYPE_CHECKING:
+    from .damage_system import DamageRequest
 
 
 class HitPreventionReason(str, Enum):
@@ -42,7 +45,7 @@ class HitResolutionSystem:
     def resolve(
         self,
         context: BattleContext,
-        request: DamageRequest,
+        request: "DamageRequest",
         rules: DamageRuleCollection,
     ) -> HitResolutionResult:
         applicable = tuple(
