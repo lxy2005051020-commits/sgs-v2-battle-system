@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 
 from .damage_system import DamageRequest
 from .enums import DamageSourceType, DamageType
+from .numeric_validation import validate_nonnegative_finite
 from .recovery_system import RecoveryRequest
 from .state_runtime_params import EmptyStateRuntimeParams, StateRuntimeParams
 
@@ -43,8 +44,8 @@ class DamageEffect:
             raise ValueError("source_id cannot be empty")
         if not self.target_id:
             raise ValueError("target_id cannot be empty")
-        if self.coefficient < 0:
-            raise ValueError("coefficient must be >= 0")
+        coefficient = validate_nonnegative_finite(self.coefficient, "coefficient")
+        object.__setattr__(self, "coefficient", coefficient)
         _validate_optional_id(self.source_state_id, "source_state_id")
         _validate_optional_id(
             self.source_state_instance_id,
