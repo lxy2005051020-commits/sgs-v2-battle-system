@@ -15,11 +15,59 @@ from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem, AttributeModifierProvider
 from .battle_systems import BattleSystems
+from .damage_formula_context import DamageDefensePolicy, DamageFormulaContext
+from .damage_formula_policy_system import (
+    DamageFormulaPolicyResult,
+    DamageFormulaPolicySystem,
+)
+from .damage_modifiers import (
+    AppliedDamageModifier,
+    DamageModifierContribution,
+    DamageModifierKind,
+    DamageModifierOperation,
+    DamageModifierPhase,
+    DamageModifierResult,
+)
+from .damage_modifier_system import DamageModifierSystem
+from .damage_pipeline_trace import DamagePipelineTrace, StageEvaluationStatus
+from .damage_prevention_system import (
+    DamageAllowedResult,
+    DamagePermissionResult,
+    DamagePreventedResult,
+    DamagePreventionReason,
+    DamagePreventionSystem,
+)
 from .damage_resolution_system import (
     DamageResolutionResult,
     DamageResolutionSystem,
 )
-from .damage_system import DamageRequest, DamageResult, DamageSystem
+from .damage_rule_models import (
+    DamageFormulaPolicyContribution,
+    DamagePreventionContribution,
+    DamagePreventionRuleKind,
+    DamageRuleFamily,
+    HitPreventionCategory,
+    HitRuleContribution,
+    HitRuleKind,
+    RuleContributionSource,
+)
+from .damage_rule_provider import (
+    DamageRuleCollection,
+    DamageRuleProvider,
+    StateDamageRuleProvider,
+    StateRuleAdapter,
+    StateRuleBinding,
+)
+from .damage_state_rule_bindings import (
+    DEFAULT_STAGE8_STATE_RULE_BINDINGS,
+    default_stage8_official_binding_state_ids,
+)
+from .damage_system import (
+    DamageRequest,
+    DamageResult,
+    DamageSystem,
+    InvalidDamageParticipantError,
+)
 from .effect_executor import EffectExecutor
 from .effect_result import (
     ApplyStateEffectResult,
@@ -36,6 +84,13 @@ from .effects import (
     Effect,
     RecoverEffect,
     RemoveStateEffect,
+)
+from .hit_resolution_system import (
+    HitAllowedResult,
+    HitPreventedResult,
+    HitPreventionReason,
+    HitResolutionResult,
+    HitResolutionSystem,
 )
 from .normal_attack_system import NormalAttackResult, NormalAttackSystem
 from .official_state_catalog import (
@@ -71,6 +126,11 @@ from .skill_runtime import SkillRuntime
 from .stage7_state_params import (
     PeriodicDamageStateParams,
     PeriodicRecoveryStateParams,
+)
+from .stage8_state_params import (
+    Stage8ModifierParams,
+    Stage8PierceParams,
+    Stage8ProbabilityParams,
 )
 from .state_definition import StateDefinition
 from .state_instance import StateInstance
@@ -111,11 +171,45 @@ __all__ = [
     "AttributeSystem",
     "AttributeModifierProvider",
     "BattleSystems",
+    "DamageDefensePolicy",
+    "DamageFormulaContext",
+    "DamageFormulaPolicyResult",
+    "DamageFormulaPolicySystem",
+    "AppliedDamageModifier",
+    "DamageModifierContribution",
+    "DamageModifierKind",
+    "DamageModifierOperation",
+    "DamageModifierPhase",
+    "DamageModifierResult",
+    "DamageModifierSystem",
+    "DamagePipelineTrace",
+    "StageEvaluationStatus",
+    "DamageAllowedResult",
+    "DamagePermissionResult",
+    "DamagePreventedResult",
+    "DamagePreventionReason",
+    "DamagePreventionSystem",
     "DamageResolutionResult",
     "DamageResolutionSystem",
+    "DamageRuleFamily",
+    "RuleContributionSource",
+    "DamagePreventionRuleKind",
+    "DamagePreventionContribution",
+    "HitPreventionCategory",
+    "HitRuleKind",
+    "HitRuleContribution",
+    "DamageFormulaPolicyContribution",
+    "DamageRuleCollection",
+    "DamageRuleProvider",
+    "StateRuleAdapter",
+    "StateRuleBinding",
+    "StateDamageRuleProvider",
+    "DEFAULT_STAGE8_STATE_RULE_BINDINGS",
+    "default_stage8_official_binding_state_ids",
     "DamageRequest",
     "DamageResult",
     "DamageSystem",
+    "InvalidDamageParticipantError",
     "EffectExecutor",
     "EffectExecutionStatus",
     "EffectExecutionResult",
@@ -129,6 +223,11 @@ __all__ = [
     "ApplyStateEffect",
     "RemoveStateEffect",
     "RecoverEffect",
+    "HitAllowedResult",
+    "HitPreventedResult",
+    "HitPreventionReason",
+    "HitResolutionResult",
+    "HitResolutionSystem",
     "NormalAttackResult",
     "NormalAttackSystem",
     "OFFICIAL_STATE_CATALOG",
@@ -158,6 +257,9 @@ __all__ = [
     "SkillRuntime",
     "PeriodicDamageStateParams",
     "PeriodicRecoveryStateParams",
+    "Stage8ProbabilityParams",
+    "Stage8ModifierParams",
+    "Stage8PierceParams",
     "StateDefinition",
     "StateInstance",
     "StateLifecycleSystem",
