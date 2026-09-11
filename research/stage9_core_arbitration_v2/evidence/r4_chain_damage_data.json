@@ -1,0 +1,469 @@
+{
+  "total": 11104,
+  "same_cnt": 10817,
+  "diff_cnt": 287,
+  "samples_diff": [
+    {
+      "report": "战报_1068460_pid1063452.json",
+      "event_idx": 590,
+      "prev_target": "颜良",
+      "prev_damage": 1078,
+      "sub_hits": [
+        {
+          "target": "潘璋",
+          "damage": 243,
+          "remaining": 5933,
+          "event_idx": 591
+        },
+        {
+          "target": "颜良",
+          "damage": 228,
+          "remaining": 2830,
+          "event_idx": 598
+        }
+      ],
+      "same_damage": false,
+      "ratio1": 0.22541743970315398,
+      "ratio2": 0.21150278293135436
+    },
+    {
+      "report": "战报_1068460_pid1063452.json",
+      "event_idx": 730,
+      "prev_target": "颜良",
+      "prev_damage": 923,
+      "sub_hits": [
+        {
+          "target": "潘璋",
+          "damage": 208,
+          "remaining": 3355,
+          "event_idx": 731
+        },
+        {
+          "target": "颜良",
+          "damage": 180,
+          "remaining": 949,
+          "event_idx": 738
+        }
+      ],
+      "same_damage": false,
+      "ratio1": 0.22535211267605634,
+      "ratio2": 0.19501625135427952
+    },
+    {
+      "report": "战报_1068555_pid1063572.json",
+      "event_idx": 1088,
+      "prev_target": "司马懿",
+      "prev_damage": 546,
+      "sub_hits": [
+        {
+          "target": "丁奉",
+          "damage": 114,
+          "remaining": 2379,
+          "event_idx": 1089
+        },
+        {
+          "target": "司马懿",
+          "damage": 125,
+          "remaining": 2904,
+          "event_idx": 1096
+        }
+      ],
+      "same_damage": false,
+      "ratio1": 0.2087912087912088,
+      "ratio2": 0.22893772893772893
+    },
+    {
+      "report": "战报_1081144_pid1076220.json",
+      "event_idx": 58,
+      "prev_target": "强城卫",
+      "prev_damage": 282,
+      "sub_hits": [
+        {
+          "target": "强城卫",
+          "damage": 27,
+          "remaining": 0,
+          "event_idx": 59
+        },
+        {
+          "target": "城卫",
+          "damage": 14,
+          "remaining": 0,
+          "event_idx": 63
+        }
+      ],
+      "same_damage": false,
+      "ratio1": 0.09574468085106383,
+      "ratio2": 0.04964539007092199
+    },
+    {
+      "report": "战报_1101948_pid1097046.json",
+      "event_idx": 795,
+      "prev_target": "张飞",
+      "prev_damage": 763,
+      "sub_hits": [
+        {
+          "target": "主公",
+          "damage": 215,
+          "remaining": 682,
+          "event_idx": 796
+        },
+        {
+          "target": "张飞",
+          "damage": 119,
+          "remaining": 1128,
+          "event_idx": 803
+        }
+      ],
+      "same_damage": false,
+      "ratio1": 0.2817824377457405,
+      "ratio2": 0.1559633027522936
+    },
+    {
+      "report": "战报_1102160_pid1097253.json",
+      "event_idx": 735,
+      "prev_target": "刘备",
+      "prev_damage": 286,
+      "sub_hits": [
+        {
+          "target": "赵云",
+          "damage": 80,
+          "remaining": 4520,
+          "event_idx": 736
+        },
+        {
+          "target": "刘备",
+          "damage": 120,
+          "remaining": 4795,
+          "event_idx": 743
+        }
+      ],
+      "same_damage": false,
+      "ratio1": 0.27972027972027974,
+      "ratio2": 0.4195804195804196
+    },
+    {
+      "report": "战报_1102160_pid1097253.json",
+      "event_idx": 751,
+      "prev_target": "刘备",
+      "prev_damage": 291,
+      "sub_hits": [
+        {
+          "target": "赵云",
+          "damage": 82,
+          "remaining": 4012,
+          "event_idx": 752
+        },
+        {
+          "target": "刘备",
+          "damage": 115,
+          "remaining": 4389,
+          "event_idx": 759
+        }
+      ],
+      "same_damage": false,
+      "ratio1": 0.281786941580756,
+      "ratio2": 0.3951890034364261
+    },
+    {
+      "report": "战报_1104440_pid1099540.json",
+      "event_idx": 488,
+      "prev_target": "主公",
+      "prev_damage": 413,
+      "sub_hits": [
+        {
+          "target": "关羽",
+          "damage": 74,
+          "remaining": 5030,
+          "event_idx": 489
+        },
+        {
+          "target": "主公",
+          "damage": 109,
+          "remaining": 5741,
+          "event_idx": 496
+        }
+      ],
+      "same_damage": false,
+      "ratio1": 0.1791767554479419,
+      "ratio2": 0.2639225181598063
+    },
+    {
+      "report": "战报_1104720_pid1099825.json",
+      "event_idx": 154,
+      "prev_target": "勇城卫",
+      "prev_damage": 530,
+      "sub_hits": [
+        {
+          "target": "骁城卫",
+          "damage": 110,
+          "remaining": 609,
+          "event_idx": 155
+        },
+        {
+          "target": "勇城卫",
+          "damage": 37,
+          "remaining": 0,
+          "event_idx": 157
+        }
+      ],
+      "same_damage": false,
+      "ratio1": 0.20754716981132076,
+      "ratio2": 0.06981132075471698
+    },
+    {
+      "report": "战报_1104973_pid1100065.json",
+      "event_idx": 593,
+      "prev_target": "刘备",
+      "prev_damage": 478,
+      "sub_hits": [
+        {
+          "target": "主公",
+          "damage": 86,
+          "remaining": 3552,
+          "event_idx": 594
+        },
+        {
+          "target": "刘备",
+          "damage": 43,
+          "remaining": 3329,
+          "event_idx": 601
+        }
+      ],
+      "same_damage": false,
+      "ratio1": 0.1799163179916318,
+      "ratio2": 0.0899581589958159
+    }
+  ],
+  "samples_same": [
+    {
+      "report": "战报_1068460_pid1063452.json",
+      "event_idx": 509,
+      "prev_target": "颜良",
+      "prev_damage": 910,
+      "sub_hits": [
+        {
+          "target": "胡车儿",
+          "damage": 205,
+          "remaining": 1047,
+          "event_idx": 510
+        },
+        {
+          "target": "潘璋",
+          "damage": 205,
+          "remaining": 7124,
+          "event_idx": 512
+        }
+      ],
+      "same_damage": true,
+      "ratio1": 0.22527472527472528,
+      "ratio2": 0.22527472527472528
+    },
+    {
+      "report": "战报_1068460_pid1063452.json",
+      "event_idx": 518,
+      "prev_target": "胡车儿",
+      "prev_damage": 745,
+      "sub_hits": [
+        {
+          "target": "颜良",
+          "damage": 168,
+          "remaining": 4312,
+          "event_idx": 519
+        },
+        {
+          "target": "潘璋",
+          "damage": 168,
+          "remaining": 6956,
+          "event_idx": 521
+        }
+      ],
+      "same_damage": true,
+      "ratio1": 0.22550335570469798,
+      "ratio2": 0.22550335570469798
+    },
+    {
+      "report": "战报_1068460_pid1063452.json",
+      "event_idx": 527,
+      "prev_target": "潘璋",
+      "prev_damage": 780,
+      "sub_hits": [
+        {
+          "target": "颜良",
+          "damage": 176,
+          "remaining": 4136,
+          "event_idx": 528
+        },
+        {
+          "target": "胡车儿",
+          "damage": 176,
+          "remaining": 126,
+          "event_idx": 530
+        }
+      ],
+      "same_damage": true,
+      "ratio1": 0.22564102564102564,
+      "ratio2": 0.22564102564102564
+    },
+    {
+      "report": "战报_1068555_pid1063572.json",
+      "event_idx": 338,
+      "prev_target": "司马懿",
+      "prev_damage": 455,
+      "sub_hits": [
+        {
+          "target": "丁奉",
+          "damage": 96,
+          "remaining": 8753,
+          "event_idx": 339
+        },
+        {
+          "target": "臧霸",
+          "damage": 96,
+          "remaining": 6999,
+          "event_idx": 341
+        }
+      ],
+      "same_damage": true,
+      "ratio1": 0.210989010989011,
+      "ratio2": 0.210989010989011
+    },
+    {
+      "report": "战报_1068555_pid1063572.json",
+      "event_idx": 347,
+      "prev_target": "丁奉",
+      "prev_damage": 607,
+      "sub_hits": [
+        {
+          "target": "司马懿",
+          "damage": 128,
+          "remaining": 7747,
+          "event_idx": 348
+        },
+        {
+          "target": "臧霸",
+          "damage": 128,
+          "remaining": 6871,
+          "event_idx": 350
+        }
+      ],
+      "same_damage": true,
+      "ratio1": 0.21087314662273476,
+      "ratio2": 0.21087314662273476
+    },
+    {
+      "report": "战报_1068555_pid1063572.json",
+      "event_idx": 356,
+      "prev_target": "臧霸",
+      "prev_damage": 798,
+      "sub_hits": [
+        {
+          "target": "司马懿",
+          "damage": 169,
+          "remaining": 7578,
+          "event_idx": 357
+        },
+        {
+          "target": "丁奉",
+          "damage": 169,
+          "remaining": 7977,
+          "event_idx": 359
+        }
+      ],
+      "same_damage": true,
+      "ratio1": 0.21177944862155387,
+      "ratio2": 0.21177944862155387
+    },
+    {
+      "report": "战报_1068555_pid1063572.json",
+      "event_idx": 375,
+      "prev_target": "丁奉",
+      "prev_damage": 576,
+      "sub_hits": [
+        {
+          "target": "司马懿",
+          "damage": 122,
+          "remaining": 7456,
+          "event_idx": 376
+        },
+        {
+          "target": "臧霸",
+          "damage": 122,
+          "remaining": 5951,
+          "event_idx": 378
+        }
+      ],
+      "same_damage": true,
+      "ratio1": 0.21180555555555555,
+      "ratio2": 0.21180555555555555
+    },
+    {
+      "report": "战报_1068555_pid1063572.json",
+      "event_idx": 384,
+      "prev_target": "臧霸",
+      "prev_damage": 739,
+      "sub_hits": [
+        {
+          "target": "司马懿",
+          "damage": 156,
+          "remaining": 7300,
+          "event_idx": 385
+        },
+        {
+          "target": "丁奉",
+          "damage": 156,
+          "remaining": 7245,
+          "event_idx": 387
+        }
+      ],
+      "same_damage": true,
+      "ratio1": 0.21109607577807848,
+      "ratio2": 0.21109607577807848
+    },
+    {
+      "report": "战报_1068555_pid1063572.json",
+      "event_idx": 396,
+      "prev_target": "臧霸",
+      "prev_damage": 432,
+      "sub_hits": [
+        {
+          "target": "司马懿",
+          "damage": 91,
+          "remaining": 7209,
+          "event_idx": 397
+        },
+        {
+          "target": "丁奉",
+          "damage": 91,
+          "remaining": 7154,
+          "event_idx": 399
+        }
+      ],
+      "same_damage": true,
+      "ratio1": 0.21064814814814814,
+      "ratio2": 0.21064814814814814
+    },
+    {
+      "report": "战报_1068555_pid1063572.json",
+      "event_idx": 420,
+      "prev_target": "臧霸",
+      "prev_damage": 287,
+      "sub_hits": [
+        {
+          "target": "司马懿",
+          "damage": 60,
+          "remaining": 7149,
+          "event_idx": 421
+        },
+        {
+          "target": "丁奉",
+          "damage": 60,
+          "remaining": 7094,
+          "event_idx": 423
+        }
+      ],
+      "same_damage": true,
+      "ratio1": 0.20905923344947736,
+      "ratio2": 0.20905923344947736
+    }
+  ]
+}
