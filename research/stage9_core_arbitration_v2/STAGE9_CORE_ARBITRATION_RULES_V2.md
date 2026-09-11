@@ -3,9 +3,11 @@
 > **项目**: 三国志战略版战斗模拟器 V2  
 > **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
 > **数据基线**: 全盘扫描 32,660 份战报（逾 1,400 万条原始事件流）  
-> **状态**: `REPAIRED — CLEAVE / CHAIN CORE MECHANICS FROZEN`  
+> **状态**: `REPAIRED — CLEAVE / CHAIN / SHARE / DISTRIBUTION CORE MECHANICS FROZEN`  
 > **群攻机制冻结记录**: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`  
 > **铁索机制冻结记录**: `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`  
+> **分担机制冻结记录**: `STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md`  
+> **分摊机制冻结记录**: `STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md`  
 > **最高原则**: 
 > 1. 反例优先、控制变量优先、直接证据优先；
 > 2. 严禁将 NOT OBSERVED 写成 BLOCKED；
@@ -21,6 +23,7 @@
 ### 1. 目标选择与重定向总顺序 (R2)
 - **流水线**: 存活池 → 阵营过滤 → 混乱判定 (JIT 即时) → 嘲讽/锁定检查 (若未混乱) → 意图目标 → 援护拦截 → 受击承伤者。
 - 混乱压制嘲讽、援护重定向、自援护等仍维持既有研究结论；最终证据评级仍受 Stage 9 提取器最后语义审计约束。
+- Share / Distribution 均只检查援护等重定向后的 `FINAL_ACTUAL_DAMAGE_TARGET`，不得回头读取原始意图目标的状态。
 
 ### 2. 目标身份三级解耦 (R2)
 必须解耦：
@@ -30,8 +33,10 @@
 
 群攻以 `post_redirect_attack_target` 为中心向其余合法副目标派生。
 
-### 3. 普通攻击完整生命周期 (R1 + Cleave/Chain Freeze)
-普通攻击生命周期仍以既有时序为骨架，但铁索加入明确的 Inline / Deferred 规则：
+Share / Distribution 会在正常伤害公式完成后进一步把一个 Damage Instance 的最终兵力承担实体扩展为多个 `damage_recipient(s)`。
+
+### 3. 普通攻击完整生命周期 (R1 + Frozen Records)
+普通攻击生命周期仍以既有时序为骨架，铁索加入明确的 Inline / Deferred 规则：
 
 ```text
 Main normal-attack damage
@@ -49,12 +54,15 @@ Main normal-attack damage
 
 默认所有其他合法 Damage Instance 的 Chain 都在该段伤害后立即 Inline 执行。
 
-### 4. 反应队列 / 时序架构 (R1 + Chain Freeze)
+Share / Distribution 属于本 Damage Instance 内部的伤害分流阶段，不是新的攻击动作。
+
+### 4. 反应队列 / 时序架构 (R1 + Frozen Records)
 - 采用**阶段优先级 + 局域 Inline 回调 + 少量显式 Deferred 资格**。
 - Chain 默认 `PER-DAMAGE INLINE`。
 - 普通攻击主目标在存在群攻时是目前已确认的 Chain Deferred 特例。
 - Deferred Chain 不是固化伤害事件，而是待执行资格；执行时重新检查源节点存活与当前 Chain 状态。
 - Deferred Chain 固定触发伤害值，但 owner / ratio / effect metadata 在执行时读取当前有效 Chain 状态。
+- Share / Distribution 均按 `PER-DAMAGE INSTANCE` 实时校验，不在技能开始时整体快照可用承担关系。
 
 ### 5. 跨机制递归许可矩阵 (R4 + Frozen Records)
 
@@ -71,6 +79,7 @@ Counter → Chain = ALLOWED
 
 Chain → Chain = BLOCKED
 Chain → Share = BLOCKED
+Chain → Distribution = BLOCKED
 Chain → FirstAid = BLOCKED
 Chain → Counter = BLOCKED
 Chain → Crit = BLOCKED
@@ -78,24 +87,91 @@ Chain → Lifesteal = BLOCKED
 Chain → StrategyRecovery = BLOCKED
 Chain → 刚烈不屈等受击响应 = BLOCKED
 
-Share Damage → Share = BLOCKED
-Share Damage → FirstAid = BLOCKED
-Share Damage → Counter = BLOCKED
-Share Damage → Chain = BLOCKED
-Share Damage → 刚烈不屈等受击响应 = BLOCKED
+Share derived loss → Share = BLOCKED
+Share derived loss → Distribution = BLOCKED
+Share derived loss → FirstAid = BLOCKED
+Share derived loss → Counter = BLOCKED
+Share derived loss → Chain = BLOCKED
+Share derived loss → 刚烈不屈等受击响应 = BLOCKED
+
+Distribution participant derived loss → Share = BLOCKED
+Distribution participant derived loss → Distribution = BLOCKED
+Distribution participant derived loss → FirstAid = BLOCKED
+Distribution participant derived loss → Counter = BLOCKED
+Distribution participant derived loss → Chain = BLOCKED
+Distribution participant derived loss → 普通受击响应 = BLOCKED
 ```
 
-Counter → Counter 仍保留为最终提取器语义复核项，不因 Chain 已冻结而自动升级。
+Counter → Counter 仍保留为最终提取器语义复核项，不因其他机制已冻结而自动升级。
 
-### 6. 派生伤害数学语义 (R3)
+### 6. 派生伤害 / 分流数学语义 (R3 + Frozen Records)
 
-#### 6.1 SPLIT / Share
-分担属于被动数值结算支路。其完整基数 / 致死边界仍属于下一阶段 Share 专题。
+#### 6.1 SPLIT / DAMAGE_SHARE — FROZEN
 
-#### 6.2 TRANSFER / Guard
+分担是终伤后的单承担者分流：
+
+```text
+Dsharer = round(Dtotal × R)
+Dtarget = Dtotal - Dsharer
+```
+
+关键性质：
+
+```text
+single sharer
+share portion calculated first
+target takes remainder
+target-first commit
+```
+
+理论拆分满足：
+
+```text
+Dtarget + Dsharer == Dtotal
+```
+
+#### 6.2 DISTRIBUTION — FROZEN
+
+分摊是终伤后的多承担者分流：
+
+```text
+participants = current legal same-camp alive non-target units
+N = participants.count
+```
+
+若：
+
+```text
+N == 0
+```
+
+则：
+
+```text
+Dtarget = Dtotal
+no effective distribution
+```
+
+若 `N > 0`：
+
+```text
+Dtarget = round(Dtotal × (1 - R))
+Dtransfer = Dtotal - Dtarget
+Dparticipant = round(Dtransfer / N)
+```
+
+每个承担者使用相同 `Dparticipant`，不使用最后一人吃余数规则。
+
+由于存在第二次独立取整，不要求：
+
+```text
+Dtarget + N × Dparticipant == Dtotal
+```
+
+#### 6.3 TRANSFER / Guard
 援护属于动作级重定向，继续维持既有研究框架。
 
-#### 6.3 COPY / Cleave — FROZEN
+#### 6.4 COPY / Cleave — FROZEN
 
 ```text
 CleaveDerivedDamage = MainAttackFinalDamage × CleaveRatio
@@ -103,7 +179,7 @@ CleaveDerivedDamage = MainAttackFinalDamage × CleaveRatio
 
 群攻继承原攻击 DamageType，并使用自身许可矩阵。
 
-#### 6.4 TRUE_FEEDBACK / Chain — FROZEN
+#### 6.5 TRUE_FEEDBACK / Chain — FROZEN
 
 ```text
 ChainCalculatedDamage = TriggerNodeResolvedDamage × CurrentChainRatio
@@ -125,11 +201,30 @@ AppliedTroopLoss = min(ChainCalculatedDamage, CurrentTroops)
 CreditedDamage = AppliedTroopLoss
 ```
 
-Chain overkill 不计入伤害统计；击杀归 Chain effect owner。
+分担：
 
-Share 的完整基数与死亡截断继续单独研究，禁止从旧统计直接冻结。
+```text
+ActualTargetTroopLoss = min(Dtarget, target.currentTroops)
+ActualSharerTroopLoss = min(Dsharer, sharer.currentTroops)
+```
 
-### 8. 派生伤害 Pipeline (R3 + Frozen Records)
+若 target 在 target-first commit 后死亡，则 pending `Dsharer` 整笔丢弃。
+
+分摊：
+
+```text
+ActualParticipantTroopLoss
+= min(Dparticipant, participant.currentTroops)
+
+ActualTargetTroopLoss
+= min(Dtarget, target.currentTroops)
+```
+
+承担者 overflow 直接丢弃，不返还目标、不重新分配给其他承担者。
+
+所有冻结机制的战后伤害统计均以**实际成功提交的兵力损失**为基础，而不是理论 overkill / overflow / 未提交份额。
+
+### 8. 派生伤害 / 分流 Pipeline (R3 + Frozen Records)
 
 #### 8.1 Cleave — FROZEN
 
@@ -163,7 +258,7 @@ TriggerNodeResolvedDamage
 → no Evasion
 → no Barrier
 → no target-side damage modifier
-→ no Share
+→ no Share / Distribution
 → no Crit reroll
 → restricted troop-loss settlement
 → no hit-response callback chain
@@ -171,13 +266,39 @@ TriggerNodeResolvedDamage
 
 Chain 不触发急救、反击、倒戈、攻心、刚烈等响应，也不再次触发 Chain。
 
-#### 8.3 Share Passive Settlement
+#### 8.3 DAMAGE_SHARE — FROZEN
 
 ```text
-Share Damage
-→ passive troop-number settlement
-→ no new FirstAid / Counter / Chain / Share / hit-response chain
+TARGET_SELECTION
+→ GUARD / REDIRECT
+→ FINAL_ACTUAL_DAMAGE_TARGET
+→ EVASION / RESISTANCE upstream gate
+→ normal damage formula
+→ Dtotal
+→ Share partition
+→ target commits Dtarget
+→ target death check
+→ if target alive: sharer commits attributed direct troop loss
 ```
+
+合法 `Dtotal = 0` 不等于事件取消；虚弱 0 伤害仍可执行 0 值分担。
+
+#### 8.4 DISTRIBUTION — FROZEN
+
+```text
+TARGET_SELECTION
+→ GUARD / REDIRECT
+→ FINAL_ACTUAL_DAMAGE_TARGET
+→ EVASION / RESISTANCE upstream gate
+→ normal damage formula
+→ Dtotal
+→ Damage-Time participant set evaluation
+→ calculate Dtarget / Dtransfer / Dparticipant
+→ participants Slot ASC commit
+→ original target commits Dtarget last
+```
+
+某个承担者死亡不会中断后续承担者或目标提交。
 
 ### 9. 战报因果溯源结构 (R8)
 继续区分：
@@ -187,7 +308,18 @@ Share Damage
 
 不得把工程字段宣称为官方内部调用栈事实。
 
-### 10. 死亡与终战边界 (R5 + Chain Freeze)
+Share / Distribution 的承担者损失必须保留：
+
+```text
+physicalAttacker
+physicalSkill
+victim
+creditOwner
+```
+
+正常同阵营分流下 `creditOwner = original attacker`；Share 的跨阵营反向分担特例按其冻结记录可发生 credit rerouting。
+
+### 10. 死亡与终战边界 (R5 + Frozen Records)
 
 Chain 已确认：
 
@@ -203,11 +335,30 @@ One feedback target dies
 → remaining legal targets continue
 ```
 
-传播目标按槽位顺序继续结算，不因前一个目标死亡而整体中止。
+Share 已确认：
+
+```text
+calculate Dtarget / Dsharer
+→ target commit first
+→ if target dies:
+     discard pending Dsharer
+     stop Share branch
+```
+
+Distribution 已确认：
+
+```text
+participants commit first by Slot ASC
+→ participant death only ends that participant settlement
+→ later participants continue
+→ original target commits last
+```
+
+承担者死亡后，下一笔 Damage Instance 的 Distribution participant set 会在 Damage-Time 动态重算。
 
 其余 Battle Victory / commander death / skill-loop 等总终战规则仍维持既有 R5 研究状态。
 
-### 11. 多来源冲突与状态生命周期 (R6 + Chain Freeze)
+### 11. 多来源冲突与状态生命周期 (R6 + Frozen Records)
 
 #### 11.1 Chain 单实例覆盖 — FROZEN
 
@@ -226,27 +377,54 @@ other owner reapply
 
 每次合法伤害仍只产生一次 Chain。
 
-Chain feedback 的 owner / ratio 来自**触发节点当前 activeChainEffect**，接收目标自己的 Chain owner / ratio 不影响本次收到的反馈。
+#### 11.2 DAMAGE_SHARE 单实例与优先级 — FROZEN
 
-#### 11.2 Chain owner death — FROZEN
+```text
+Effective_Instance_Limit = 1
+same source reapply = REFRESH_AND_REPLACE
+cross source reapply = REPLACE
+```
 
-施加者死亡不会清除已施加的 Chain：
-- 状态继续倒计时；
-- 传播伤害不衰减；
-- 伤害 / 击杀仍归原施加者；
-- 已死亡施加者本人应获得的治疗等收益跳过。
+并冻结：
 
-#### 11.3 Chain duration / cleanse — FROZEN
+```text
+DAMAGE_SHARE > DISTRIBUTION
+```
 
-- 持续时间在目标自身 `[单位]开始行动` 节点扣减；
-- `1 → 0` 时先移除，再结算持续伤害；
-- 震慑不阻止 duration tick；
-- 净化 / 驱散负面可在当前微步立即移除 Chain；
-- 净化后重新施加是全新实例。
+即已有 Share 时 incoming Distribution 无效；已有 Distribution 时 incoming Share 成功并替换 Distribution。
+
+#### 11.3 DISTRIBUTION 单实例 — FROZEN / inherited non-blocking edge
+
+```text
+Effective_Instance_Limit = 1
+same source reapply = REFRESH
+```
+
+当前真实资料中没有可自然观察的第二独立 Distribution 来源，因此：
+
+```text
+cross source reapply = REPLACE
+```
+
+属于从 DAMAGE_SHARE 家族继承的非阻塞实现规则，不能宣称已被真实跨来源战报直接证明。
+
+#### 11.4 Duration / operational distinction
+
+Share / Distribution 都应区分：
+
+```text
+state.exists
+!=
+state.isOperational()
+```
+
+固定持续回合状态由 protected target 自身 ACTION_START 管理 duration。
+
+Share 的 sharer 死亡会即时使后续 Share operational check 失败；Distribution 的 participant 死亡则在下一次 Damage-Time participant evaluation 中动态排除。
 
 控制状态更强覆盖、更广泛多来源同类 Reaction 顺序仍按各自专题处理。
 
-### 12. 确定性与 RNG (R7 + Chain Freeze)
+### 12. 确定性与 RNG (R7 + Frozen Records)
 
 Chain 多目标传播**不使用 RNG**，按固定槽位：
 
@@ -254,14 +432,15 @@ Chain 多目标传播**不使用 RNG**，按固定槽位：
 slot 0 → slot 1 → slot 2
 ```
 
-每个目标轮到时执行 JIT revalidation：
+Distribution 多承担者提交同样采用：
 
 ```text
-same camp
-alive
-chain active
-not trigger node itself
+slot 0 → slot 1 → slot 2
 ```
+
+跳过 original target 与当前不合法承担者。
+
+每一笔 Damage Instance 的 Distribution participant set 都是 JIT 动态读取。
 
 连击第二击重新索敌与严格 transition matrix 的统计封口仍属于 R7 独立问题。
 
@@ -284,9 +463,37 @@ Counter Damage
 ```text
 Chain TRUE_FEEDBACK
 Share Passive Numeric Settlement
+Distribution Participant Passive Numeric Settlement
 ```
 
 0 伤害的合法伤害结算仍会执行 Chain，只是反馈伤害为 0。
+
+---
+
+## Share / Distribution 家族关键差异
+
+```text
+DAMAGE_SHARE
+- topology: one linked sharer
+- calculation: Dsharer first, target takes remainder
+- commit: target first, sharer second
+- target death: interrupts pending sharer commit
+
+DISTRIBUTION
+- topology: dynamic multi-participant set
+- calculation: Dtarget first, transfer pool then equal participant share
+- commit: participants Slot ASC first, target last
+- participant death: does not abort later commits
+```
+
+两者共同点：
+
+```text
+post-normal-formula partition
+not ordinary DamageReductionModifier
+derived participant loss is not second normal DamageEvent
+actual committed troop loss drives statistics / wounded processing
+```
 
 ---
 
@@ -294,9 +501,10 @@ Share Passive Numeric Settlement
 
 1. **Counter**: 仍可作为新的攻击/伤害动作走既有 Stage 8 能力边界。
 2. **Cleave**: 固定派生值，跳过 Base Formula，使用 Cleave 专属许可矩阵。
-3. **Chain**: `TRUE_FEEDBACK`，跳过 Base Formula，并且进一步跳过 Evasion / Barrier / Modifier / Share / hit callback 层，使用受限直接数值结算。
-4. **Share**: 分担者支路目前已确定是 Passive Numeric Settlement，但其上游 ShareBase 等核心数学仍待下一专题冻结。
-5. **结论**: Stage 9 设计需要能够表达不同派生类型的 provenance、permission matrix、timing policy 与 attribution owner。当前事实**不构成 Stage 8 Formal Reopen**。
+3. **Chain**: `TRUE_FEEDBACK`，跳过 Base Formula，并且进一步跳过 Evasion / Barrier / Modifier / Share / Distribution / hit callback 层，使用受限直接数值结算。
+4. **Share**: post-formula single-sharer partition；target-first commit；派生承担者损失为 attributed direct troop loss。
+5. **Distribution**: post-formula dynamic multi-participant partition；participants-first commit；派生承担者损失为 attributed direct troop loss。
+6. **结论**: Stage 9 设计需要能够表达不同派生类型的 provenance、permission matrix、timing policy、partition topology 与 attribution owner。当前事实**不构成 Stage 8 Formal Reopen**。
 
 ---
 
@@ -306,5 +514,7 @@ Share Passive Numeric Settlement
 Stage 8 = FROZEN
 Cleave Core Mechanics = FROZEN
 Chain Core Mechanics = FROZEN
-Share Core Mechanics = NEXT RESEARCH TARGET
+Share Core Mechanics = FROZEN
+Distribution Core Mechanics = FROZEN
+Next Functional State Research Target = TBD
 ```
