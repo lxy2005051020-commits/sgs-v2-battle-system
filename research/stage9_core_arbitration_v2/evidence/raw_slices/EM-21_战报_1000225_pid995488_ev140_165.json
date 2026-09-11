@@ -1,0 +1,11 @@
+{
+  "claim_id": "EM-21",
+  "original_file": "战报_1000225_pid995488.json",
+  "event_range": [
+    140,
+    165
+  ],
+  "evidence_type": "positive",
+  "note": "Yanren paoxiao multi-hit finishes target 2 after commander dies",
+  "events": []
+}

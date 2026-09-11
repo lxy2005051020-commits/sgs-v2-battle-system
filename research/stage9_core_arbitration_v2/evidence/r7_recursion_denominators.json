@@ -1,0 +1,54 @@
+{
+  "c2c": {
+    "source": 6287,
+    "eligible": 42,
+    "triggered": 0,
+    "cases": [
+      {
+        "file": "战报_1068378_pid1063403.json",
+        "victim": "纪灵",
+        "counterer": "程普",
+        "countered_back": false
+      },
+      {
+        "file": "战报_1095071_pid1090198.json",
+        "victim": "廖化",
+        "counterer": "董卓",
+        "countered_back": false
+      },
+      {
+        "file": "战报_1095071_pid1090198.json",
+        "victim": "董卓",
+        "counterer": "廖化",
+        "countered_back": false
+      },
+      {
+        "file": "战报_1105051_pid1100143.json",
+        "victim": "董卓",
+        "counterer": "夏侯惇",
+        "countered_back": false
+      },
+      {
+        "file": "战报_1105051_pid1100143.json",
+        "victim": "夏侯惇",
+        "counterer": "董卓",
+        "countered_back": false
+      }
+    ]
+  },
+  "chain": {
+    "source": 24433,
+    "eligible": 24433,
+    "triggered": 29
+  },
+  "share": {
+    "source": 0,
+    "eligible": 0,
+    "triggered": 0
+  },
+  "combo": {
+    "source": 5428,
+    "eligible": 5428,
+    "triggered": 10
+  }
+}

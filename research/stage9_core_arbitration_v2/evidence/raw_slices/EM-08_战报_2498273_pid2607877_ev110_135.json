@@ -1,0 +1,902 @@
+{
+  "claim_id": "EM-08",
+  "original_file": "战报_2498273_pid2607877.json",
+  "event_range": [
+    110,
+    135
+  ],
+  "evidence_type": "counterexample_explained",
+  "note": "Juedi fanji stack after assault damage (OnDamageTaken callback)",
+  "events": [
+    {
+      "key": 7,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 735,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "buff_name",
+          "round",
+          "skill_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbd720",
+          "checked": 5,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            },
+            {
+              "key": 4,
+              "value": "round"
+            },
+            {
+              "key": 5,
+              "value": "skill_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 8,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 735,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "buff_name",
+          "round",
+          "skill_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbd720",
+          "checked": 5,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            },
+            {
+              "key": 4,
+              "value": "round"
+            },
+            {
+              "key": 5,
+              "value": "skill_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 9,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>来自<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>【陷阵突袭】的「穷追」效果因几率没有生效",
+        "desc": "来自<font color='#ec616b'>[张辽]</font>【陷阵突袭】的「穷追」效果因几率没有生效",
+        "cfg_id": 229,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x40844940",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "skill_name"
+            },
+            {
+              "key": 4,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 10,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>对<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_my.png'/><font color='#75b3ed'>[关平]</font>发动普通攻击",
+        "desc": "对<font color='#75b3ed'>[关平]</font>发动普通攻击",
+        "cfg_id": 9,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbd7c0",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 11,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>执行来自【胜战】的「破阵」效果",
+        "desc": "<font color='#ec616b'>[张辽]</font>执行来自【胜战】的「破阵」效果",
+        "cfg_id": 96,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbc0a0",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 12,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_my.png'/><font color='#75b3ed'>[关平]</font>损失了兵力<font color='#C12020'>922</font>（6078）",
+        "desc": "<font color='#75b3ed'>[关平]</font>损失了兵力<font color='#C12020'>922</font>（6078）",
+        "cfg_id": 28,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbeaa0",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "num1"
+            },
+            {
+              "key": 3,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 13,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 725,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbf080",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "num1"
+            },
+            {
+              "key": 4,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 14,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>执行来自【陷阵突袭】的「战法发动几率增加」效果",
+        "desc": "执行来自【陷阵突袭】的「战法发动几率增加」效果",
+        "cfg_id": 230,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbfbe0",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 15,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>的【暴戾无仁】发动几率提升了【15.00%】(50.00%)",
+        "desc": "<font color='#ec616b'>[张辽]</font>的【暴戾无仁】发动几率提升了【15.00%】(50.00%)",
+        "cfg_id": 69,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_type_name",
+          "num",
+          "total"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3da80300",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_type_name"
+            },
+            {
+              "key": 3,
+              "value": "num"
+            },
+            {
+              "key": 4,
+              "value": "total"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 16,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>执行来自【陷阵突袭】的「战法发动几率增加」效果",
+        "desc": "执行来自【陷阵突袭】的「战法发动几率增加」效果",
+        "cfg_id": 230,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbfbe0",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 17,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>的【百骑劫营】发动几率提升了【15.00%】(55.00%)",
+        "desc": "<font color='#ec616b'>[张辽]</font>的【百骑劫营】发动几率提升了【15.00%】(55.00%)",
+        "cfg_id": 69,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_type_name",
+          "num",
+          "total"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3da80300",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_type_name"
+            },
+            {
+              "key": 3,
+              "value": "num"
+            },
+            {
+              "key": 4,
+              "value": "total"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 18,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>发动战法【百骑劫营】",
+        "desc": "发动战法【百骑劫营】",
+        "cfg_id": 7,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3da856a0",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 19,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>执行来自【胜战】的「破阵」效果",
+        "desc": "<font color='#ec616b'>[张辽]</font>执行来自【胜战】的「破阵」效果",
+        "cfg_id": 96,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbc0a0",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 20,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>执行来自【一鼓作气】的「突击战法造成伤害增加」效果",
+        "desc": "<font color='#ec616b'>[张辽]</font>执行来自【一鼓作气】的「突击战法造成伤害增加」效果",
+        "cfg_id": 96,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbc0a0",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 21,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>突击战法造成伤害提升了6.00%",
+        "desc": "<font color='#ec616b'>[张辽]</font>突击战法造成伤害提升了6.00%",
+        "cfg_id": 70,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "type_name",
+          "num"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3da82880",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "type_name"
+            },
+            {
+              "key": 3,
+              "value": "num"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 22,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_my.png'/><font color='#75b3ed'>[张飞]</font>由于<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>【百骑劫营】的伤害，损失了兵力<font color='#C12020'>1284</font>（1941）",
+        "desc": "<font color='#75b3ed'>[张飞]</font>由于<font color='#ec616b'>[张辽]</font>【百骑劫营】的伤害，损失了兵力<font color='#C12020'>1284</font>（1941）",
+        "cfg_id": 145,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "skill_name",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3da85d00",
+          "checked": 5,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "skill_name"
+            },
+            {
+              "key": 4,
+              "value": "num1"
+            },
+            {
+              "key": 5,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 23,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 725,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbf080",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "num1"
+            },
+            {
+              "key": 4,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 24,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_my.png'/><font color='#75b3ed'>[张飞]</font>执行来自【绝地反击】的「绝地反击-绝境[预备]」效果",
+        "desc": "<font color='#75b3ed'>[张飞]</font>执行来自【绝地反击】的「绝地反击-绝境[预备]」效果",
+        "cfg_id": 96,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbc0a0",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 25,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_my.png'/><font color='#75b3ed'>[张飞]</font>的【绝地反击】当前次数为5",
+        "desc": "<font color='#75b3ed'>[张飞]</font>的【绝地反击】当前次数为5",
+        "cfg_id": 151,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "times"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x41482400",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "times"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 26,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_my.png'/><font color='#75b3ed'>[张飞]</font>的武力提高了4.30 (248.85)",
+        "desc": "<font color='#75b3ed'>[张飞]</font>的武力提高了4.30 (248.85)",
+        "cfg_id": 138,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "attr",
+          "addition",
+          "total"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3da86520",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "attr"
+            },
+            {
+              "key": 3,
+              "value": "addition"
+            },
+            {
+              "key": 4,
+              "value": "total"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 27,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>执行来自【一鼓作气】的「一鼓作气[预备]」效果",
+        "desc": "<font color='#ec616b'>[张辽]</font>执行来自【一鼓作气】的「一鼓作气[预备]」效果",
+        "cfg_id": 96,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbc0a0",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 28,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>的「突击战法造成伤害增加」效果已消失",
+        "desc": "<font color='#ec616b'>[张辽]</font>的「突击战法造成伤害增加」效果已消失",
+        "cfg_id": 22,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3da96500",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 29,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>的「一鼓作气[预备]」效果已消失",
+        "desc": "<font color='#ec616b'>[张辽]</font>的「一鼓作气[预备]」效果已消失",
+        "cfg_id": 22,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3da96500",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 30,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>执行来自【陷阵突袭】的「陷阵突袭[预备]」效果",
+        "desc": "<font color='#ec616b'>[张辽]</font>执行来自【陷阵突袭】的「陷阵突袭[预备]」效果",
+        "cfg_id": 96,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbc0a0",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 31,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_knight_enemy.png'/><font color='#ec616b'>[张辽]</font>执行来自【胜战】的「破阵」效果",
+        "desc": "<font color='#ec616b'>[张辽]</font>执行来自【胜战】的「破阵」效果",
+        "cfg_id": 96,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x3ebbc0a0",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    }
+  ]
+}

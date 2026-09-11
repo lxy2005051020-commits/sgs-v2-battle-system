@@ -1,66 +1,99 @@
-# Stage 9 核心底层裁决全景总规 (v2)
+﻿# Stage 9 核心底层裁决全景总规 (v2 - Repaired)
 
 > **项目**: 三国志战略版战斗模拟器 V2  
-> **研究基线 Commit**: `a38b992480488557741354a7a685e182f3d5f4ff` (main)  
+> **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
 > **数据基线**: 全盘扫描 32,660 份战报（逾 1,400 万条原始事件流）  
-> **状态**: `READY FOR INDEPENDENT FREEZE AUDIT`  
-> **最高原则**: 反例优先、控制变量优先、直接证据优先、严禁将 NOT OBSERVED 写成 BLOCKED、严禁把工程设计表述为官方实证。
+> **状态**: `REPAIRED — AUDIT READY (CONSISTENT EVIDENCE BASELINE)`  
+> **最高原则**: 
+> 1. 反例优先、控制变量优先、直接证据优先；
+> 2. 严禁将 NOT OBSERVED 写成 BLOCKED；
+> 3. 严禁把工程设计表述为官方内部实证；
+> 4. 严禁把统计模型兼容断言为官方机制证明；
+> 5. 跨文档同一机制只能存在单一一致结论。
 
 ---
 
-## 核心裁决原则全览 (12 个问题域定性)
+## 核心裁决原则全览 (12 个问题域统一裁决)
 
 ### 1. 目标选择与重定向总顺序 (R2)
-- **流水线**: 存活池 $\rightarrow$ 阵营过滤 $\rightarrow$ **混乱判定 (JIT 即时)** $\rightarrow$ **嘲讽/锁定检查** $\rightarrow$ **意图目标 (Intended)** $\rightarrow$ **援护拦截 (Rescue Hook)** $\rightarrow$ **受击承伤者 (Resolved)**。
-- **混乱 100% 压制嘲讽**（42例无反例）。
-- **援护高于嘲讽**，最终由援护者承伤（89例无反例）。
-- **混乱攻击友军可被援护**，攻击者==援护者时发生自攻（25例自攻铁证）。
+- **流水线**: 存活池 $\rightarrow$ 阵营过滤 $\rightarrow$ **混乱判定 (JIT 即时)** $\rightarrow$ **嘲讽/锁定检查 (若未混乱)** $\rightarrow$ **意图目标 (Intended Target)** $\rightarrow$ **援护拦截 (Rescue Hook)** $\rightarrow$ **受击承伤者 (Resolved Action Target)**。
+- **混乱压制嘲讽**: 武将混乱时，嘲讽锁定失效，进入全场无差别抽取（1,397 例共现样本，82.75% 攻击非嘲讽源，17.25% 随机命中嘲讽源）。[Grade A]
+- **援护高于嘲讽**: 意图目标被嘲讽锁定为其自身时，若嘲讽源身上带有队友援护，伤害由援护者代为承受（89 例无反例）。[Grade A]
+- **混乱攻击友军可被援护**: 攻击者==援护者时发生自援护（自攻，25 例验证）。[Grade A]
 
 ### 2. 目标身份三级解耦 (R2)
-- 必须解耦为 `pre_redirect_target`, `post_redirect_attack_target`, `damage_recipient(s)`。
-- 突击战法、反击、控制状态 100% 作用于 `post_redirect_attack_target`（援护者）。
-- 群攻以 `post_redirect_attack_target` 为基准向其余队友溅射（原目标沦为队友自身受溅射）。
+- **必须解耦三级目标属性**:
+  1. `pre_redirect_target` (Intended Target): 攻击意图目标；
+  2. `post_redirect_attack_target` (Resolved Action Target): 物理受击动作受体，作为后续反击主体、突击受体及群攻溅射中心；
+  3. `damage_recipient(s)` (Damage Receivers): 经分担/分摊后的兵力实际扣除实体。
+- 突击战法、反击、控制状态作用于 `post_redirect_attack_target`（援护者）。[Grade A]
+- 群攻以 `post_redirect_attack_target` 为基准向其余队友溅射（18 例）。[Grade B]
 
 ### 3. 普通攻击完整生命周期 (R1)
-- 严格流转：`声明(cfg 9) -> 援护重定向(cfg 143/9) -> 扣血(cfg 28) -> 即时受击急救 -> 群攻 -> 反击 -> 突击战法 -> 连击检查点`。
-- 群攻必定先于反击（12:0）；群攻必定先于突击（74:0）；真正普攻反击必定先于突击（96:0）；突击必定先于连击（162:0）。
+- **严格时序流转**:
+  $$\text{声明 (cfg 9)} \rightarrow \text{援护重定向 (cfg 143/9)} \rightarrow \text{扣血 (cfg 28)} \rightarrow \text{受击回调 (急救/绝地)} \rightarrow \text{群攻反应} \rightarrow \text{普攻反击反应} \rightarrow \text{突击战法} \rightarrow \text{连击检查点}$$
+- **时序证据核验**:
+  - 群攻先于反击（12:0）[Grade B]；
+  - 普攻反击先于突击（96:0，已将绝地反击归因为 OnDamageTaken Callback）[Grade B]；
+  - 突击先于连击检查点（162:0）[Grade A]。
 
 ### 4. 反应队列架构 (R1)
-- 采用 **阶段优先制 (Phase Priority) + 局域即时内联回调 (Inline Callbacks)**。
-- 突击战法造成致死伤害时，后续附加状态立即短路取消（报 cfg 149）。
+- 采用 **阶段优先级制 (Phase Priority) + 局域即时内联回调 (Inline Callbacks)**。[Grade B]
+- 突击致死时，后续附加状态短路取消（报 cfg 149）。[Grade A]
 
 ### 5. 跨机制递归许可矩阵 (R4)
-- 来源标签防护防线：反击不套反击、群攻不套群攻、连环不二次连环、分担不嵌套分担、连击非无限连。
-- 跨机制派生支持：Cleave $\rightarrow$ Share (17), Cleave $\rightarrow$ FirstAid (149), Counter $\rightarrow$ FirstAid (192), Counter $\rightarrow$ Chain (14)。
+- **BLOCKED 项 (具备有效分母且未触发)**:
+  - 反击套反击: 有效机会 Denominator=42，触发=0 [Grade B]；
+  - 连环套连环: 有效机会 Denominator=24,433，触发=0 [Grade A]；
+  - 连击第 2 击套第 3 击: 有效机会 Denominator=5,428，触发=0 [Grade A]。
+- **NOT OBSERVED 项 (缺乏有效分母，工程设计不变量)**:
+  - 群攻套群攻: 机制无受击群攻战法，分母为 0 [Grade C]；
+  - 分担套分担: 战报无同队双分担共存样本，分母为 0 [Grade C]。
+- **跨机制派生支持**: Cleave $\rightarrow$ Share, Cleave $\rightarrow$ FirstAid, Counter $\rightarrow$ FirstAid, Counter $\rightarrow$ Chain。
 
 ### 6. 四类派生伤害数学语义 (R3, R6)
-- **SPLIT (拆分 - 分担/分摊)**: 总量严格守恒，$D_{orig} = D_{main} + \sum D_{sub}$。分担为一对一，分摊为一对全队均摊。
-- **TRANSFER (转移 - 援护)**: 动作级 100% 物理重定向。
-- **FEEDBACK (反馈 - 铁索连环)**: 原目标受 100% 伤害，按比率向连环队友等额广播。
+- **SPLIT (分摊/分担)**: 总量严格守恒，$D_{orig} = D_{main} + \sum D_{sub}$。分担为一对一 (11,381例)，分摊为一对全队均摊。[Grade A]
+- **TRANSFER (转移 - 援护)**: 动作级 100% 物理重定向。[Grade A]
+- **FEEDBACK (反馈 - 铁索连环)**: 原目标承伤不减，按比例向连环队友广播 (10,817例)。[Grade A]
+- **COPY (复制 - 群攻)**: 主目标承伤不减，副目标按比例复制基础值。[Grade B]
 
 ### 7. 理论伤害 vs 实际兵力损失 (R3, R5, R6)
-- 致死过量时：主目标受击致死，分担动作取消，分担者不承担过量；连环主目标致死不向队友广播。
-- 群攻基数严格继承主目标受到的最终伤害（包含会心与增伤）。
+- **致死分担截断 (观察事实)**: 主目标受击兵力致死时，未观察到分担转嫁发生（154 例验证，分担者不承担过量）。[Grade B]
+- 群攻基数继承主目标承受的基准兵刃伤害。
 
 ### 8. 派生伤害 Pipeline 重入 (R3)
-- 反击为完整独立 DamageRequest，重走公式、独立暴击与规避/抵御。
-- 群攻与铁索反馈不重算副目标攻防公式，但副目标独立判定规避、抵御、分担与全局减伤。
+- **表现模型**: 最符合 **fixed derived base + target-side modifier re-entry** 模型。[Grade B]
+- 群攻与铁索反馈跳过副目标基础攻防公式，但副目标独立判定规避、抵御与全局增减伤修饰。
+- 反击作为全新攻击动作，完整重走 Base Pipeline 与 Modifier Pipeline。
 
 ### 9. 战报因果溯源结构 (R8)
-- 战报平铺无显式 parent_id，定界符（723/734/735/725/724/736/733）结合单向 DFS 调用栈还原树状因果。
+- **三层因果模型分离**:
+  1. **LOG FACT**: 战报事件为绝对平铺序列（仅 `cfg_id`, `desc`, `args`），无 `parent_id`、`root_action_id`、`call_depth`、`indent`。[Grade A]
+  2. **RECONSTRUCTED MODEL**: 通过定界符（723/733/734/735/725/724/736）还原动作边界。[Grade B]
+  3. **ENGINEERING MODEL**: `root_action_id` 与 `reaction_depth` 属于模拟器实现设计。官方内部调用栈机制标记为 **UNKNOWN**。
 
-### 10. 死亡与终止短路铁律 (R5)
-- 反击致死攻击者：后续突击与连击全部短路取消（113例）。
-- 主将致死：战斗立即终止（890例）。
-- 连环主将致死：原子性遍历循环，传完剩余目标后终战。
+### 10. 死亡与终战分层模型 (R5)
+- **确立 9 层死亡与终战模型**:
+  1. Unit Death (cfg 163)
+  2. Current Damage Completion
+  3. Inline Callback Completion
+  4. Current Reaction Completion
+  5. Current Skill / Multi-target Loop Completion
+  6. Current Attack Completion
+  7. Future Reaction Cancellation
+  8. Morale Loss from Commander Death (cfg 209)
+  9. Battle Victory Finalization (cfg 157)
+- **仲裁定论**: 
+  - 攻击者在反击中阵亡: 后续突击与连击立即硬短路 (IMMEDIATE ABORT, 113例) [Grade A]；
+  - 技能或连环传播中主将阵亡: 当前多目标循环结算完毕后终战 (DEFERRED TERMINATION, 890例) [Grade A]。连环主将阵亡样本仅 5 例 [Grade C]。
 
 ### 11. 多来源冲突裁决 (R6)
-- 控制状态先占独占，后施加者报 cfg 23 失效（1,550例，0覆盖）。
-- 多反击与多群攻按战法装配顺序各自独立触发。
+- **控制状态排斥**: 重复施加控制多数表现为 cfg 23 拒绝（1,550 例，0 覆盖）；更强效果能否覆盖弱控因数据无法标定强度，属于未证实 (UNKNOWN)。[Grade B]
+- **多反击触发**: 同武将携带多个反击战法按装配顺序独立触发（样本仅 8 例）。[Grade C]
 
 ### 12. 确定性与 RNG (R7)
-- 连击第二击必定独立重新索敌（4,017对样本分层：常规存活同目标率 48.23%，嘲讽 100%）。
-- 混乱为 JIT 即时判定。单目标不推进 PRNG 作为模拟器工程建议。
+- **第二击重新索敌**: 连击第二击重新执行目标决议，不固定继承第一击目标（5,252 对分层样本：候选为 3 时同目标率 48.75%，候选为 2 时 64.11%）。[Grade B]
+- **官方内部 PRNG 机制**: 具体 PRNG 算法、调用次数与步进序列标记为 **UNKNOWN**（禁止将模拟器设计断言为官方事实）。[UNKNOWN]
 
 ---
 
@@ -69,5 +102,5 @@
 1. **反击 (Counter)**: 构造常规 `DamageRequest`，完全复用 Stage 8 冻结流水线（分类 A：外层编排即可）。
 2. **群攻 (Cleave) 与铁索反馈 (Chain)**:
    - 具有直接派生的 Base Value，跳过基础攻防公式，但需进入 HitResolution（判定规避/抵御）与 Modifier（副目标减伤）。
-   - **评估定论**: 属于 **分类 B (可能需要 Stage 8 新 extension point 或派生适配器)**。
-   - **无 freeze-breaking 缺陷**: 绝无必须 Formal Reopen Stage 8 的违规点，通过在 Stage 9 引入 `DerivedDamagePipelineAdapter` 即可完美衔接。
+   - **评估定论**: 属于 **分类 B (Potential Extension Point Required)**。
+   - **无 freeze-breaking 缺陷**: 无需 Formal Reopen Stage 8。在 Stage 9 引入派生适配器即可衔接 Stage 8。

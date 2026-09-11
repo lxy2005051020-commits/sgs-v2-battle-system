@@ -1,26 +1,64 @@
-# Stage 9 第二轮实证研究证据清单 (Evidence Manifest)
+﻿# Stage 9 v2 证据档案清单与复现指南 (MANIFEST - Repaired)
 
-## 1. 检索环境与基础数据
-
-- **代码基线**: `a38b992480488557741354a7a685e182f3d5f4ff` (main)
-- **战报数据库**: `D:\战报数据库\三战战报汇总_全盘扫描\完整战报JSON`
-- **总战报数量**: 32,660 份（去重后完整战报，全量原始事件流逾 1,400 万条）
-- **标签索引文件**: `research/stage9_core_arbitration_v2/evidence/stage9_index.json` (2.26 MB, 32,660 份战报标签)
+> **可复现性声明**: **PARTIALLY REPRODUCIBLE FROM REPOSITORY; FULL REPRODUCTION REQUIRES ORIGINAL BATTLE DATABASE**  
+> 仓库内包含全部提取脚本、中间统计 JSON、索引文件、哈希清单、断言索引及关键断言原生切片。在拥有本地原始战报库时可 100% 完整重跑；在无原始库时可通过原生切片直接核验证据链。
 
 ---
 
-## 2. 核心证据数据文件与查询脚本索引
+## 一、 证据数据清单 (Evidence Datasets)
 
-| 证据数据文件 | 关联脚本 | 样本覆盖与核心统计 | 对应研究模块 |
+| 文件名 | 大小/格式 | 说明与用途 | 对应核心断言 |
 | :--- | :--- | :--- | :--- |
-| `r1_lifecycle_data.json` | `research_r1_lifecycle.py` | 5,208 份候选战报；成对共现统计：Assault vs Combo (162:0), Damage vs FirstAid (4654:0), Cleave vs Assault (74:0), Cleave vs Counter (12:0), Counter vs Combo (54:0), Counter vs Assault (96:3, 3 例反例经核实为绝地反击而非通常普攻反击)；3 反应共存案例 4 例。 | R1 普攻生命周期与反应顺序 |
-| `r1_edge_cases.json` | `research_r1_zero_and_death.py` | 18,411 份候选；零伤害触发群攻 33 例、反击 45 例、突击 120 例；抵御触发群攻 9 例、反击 21 例、突击 49 例；反击致死攻击者 113 例（突击与第二击全部短路取消）。 | R1/R5 边界条件与死亡短路 |
-| `r2_self_rescue_data.json` | `research_r2_self_rescue.py` | 707 份援护战报；检出 25 例攻击者与援护者为同一人的“自我普攻”案例（混乱打队友，队友由攻击者援护，最终打自己）。 | R2 援护合法性与目标重定向 |
-| `r2_combo_rescue_data.json` | `research_r2_combo_rescue.py` | 255 份连击+援护战报；检出 36 例组合：第 1 击与第 2 击均被援护 13 例、仅第 1 击被援护 7 例、仅第 2 击被援护 16 例。证明援护在每次普攻发起时独立判定。 | R2/R7 连击与援护交叉 |
-| `r3_cleave_damage_data.json` | `research_r3_cleave.py`<br>`inspect_cleave_diff.py` | 1,303 份群攻战报；2,258 个多副目标群攻事件；1,938 个（85.8%）副目标承受完全相同伤害；320 个不同伤害经逐帧切片全数证实为残血兵力截断、分担拆分、副目标受增减伤 Buff 或攻击者中途获得增伤（如攻其不备），副目标未重走基础攻防公式。 | R3 群攻基数与 Pipeline |
-| `r4_chain_damage_data.json` | `research_r4_chain.py`<br>`inspect_chain_diff.py` | 1,522 份连环战报；11,104 个多目标反馈事件；10,817 个（97.4%）副目标承受完全相同伤害；287 个差异案例全数为残血兵力截断或多段攻击各自独立反馈，目标智力/防御不重新参与计算。 | R4 铁索连环反馈基数 |
-| `r6_fendan_math_data.json` | `research_r6_overkill.py` | 2,128 份分担战报；11,381 个分担事件对；主目标伤害扣减与分担者承伤之和 100% 严格守恒 ($D_{orig} = D_{main} + D_{sharer}$)。 | R5/R6 分担守恒律 |
-| `r6_death_near_fendan.json` | `research_r6_death_during_fendan.py` | 1,974 份战报；检出 154 例分担状态下的死亡切片：主目标受击致死时分担者不承担过量溢出伤害（分担动作不执行）；分担者残血受损致死时伤害截断为剩余兵力。 | R5/R6 致死过量与分担截断 |
-| `r9_status_conflict_data.json` | `research_r9_multi_source.py` | 3,000 份战报；cfg 23（已存在同等或更强效果，施加失败）1,550 例（嘲讽、禁疗、计穷、缴械、混乱、洞察）；cfg 24（覆盖）0 例；cfg 25（刷新）7,875 例（仅限增减伤 Buff 与持续状态）。证明控制状态不可覆盖。 | R6 多来源冲突与覆盖规则 |
-| `r10_combo_stratified_data.json` | `research_r10_combo_stratified.py` | 11,015 份连击战报；4,017 对完整连击动作；嘲讽分层同目标率 100% (12/12)；常规存活分层同目标率 48.23% (1721/3568)；混乱分层同目标率 34.48% (80/232)。证明第二击为独立均匀重新索敌。 | R7 RNG 与确定性 |
-| `r7_recursion_matrix_data.json` | `research_r7_recursion.py`<br>`inspect_recursion_details.py` | 2,500 份战报；跨反应矩阵全量检验：反击套反击 0 例（排查 8 例为同武将多战法并发反击）；连环套连环 0 例；群攻套群攻 0 例；分担套分担 0 例。跨机制衍生支持：Cleave->Share (17), Cleave->FirstAid (149), Counter->FirstAid (192), Counter->Chain (14) 等。 | R4 完整递归许可矩阵 |
+| **`RAW_BATTLE_HASH_MANIFEST.csv`** | CSV | 关键断言所依赖原始战报文件的 SHA-256 哈希值与字节大小清单 | 全量可信性基准 |
+| **`CLAIM_EVIDENCE_INDEX.csv`** | CSV | 核心机制断言与战报文件名、事件起止序号的精确映射索引 | 全量证据溯源 |
+| **`raw_slices/*.json`** | JSON 集合 | 关键断言的最小原生战报事件切片包（无需原始数据库即可核验） | EM-01, EM-03, EM-08, EM-11, EM-19, EM-21, EM-22 |
+| **`r11_confusion_taunt_data.json`** | JSON | 1,397 例混乱 × 嘲讽共现样本完整提取集 | EM-01 (BF-01) |
+| **`r10_combo_detailed_stratified.json`**| JSON | 5,252 组连击多维正交分层索敌统计集 | EM-25 (BF-05) |
+| **`r7_recursion_denominators.json`** | JSON | 反击/连环/分担/连击的有效机会分母与触发统计 | EM-11 ~ EM-14 (BF-06) |
+| **`r1_lifecycle_data.json`** | JSON | 普通攻击生命周期各反应对共现统计 | EM-08 (BF-02) |
+| **`r1_edge_cases.json`** | JSON | 零伤害、抵御、反击致死攻击者切片集 (281 例) | EM-10, EM-20 |
+| **`r2_self_rescue_data.json`** | JSON | 25 例“攻击者==援护者”自攻自受样本 | EM-03 |
+| **`r3_cleave_damage_data.json`** | JSON | 2,258 组双副目标群攻伤害对比集 | EM-17 (HR-01) |
+| **`r4_chain_damage_data.json`** | JSON | 11,104 组多副目标铁索连环伤害对比集 | EM-18 (HR-01) |
+| **`r6_fendan_math_data.json`** | JSON | 11,381 组分担减免与承受数学守恒验证集 | EM-15 |
+| **`r6_death_near_fendan.json`** | JSON | 154 组主目标致死阻断分担样本集 | EM-19 (HR-02) |
+| **`r9_status_conflict_data.json`** | JSON | cfg 23 (1550例) 与 cfg 25 (7875例) 状态冲突集 | EM-23 (BF-07) |
+| **`stage9_index.json`** | JSON (2.26MB) | 32,660 份战报的核心机制关键词与特征标签索引 | 全库检索入口 |
+
+---
+
+## 二、 自动化提取与验证脚本 (Python Scripts)
+
+| 脚本名 | 核心功能 | 运行方式 |
+| :--- | :--- | :--- |
+| **`research_bf01_confusion_taunt.py`** | 提取混乱 × 嘲讽共现战报，核验索敌行为 | `python evidence/research_bf01_confusion_taunt.py` |
+| **`research_bf05_stratify.py`** | 提取连击多维正交分层索敌数据 | `python evidence/research_bf05_stratify.py` |
+| **`research_bf06_recursion_denominator.py`** | 计算自递归有效机会分母 | `python evidence/research_bf06_recursion_denominator.py` |
+| **`inspect_bf03_schema.py`** | 验证战报原生 JSON 物理 Schema | `python evidence/inspect_bf03_schema.py` |
+| **`generate_evidence_index.py`** | 生成哈希清单、断言索引与原生切片 | `python evidence/generate_evidence_index.py` |
+| **`research_r1_lifecycle.py`** | 统计普攻反应成对时序与绝地反击反例 | `python evidence/research_r1_lifecycle.py` |
+| **`research_r2_self_rescue.py`** | 提取自援护样本 | `python evidence/research_r2_self_rescue.py` |
+| **`research_r3_cleave.py`** | 验证群攻派生基数与差异归因 | `python evidence/research_r3_cleave.py` |
+| **`research_r4_chain.py`** | 验证铁索连环派生基数 | `python evidence/research_r4_chain.py` |
+| **`research_r6_overkill.py`** | 验证致死分担阻断 | `python evidence/research_r6_overkill.py` |
+
+---
+
+## 三、 本地复现指南 (Reproduction Guide)
+
+### 模式 A: 基于原生切片的快速轻量核验 (无需原始数据库)
+直接读取 `evidence/raw_slices/` 下的 JSON 文件。每个切片均为原生战报的原始子事件数组，可直接核查：
+- `raw_slices/EM-01_*`: 混乱武将被嘲讽后攻击非嘲讽源的原始日志；
+- `raw_slices/EM-03_*`: 张飞混乱打张飞自身的原始日志；
+- `raw_slices/EM-08_*`: 绝地反击作为受击被动回调在突击伤害后执行的原始日志；
+- `raw_slices/EM-19_*`: 主目标致死后未发生分担转嫁的原始日志；
+- `raw_slices/EM-21_*`: 燕人咆哮多目标循环中主将阵亡仍完成目标 2 的原始日志。
+
+### 模式 B: 基于原始数据库的全量重新统计
+需本地挂载 `D:\战报数据库\三战战报汇总_全盘扫描\完整战报JSON`，直接在工作目录下运行：
+```bash
+python research/stage9_core_arbitration_v2/evidence/research_bf01_confusion_taunt.py
+python research/stage9_core_arbitration_v2/evidence/research_bf05_stratify.py
+python research/stage9_core_arbitration_v2/evidence/research_bf06_recursion_denominator.py
+```
+全部脚本均采用多层异常捕获与确定性统计逻辑，输出结果与本报告保存的 JSON 数据集完全一致。
