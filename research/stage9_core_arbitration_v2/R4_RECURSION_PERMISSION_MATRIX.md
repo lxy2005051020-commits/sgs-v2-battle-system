@@ -1,46 +1,122 @@
-﻿# R4 跨机制递归许可矩阵与有效分母审计报告 (v2 - Repaired)
+# R4 跨机制递归许可矩阵与有效分母审计报告 (v2 - Cleave/Share Sync)
 
 > **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
 > **数据文件**: `evidence/r7_recursion_denominators.json`, `evidence/r7_recursion_matrix_data.json`, `evidence/raw_slices/EM-11_*`, `evidence/raw_slices/EM-22_*`  
-> **核心任务**: 为递归禁止断言计算有效机会（Eligible Opportunities）分母，严格区分 BLOCKED 与 NOT OBSERVED (BF-06)。
+> **群攻机制冻结记录**: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`  
+> **核心任务**: 为递归禁止断言计算有效机会（Eligible Opportunities）分母，并同步纳入后续直接确认的群攻 / 分担机制边界。
 
 ---
 
 ## 一、 自递归机制的有效机会分母与定性
 
-审计明确指出：未发生递归只有在具备“有效机会分母”的前提下，才能断言为 BLOCKED；若分母为 0，则仅能定性为 NOT OBSERVED。
+历史审计原则仍然成立：仅凭“战报未观察到”不能把机制写成 BLOCKED；若无有效分母，应标记 NOT OBSERVED。  
+但当某项机制后来通过独立游戏机制确认被直接确定时，可以从“统计未观察”升级为“项目机制已确认”。这两类证据来源必须区分。
 
-| 自递归对 (Self-Recursion) | 源事件数 (Source Events) | 有效机会分母 (Eligible Opportunities) | 实际触发数 (Triggered) | 阻断比例 (Blocked Ratio) | 定性状态 (Status) | 证据等级 (Confidence) | 机制说明 |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| **Counter $\rightarrow$ Counter** | 6,287 | **42** | 0 | 100.0% | **BLOCKED** | **Grade B** | 被反击者具备反击战法（后发/气凌）且受击存活的样本共 42 例，无一例反向反击。因分母有限，核定为 B 级。 |
-| **Cleave $\rightarrow$ Cleave** | 2,258 | **0** | 0 | - | **NOT OBSERVED** | **Grade C** | 三战无任何“受兵刃伤害后发动群攻”的战法，机制上不存在有效触发机会。作为工程设计不变量。 |
-| **Chain $\rightarrow$ Chain** | 24,433 | **24,433** | 0 | 100.0% | **BLOCKED** | **Grade A** | 铁索连环反馈的谋略伤害共现 24,433 次，其受击者身上处于连环且队友存活，但 0 次再次触发连环传播。 |
-| **Share $\rightarrow$ Share** | 11,381 | **0** | 0 | - | **NOT OBSERVED** | **Grade C** | 战报中无同队双分担者互相分担的有效构筑样本，分母为 0。作为工程设计不变量。 |
-| **Combo2 $\rightarrow$ Combo3** | 5,428 | **5,428** | 0 | 100.0% | **BLOCKED** | **Grade A** | 单回合连击执行第二击后，第三次普攻触发为 0。 |
-
----
-
-## 二、 跨机制派生矩阵 (Cross-Mechanism Matrix)
-
-在跨机制派生中，战报证实了合法的跨类型连锁触发：
-
-| 触发源 (Source) | 承接机制 (Target) | 全库观察案例 (Observed Cases) | 典型战报举例 | 判定与置信度 |
-| :--- | :--- | :---: | :--- | :---: |
-| **Cleave (群攻)** | Share (分担) | 17 | `战报_1104450` 赵云受群攻，被刘备严阵以待分担 | 允许 [Grade A] |
-| **Cleave (群攻)** | FirstAid (急救) | 149 | `战报_1068287` 副目标受群攻触发青囊急救 | 允许 [Grade A] |
-| **Cleave (群攻)** | Chain (连环) | 12 | 谋略群攻命中连环副目标触发连环反馈 | 允许 [Grade B] |
-| **Cleave (群攻)** | Counter (反击) | 0 (有效分母 28) | 副目标受溅射不触发对主攻击者的反击 | 阻断 [Grade B] |
-| **Counter (反击)** | Share (分担) | 12 | 反击伤害被受击方队友分担 | 允许 [Grade B] |
-| **Counter (反击)** | FirstAid (急救) | 192 | 被反击方受伤害触发急救回血 | 允许 [Grade A] |
-| **Counter (反击)** | Chain (连环) | 14 | 谋略反击命中连环目标触发反馈 | 允许 [Grade B] |
-| **Chain (连环)** | Share (分担) | 19 | 连环反馈伤害被副目标队友分担 | 允许 [Grade B] |
-| **Chain (连环)** | FirstAid (急救) | 128 | 连环反馈伤害触发急救回血 | 允许 [Grade A] |
-| **Chain (连环)** | Counter (反击) | 0 (有效分母 150) | 连环受击者不触发对伤害源的反击 | 阻断 [Grade A] |
+| 自递归对 (Self-Recursion) | 历史统计状态 | 当前状态 | 当前说明 |
+| :--- | :--- | :--- | :--- |
+| **Counter → Counter** | 有效机会分母存在，历史统计 0 触发 | **PENDING FINAL EXTRACTOR AUDIT** | 方向支持 BLOCKED，但最终冻结仍受状态生命周期提取器语义审计约束。 |
+| **Cleave → Cleave** | 历史分母为 0，曾标记 NOT OBSERVED | **BLOCKED — FROZEN** | 已直接确认：群攻派生伤害不会再次触发新的群攻。不得再保留为“仅工程防御不变量”。 |
+| **Chain → Chain** | 历史有效机会分母较大，0 触发 | **PENDING FINAL EXTRACTOR AUDIT** | 方向支持 BLOCKED，但最终冻结仍受 Chain 状态 / execution 语义审计约束。 |
+| **Share Damage → Share** | 历史分母为 0，曾标记 NOT OBSERVED | **BLOCKED — FROZEN** | 已直接确认：分担兵力扣除属于被动数值结算，不会再次触发分担。 |
+| **Combo2 → Combo3** | 全量连击样本中未观察第三击 | **BLOCKED** | 当前研究强支持连击仅额外产生第二次普通攻击，不递归出第三击。 |
 
 ---
 
-## 三、 模拟器工程防御规范
+## 二、 群攻 / 分担直接确认后的递归边界
 
-根据上述实证，模拟器设计规范确立：
-1. **天然被动阻断机制 (BLOCKED)**: 引擎必须显式增加来源标签过滤，防止 Counter 与 Chain 的二次递归。
-2. **未观察到机制 (NOT OBSERVED)**: 针对 Cleave $\rightarrow$ Cleave 与 Share $\rightarrow$ Share，在缺乏官方对抗样本的情况下，统一设定 `ReactionDepth <= 1` 或派生标记，防御性阻断自递归循环。
+### 1. Cleave 派生伤害
+
+已经冻结：
+
+```text
+Cleave → Cleave = BLOCKED
+Cleave → Counter = BLOCKED
+Cleave → Share = ALLOWED
+Cleave → FirstAid = ALLOWED
+```
+
+群攻属于派生伤害，可以进入规避、抵御、分担与允许的伤后恢复流程，但 **不具备再次传播攻击型 Reaction 的资格**。
+
+### 2. Share Damage
+
+分担者被扣除的兵力属于：
+
+```text
+Passive Numeric Settlement
+```
+
+而不是：
+
+```text
+New Hit Event
+New Damage Reaction Source
+```
+
+因此已经冻结：
+
+```text
+Share Damage → Share = BLOCKED
+Share Damage → FirstAid = BLOCKED
+Share Damage → Counter = BLOCKED
+Share Damage → 刚烈不屈等受击响应 = BLOCKED
+```
+
+这条规则从机制层直接切断 Share 的递归响应链。
+
+---
+
+## 三、 跨机制派生矩阵
+
+| 触发源 (Source) | 承接机制 (Target) | 当前判定 | 说明 |
+| :--- | :--- | :---: | :--- |
+| **Cleave (群攻)** | Share (分担) | **ALLOWED — FROZEN** | 群攻可以进入分担。 |
+| **Cleave (群攻)** | FirstAid (急救) | **ALLOWED — FROZEN** | 群攻实际承伤可以触发急救。 |
+| **Cleave (群攻)** | Counter (反击) | **BLOCKED — FROZEN** | 群攻副目标不会因群攻触发反击。 |
+| **Cleave (群攻)** | Cleave (群攻) | **BLOCKED — FROZEN** | 群攻不会递归触发群攻。 |
+| **Share Damage** | Share | **BLOCKED — FROZEN** | 被动数值结算，不再开启分担。 |
+| **Share Damage** | FirstAid | **BLOCKED — FROZEN** | 被动数值结算，不产生受击急救响应。 |
+| **Share Damage** | Counter | **BLOCKED — FROZEN** | 被动数值结算，不产生反击响应。 |
+| **Counter (反击)** | FirstAid | ALLOWED（既有研究） | 被反击方受伤可触发急救。 |
+| **Counter (反击)** | Chain | ALLOWED（既有研究） | 谋略反击可进入连环反馈。 |
+| **Chain (连环)** | Share / FirstAid / Counter | **待独立复核** | 不允许从 Cleave 冻结矩阵自动类推 Chain。 |
+
+---
+
+## 四、 模拟器工程防御规范
+
+当前至少需要明确区分三类运行时语义：
+
+```text
+1. Full Attack / Full Hit
+2. Derived Damage（例如 Cleave）
+3. Passive Numeric Settlement（例如 Share Damage）
+```
+
+其中：
+
+```text
+Derived Damage
+→ 可以拥有部分防护 / 分担 / 恢复回调
+→ 但可通过 provenance / recursion permission 禁止攻击型递归
+
+Passive Numeric Settlement
+→ 直接执行数值扣除
+→ 不重新打开受击 Reaction 链
+```
+
+因此不建议仅靠一个笼统的 `ReactionDepth <= 1` 解决所有递归问题。更准确的做法是让来源类型与递归许可矩阵共同裁决。
+
+---
+
+## 五、 当前冻结状态
+
+已经从待研究项中移除：
+
+- `Cleave → Cleave`；
+- `Cleave → Counter`；
+- `Cleave → Share`；
+- `Cleave → FirstAid`；
+- `Share Damage → Share`；
+- `Share Damage → FirstAid / Counter / 受击响应`。
+
+Counter / Chain 自递归仍需等待提取器最后一轮语义正确性复核后再决定是否进入正式 FROZEN。
