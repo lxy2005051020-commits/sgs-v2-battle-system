@@ -4,6 +4,7 @@
 > **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
 > **数据基线**: 全盘扫描 32,660 份战报（逾 1,400 万条原始事件流）  
 > **状态**: `REPAIRED — AUDIT READY (CONSISTENT EVIDENCE BASELINE)`  
+> **群攻机制冻结记录**: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`  
 > **最高原则**: 
 > 1. 反例优先、控制变量优先、直接证据优先；
 > 2. 严禁将 NOT OBSERVED 写成 BLOCKED；
@@ -41,30 +42,44 @@
 - 采用 **阶段优先级制 (Phase Priority) + 局域即时内联回调 (Inline Callbacks)**。[Grade B]
 - 突击致死时，后续附加状态短路取消（报 cfg 149）。[Grade A]
 
-### 5. 跨机制递归许可矩阵 (R4)
-- **BLOCKED 项 (具备有效分母且未触发)**:
-  - 反击套反击: 有效机会 Denominator=90，触发=0 [Grade B]；
-  - 连环套连环: 有效机会 Denominator=23,620，触发=0 [Grade A]；
+### 5. 跨机制递归许可矩阵 (R4 + Cleave Freeze)
+- **已有研究统计支持的 BLOCKED 项**:
+  - 反击套反击: 有效机会 Denominator=90，触发=0 [历史 Grade B；最终冻结仍受提取器语义审计约束]；
+  - 连环套连环: 有效机会 Denominator=23,620，触发=0 [历史 Grade A；最终冻结仍受提取器语义审计约束]；
   - 连击第 2 击套第 3 击: 有效机会 Denominator=34,639，触发=0 [Grade A]。
-- **NOT OBSERVED 项 (缺乏有效分母，工程设计不变量)**:
-  - 群攻套群攻: 机制无受击群攻战法，分母为 0 [Grade C]；
-  - 分担套分担: 战报无同队双分担共存样本，分母为 0 [Grade C]。
-- **跨机制派生支持**: Cleave $\rightarrow$ Share, Cleave $\rightarrow$ FirstAid, Counter $\rightarrow$ FirstAid, Counter $\rightarrow$ Chain。
+- **已直接确认并冻结的群攻/分担递归边界**:
+  - `Cleave → Cleave = BLOCKED`；
+  - `Cleave → Counter = BLOCKED`；
+  - `Share Damage → Share = BLOCKED`；
+  - `Share Damage → FirstAid / Counter / 刚烈不屈等受击响应 = BLOCKED`。
+- **已确认跨机制支持**:
+  - `Cleave → Share = ALLOWED`；
+  - `Cleave → FirstAid = ALLOWED`；
+  - Counter → FirstAid、Counter → Chain 维持既有研究结论。
 
 ### 6. 四类派生伤害数学语义 (R3, R6)
-- **SPLIT (分摊/分担)**: 总量严格守恒，$D_{orig} = D_{main} + \sum D_{sub}$。分担为一对一 (11,381例)，分摊为一对全队均摊。[Grade A]
+- **SPLIT (分摊/分担)**: 总量严格守恒，$D_{orig} = D_{main} + \sum D_{sub}$。分担为一对一，分摊为一对全队均摊。[Grade A]
 - **TRANSFER (转移 - 援护)**: 动作级 100% 物理重定向。[Grade A]
-- **FEEDBACK (反馈 - 铁索连环)**: 原目标承伤不减，按比例向连环队友广播 (10,817例)。[Grade A]
-- **COPY (复制 - 群攻)**: 主目标承伤不减，副目标按比例复制基础值。[Grade B]
+- **FEEDBACK (反馈 - 铁索连环)**: 原目标承伤不减，按比例向连环队友广播。[Grade A]
+- **COPY (复制 - 群攻)**: 主目标承伤不减，以主攻击最终结算伤害乘群攻比例生成副目标派生伤害。群攻核心规则已单独冻结于 `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`。
 
 ### 7. 理论伤害 vs 实际兵力损失 (R3, R5, R6)
-- **致死分担截断 (观察事实)**: 主目标受击兵力致死时，未观察到分担转嫁发生（154 例验证，分担者不承担过量）。[Grade B]
-- 群攻基数继承主目标承受的基准兵刃伤害。
+- **群攻基数**: 群攻使用触发它的主攻击 **最终结算伤害** 作为派生基数，再乘 Cleave Ratio；副目标不重新执行基础攻防公式。
+- **历史致死分担观察**: 旧版样本中主目标受击兵力致死时未观察到分担转嫁；由于提取器语义仍在做最终审计，该致死边界暂不提升为新的 Frozen 规则。
 
-### 8. 派生伤害 Pipeline 重入 (R3)
-- **表现模型**: 最符合 **fixed derived base + target-side modifier re-entry** 模型。[Grade B]
-- 群攻与铁索反馈跳过副目标基础攻防公式，但副目标独立判定规避、抵御与全局增减伤修饰。
-- 反击作为全新攻击动作，完整重走 Base Pipeline 与 Modifier Pipeline。
+### 8. 派生伤害 Pipeline 重入 (R3 + Cleave Freeze)
+- **群攻（已冻结）**:
+  - 跳过副目标基础攻防公式；
+  - 继承原攻击 `DamageType`；
+  - 可以被规避；
+  - 可以被抵御，抵御成功消耗 1 次抵御；
+  - **不重新受到副目标自身伤害增减 Modifier 影响**；
+  - 可以进入分担；
+  - 实际承伤后可触发急救；
+  - 兵刃型群攻可按规则触发倒戈，谋略型群攻可按规则触发攻心；
+  - 不触发反击，不再次触发群攻。
+- **分担支路**: 分担者被扣除的 Share Damage 属于被动数值结算，不开启新的完整受击响应链。
+- **铁索连环**: 仍维持“派生基数、跳过副目标基础公式”的研究结论；不得因为群攻已冻结而自动推定铁索拥有完全相同的 Evasion / Barrier / Modifier / Share / Callback 许可矩阵，铁索边界须独立确认。
 
 ### 9. 战报因果溯源结构 (R8)
 - **三层因果模型分离**:
@@ -92,7 +107,7 @@
 - **多反击触发**: 同武将携带多个反击战法按装配顺序独立触发（样本仅 8 例）。[Grade C]
 
 ### 12. 确定性与 RNG (R7)
-- **第二击重新索敌**: 连击第二击重新执行目标决议，合法候选池中按 1/K 独立随机均匀索敌（34,639 对全量分层样本：候选为 1 时同目标率 100.00%，候选为 2 时 50.52%，候选为 3 时 33.83%，严格服从 1/K 独立随机均匀分布；第一击目标阵亡时 100% 转移目标）。[Grade A]
+- **第二击重新索敌**: 连击第二击重新执行目标决议，合法候选池中按 1/K 独立随机均匀索敌（34,639 对全量分层样本：候选为 1 时同目标率 100.00%，候选为 2 时 50.52%，候选为 3 时 33.83%，第一击目标阵亡时 100% 转移目标）。当前“重新索敌”结论强；严格独立均匀模型仍应由完整 transition matrix 做最终统计封口。
 - **官方内部 PRNG 机制**: 具体 PRNG 算法、调用次数与步进序列标记为 **UNKNOWN**（禁止将模拟器设计断言为官方事实）。[UNKNOWN]
 
 ---
@@ -100,7 +115,13 @@
 ## 与 Stage 8 Frozen Contract 边界评估
 
 1. **反击 (Counter)**: 构造常规 `DamageRequest`，完全复用 Stage 8 冻结流水线（分类 A：外层编排即可）。
-2. **群攻 (Cleave) 与铁索反馈 (Chain)**:
-   - 具有直接派生的 Base Value，跳过基础攻防公式，但需进入 HitResolution（判定规避/抵御）与 Modifier（副目标减伤）。
-   - **评估定论**: 属于 **分类 B (Potential Extension Point Required)**。
-   - **无 freeze-breaking 缺陷**: 无需 Formal Reopen Stage 8。在 Stage 9 引入派生适配器即可衔接 Stage 8。
+2. **群攻 (Cleave)**:
+   - 输入已经是主攻击最终结算伤害派生出的固定值；
+   - 跳过基础攻防公式；
+   - 不重新跑副目标伤害增减 Modifier；
+   - 仍需要规避、抵御、分担、兵力扣除与选择性的 post-damage recovery callback；
+   - 必须禁止 Counter / Cleave 递归传播。
+3. **铁索反馈 (Chain)**:
+   - 仍确定跳过副目标基础攻防公式；
+   - 其余重入边界须独立研究，禁止直接复制 Cleave 矩阵。
+4. **评估定论**: 群攻与其他派生伤害都提示 Stage 9 可能需要一个明确的 `Derived Damage` extension/interface。该需求应在 Stage 9 设计阶段评估，**当前不构成 Stage 8 Formal Reopen**。
