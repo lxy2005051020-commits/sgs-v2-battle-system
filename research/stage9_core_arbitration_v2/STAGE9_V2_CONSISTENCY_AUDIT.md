@@ -1,36 +1,184 @@
-# Stage 9 v2 内部结论一致性审计表 (Consistency Audit Matrix)
+# Stage 9 v2 内部结论一致性审计表 (Post Cleave / Chain Freeze Sync)
 
-> **审计基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b`  
-> **数据范围**: 32,660 份真实战报数据库（含定向提取的清洗样本切片）  
-> **审计准则**: 消除正文、总规、分项报告与矩阵中的互斥断言；区分观察事实与推论；诚实验证分母与评级。
-
----
-
-## 一、 一致性检查总表
-
-| 序号 | 机制主题 (Topic) | R 系列专题报告 (R-file Claim) | 核心总规 (Core Rules Claim) | 证据矩阵 (Evidence Matrix Claim) | README 声明 (README Claim) | 最终统一定论 (Final Unified Claim) | 状态 (Status) |
-| :---: | :--- | :--- | :--- | :--- | :--- | :--- | :---: |
-| 1 | **confusion vs taunt** | R2: 混乱压制嘲讽，进入无差别目标选择 | 原总规称压制；旧交付总结曾误写嘲讽绝对优先 | EM-01: 混乱压制嘲讽 | README: 混乱优先于嘲讽 | **混乱压制嘲讽**。1,351 例共现有效样本中，79.13% 攻击非嘲讽源（含打友军），20.87% 随机命中嘲讽源。定论统一为：混乱完全压制嘲讽的目标锁定。 | **FIXED** |
-| 2 | **guard vs taunt** | R2: 援护发生在嘲讽之后，援护者代为承伤 | 援护高于嘲讽，最终由援护者承伤 | EM-02: 援护优先级高于嘲讽 | 援护高于嘲讽 | **援护高于嘲讽**。嘲讽锁定意图目标为嘲讽源，若嘲讽源受队友援护，重定向至援护者。89 例无反例。 | **CONSISTENT** |
-| 3 | **cleave vs counter** | R1: 群攻先于反击 (12:0) | 声明 $\rightarrow$ 扣血 $\rightarrow$ 急救 $\rightarrow$ 群攻 $\rightarrow$ 反击 | EM-08: 包含群攻先于反击 | 曾误写反击先于群攻 | **群攻先于反击 (Cleave $\rightarrow$ Counter)**。12 例真实共现样本中群攻均先于反击。因样本量仅 12 例，评级由 A 降为 **B**。 | **FIXED** |
-| 4 | **counter vs assault** | R1: 普攻反击 100% 先于突击 (96:0)，3 例反例为绝地反击被动受击回调 | 反击先于突击 (96:0) | EM-08: 反击先于突击 | 明确排除绝地反击 | **普通攻击反击先于突击战法**。统一术语，将【绝地反击】定性为 OnDamageTaken Callback，真正的普攻反击（后发、气凌）96:0 先于突击。评级 **B**。 | **CONSISTENT** |
-| 5 | **commander death** | R5: 主将阵亡触发战败，但当前原子动作块继续结算 | 原总规写立即终战；部分总结写绝对立即停止 | EM-21: 主将阵亡战斗终止 | 写法偏向立即停止 | **建立 9 层死亡与终战模型**。多段伤害/连环在当前原子动作块内结算完毕，随后执行 cfg 209 兵力损失并于 cfg 157 终战；未触发的后续反应短路。 | **FIXED** |
-| 6 | **chain commander death** | R5: 连环传播中主将阵亡，当前传播链继续结算 | 连环为原子循环，传完再终战 | EM-22: 连环中主将阵亡传完再终战 (5例) | 提及原子循环 | **连环传播中主将阵亡执行 DEFERRED TERMINATION**。当前连环广播循环完成剩余目标后终战。样本量 5 例，评级由 B 降为 **C**。 | **FIXED** |
-| 7 | **counter recursion** | R4: 反击不套反击 (0 递归) | 来源防护防线禁止自递归 | EM-11: 曾误标 0 cases / Grade A | 提防线禁止自递归 | **反击不触发反击 (BLOCKED)**。全库检出 90 例被反击者自身具备反击状态且存活的有效机会 (Eligible Opportunities=90)，0 例触发二次反击。评级定为 **B**。 | **FIXED** |
-| 8 | **cleave recursion** | R4: 群攻不套群攻 (0 递归) | 禁止自递归 | EM-12: 曾误标 0 cases / Grade A | 提防线禁止自递归 | **群攻不触发群攻 (NOT OBSERVED)**。三战中不存在受击触发群攻的战法设计，有效机会 Denominator=0。评级由 A 降为 **C (PROVISIONAL)**。 | **FIXED** |
-| 9 | **chain recursion** | R4: 铁索不二次连环 (0 递归) | 禁止自递归 | EM-13: 曾误标 0 cases / Grade A | 提防线禁止自递归 | **铁索反馈不二次触发连环 (BLOCKED)**。连环谋略伤害有效机会 23,620 例，二次连环触发为 0。评级为 **A**。 | **FIXED** |
-| 10 | **share recursion** | R4: 分担不嵌套分担 (0 递归) | 禁止自递归 | EM-14: 曾误标 0 cases / Grade A | 提防线禁止自递归 | **分担不嵌套分担 (NOT OBSERVED)**。真实战报中无同队双分担者互相分担的有效样本，有效机会 Denominator=0。评级由 A 降为 **C (PROVISIONAL)**。 | **FIXED** |
-| 11 | **multi-control overwrite** | R6: 重复控制触发 cfg 23 拒绝 (1,550例, 0覆盖) | 控制先占独占，绝对不可覆盖 | EM-23: 控制绝对排斥 | 称绝对不可覆盖 | **同类控制多表现为 cfg 23 拒绝，强度覆盖未证实**。战报日志 cfg 23 文本为“同等或更强效果”，因缺乏弱控被强控覆盖的直接样本，评级由 A 降为 **B**。 | **FIXED** |
-| 12 | **combo retarget** | R7: 第二击独立均匀索敌 | 第二击必定独立重新索敌 | EM-25: 独立均匀索敌 (34,639例) | 第二击重新索敌 | **第二击重新执行独立均匀索敌**。修复提取器后全量 34,639 组分层统计表明：候选为 3 时同目标率 33.83%（理论 33.33%），候选为 2 时 50.52%（理论 50.00%），候选为 1 时 100.00%。严格证实为 uniform i.i.d.。评级升为 **A**。 | **FIXED** |
-| 13 | **RNG consumption** | R7: 伪随机序列消耗与确定性分支 | 单目标不推进 PRNG | R7 提确定性分支 | 提确定性分支 | **战报仅可观察行为结果，内部 PRNG 调用与步进标记为 UNKNOWN**。模拟器单目标不消耗 PRNG 属于工程设计，非官方实现实证。评级 **UNKNOWN / C**。 | **FIXED** |
-| 14 | **provenance structure** | R8: 战报平铺无 parent_id，定界符因果还原 | 曾提 group/event_id 树状 | R8 明确区分三层 | 曾误写官方日志含树结构 | **明确划分三层因果模型**：1. LOG FACT（真实平铺字段）；2. RECONSTRUCTED MODEL（定界符因果推断）；3. ENGINEERING MODEL（模拟器设计字段）。禁止宣称官方必为 DFS/FIFO。 | **FIXED** |
-| 15 | **cleave pipeline** | R3: 群攻子目标承伤高度一致 (85.8%) | 跳过公式，进入修饰层 | EM-17: 群攻不重算副目标基础攻防 | 跳过公式，进入修饰层 | **群攻最符合 fixed derived base + target modifier re-entry 模型**。跳过副目标基础攻防公式，但进入命中与减伤修饰。评级保持 **B (STRONG)**。 | **CONSISTENT** |
-| 16 | **chain pipeline** | R3: 铁索反馈承伤高度一致 (97.4%) | 跳过公式，进入修饰层 | EM-18: 铁索不重算副目标智力/统率 | 跳过公式，进入修饰层 | **铁索最符合 fixed derived base + target modifier re-entry 模型**。跳过副目标智力公式，但受副目标减伤/抵御影响。评级保持 **B (STRONG)**。 | **CONSISTENT** |
+> **历史审计基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b`  
+> **后续冻结记录**: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`, `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`  
+> **当前原则**: 历史统计审计用于证据溯源；若其机制解释与后续逐项直接冻结规则冲突，以最新冻结记录、R3/R4 与 Stage 9 总规为当前唯一事实基线。
 
 ---
 
-## 二、 审计总结
+## 一、 当前一致性总表
 
-1. **已修复冲突点 (FIXED)**: 共 **12 项**，彻底根除了“混乱 vs 嘲讽互斥”、“群攻 vs 反击颠倒”、“0 cases 标 A 级”、“递归缺少分母”、“PRNG 伪装官方实现”、“战报字段伪造”等重大内部矛盾。
-2. **完全一致点 (CONSISTENT)**: 共 **4 项**，包括援护高于嘲讽、反击先于突击、群攻与铁索派生管线表现等。
-3. **未解决阻断点 (UNRESOLVED)**: **0 项**（所有矛盾均已在单一且经过验证的战报事实上完全统一）。
+| 主题 | 历史状态 | 后续冻结后的统一结论 | 当前状态 |
+|---|---|---|---|
+| confusion vs taunt | 历史提取器支持混乱压制嘲讽 | 保持历史结论，但最终证据强度仍受提取器语义终审约束 | PENDING AUDIT QUALITY |
+| guard vs taunt | 援护可重定向嘲讽后的实际承伤者 | 无本轮冲突 | CONSISTENT |
+| cleave vs counter timing | 群攻先于普通反击 | 保持；群攻副目标 Chain 可在各自群攻伤害后 Inline | CONSISTENT + EXTENDED |
+| counter vs assault | 普通反击先于突击 | 无本轮冲突 | CONSISTENT |
+| commander death | 当前原子动作与未来反应分层处理 | Chain 目标循环的局部死亡规则已单独冻结 | CONSISTENT + EXTENDED |
+| Counter→Counter | 历史样本方向支持 BLOCKED | 不升级为 Frozen，继续等提取器语义终审 | PENDING |
+| Cleave→Cleave | 历史曾因分母 0 写 NOT OBSERVED | 已直接确认 `BLOCKED — FROZEN` | **RESOLVED** |
+| Chain→Chain | 历史统计支持 BLOCKED | 已直接确认 `BLOCKED — FROZEN`，不再依赖旧分母证明实现语义 | **RESOLVED** |
+| Share→Share | 历史曾因分母 0 写 NOT OBSERVED | 已直接确认 Share passive settlement 不会再触发 Share | **RESOLVED** |
+| Cleave Pipeline | 旧版写 fixed base + target modifier re-entry | **废弃旧模型**。Cleave 可规避、可抵御、可分担，但不重新吃副目标伤害增减 | **FIXED** |
+| Chain Pipeline | 旧版写 fixed base + target modifier / Barrier / Evasion re-entry | **废弃旧模型**。Chain 为 TRUE_FEEDBACK，不可规避、不可抵御、不吃目标侧增减伤、不可分担 | **FIXED** |
+| Chain FirstAid | 旧统计曾将 Chain→FirstAid 视为允许 | 已直接确认 `BLOCKED — FROZEN` | **FIXED** |
+| Chain Counter | 历史统计方向支持不触发 | 已直接确认 `BLOCKED — FROZEN` | **RESOLVED** |
+| Cleave→Chain | 历史存在相关样本但旧总规未冻结 | 已直接确认 `ALLOWED — FROZEN`；群攻副目标受伤后可立即 Inline Chain | **RESOLVED** |
+| Counter→Chain | 历史支持 | 已直接确认 `ALLOWED — FROZEN`，反击伤害后 Inline | **RESOLVED** |
+| Share→Chain | 旧矩阵未明确冻结 | 已直接确认 `BLOCKED — FROZEN` | **RESOLVED** |
+| Chain 多来源 | 旧版未完整裁决 | 单实例；后发覆盖；owner/ratio 使用执行时当前有效状态；持续时间刷新 2 回合 | **RESOLVED** |
+| Chain owner death | 旧版未完整裁决 | 施加者死亡不清除状态；伤害/击杀仍归该 owner；死者自身治疗收益丢弃 | **RESOLVED** |
+| Chain duration / cleanse | 旧版未完整裁决 | ACTION_START 扣减；到期先于持续伤害；震慑照常 tick；净化即时移除 | **RESOLVED** |
+| combo retarget | 历史统计支持重索敌 | 重索敌强结论保留；严格 transition matrix 仍需最终统计封口 | PENDING STAT CLOSURE |
+| stronger control overwrite | 未证实 | 仍 UNKNOWN / 待研究 | PENDING |
+
+---
+
+## 二、 Cleave 当前唯一统一模型
+
+```text
+MainAttackFinalDamage
+→ × CleaveRatio
+→ CleaveDerivedDamage
+→ Evasion
+→ Barrier
+→ no target-side damage modifier re-entry
+→ Share if present
+→ Troop Loss
+→ allowed recovery callbacks
+```
+
+```text
+Cleave → FirstAid = ALLOWED
+Cleave → Share = ALLOWED
+Cleave → Chain = ALLOWED
+Cleave → Counter = BLOCKED
+Cleave → Cleave = BLOCKED
+```
+
+群攻继承源攻击 DamageType；兵刃 / 谋略分别进入对应恢复类判定。
+
+---
+
+## 三、 Chain 当前唯一统一模型
+
+```text
+TriggerNodeResolvedDamage
+→ × trigger-node current ChainRatio
+→ TRUE_FEEDBACK
+→ no Evasion
+→ no Barrier
+→ no target-side damage modifier
+→ no Share
+→ no second Crit
+→ applied troop-loss settlement
+→ no hit-response callbacks
+```
+
+```text
+Chain → FirstAid = BLOCKED
+Chain → Counter = BLOCKED
+Chain → Chain = BLOCKED
+Chain → Share = BLOCKED
+Chain → Lifesteal = BLOCKED
+Chain → StrategyRecovery = BLOCKED
+Chain → 刚烈不屈等受击响应 = BLOCKED
+```
+
+可触发 Chain：
+
+```text
+Normal Attack / Skill / Periodic / Cleave / Counter damage
+```
+
+不可触发 Chain：
+
+```text
+Chain TRUE_FEEDBACK
+Share Passive Numeric Settlement
+```
+
+---
+
+## 四、 Chain 时序统一模型
+
+默认：
+
+```text
+Damage Instance
+→ Chain INLINE
+→ continue
+```
+
+普通攻击主目标 + 群攻特例：
+
+```text
+Main target damage
+→ defer main-target Chain
+→ resolve all Cleave targets and each target's Inline Chain
+→ Cleave complete
+→ execute main-target Deferred Chain
+```
+
+Deferred Chain：
+
+```text
+fixed: triggerDamage
+JIT at execution: source alive + activeChainEffect exists
+execution-time dynamic: owner / ratio / effect metadata
+```
+
+死亡或状态失效：Cancel。状态被覆盖：使用当前新 owner / ratio。
+
+---
+
+## 五、 Chain 传播与状态生命周期统一模型
+
+传播：
+
+```text
+same camp only
+slot 0 → slot 1 → slot 2
+JIT revalidation per target
+broadcast full ratio to each eligible target
+one target death does not stop remaining targets
+```
+
+状态：
+
+```text
+single active Chain instance per unit
+same-source reapply → refresh to 2 turns
+different-source reapply → later effect overwrites owner/ratio and refreshes to 2 turns
+owner death → state remains
+cleanse → immediate removal
+reapply after cleanse → brand-new instance
+duration tick → target ACTION_START
+1→0 expiry → before periodic damage
+stun → does not prevent duration tick
+```
+
+---
+
+## 六、 一致性审计结论
+
+本轮同步后，以下旧版互斥断言已从当前主文档体系中废弃：
+
+```text
+Cleave target modifier re-entry
+Chain Evasion / Barrier / target modifier re-entry
+Chain → Share ALLOWED
+Chain → FirstAid ALLOWED
+Cleave→Cleave merely NOT OBSERVED
+Share→Share merely NOT OBSERVED
+```
+
+当前主基线已经统一为：
+
+```text
+Cleave Core Mechanics = FROZEN
+Chain Core Mechanics = FROZEN
+Share Core Mechanics = NEXT RESEARCH TARGET
+```
+
+尚未解决的问题必须继续标记为 PENDING / UNKNOWN，不得因为 Cleave / Chain 已冻结而顺带宣布整个 Stage 9 完成。
