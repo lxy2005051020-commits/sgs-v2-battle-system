@@ -1,387 +1,1150 @@
 {
-  "summary": {
-    "(1, 'CONFUSION', 'DIED')": {
-      "candidate_count": 1,
+  "metadata": {
+    "extractor": "run_bf05_reextraction.py",
+    "candidate_reports": 11015,
+    "processed_reports": 11015,
+    "total_combos": 34639,
+    "invariants": {
+      "inv01_candidate1_same": {
+        "total": 5976,
+        "passed": 5976,
+        "pass_rate": 1.0,
+        "failures_sample": []
+      },
+      "inv02_dead_retarget": {
+        "total": 464,
+        "passed": 464,
+        "pass_rate": 1.0,
+        "failures_sample": []
+      },
+      "inv06_combo_actor_match": {
+        "total": 34639,
+        "passed": 34639,
+        "pass_rate": 1.0,
+        "failures_sample": []
+      }
+    },
+    "excluded_counts": {
+      "parse_error": 0,
+      "candidate_pool_unknown": 211
+    }
+  },
+  "strata": {
+    "('3', 'CONFUSION', 'DIED', 'POOL_CHANGED')": {
+      "candidate_count": "3",
       "condition": "CONFUSION",
       "target1_status": "DIED",
+      "pool_state": "POOL_CHANGED",
+      "n": 1,
+      "same": 0,
+      "diff": 1,
+      "p_same": 0.0,
+      "ci_95": [
+        0.0,
+        0.7934567085261071
+      ]
+    },
+    "('3', 'CONFUSION', 'DIED', 'POOL_STABLE')": {
+      "candidate_count": "3",
+      "condition": "CONFUSION",
+      "target1_status": "DIED",
+      "pool_state": "POOL_STABLE",
       "n": 3,
       "same": 0,
       "diff": 3,
-      "p_observed": 0.0,
-      "p_expected": 0.0
+      "p_same": 0.0,
+      "ci_95": [
+        0.0,
+        0.5615060804490177
+      ]
     },
-    "(2, 'CONFUSION', 'DIED')": {
-      "candidate_count": 2,
+    "('4', 'CONFUSION', 'DIED', 'POOL_STABLE')": {
+      "candidate_count": "4",
       "condition": "CONFUSION",
       "target1_status": "DIED",
-      "n": 16,
-      "same": 2,
-      "diff": 14,
-      "p_observed": 0.125,
-      "p_expected": 0.0
+      "pool_state": "POOL_STABLE",
+      "n": 4,
+      "same": 0,
+      "diff": 4,
+      "p_same": 0.0,
+      "ci_95": [
+        0.0,
+        0.48990002040399916
+      ]
     },
-    "(1, 'CONFUSION', 'SURVIVED')": {
-      "candidate_count": 1,
+    "('2', 'CONFUSION', 'SURVIVED', 'POOL_STABLE')": {
+      "candidate_count": "2",
       "condition": "CONFUSION",
       "target1_status": "SURVIVED",
-      "n": 7,
-      "same": 7,
+      "pool_state": "POOL_STABLE",
+      "n": 1,
+      "same": 1,
       "diff": 0,
-      "p_observed": 1.0,
-      "p_expected": 0.2
+      "p_same": 1.0,
+      "ci_95": [
+        0.20654329147389294,
+        1.0
+      ]
     },
-    "(2, 'CONFUSION', 'SURVIVED')": {
-      "candidate_count": 2,
+    "('3', 'CONFUSION', 'SURVIVED', 'POOL_STABLE')": {
+      "candidate_count": "3",
       "condition": "CONFUSION",
       "target1_status": "SURVIVED",
-      "n": 34,
-      "same": 14,
-      "diff": 20,
-      "p_observed": 0.4117647058823529,
-      "p_expected": 0.2
+      "pool_state": "POOL_STABLE",
+      "n": 100,
+      "same": 35,
+      "diff": 65,
+      "p_same": 0.35,
+      "ci_95": [
+        0.2636410465347802,
+        0.4474573957080203
+      ]
     },
-    "(3, 'CONFUSION', 'SURVIVED')": {
-      "candidate_count": 3,
+    "('4', 'CONFUSION', 'SURVIVED', 'POOL_STABLE')": {
+      "candidate_count": "4",
       "condition": "CONFUSION",
       "target1_status": "SURVIVED",
-      "n": 211,
-      "same": 70,
-      "diff": 141,
-      "p_observed": 0.33175355450236965,
-      "p_expected": 0.2
+      "pool_state": "POOL_STABLE",
+      "n": 127,
+      "same": 37,
+      "diff": 90,
+      "p_same": 0.29133858267716534,
+      "ci_95": [
+        0.21936666512736952,
+        0.3755633876998658
+      ]
     },
-    "(1, 'NORMAL', 'DIED')": {
-      "candidate_count": 1,
+    "('5', 'CONFUSION', 'SURVIVED', 'POOL_STABLE')": {
+      "candidate_count": "5",
+      "condition": "CONFUSION",
+      "target1_status": "SURVIVED",
+      "pool_state": "POOL_STABLE",
+      "n": 1536,
+      "same": 336,
+      "diff": 1200,
+      "p_same": 0.21875,
+      "ci_95": [
+        0.19879131203097666,
+        0.24011201412932448
+      ]
+    },
+    "('1', 'NORMAL', 'DIED', 'POOL_CHANGED')": {
+      "candidate_count": "1",
       "condition": "NORMAL",
       "target1_status": "DIED",
-      "n": 65,
-      "same": 44,
-      "diff": 21,
-      "p_observed": 0.676923076923077,
-      "p_expected": 0.0
+      "pool_state": "POOL_CHANGED",
+      "n": 207,
+      "same": 0,
+      "diff": 207,
+      "p_same": 0.0,
+      "ci_95": [
+        0.0,
+        0.018220313258863523
+      ]
     },
-    "(2, 'NORMAL', 'DIED')": {
-      "candidate_count": 2,
+    "('2', 'NORMAL', 'DIED', 'POOL_CHANGED')": {
+      "candidate_count": "2",
       "condition": "NORMAL",
       "target1_status": "DIED",
-      "n": 377,
-      "same": 132,
-      "diff": 245,
-      "p_observed": 0.35013262599469497,
-      "p_expected": 0.0
+      "pool_state": "POOL_CHANGED",
+      "n": 249,
+      "same": 0,
+      "diff": 249,
+      "p_same": 0.0,
+      "ci_95": [
+        0.0,
+        0.01519370230215281
+      ]
     },
-    "(1, 'NORMAL', 'SURVIVED')": {
-      "candidate_count": 1,
+    "('1', 'NORMAL', 'SURVIVED', 'POOL_CHANGED')": {
+      "candidate_count": "1",
       "condition": "NORMAL",
       "target1_status": "SURVIVED",
-      "n": 56,
-      "same": 47,
+      "pool_state": "POOL_CHANGED",
+      "n": 2,
+      "same": 2,
+      "diff": 0,
+      "p_same": 1.0,
+      "ci_95": [
+        0.34237195288961925,
+        1.0
+      ]
+    },
+    "('2', 'NORMAL', 'SURVIVED', 'POOL_CHANGED')": {
+      "candidate_count": "2",
+      "condition": "NORMAL",
+      "target1_status": "SURVIVED",
+      "pool_state": "POOL_CHANGED",
+      "n": 19,
+      "same": 10,
       "diff": 9,
-      "p_observed": 0.8392857142857143,
-      "p_expected": 1.0
+      "p_same": 0.5263157894736842,
+      "ci_95": [
+        0.31707482511825114,
+        0.7267049451255145
+      ]
     },
-    "(2, 'NORMAL', 'SURVIVED')": {
-      "candidate_count": 2,
+    "('1', 'NORMAL', 'SURVIVED', 'POOL_STABLE')": {
+      "candidate_count": "1",
       "condition": "NORMAL",
       "target1_status": "SURVIVED",
-      "n": 496,
-      "same": 318,
-      "diff": 178,
-      "p_observed": 0.6411290322580645,
-      "p_expected": 0.5
+      "pool_state": "POOL_STABLE",
+      "n": 5976,
+      "same": 5976,
+      "diff": 0,
+      "p_same": 1.0,
+      "ci_95": [
+        0.9993575749565006,
+        1.0
+      ]
     },
-    "(3, 'NORMAL', 'SURVIVED')": {
-      "candidate_count": 3,
+    "('2', 'NORMAL', 'SURVIVED', 'POOL_STABLE')": {
+      "candidate_count": "2",
       "condition": "NORMAL",
       "target1_status": "SURVIVED",
-      "n": 3975,
-      "same": 1938,
-      "diff": 2037,
-      "p_observed": 0.48754716981132074,
-      "p_expected": 0.3333
+      "pool_state": "POOL_STABLE",
+      "n": 3074,
+      "same": 1553,
+      "diff": 1521,
+      "p_same": 0.5052049446974626,
+      "ci_95": [
+        0.48753483927425617,
+        0.5228620570442548
+      ]
     },
-    "(3, 'TAUNT', 'SURVIVED')": {
-      "candidate_count": 3,
+    "('3', 'NORMAL', 'SURVIVED', 'POOL_STABLE')": {
+      "candidate_count": "3",
+      "condition": "NORMAL",
+      "target1_status": "SURVIVED",
+      "pool_state": "POOL_STABLE",
+      "n": 21428,
+      "same": 7250,
+      "diff": 14178,
+      "p_same": 0.33834235579615457,
+      "ci_95": [
+        0.332036637323792,
+        0.3447060276649226
+      ]
+    },
+    "('UNKNOWN', 'NORMAL', 'SURVIVED', 'POOL_STABLE')": {
+      "candidate_count": "UNKNOWN",
+      "condition": "NORMAL",
+      "target1_status": "SURVIVED",
+      "pool_state": "POOL_STABLE",
+      "n": 211,
+      "same": 211,
+      "diff": 0,
+      "p_same": 1.0,
+      "ci_95": [
+        0.9821189192409663,
+        1.0
+      ]
+    },
+    "('1', 'TAUNT', 'SURVIVED', 'POOL_STABLE')": {
+      "candidate_count": "1",
       "condition": "TAUNT",
       "target1_status": "SURVIVED",
-      "n": 12,
-      "same": 12,
-      "diff": 0,
-      "p_observed": 1.0,
-      "p_expected": 1.0
+      "pool_state": "POOL_STABLE",
+      "n": 1701,
+      "same": 1698,
+      "diff": 3,
+      "p_same": 0.9982363315696648,
+      "ci_95": [
+        0.9948272371209866,
+        0.9994000271597535
+      ]
     }
   },
-  "total": 5252,
-  "samples": [
-    {
-      "report": "战报_1025176_pid1020342.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "太史慈",
-      "tgt1": "徐盛",
-      "tgt2": "徐盛",
-      "same": true
-    },
-    {
-      "report": "战报_1025176_pid1020342.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "太史慈",
-      "tgt1": "潘凤",
-      "tgt2": "潘凤",
-      "same": true
-    },
-    {
-      "report": "战报_1025176_pid1020342.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "太史慈",
-      "tgt1": "潘凤",
-      "tgt2": "徐盛",
-      "same": false
-    },
-    {
-      "report": "战报_1025176_pid1020342.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "太史慈",
-      "tgt1": "徐盛",
-      "tgt2": "徐盛",
-      "same": true
-    },
-    {
-      "report": "战报_1025176_pid1020342.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "太史慈",
-      "tgt1": "徐盛",
-      "tgt2": "张燕",
-      "same": false
-    },
-    {
-      "report": "战报_1031263_pid1026426.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "开路先锋",
-      "same": true
-    },
-    {
-      "report": "战报_1031263_pid1026426.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "开路先锋",
-      "tgt1": "迁都使",
-      "tgt2": "开路先锋",
-      "same": false
-    },
-    {
-      "report": "战报_1031263_pid1026426.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "开路先锋",
-      "tgt1": "开路先锋",
-      "tgt2": "开路先锋",
-      "same": true
-    },
-    {
-      "report": "战报_1031263_pid1026426.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "开路先锋",
-      "same": true
-    },
-    {
-      "report": "战报_1031263_pid1026426.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "开路先锋",
-      "tgt1": "迁都使",
-      "tgt2": "迁都使",
-      "same": true
-    },
-    {
-      "report": "战报_1031263_pid1026426.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "开路先锋",
-      "tgt1": "迁都使",
-      "tgt2": "迁都使",
-      "same": true
-    },
-    {
-      "report": "战报_1031263_pid1026426.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "开路先锋",
-      "tgt1": "迁都使",
-      "tgt2": "迁都使",
-      "same": true
-    },
-    {
-      "report": "战报_1031263_pid1026426.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "迁都使",
-      "tgt2": "迁都使",
-      "same": true
-    },
-    {
-      "report": "战报_1031263_pid1026426.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "开路先锋",
-      "tgt1": "迁都使",
-      "tgt2": "迁都使",
-      "same": true
-    },
-    {
-      "report": "战报_1033531_pid1028684.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "开路先锋",
-      "same": true
-    },
-    {
-      "report": "战报_1033531_pid1028684.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "迁都使",
-      "same": false
-    },
-    {
-      "report": "战报_1033531_pid1028684.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "迁都使",
-      "same": false
-    },
-    {
-      "report": "战报_1033531_pid1028684.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "开路先锋",
-      "tgt1": "迁都使",
-      "tgt2": "迁都使",
-      "same": true
-    },
-    {
-      "report": "战报_1033531_pid1028684.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "迁都使",
-      "same": false
-    },
-    {
-      "report": "战报_1033531_pid1028684.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "迁都使",
-      "same": false
-    },
-    {
-      "report": "战报_1033531_pid1028684.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "迁都使",
-      "tgt2": "开路先锋",
-      "same": false
-    },
-    {
-      "report": "战报_1033531_pid1028684.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "开路先锋",
-      "same": true
-    },
-    {
-      "report": "战报_1033531_pid1028684.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "开路先锋",
-      "tgt1": "迁都使",
-      "tgt2": "迁都使",
-      "same": true
-    },
-    {
-      "report": "战报_1033534_pid1028688.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "迁都使",
-      "same": false
-    },
-    {
-      "report": "战报_1033534_pid1028688.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "开路先锋",
-      "tgt1": "开路先锋",
-      "tgt2": "迁都使",
-      "same": false
-    },
-    {
-      "report": "战报_1033534_pid1028688.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "开路先锋",
-      "tgt1": "开路先锋",
-      "tgt2": "迁都使",
-      "same": false
-    },
-    {
-      "report": "战报_1033534_pid1028688.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "开路先锋",
-      "same": true
-    },
-    {
-      "report": "战报_1033534_pid1028688.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "迁都使",
-      "tgt1": "开路先锋",
-      "tgt2": "开路先锋",
-      "same": true
-    },
-    {
-      "report": "战报_1068267_pid1063284.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "太史慈",
-      "tgt1": "强城卫",
-      "tgt2": "勇城卫",
-      "same": false
-    },
-    {
-      "report": "战报_1068267_pid1063284.json",
-      "cand_count": 3,
-      "key": "(3, 'NORMAL', 'SURVIVED')",
-      "att": "太史慈",
-      "tgt1": "勇城卫",
-      "tgt2": "强城卫",
-      "same": false
-    }
-  ]
+  "spot_check_candidates": {
+    "cand_3": [
+      {
+        "file": "战报_1025176_pid1020342.json",
+        "actor": "enemy_0_太史慈",
+        "tgt1": "my_0_徐盛",
+        "tgt2": "my_0_徐盛",
+        "same": true,
+        "checkpoint": 15
+      },
+      {
+        "file": "战报_1025176_pid1020342.json",
+        "actor": "enemy_0_太史慈",
+        "tgt1": "my_2_潘凤",
+        "tgt2": "my_2_潘凤",
+        "same": true,
+        "checkpoint": 100
+      },
+      {
+        "file": "战报_1025176_pid1020342.json",
+        "actor": "enemy_0_太史慈",
+        "tgt1": "my_2_潘凤",
+        "tgt2": "my_0_徐盛",
+        "same": false,
+        "checkpoint": 176
+      },
+      {
+        "file": "战报_1025176_pid1020342.json",
+        "actor": "enemy_0_太史慈",
+        "tgt1": "my_0_徐盛",
+        "tgt2": "my_0_徐盛",
+        "same": true,
+        "checkpoint": 264
+      },
+      {
+        "file": "战报_1025176_pid1020342.json",
+        "actor": "enemy_0_太史慈",
+        "tgt1": "my_0_徐盛",
+        "tgt2": "my_1_张燕",
+        "same": false,
+        "checkpoint": 369
+      },
+      {
+        "file": "战报_1068270_pid1063287.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_1_纪灵",
+        "tgt2": "enemy_2_韩遂",
+        "same": false,
+        "checkpoint": 34
+      },
+      {
+        "file": "战报_1068270_pid1063287.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_2_韩遂",
+        "tgt2": "enemy_2_韩遂",
+        "same": true,
+        "checkpoint": 182
+      },
+      {
+        "file": "战报_1068270_pid1063287.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_1_纪灵",
+        "tgt2": "enemy_0_马超",
+        "same": false,
+        "checkpoint": 325
+      },
+      {
+        "file": "战报_1068281_pid1063298.json",
+        "actor": "enemy_2_韩遂",
+        "tgt1": "my_1_张飞",
+        "tgt2": "my_0_刘备",
+        "same": false,
+        "checkpoint": 66
+      },
+      {
+        "file": "战报_1068281_pid1063298.json",
+        "actor": "enemy_0_马超",
+        "tgt1": "my_2_主公",
+        "tgt2": "my_0_刘备",
+        "same": false,
+        "checkpoint": 361
+      },
+      {
+        "file": "战报_1068281_pid1063298.json",
+        "actor": "enemy_0_马超",
+        "tgt1": "my_2_主公",
+        "tgt2": "my_1_张飞",
+        "same": false,
+        "checkpoint": 477
+      },
+      {
+        "file": "战报_1068281_pid1063298.json",
+        "actor": "enemy_1_纪灵",
+        "tgt1": "my_1_张飞",
+        "tgt2": "my_0_刘备",
+        "same": false,
+        "checkpoint": 518
+      },
+      {
+        "file": "战报_1068287_pid1063304.json",
+        "actor": "enemy_0_马超",
+        "tgt1": "my_1_主公",
+        "tgt2": "my_1_主公",
+        "same": true,
+        "checkpoint": 215
+      },
+      {
+        "file": "战报_1068287_pid1063304.json",
+        "actor": "enemy_0_马超",
+        "tgt1": "my_0_周瑜",
+        "tgt2": "my_1_主公",
+        "same": false,
+        "checkpoint": 328
+      },
+      {
+        "file": "战报_1068293_pid1063310.json",
+        "actor": "enemy_1_文聘",
+        "tgt1": "my_1_张飞",
+        "tgt2": "my_2_主公",
+        "same": false,
+        "checkpoint": 76
+      },
+      {
+        "file": "战报_1068293_pid1063310.json",
+        "actor": "enemy_1_文聘",
+        "tgt1": "my_0_刘备",
+        "tgt2": "my_0_刘备",
+        "same": true,
+        "checkpoint": 452
+      },
+      {
+        "file": "战报_1068368_pid1063360.json",
+        "actor": "enemy_0_张姬",
+        "tgt1": "my_2_主公",
+        "tgt2": "my_1_张飞",
+        "same": false,
+        "checkpoint": 483
+      },
+      {
+        "file": "战报_1068368_pid1063360.json",
+        "actor": "enemy_0_张姬",
+        "tgt1": "my_0_刘备",
+        "tgt2": "my_1_张飞",
+        "same": false,
+        "checkpoint": 602
+      },
+      {
+        "file": "战报_1068368_pid1063360.json",
+        "actor": "enemy_0_张姬",
+        "tgt1": "my_1_张飞",
+        "tgt2": "my_1_张飞",
+        "same": true,
+        "checkpoint": 722
+      },
+      {
+        "file": "战报_1068375_pid1063363.json",
+        "actor": "enemy_0_马超",
+        "tgt1": "my_2_法正",
+        "tgt2": "my_0_张飞",
+        "same": false,
+        "checkpoint": 332
+      }
+    ],
+    "cand_2": [
+      {
+        "file": "战报_1031263_pid1026426.json",
+        "actor": "enemy_1_迁都使",
+        "tgt1": "my_0_开路先锋",
+        "tgt2": "my_0_开路先锋",
+        "same": true,
+        "checkpoint": 11
+      },
+      {
+        "file": "战报_1031263_pid1026426.json",
+        "actor": "enemy_0_开路先锋",
+        "tgt1": "my_1_迁都使",
+        "tgt2": "enemy_0_开路先锋",
+        "same": false,
+        "checkpoint": 29
+      },
+      {
+        "file": "战报_1031263_pid1026426.json",
+        "actor": "my_0_开路先锋",
+        "tgt1": "my_0_开路先锋",
+        "tgt2": "my_0_开路先锋",
+        "same": true,
+        "checkpoint": 57
+      },
+      {
+        "file": "战报_1031263_pid1026426.json",
+        "actor": "my_1_迁都使",
+        "tgt1": "enemy_0_开路先锋",
+        "tgt2": "enemy_0_开路先锋",
+        "same": true,
+        "checkpoint": 97
+      },
+      {
+        "file": "战报_1031263_pid1026426.json",
+        "actor": "enemy_0_开路先锋",
+        "tgt1": "my_1_迁都使",
+        "tgt2": "my_1_迁都使",
+        "same": true,
+        "checkpoint": 136
+      },
+      {
+        "file": "战报_1031263_pid1026426.json",
+        "actor": "enemy_0_开路先锋",
+        "tgt1": "my_1_迁都使",
+        "tgt2": "my_1_迁都使",
+        "same": true,
+        "checkpoint": 226
+      },
+      {
+        "file": "战报_1031263_pid1026426.json",
+        "actor": "enemy_0_开路先锋",
+        "tgt1": "my_1_迁都使",
+        "tgt2": "my_1_迁都使",
+        "same": true,
+        "checkpoint": 275
+      },
+      {
+        "file": "战报_1031263_pid1026426.json",
+        "actor": "my_1_迁都使",
+        "tgt1": "my_1_迁都使",
+        "tgt2": "my_1_迁都使",
+        "same": true,
+        "checkpoint": 374
+      },
+      {
+        "file": "战报_1031263_pid1026426.json",
+        "actor": "my_0_开路先锋",
+        "tgt1": "enemy_1_迁都使",
+        "tgt2": "enemy_1_迁都使",
+        "same": true,
+        "checkpoint": 392
+      },
+      {
+        "file": "战报_1033531_pid1028684.json",
+        "actor": "enemy_1_迁都使",
+        "tgt1": "my_0_开路先锋",
+        "tgt2": "my_0_开路先锋",
+        "same": true,
+        "checkpoint": 11
+      },
+      {
+        "file": "战报_1033531_pid1028684.json",
+        "actor": "enemy_1_迁都使",
+        "tgt1": "my_0_开路先锋",
+        "tgt2": "enemy_1_迁都使",
+        "same": false,
+        "checkpoint": 60
+      },
+      {
+        "file": "战报_1033531_pid1028684.json",
+        "actor": "my_1_迁都使",
+        "tgt1": "enemy_0_开路先锋",
+        "tgt2": "my_1_迁都使",
+        "same": false,
+        "checkpoint": 88
+      },
+      {
+        "file": "战报_1033531_pid1028684.json",
+        "actor": "my_0_开路先锋",
+        "tgt1": "enemy_1_迁都使",
+        "tgt2": "enemy_1_迁都使",
+        "same": true,
+        "checkpoint": 106
+      },
+      {
+        "file": "战报_1033531_pid1028684.json",
+        "actor": "my_1_迁都使",
+        "tgt1": "enemy_0_开路先锋",
+        "tgt2": "my_1_迁都使",
+        "same": false,
+        "checkpoint": 146
+      },
+      {
+        "file": "战报_1033531_pid1028684.json",
+        "actor": "my_1_迁都使",
+        "tgt1": "enemy_0_开路先锋",
+        "tgt2": "my_1_迁都使",
+        "same": false,
+        "checkpoint": 196
+      },
+      {
+        "file": "战报_1033531_pid1028684.json",
+        "actor": "my_1_迁都使",
+        "tgt1": "my_1_迁都使",
+        "tgt2": "enemy_0_开路先锋",
+        "same": false,
+        "checkpoint": 285
+      },
+      {
+        "file": "战报_1033531_pid1028684.json",
+        "actor": "enemy_1_迁都使",
+        "tgt1": "my_0_开路先锋",
+        "tgt2": "my_0_开路先锋",
+        "same": true,
+        "checkpoint": 313
+      },
+      {
+        "file": "战报_1033531_pid1028684.json",
+        "actor": "my_0_开路先锋",
+        "tgt1": "enemy_1_迁都使",
+        "tgt2": "enemy_1_迁都使",
+        "same": true,
+        "checkpoint": 393
+      },
+      {
+        "file": "战报_1033534_pid1028688.json",
+        "actor": "my_1_迁都使",
+        "tgt1": "enemy_0_开路先锋",
+        "tgt2": "my_1_迁都使",
+        "same": false,
+        "checkpoint": 31
+      },
+      {
+        "file": "战报_1033534_pid1028688.json",
+        "actor": "my_0_开路先锋",
+        "tgt1": "my_0_开路先锋",
+        "tgt2": "enemy_1_迁都使",
+        "same": false,
+        "checkpoint": 130
+      }
+    ],
+    "cand_1": [
+      {
+        "file": "战报_1068514_pid1063527.json",
+        "actor": "enemy_1_胡车儿",
+        "tgt1": "my_0_张辽",
+        "tgt2": "my_0_张辽",
+        "same": true,
+        "checkpoint": 196
+      },
+      {
+        "file": "战报_1068514_pid1063527.json",
+        "actor": "enemy_0_颜良",
+        "tgt1": "my_0_张辽",
+        "tgt2": "my_0_张辽",
+        "same": true,
+        "checkpoint": 233
+      },
+      {
+        "file": "战报_1092819_pid1087927.json",
+        "actor": "enemy_1_太史慈",
+        "tgt1": "my_0_周瑜",
+        "tgt2": "my_0_周瑜",
+        "same": true,
+        "checkpoint": 384
+      },
+      {
+        "file": "战报_1104692_pid1099797.json",
+        "actor": "enemy_0_黄忠",
+        "tgt1": "my_0_刘备",
+        "tgt2": "my_0_刘备",
+        "same": true,
+        "checkpoint": 624
+      },
+      {
+        "file": "战报_1105032_pid1100124.json",
+        "actor": "enemy_0_孙尚香",
+        "tgt1": "my_0_陆逊",
+        "tgt2": "my_0_陆逊",
+        "same": true,
+        "checkpoint": 736
+      },
+      {
+        "file": "战报_1105133_pid1100227.json",
+        "actor": "enemy_0_黄忠",
+        "tgt1": "my_0_陆逊",
+        "tgt2": "my_0_陆逊",
+        "same": true,
+        "checkpoint": 224
+      },
+      {
+        "file": "战报_1105167_pid1100263.json",
+        "actor": "enemy_2_陈宫",
+        "tgt1": "my_0_刘备",
+        "tgt2": "my_0_刘备",
+        "same": true,
+        "checkpoint": 729
+      },
+      {
+        "file": "战报_1105179_pid1100275.json",
+        "actor": "enemy_2_陈宫",
+        "tgt1": "my_0_赵云",
+        "tgt2": "my_0_赵云",
+        "same": true,
+        "checkpoint": 343
+      },
+      {
+        "file": "战报_1105181_pid1100277.json",
+        "actor": "enemy_1_孙尚香",
+        "tgt1": "my_0_曹操",
+        "tgt2": "my_0_曹操",
+        "same": true,
+        "checkpoint": 54
+      },
+      {
+        "file": "战报_1105181_pid1100277.json",
+        "actor": "enemy_2_陈宫",
+        "tgt1": "my_0_曹操",
+        "tgt2": "my_0_曹操",
+        "same": true,
+        "checkpoint": 108
+      },
+      {
+        "file": "战报_1105907_pid1101036.json",
+        "actor": "enemy_0_黄忠",
+        "tgt1": "my_0_周瑜",
+        "tgt2": "my_0_周瑜",
+        "same": true,
+        "checkpoint": 809
+      },
+      {
+        "file": "战报_1106687_pid1101865.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_0_黄忠",
+        "tgt2": "enemy_0_黄忠",
+        "same": true,
+        "checkpoint": 48
+      },
+      {
+        "file": "战报_1108237_pid1103445.json",
+        "actor": "enemy_2_钟会",
+        "tgt1": "my_0_周瑜",
+        "tgt2": "my_0_周瑜",
+        "same": true,
+        "checkpoint": 660
+      },
+      {
+        "file": "战报_1109434_pid1104662.json",
+        "actor": "enemy_2_钟会",
+        "tgt1": "my_0_张飞",
+        "tgt2": "my_0_张飞",
+        "same": true,
+        "checkpoint": 336
+      },
+      {
+        "file": "战报_1114557_pid1109849.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_0_陆逊",
+        "tgt2": "enemy_0_陆逊",
+        "same": true,
+        "checkpoint": 260
+      },
+      {
+        "file": "战报_1115078_pid1110376.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_0_周瑜",
+        "tgt2": "enemy_0_周瑜",
+        "same": true,
+        "checkpoint": 16
+      },
+      {
+        "file": "战报_1115079_pid1110378.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_0_袁绍",
+        "tgt2": "enemy_0_袁绍",
+        "same": true,
+        "checkpoint": 689
+      },
+      {
+        "file": "战报_1515840_pid1513602.json",
+        "actor": "enemy_1_陆逊",
+        "tgt1": "my_0_曹操",
+        "tgt2": "my_0_曹操",
+        "same": true,
+        "checkpoint": 514
+      },
+      {
+        "file": "战报_1515858_pid1513617.json",
+        "actor": "enemy_2_陈宫",
+        "tgt1": "my_0_袁绍",
+        "tgt2": "my_0_袁绍",
+        "same": true,
+        "checkpoint": 1473
+      },
+      {
+        "file": "战报_1516013_pid1513776.json",
+        "actor": "enemy_2_马云騄",
+        "tgt1": "my_0_陆逊",
+        "tgt2": "my_0_陆逊",
+        "same": true,
+        "checkpoint": 576
+      }
+    ],
+    "confusion": [
+      {
+        "file": "战报_1092869_pid1087979.json",
+        "actor": "enemy_1_太史慈",
+        "tgt1": "enemy_2_程普",
+        "tgt2": "enemy_0_甘宁",
+        "same": false,
+        "checkpoint": 418
+      },
+      {
+        "file": "战报_1104432_pid1099532.json",
+        "actor": "enemy_0_张姬",
+        "tgt1": "my_0_贾诩",
+        "tgt2": "my_0_贾诩",
+        "same": true,
+        "checkpoint": 83
+      },
+      {
+        "file": "战报_1104432_pid1099532.json",
+        "actor": "enemy_2_邓艾",
+        "tgt1": "my_2_卢植",
+        "tgt2": "my_2_卢植",
+        "same": true,
+        "checkpoint": 100
+      },
+      {
+        "file": "战报_1104433_pid1099533.json",
+        "actor": "enemy_2_邓艾",
+        "tgt1": "my_2_卢植",
+        "tgt2": "enemy_0_张姬",
+        "same": false,
+        "checkpoint": 286
+      },
+      {
+        "file": "战报_1104433_pid1099533.json",
+        "actor": "enemy_2_邓艾",
+        "tgt1": "enemy_0_张姬",
+        "tgt2": "enemy_0_张姬",
+        "same": true,
+        "checkpoint": 735
+      },
+      {
+        "file": "战报_1104505_pid1099606.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "my_0_周瑜",
+        "tgt2": "enemy_0_于禁",
+        "same": false,
+        "checkpoint": 303
+      },
+      {
+        "file": "战报_1104505_pid1099606.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_1_法正",
+        "tgt2": "enemy_1_法正",
+        "same": true,
+        "checkpoint": 451
+      },
+      {
+        "file": "战报_1104505_pid1099606.json",
+        "actor": "my_2_吕蒙",
+        "tgt1": "enemy_2_张飞",
+        "tgt2": "enemy_1_法正",
+        "same": false,
+        "checkpoint": 958
+      },
+      {
+        "file": "战报_1104510_pid1099611.json",
+        "actor": "my_2_太史慈",
+        "tgt1": "enemy_2_田丰",
+        "tgt2": "enemy_2_田丰",
+        "same": true,
+        "checkpoint": 417
+      },
+      {
+        "file": "战报_1104553_pid1099654.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_0_曹操",
+        "tgt2": "enemy_0_曹操",
+        "same": true,
+        "checkpoint": 944
+      },
+      {
+        "file": "战报_1104553_pid1099654.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_2_田丰",
+        "tgt2": "enemy_2_田丰",
+        "same": true,
+        "checkpoint": 1058
+      },
+      {
+        "file": "战报_1104740_pid1099845.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "my_0_主公",
+        "tgt2": "enemy_0_黄忠",
+        "same": false,
+        "checkpoint": 168
+      },
+      {
+        "file": "战报_1105040_pid1100132.json",
+        "actor": "enemy_0_孙尚香",
+        "tgt1": "enemy_1_陆逊",
+        "tgt2": "my_0_贾诩",
+        "same": false,
+        "checkpoint": 773
+      },
+      {
+        "file": "战报_1106688_pid1101866.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_2_徐庶",
+        "tgt2": "enemy_2_徐庶",
+        "same": true,
+        "checkpoint": 340
+      },
+      {
+        "file": "战报_1109334_pid1104562.json",
+        "actor": "enemy_1_孙尚香",
+        "tgt1": "my_0_贾诩",
+        "tgt2": "my_1_赵云",
+        "same": false,
+        "checkpoint": 255
+      },
+      {
+        "file": "战报_1109335_pid1104563.json",
+        "actor": "enemy_2_钟会",
+        "tgt1": "enemy_1_陆逊",
+        "tgt2": "enemy_1_陆逊",
+        "same": true,
+        "checkpoint": 321
+      },
+      {
+        "file": "战报_1109534_pid1104764.json",
+        "actor": "enemy_0_孙尚香",
+        "tgt1": "my_0_赵云",
+        "tgt2": "my_0_赵云",
+        "same": true,
+        "checkpoint": 142
+      },
+      {
+        "file": "战报_1109534_pid1104764.json",
+        "actor": "enemy_2_钟会",
+        "tgt1": "enemy_1_陆逊",
+        "tgt2": "enemy_0_孙尚香",
+        "same": false,
+        "checkpoint": 289
+      },
+      {
+        "file": "战报_1109534_pid1104764.json",
+        "actor": "enemy_0_孙尚香",
+        "tgt1": "my_1_贾诩",
+        "tgt2": "my_2_左慈",
+        "same": false,
+        "checkpoint": 344
+      },
+      {
+        "file": "战报_1109534_pid1104764.json",
+        "actor": "enemy_1_陆逊",
+        "tgt1": "my_0_赵云",
+        "tgt2": "my_0_赵云",
+        "same": true,
+        "checkpoint": 584
+      }
+    ],
+    "taunt": [
+      {
+        "file": "战报_1104751_pid1099856.json",
+        "actor": "enemy_0_黄忠",
+        "tgt1": "my_0_夏侯惇",
+        "tgt2": "my_0_夏侯惇",
+        "same": true,
+        "checkpoint": 238
+      },
+      {
+        "file": "战报_1515992_pid1513755.json",
+        "actor": "enemy_0_黄忠",
+        "tgt1": "my_1_孙坚",
+        "tgt2": "my_1_孙坚",
+        "same": true,
+        "checkpoint": 65
+      },
+      {
+        "file": "战报_1516132_pid1513895.json",
+        "actor": "enemy_2_钟会",
+        "tgt1": "my_2_孙坚",
+        "tgt2": "my_2_孙坚",
+        "same": true,
+        "checkpoint": 365
+      },
+      {
+        "file": "战报_1516151_pid1513914.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_1_曹仁",
+        "tgt2": "enemy_1_曹仁",
+        "same": true,
+        "checkpoint": 645
+      },
+      {
+        "file": "战报_1523814_pid1521847.json",
+        "actor": "enemy_1_太史慈",
+        "tgt1": "my_2_孙坚",
+        "tgt2": "my_2_孙坚",
+        "same": true,
+        "checkpoint": 161
+      },
+      {
+        "file": "战报_1523814_pid1521847.json",
+        "actor": "enemy_1_太史慈",
+        "tgt1": "my_2_孙坚",
+        "tgt2": "my_2_孙坚",
+        "same": true,
+        "checkpoint": 370
+      },
+      {
+        "file": "战报_1524176_pid1522366.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_1_孙坚",
+        "tgt2": "enemy_1_孙坚",
+        "same": true,
+        "checkpoint": 489
+      },
+      {
+        "file": "战报_1524176_pid1522366.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_1_孙坚",
+        "tgt2": "enemy_1_孙坚",
+        "same": true,
+        "checkpoint": 629
+      },
+      {
+        "file": "战报_1559504_pid1558683.json",
+        "actor": "enemy_1_太史慈",
+        "tgt1": "my_0_孙坚",
+        "tgt2": "my_0_孙坚",
+        "same": true,
+        "checkpoint": 204
+      },
+      {
+        "file": "战报_1559504_pid1558683.json",
+        "actor": "enemy_1_太史慈",
+        "tgt1": "my_0_孙坚",
+        "tgt2": "my_0_孙坚",
+        "same": true,
+        "checkpoint": 453
+      },
+      {
+        "file": "战报_1571498_pid1570727.json",
+        "actor": "my_1_太史慈",
+        "tgt1": "enemy_2_夏侯恩",
+        "tgt2": "enemy_2_夏侯恩",
+        "same": true,
+        "checkpoint": 85
+      },
+      {
+        "file": "战报_1821748_pid1827216.json",
+        "actor": "my_0_诸葛亮",
+        "tgt1": "enemy_0_夏侯惇",
+        "tgt2": "enemy_0_夏侯惇",
+        "same": true,
+        "checkpoint": 140
+      },
+      {
+        "file": "战报_1821748_pid1827216.json",
+        "actor": "my_0_诸葛亮",
+        "tgt1": "enemy_0_夏侯惇",
+        "tgt2": "enemy_2_马云騄",
+        "same": false,
+        "checkpoint": 554
+      },
+      {
+        "file": "战报_2133044_pid2197259.json",
+        "actor": "my_1_颜良",
+        "tgt1": "enemy_1_孙坚",
+        "tgt2": "enemy_1_孙坚",
+        "same": true,
+        "checkpoint": 881
+      },
+      {
+        "file": "战报_2199538_pid2267102.json",
+        "actor": "my_0_孟获",
+        "tgt1": "enemy_2_纪灵",
+        "tgt2": "enemy_2_纪灵",
+        "same": true,
+        "checkpoint": 954
+      },
+      {
+        "file": "战报_2202566_pid2270413.json",
+        "actor": "enemy_1_文聘",
+        "tgt1": "my_2_孙坚",
+        "tgt2": "my_2_孙坚",
+        "same": true,
+        "checkpoint": 153
+      },
+      {
+        "file": "战报_2236438_pid2307028.json",
+        "actor": "enemy_1_文聘",
+        "tgt1": "my_2_孙坚",
+        "tgt2": "my_2_孙坚",
+        "same": true,
+        "checkpoint": 140
+      },
+      {
+        "file": "战报_2236438_pid2307028.json",
+        "actor": "enemy_1_文聘",
+        "tgt1": "my_2_孙坚",
+        "tgt2": "my_2_孙坚",
+        "same": true,
+        "checkpoint": 275
+      },
+      {
+        "file": "战报_2247169_pid2318605.json",
+        "actor": "enemy_0_张姬",
+        "tgt1": "my_1_孙坚",
+        "tgt2": "my_1_孙坚",
+        "same": true,
+        "checkpoint": 179
+      },
+      {
+        "file": "战报_2491262_pid2598646.json",
+        "actor": "enemy_1_王异",
+        "tgt1": "my_1_曹操",
+        "tgt2": "my_1_曹操",
+        "same": true,
+        "checkpoint": 775
+      },
+      {
+        "file": "战报_2499423_pid2609365.json",
+        "actor": "enemy_0_诸葛亮",
+        "tgt1": "my_2_纪灵",
+        "tgt2": "my_2_纪灵",
+        "same": true,
+        "checkpoint": 255
+      },
+      {
+        "file": "战报_2501856_pid2612569.json",
+        "actor": "enemy_2_曹真",
+        "tgt1": "my_2_夏侯惇",
+        "tgt2": "my_2_夏侯惇",
+        "same": true,
+        "checkpoint": 527
+      },
+      {
+        "file": "战报_2502944_pid2614043.json",
+        "actor": "enemy_1_太史慈",
+        "tgt1": "my_0_曹仁",
+        "tgt2": "my_0_曹仁",
+        "same": true,
+        "checkpoint": 225
+      },
+      {
+        "file": "战报_2504263_pid2615801.json",
+        "actor": "my_2_太史慈",
+        "tgt1": "enemy_0_诸葛亮",
+        "tgt2": "enemy_0_诸葛亮",
+        "same": true,
+        "checkpoint": 387
+      },
+      {
+        "file": "战报_2504593_pid2616249.json",
+        "actor": "my_2_管亥",
+        "tgt1": "enemy_1_曹操",
+        "tgt2": "enemy_1_曹操",
+        "same": true,
+        "checkpoint": 258
+      },
+      {
+        "file": "战报_2507468_pid2619917.json",
+        "actor": "enemy_2_太史慈",
+        "tgt1": "my_1_纪灵",
+        "tgt2": "my_1_纪灵",
+        "same": true,
+        "checkpoint": 138
+      },
+      {
+        "file": "战报_2508410_pid2621058.json",
+        "actor": "enemy_2_太史慈",
+        "tgt1": "my_1_纪灵",
+        "tgt2": "my_1_纪灵",
+        "same": true,
+        "checkpoint": 150
+      },
+      {
+        "file": "战报_3439576_pid3799883.json",
+        "actor": "my_1_郭嘉",
+        "tgt1": "enemy_2_主公",
+        "tgt2": "enemy_2_主公",
+        "same": true,
+        "checkpoint": 820
+      },
+      {
+        "file": "战报_3442615_pid3804028.json",
+        "actor": "enemy_1_太史慈",
+        "tgt1": "my_2_程普",
+        "tgt2": "my_2_程普",
+        "same": true,
+        "checkpoint": 197
+      },
+      {
+        "file": "战报_3443652_pid3805571.json",
+        "actor": "enemy_1_太史慈",
+        "tgt1": "my_1_孙坚",
+        "tgt2": "my_1_孙坚",
+        "same": true,
+        "checkpoint": 254
+      }
+    ]
+  }
 }

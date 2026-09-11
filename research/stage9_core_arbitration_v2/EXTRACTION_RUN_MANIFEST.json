@@ -1,0 +1,99 @@
+{
+  "audit_run_timestamp": "2026-09-11T07:44:24.824546+00:00",
+  "baseline_commit": "50a2bca26a359dfd9b8f19d0208a505ed9a2ae6b",
+  "system_verdict": "PASS",
+  "infrastructure_libraries": {
+    "evidence/lib/unit_identity.py": "19459be9c837e5c28838b821f28a2c2be96a92c60a7dc5fff3655b13d7578068",
+    "evidence/lib/state_tracker.py": "1be5471421981f5aea16273244aa066b8e79333db44dfbf804c49819fd8f4468",
+    "evidence/lib/target_pool.py": "2c5869a47e48e845868ad5f8355fe5de25138acf0ba4111c7c537b1baed5704c",
+    "evidence/lib/action_segmenter.py": "0814f998a7a3d2e3a0624bc1dc20b4dead9b14525375f346d73d3d0295ec2ce5",
+    "evidence/lib/battle_parser.py": "7b2e053bfc2243d8042110a52edc6da1e99885723a34309e9a85d23e713adefd",
+    "evidence/lib/evidence_utils.py": "4dbfc8a8e0c1f1735bed90d0e17c33922a889bd0afb55d7a70cf9195b95a6dc6"
+  },
+  "qa_test_suite": {
+    "total_tests": 10,
+    "passed": 10,
+    "failed": 0,
+    "status": "ALL_PASSED"
+  },
+  "datasets": {
+    "r11_confusion_taunt_data.json": {
+      "sha256": "1679af287413e52cbe405d20e720070c9197f3f82d70e556de54cbc9d985d2fb",
+      "extractor": "evidence/run_bf01_reextraction.py",
+      "candidate_files": 1349,
+      "processed_files": 1349,
+      "eligible_cases": 1351,
+      "excluded_cases": 2,
+      "results": {
+        "target_equals_taunt": 282,
+        "target_not_equals_taunt": 1069,
+        "p_not_taunt": 0.7913
+      }
+    },
+    "r10_combo_detailed_stratified.json": {
+      "sha256": "88665e1be37a6d29ab739d697da13fc6a73e1e35642c19574b0f22b4a45ae480",
+      "extractor": "evidence/run_bf05_reextraction.py",
+      "candidate_files": 11015,
+      "processed_files": 11015,
+      "total_combos_extracted": 34639,
+      "invariants": {
+        "inv01_candidate1_same": {
+          "total": 5976,
+          "passed": 5976,
+          "rate": 1.0
+        },
+        "inv02_dead_retarget": {
+          "total": 464,
+          "passed": 464,
+          "rate": 1.0
+        },
+        "inv06_combo_actor_match": {
+          "total": 34639,
+          "passed": 34639,
+          "rate": 1.0
+        }
+      }
+    },
+    "r7_recursion_denominators.json": {
+      "sha256": "ce70a2ce05481e44b98b5ff12933afe45087ea439a13e8a51d542249294cee1f",
+      "extractor": "evidence/run_bf06_reextraction.py",
+      "candidate_files": {
+        "counter": 4233,
+        "chain": 1522,
+        "share": 2129,
+        "combo": 11015
+      },
+      "counter_to_counter": {
+        "source": 15060,
+        "eligible": 90,
+        "triggered": 0,
+        "status": "BLOCKED"
+      },
+      "chain_to_chain": {
+        "source": 24525,
+        "eligible": 23620,
+        "triggered": 0,
+        "status": "BLOCKED"
+      },
+      "share_to_share": {
+        "source": 0,
+        "eligible": 0,
+        "triggered": 0,
+        "status": "NOT_OBSERVED"
+      },
+      "combo_hit3": {
+        "source": 34639,
+        "eligible": 34639,
+        "triggered": 0,
+        "status": "BLOCKED"
+      }
+    },
+    "r10_combo_spot_check_report.json": {
+      "sha256": "797163f36a8a8fcb0d7baa129149b0cfdd04959d3c5da2df14faa9e5c363211c",
+      "total_checked": 110,
+      "mismatches": 0,
+      "error_rate": 0.0,
+      "verdict": "PASS"
+    }
+  }
+}
