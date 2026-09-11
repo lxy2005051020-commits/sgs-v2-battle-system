@@ -2,12 +2,12 @@
 
 > **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
 > **数据基线**: 全盘扫描 32,660 份战报（全量事件逾 1,400 万条）  
-> **最新状态**: `CLEAVE / CHAIN CORE MECHANICS FROZEN`  
+> **最新状态**: `CLEAVE / CHAIN / SHARE CORE MECHANICS FROZEN`  
 > **可复现性声明**: **PARTIALLY REPRODUCIBLE FROM REPOSITORY; FULL REPRODUCTION REQUIRES ORIGINAL BATTLE DATABASE**
 
 本目录为三国志战略版战斗模拟系统（V2）Stage 9（核心底层机制裁决）的第二轮定向实证研究规范与可复现档案库。
 
-在历史实证研究与提取器审计基础上，后续已对群攻（Cleave）与铁索连环（Chain）核心机制进行逐项人工确认，并分别建立独立冻结记录。若旧统计解释与最新冻结记录冲突，以最新冻结记录和总规为准。毕竟让同一个仓库同时相信两套互斥物理定律，多少有点奢侈。
+在历史实证研究与提取器审计基础上，后续已对群攻（Cleave）、铁索连环（Chain）与分担（Damage Share）核心机制进行逐项人工确认，并分别建立独立冻结记录。若旧统计解释与最新冻结记录冲突，以最新冻结记录和总规为准。毕竟让同一个仓库同时相信两套互斥物理定律，多少有点奢侈。
 
 ---
 
@@ -17,6 +17,7 @@
 - [`STAGE9_CORE_ARBITRATION_RULES_V2.md`](STAGE9_CORE_ARBITRATION_RULES_V2.md): Stage 9 核心底层裁决主文件，已同步 Cleave / Chain 冻结状态。
 - [`STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`](STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md): 群攻核心机制冻结记录。
 - [`STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`](STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md): **铁索连环核心机制冻结记录**，覆盖反馈基数、TRUE_FEEDBACK、许可矩阵、Inline / Deferred 时序、多目标传播、状态覆盖、归属、死亡、净化与 duration 生命周期。
+- [`STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md`](STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md): **690087 分担核心机制冻结记录**，覆盖终伤后拆分、取整、target-first commit、死亡中断、实时校验、分摊优先级、援护交互、生命周期、归因、统计、伤兵与零值边界。
 - [`STAGE9_EVIDENCE_EXTRACTOR_AUDIT.md`](STAGE9_EVIDENCE_EXTRACTOR_AUDIT.md): 历史实证提取器审计与修复报告；后续独立审计仍要求对状态存在与 Reaction Execution 语义分离做最终复核。
 - [`STAGE9_EVIDENCE_MATRIX_V2.md`](STAGE9_EVIDENCE_MATRIX_V2.md): 历史统计证据矩阵。若与后续直接冻结记录冲突，以冻结记录和总规为准。
 - [`STAGE9_V2_CONSISTENCY_AUDIT.md`](STAGE9_V2_CONSISTENCY_AUDIT.md): 历史内部一致性审计表。
@@ -27,7 +28,7 @@
 ### 2. 八大专题报告
 - [`R1_ATTACK_LIFECYCLE_AND_REACTION_ORDER.md`](R1_ATTACK_LIFECYCLE_AND_REACTION_ORDER.md): 普攻生命周期与反应顺序。
 - [`R2_TARGET_REDIRECT_AND_GUARD.md`](R2_TARGET_REDIRECT_AND_GUARD.md): 混乱 × 嘲讽、自援护与三级目标解耦。
-- [`R3_DAMAGE_DERIVATION_PIPELINE.md`](R3_DAMAGE_DERIVATION_PIPELINE.md): **Cleave / Chain 派生伤害 Pipeline 已同步冻结**；Share 数学与致死边界仍待下一专题。
+- [`R3_DAMAGE_DERIVATION_PIPELINE.md`](R3_DAMAGE_DERIVATION_PIPELINE.md): Cleave / Chain 派生伤害 Pipeline 历史专题；Share 的最终机制以 `STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md` 为准。
 - [`R4_RECURSION_PERMISSION_MATRIX.md`](R4_RECURSION_PERMISSION_MATRIX.md): **已同步 Cleave / Chain / Share Damage 跨机制许可矩阵**。
 - [`R5_DEATH_TERMINATION_MATRIX.md`](R5_DEATH_TERMINATION_MATRIX.md): 9 层死亡与终战模型。
 - [`R6_MULTI_SOURCE_RULES.md`](R6_MULTI_SOURCE_RULES.md): 多来源冲突研究；Chain 单实例覆盖规则已由 Chain Freeze 单独确定。
@@ -58,8 +59,11 @@ FROZEN
 Stage 9 Chain Core Mechanics:
 FROZEN
 
+Stage 9 Share Core Mechanics:
+FROZEN
+
 Next Core Research Target:
-SHARE / 分担
+DISTRIBUTION / 分摊
 ```
 
 ### Cleave confirmed
@@ -129,17 +133,58 @@ applied troop loss = min(calculated feedback, current troops)
 damage statistics use applied troop loss
 ```
 
+### Share confirmed
+
+```text
+DAMAGE_SHARE is a unique-slot post-formula partition operator
+ratio snapshots on successful application / refresh
+Dsharer = round(Dtotal × R)
+Dtarget = Dtotal - Dsharer
+
+target commits Dtarget first
+if target dies → pending Dsharer is discarded
+if target survives → sharer receives attributed direct troop loss
+sharer overflow is discarded and never returned to target
+
+Share derived loss is not a second DamageEvent
+no sharer defense / reduction / Evasion / Barrier / FirstAid / Counter / recursive Share
+original target post-hit callbacks and lifesteal basis use Dtarget
+post-battle damage statistics use actual committed troop loss
+shared actual troop loss enters wounded processing
+
+PER-DAMAGE INSTANCE live validation
+PER-TARGET serial validation for AOE
+sharer death immediately invalidates later unresolved Share checks
+
+Guard redirects first; Share checks FINAL_ACTUAL_DAMAGE_TARGET
+Weakness zero-damage event still executes Share with 0 values
+Evasion / Resistance cancel upstream and therefore block Share
+
+DAMAGE_SHARE > DISTRIBUTION
+existing Share rejects incoming Distribution
+incoming Share replaces existing Distribution
+
+fixed duration ticks on protected target ACTION_START
+normal control on sharer does not disable Share
+source-bound Share can be functionally suppressed by False Report
+Share cannot be removed by normal Cleanse / Dispel
+self-share is forbidden
+
+positive same-camp Share keeps original physical attacker/skill attribution
+cross-camp reverse Share separates physical source from combat credit owner
+```
+
 ---
 
 ## 三、 仍待研究 / 审计的核心问题
 
 ```text
-1. Share / 分担核心数学与完整 Pipeline
+1. Distribution / 分摊完整机制
 2. Counter → Counter 最终提取器语义复核
 3. stronger same-type control replacement
 4. same-type multi-reaction execution ordering
-5. remaining death atomic boundaries outside frozen Chain rules
+5. remaining death atomic boundaries outside frozen Chain / Share rules
 6. strict combo transition-matrix statistical closure
 ```
 
-**下一状态研究目标：`Share / 分担`。**
+**下一状态研究目标：`Distribution / 分摊`。**
