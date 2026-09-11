@@ -21,5 +21,18 @@ research/state_catalog_v1/
 ```text
 official_state_catalog_v1 官方接口原文
     >
+stage9_core_arbitration_v1 真实战报实证裁决规范
+    >
 旧 state_catalog_v1 研究归纳
 ```
+
+---
+
+## Stage 9 核心底层裁决实证资料 (v1)
+
+```text
+research/stage9_core_arbitration_v1/
+```
+
+基于 32,660 份真实战报数据库的全量检索与分析，厘清了目标选择与重定向、意图与承伤者解耦、普攻生命周期、反应队列模型、递归防线、伤害派生分类（拆分/转移/复制/反馈）、理论伤害 vs 实际兵力损失、Pipeline 重入、因果追踪及确定性 RNG 等全部 12 项公共底层裁决规则。
+
