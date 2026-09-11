@@ -36,7 +36,7 @@ stage9_core_arbitration_v1 第一轮实证研究（历史对比资料）
 research/stage9_core_arbitration_v2/
 ```
 
-针对 v1 审计反馈开展的第二轮定向反例与控制变量实证研究。通过对 32,660 份战报的大规模统计与边缘案例穷举，完成了反例归因、自援护发现、突击前置假象破除、群攻/连环基数派生管线精确定位、分担/分摊数学模型建立、多重控制冲突策略等核心机制的严格实证，并建立了包含全量提取数据与证据等级矩阵（Grade A/B 100%）的复现档案包。
+针对 v1 审计反馈开展的第二轮定向反例与控制变量实证研究。通过大规模战报统计与边缘案例穷举，完成了目标重定向、群攻/连环派生管线、分担/分摊数学模型以及反击触发、时序、伤害管线、多来源批次与死亡边界等核心机制的严格实证，并建立了对应冻结合同。
 
 当前已形成独立冻结记录：
 
@@ -44,6 +44,7 @@ research/stage9_core_arbitration_v2/
 - `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`
 - `STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md` — `690087 分担 / DAMAGE_SHARE` 正式实现合同
 - `STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md` — `690086 分摊 / DISTRIBUTION` 正式实现合同
+- `STAGE9_COUNTERATTACK_MECHANICS_FREEZE_RECORD.md` — `690085 反击 / COUNTERATTACK` 正式实现合同
 
 其中：
 
@@ -61,15 +62,26 @@ research/stage9_core_arbitration_v2/
 → participants Slot ASC first, target commits last
 → participant death does not abort remaining commits
 → overflow discarded without redistribution
+
+690085 COUNTERATTACK
+→ ON_NORMAL_ATTACK_RECEIVED only
+→ independent WEAPON effect damage, not NormalAttack
+→ executes before Assault / Combo next hit
+→ multi-source CounterState list; same-source refresh
+→ trigger-time CounterBatch snapshot + execution-time live context
+→ Counter → Counter / Assault / Cleave blocked
+→ Counter → Chain / FirstAid / Lifesteal allowed
+→ queued sibling Counter survives target death as 0-loss execution
+→ original attacker death cancels pending Assault / Combo
 ```
 
-两者具有已冻结的非对称优先级：
+分担与分摊具有已冻结的非对称优先级：
 
 ```text
 DAMAGE_SHARE > DISTRIBUTION
 ```
 
-当前两份合同均可作为战斗模拟器正式实现依据。
+以上合同均可作为战斗模拟器正式实现依据。
 
 ---
 
