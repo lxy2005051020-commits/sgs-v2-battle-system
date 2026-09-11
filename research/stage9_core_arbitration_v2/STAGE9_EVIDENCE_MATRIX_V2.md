@@ -1,59 +1,80 @@
-# Stage 9 核心底层裁决全量证据矩阵 (Evidence Matrix v2 - Repaired)
+# Stage 9 核心底层裁决证据矩阵 (Evidence Matrix v2 - Post Freeze Sync)
 
 > **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
 > **数据基线**: 全盘扫描 32,660 份战报（全量事件逾 1,400 万条）  
-> **置信度标尺**:
-> - `A — FROZEN FACT`: 直接可观察、定义无歧义、样本充分、针对性反例搜索完成且归因清晰、跨文档完全一致。
-> - `B — STRONG`: 大样本一致支持、统计特征高度显著、机制模型自洽、反例已排除，但允许包含部分内部模型合理推论。
-> - `C — PROVISIONAL`: 样本量较少、有效机会（分母）为 0 导致仅为“未观察到 (NOT OBSERVED)”而非“已阻断 (BLOCKED)”、或存在合理解释竞争。
-> - `D — WEAK`: 极少量样本或间接日志推断。
-> - `E / UNKNOWN`: 当前战报无直接证据，标记为工程待定或官方未知，严禁工程伪装。
+> **后续冻结记录**: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`, `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`  
+> **重要说明**: 本矩阵最初用于记录历史战报统计证据。后续 Cleave / Chain / Share Damage 的若干边界已经通过项目逐项机制确认正式冻结。若历史统计模型与冻结记录冲突，**以冻结记录和 `STAGE9_CORE_ARBITRATION_RULES_V2.md` 为当前唯一实现基线**。历史样本数仅保留用于证据溯源，不能覆盖后续已冻结规则。
 
 ---
 
-## 证据矩阵总表
+## 置信度 / 状态口径
 
-| ID | Mechanism | Claim | Classification | Evidence Files | Cases / Denominator | Counterexamples | Confidence | Stage8 Impact | Remaining Unknowns |
-| :--- | :--- | :--- | :--- | :--- | :---: | :---: | :---: | :---: | :--- |
-| **EM-01** | 目标裁决顺序 | 混乱压制嘲讽锁定，进入全场无差别目标池选择 | OBSERVED | `r11_confusion_taunt_data.json`<br>`raw_slices/EM-01_*` | 1,351 (有效分母1351) | 0 (79.1%切目标, 20.9%随机打嘲讽源) | **A** | A (无冲击) | 混乱全场无差别的精确权重分布（敌/友） |
-| **EM-02** | 目标重定向 | 援护优先级高于嘲讽，最终由援护者代为承受物理攻击 | OBSERVED | `战报_5176492`<br>`r2_self_rescue_data.json` | 89 | 0 | **A** | A (无冲击) | 无 |
-| **EM-03** | 援护合法性 | 友军受混乱攻击可被同队援护；攻击者==援护者时发生自攻 | OBSERVED | `战报_1111040`<br>`raw_slices/EM-03_*` | 25 | 0 | **A** | A (无冲击) | 无 |
-| **EM-04** | 目标解耦 | 必须解耦 `intended_target`, `resolved_target`, `damage_recipient` | INFERRED | `战报_1068287`<br>`战报_1068512` | 3,250 | 0 | **A** | A (无冲击) | 无 |
-| **EM-05** | 群攻基准点 | 群攻以受击承伤者（resolved_target）为基准向其余队友溅射 | OBSERVED | `战报_1068287`<br>`r3_cleave_damage_data.json` | 18 | 0 | **B** | A (无冲击) | 样本量较少(18例)，需保持强审慎性 |
-| **EM-06** | 反击承伤者 | 反击由实际受击者（援护者）触发，原目标绝不触发 | OBSERVED | `战报_1823297`<br>`r1_lifecycle_data.json` | 96 | 0 | **A** | A (无冲击) | 无 |
-| **EM-07** | 突击受击者 | 突击战法及控制状态作用于实际受击者（援护者）身上，原目标免除 | OBSERVED | `战报_1068512`<br>`战报_1104553` | 74 | 0 | **A** | A (无冲击) | 无 |
-| **EM-08** | 普攻反应时序 | 严格流转：主扣血 $\rightarrow$ 受击回调(急救/绝地) $\rightarrow$ 群攻 $\rightarrow$ 普攻反击 $\rightarrow$ 突击 $\rightarrow$ 连击 | STATISTICALLY_SUPPORTED | `r1_lifecycle_data.json`<br>`raw_slices/EM-08_*` | 182 | 0 (已排除绝地反击) | **B** | A (外层编排) | 群攻 vs 反击共现仅 12:0，评级定为 B |
-| **EM-09** | 急救时点 | 急救挂载于扣血事件后即时内联回调（OnDamageTaken Callback） | OBSERVED | `r1_lifecycle_data.json` | 4,654 | 0 | **A** | A (无冲击) | 无 |
-| **EM-10** | 零伤/抵御反应 | 普攻造成 0 伤或被抵御，依然可正常触发群攻、反击与突击 | OBSERVED | `r1_edge_cases.json` | 281 | 0 | **A** | A (无冲击) | 特殊限定战法除外 |
-| **EM-11** | 反击套反击防线 | 反击伤害不触发对方被动反击 (BLOCKED) | OBSERVED | `r7_recursion_denominators.json`<br>`raw_slices/EM-11_*` | 0 / 90 (有效分母90) | 0 | **B** | A (无冲击) | 样本分母 90 例，未见递归，评级定为 B |
-| **EM-12** | 群攻套群攻防线 | 群攻溅射伤害不触发群攻 (NOT OBSERVED) | INFERRED | `r7_recursion_matrix_data.json` | 0 / 0 (机制无受击群攻) | 0 | **C** | A (无冲击) | 机制无受击触发群攻，分母为0，定为设计不变量 |
-| **EM-13** | 连环套连环防线 | 铁索连环反馈伤害绝不再次触发连环广播 (BLOCKED) | STATISTICALLY_SUPPORTED | `r7_recursion_denominators.json`<br>`raw_slices/EM-22_*` | 0 / 23,620 (有效分母23620) | 0 | **A** | A (无冲击) | 无 |
-| **EM-14** | 分担套分担防线 | 分担伤害未见被二次分担 (NOT OBSERVED) | INFERRED | `r7_recursion_denominators.json` | 0 / 0 (无同队双分担共存) | 0 | **C** | A (无冲击) | 缺乏双分担同队有效分母，定为设计不变量 |
-| **EM-15** | 分担数学语义 | 分担严格为 TRANSFER/SPLIT，总量守恒：$D_{orig} = D_{main} + D_{sharer}$ | STATISTICALLY_SUPPORTED | `r6_fendan_math_data.json` | 11,381 | 0 | **A** | A (无冲击) | ±1 点兵力取整舍入细节 |
-| **EM-16** | 铁索反馈语义 | 铁索严格为 FEEDBACK，原目标承伤不减，等额向连环队友广播 | STATISTICALLY_SUPPORTED | `r4_chain_damage_data.json` | 10,817 | 0 | **A** | A (外层广播) | 无 |
-| **EM-17** | 群攻 Pipeline | 群攻最符合 fixed derived base + target modifier 模型，跳过副目标攻防公式 | STATISTICALLY_SUPPORTED | `r3_cleave_damage_data.json` | 2,258 | 0 | **B** | B (派生适配器) | 官方内部具体函数实现不可见 |
-| **EM-18** | 铁索 Pipeline | 铁索最符合 fixed derived base + target modifier 模型，跳过副目标智力公式 | STATISTICALLY_SUPPORTED | `r4_chain_damage_data.json` | 11,104 | 0 | **B** | B (派生适配器) | 官方内部具体函数实现不可见 |
-| **EM-19** | 致死分担截断 | 主目标受击兵力致死时，未观察到分担转嫁发生 | OBSERVED | `r6_death_near_fendan.json`<br>`raw_slices/EM-19_*` | 154 | 0 | **B** | A (无冲击) | 内部具体短路时序节点推论 |
-| **EM-20** | 反击致死短路 | 攻击者在反击中阵亡，后续突击战法与连击第二击短路取消 | OBSERVED | `r1_edge_cases.json`<br>`raw_slices/EM-21_*` | 113 | 0 | **A** | A (无冲击) | 无 |
-| **EM-21** | 主将阵亡终战 | 主将阵亡执行延迟终战（完成当前原子技能循环后终战） | OBSERVED | `raw_slices/EM-21_*` | 890 | 0 | **A** | A (无冲击) | 极端连环多段循环细节 |
-| **EM-22** | 连环主将阵亡 | 连环循环中主将阵亡，先完成本轮剩余连环广播再终战 | OBSERVED | `战报_1104998`<br>`raw_slices/EM-22_*` | 5 | 0 | **C** | A (无冲击) | 仅检出 5 例样本，评级降为 C |
-| **EM-23** | 多控制冲突排斥 | 重复施加控制多数表现为 cfg 23 拒绝；更强效果能否覆盖弱控未证实 | OBSERVED | `r9_status_conflict_data.json` | 1,550 | 0 | **B** | A (无冲击) | 更强效果是否可覆盖弱控属于 UNKNOWN |
-| **EM-24** | 多反击触发 | 同武将携带多个反击战法，受击后按战法装配顺序独立触发 | OBSERVED | `inspect_recursion_details.py` | 8 | 0 | **C** | A (外层编排) | 样本量较少(仅8例)，评级降为 C |
-| **EM-25** | 连击重新索敌 | 连击第二击重新执行索敌，合法候选池中按 1/K 独立随机均匀索敌 | STATISTICALLY_SUPPORTED | `r10_combo_detailed_stratified.json` | 34,639 (全量提取) | 0 (1目标100%, 2目标50.5%, 3目标33.8%) | **A** | A (无冲击) | 官方内部 PRNG 种子算法不可见 |
-| **EM-26** | 混乱即时判定 | 混乱为 JIT 即时判定，每次普通攻击发起前就地独立判定 | OBSERVED | `战报_1516261`<br>`战报_1105314` | 320 | 0 | **A** | A (无冲击) | 无 |
+- `A / B / C`: 历史战报统计证据强度。
+- `FROZEN — DIRECT`: 后续逐项机制确认后的项目冻结事实，不再依赖旧提取器模型来决定实现语义。
+- `PENDING`: 仍受提取器最终语义审计或额外机制确认约束。
 
 ---
 
-## 阶段核验统计与评级分布
+## 当前证据矩阵
 
-全矩阵共 26 项核心机制断言，经过提取器全面修复与全量重提取后：
-* **Grade A (FROZEN FACT)**: **14 项** (53.8%)
-* **Grade B (STRONG)**: **8 项** (30.8%)
-* **Grade C (PROVISIONAL)**: **4 项** (15.4%) —— 分别为：
-  * `EM-12` (群攻套群攻：机制无受击群攻，有效分母为 0)
-  * `EM-14` (分担套分担：无同队双分担互相分担，有效分母为 0)
-  * `EM-22` (连环中主将阵亡：极少样本，N=5)
-  * `EM-24` (多反击触发：极少样本，N=8)
-* **Grade D / E**: **0 项**
+| ID | Mechanism | 当前统一 Claim | Evidence / Source | Cases / Denominator | Current Status | Remaining Unknowns |
+|---|---|---|---|---:|---|---|
+| EM-01 | 目标裁决顺序 | 混乱压制嘲讽锁定，进入无差别目标选择 | `r11_confusion_taunt_data.json` | 1,351 | 历史 A；仍受提取器最终审计约束 | 精确权重分布 |
+| EM-02 | 援护 vs 嘲讽 | 援护可在嘲讽目标决议后重定向实际承伤者 | 历史战报样本 | 89 | 历史 A | 无 |
+| EM-03 | 自援护 | 混乱攻击友军时可出现攻击者==援护者的自攻 | 历史样本 | 25 | 历史 A | 无 |
+| EM-04 | 目标解耦 | `intended_target` / `resolved_target` / `damage_recipient` 必须解耦 | 多类战报 | 3,250 | 历史 A | 无 |
+| EM-05 | 群攻基准点 | 群攻围绕实际承伤动作目标派生至其他合法副目标 | 群攻战报 | 18 | 历史 B | 样本有限 |
+| EM-06 | 反击承伤者 | 反击由实际受击者触发 | 历史样本 | 96 | 历史 A | 无 |
+| EM-07 | 突击受体 | 突击及控制作用于实际受击动作目标 | 历史样本 | 74 | 历史 A | 无 |
+| EM-08 | 普攻反应时序 | 群攻先于普通反击，反击先于突击，突击先于连击检查点 | `r1_lifecycle_data.json` | 182 | 历史 B | Chain 特殊 Inline / Deferred 已由 Chain Freeze 补充 |
+| EM-09 | 急救时点 | 普通可触发急救的伤害在扣兵后进入急救回调 | 历史样本 | 4,654 | 历史 A | 不适用于 Chain / Share passive settlement |
+| EM-10 | 零伤反应 | 普攻 0 伤仍可能继续产生其动作级后续机制 | `r1_edge_cases.json` | 281 | 历史 A | Chain 0 伤规则已单独冻结 |
+| EM-11 | Counter→Counter | 历史样本支持 BLOCKED | `r7_recursion_denominators.json` | 0 / 90 | **PENDING FINAL EXTRACTOR AUDIT** | 状态生命周期语义提取 |
+| EM-12 | Cleave→Cleave | 群攻派生伤害不会再次触发群攻 | `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md` | direct confirmation | **FROZEN — DIRECT** | 无 |
+| EM-13 | Chain→Chain | TRUE_FEEDBACK 不会再次触发 Chain | `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`; 历史统计亦为 0 触发 | historical 0 / 23,620 | **FROZEN — DIRECT** | 无 |
+| EM-14 | Share→Share | Share passive settlement 不再次触发 Share | Cleave/Share direct confirmation | direct confirmation | **FROZEN — DIRECT** | Share 上游数学仍待研究 |
+| EM-15 | Share 数学 | 历史统计支持 SPLIT / 守恒模型 | `r6_fendan_math_data.json` | 11,381 | 历史 A；**尚未作为本轮 Share Core Frozen** | ShareBase、致死边界、取整 |
+| EM-16 | Chain 反馈数学 | `TriggerNodeResolvedDamage × CurrentChainRatio`，对每个合法同阵营目标独立广播完整比例 | `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`; `r4_chain_damage_data.json` | 10,817+ history | **FROZEN — DIRECT** | 无核心未知 |
+| EM-17 | Cleave Pipeline | `MainAttackFinalDamage × ratio`；可 Evasion / Barrier / Share；**不重新吃副目标伤害增减** | `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md` | direct confirmation | **FROZEN — DIRECT** | Stage 9 工程接口 |
+| EM-18 | Chain Pipeline | TRUE_FEEDBACK；**不可 Evasion / Barrier / target modifier / Share**；不触发 FirstAid / Counter / Chain / 倒戈 / 攻心 / 刚烈等响应 | `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md` | direct confirmation | **FROZEN — DIRECT** | Stage 9 工程接口 |
+| EM-19 | 致死分担截断 | 历史样本中主目标致死时未观察到分担转嫁 | `r6_death_near_fendan.json` | 154 | 历史 B，**未冻结** | Share death atomic boundary |
+| EM-20 | 反击致死短路 | 攻击者反击中阵亡后续突击 / 连击短路 | 历史样本 | 113 | 历史 A | 无 |
+| EM-21 | 主将阵亡终战 | 当前原子动作与未来反应需分层裁决 | 历史样本 | 890 | 历史 A | 极端边界 |
+| EM-22 | Chain 传播目标死亡 | 当前目标死亡不阻止同一次 Chain 继续处理其他合法目标 | `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`; 历史 chain-death samples | direct + historical 5 | **FROZEN — DIRECT** for Chain target-loop rule | 战斗全局终战仍由 R5 处理 |
+| EM-23 | 多控制冲突 | 重复同类控制多数 cfg23 拒绝；强覆盖弱仍未证实 | 历史样本 | 1,550 | 历史 B | stronger replacement |
+| EM-24 | 多反击触发 | 历史少量样本支持多反击按顺序独立触发 | 历史样本 | 8 | 历史 C | 执行顺序需继续确认 |
+| EM-25 | Combo 重索敌 | 第二击重新执行目标决议；严格 transition matrix 仍需统计封口 | 历史分层数据 | 34,639 | B+ / strong | strict iid/uniform proof |
+| EM-26 | 混乱即时判定 | 混乱按动作前即时状态参与目标决议 | 历史样本 | 320 | 历史 A | 无 |
 
-> **审计判定说明**: 本矩阵中存在 4 项 Grade C 暂定规则（涉及递归分母缺失与极端边缘极低样本），且包含 2 项 UNKNOWN 领域（强弱控制覆盖能力、官方内部 PRNG 步进机制）。根据“严禁人为虚抬评级”与“存在非冻结事实即不可直接判定完全冻结”的纪律要求，本阶段应如实呈现证据强度分布。
+---
+
+## Cleave / Chain 后冻结覆盖声明
+
+以下旧版断言已经正式废弃，不得再作为实现依据：
+
+```text
+旧：Cleave → target-side damage modifier re-entry
+新：Cleave 不重新受到副目标自身伤害增减影响
+
+旧：Chain → target-side modifier / Barrier / Evasion re-entry
+新：Chain TRUE_FEEDBACK 不可规避、不可抵御、不吃目标侧增减伤
+
+旧：Chain → Share / FirstAid 可以触发
+新：Chain → Share / FirstAid = BLOCKED
+
+旧：Cleave→Cleave / Share→Share 仅 NOT OBSERVED
+新：两者均已通过后续直接机制确认升级为 BLOCKED — FROZEN
+```
+
+---
+
+## 当前研究状态
+
+```text
+Cleave Core Mechanics = FROZEN
+Chain Core Mechanics = FROZEN
+Share Core Mechanics = NEXT RESEARCH TARGET
+Counter self-recursion = PENDING FINAL EXTRACTOR AUDIT
+```
+
+历史评级统计不再用于宣称整个 Stage 9 已冻结；Stage 9 仍按专题逐个封闭。
