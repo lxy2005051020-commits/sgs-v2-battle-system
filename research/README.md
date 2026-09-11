@@ -43,8 +43,33 @@ research/stage9_core_arbitration_v2/
 - `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`
 - `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`
 - `STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md` — `690087 分担 / DAMAGE_SHARE` 正式实现合同
+- `STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md` — `690086 分摊 / DISTRIBUTION` 正式实现合同
 
-其中 `690087 DAMAGE_SHARE` 已完成终伤后拆分、取整、target-first commit、死亡中断、实时校验、援护/规避/抵御/分摊交互、生命周期、归因、统计和伤兵规则冻结，可作为战斗模拟器实现依据。
+其中：
+
+```text
+690087 DAMAGE_SHARE
+→ post-formula single-sharer partition
+→ target-first commit
+→ target death interrupt
+→ live validation / attribution / statistics / wounded rules frozen
+
+690086 DISTRIBUTION
+→ post-formula multi-participant partition
+→ Damage-Time dynamic participant set
+→ equal independently-rounded participant share
+→ participants Slot ASC first, target commits last
+→ participant death does not abort remaining commits
+→ overflow discarded without redistribution
+```
+
+两者具有已冻结的非对称优先级：
+
+```text
+DAMAGE_SHARE > DISTRIBUTION
+```
+
+当前两份合同均可作为战斗模拟器正式实现依据。
 
 ---
 
