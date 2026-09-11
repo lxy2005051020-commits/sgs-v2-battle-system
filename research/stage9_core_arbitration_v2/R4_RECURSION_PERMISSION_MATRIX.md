@@ -1,43 +1,85 @@
-# R4 跨机制递归许可矩阵与有效分母审计报告 (v2 - Cleave/Share Sync)
+# R4 跨机制递归许可矩阵与有效分母审计报告 (v2 - Cleave/Chain/Share Sync)
 
 > **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
-> **数据文件**: `evidence/r7_recursion_denominators.json`, `evidence/r7_recursion_matrix_data.json`, `evidence/raw_slices/EM-11_*`, `evidence/raw_slices/EM-22_*`  
 > **群攻机制冻结记录**: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`  
-> **核心任务**: 为递归禁止断言计算有效机会（Eligible Opportunities）分母，并同步纳入后续直接确认的群攻 / 分担机制边界。
+> **铁索机制冻结记录**: `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`  
+> **核心任务**: 区分历史统计证据与后续逐项机制确认，并维护当前唯一递归 / 跨机制许可矩阵。
 
 ---
 
-## 一、 自递归机制的有效机会分母与定性
+## 一、 自递归当前状态
 
-历史审计原则仍然成立：仅凭“战报未观察到”不能把机制写成 BLOCKED；若无有效分母，应标记 NOT OBSERVED。  
-但当某项机制后来通过独立游戏机制确认被直接确定时，可以从“统计未观察”升级为“项目机制已确认”。这两类证据来源必须区分。
+历史审计原则仍成立：仅凭“战报未观察到”不能自动写成 BLOCKED。  
+但后续通过独立机制确认已经直接确定的项目，可以升级为正式 Frozen 规则。
 
-| 自递归对 (Self-Recursion) | 历史统计状态 | 当前状态 | 当前说明 |
-| :--- | :--- | :--- | :--- |
-| **Counter → Counter** | 有效机会分母存在，历史统计 0 触发 | **PENDING FINAL EXTRACTOR AUDIT** | 方向支持 BLOCKED，但最终冻结仍受状态生命周期提取器语义审计约束。 |
-| **Cleave → Cleave** | 历史分母为 0，曾标记 NOT OBSERVED | **BLOCKED — FROZEN** | 已直接确认：群攻派生伤害不会再次触发新的群攻。不得再保留为“仅工程防御不变量”。 |
-| **Chain → Chain** | 历史有效机会分母较大，0 触发 | **PENDING FINAL EXTRACTOR AUDIT** | 方向支持 BLOCKED，但最终冻结仍受 Chain 状态 / execution 语义审计约束。 |
-| **Share Damage → Share** | 历史分母为 0，曾标记 NOT OBSERVED | **BLOCKED — FROZEN** | 已直接确认：分担兵力扣除属于被动数值结算，不会再次触发分担。 |
-| **Combo2 → Combo3** | 全量连击样本中未观察第三击 | **BLOCKED** | 当前研究强支持连击仅额外产生第二次普通攻击，不递归出第三击。 |
+| 自递归对 | 当前状态 | 当前说明 |
+|---|---|---|
+| **Counter → Counter** | `PENDING FINAL EXTRACTOR AUDIT` | 历史统计方向支持 BLOCKED，但仍受最终提取器语义审计约束。 |
+| **Cleave → Cleave** | **`BLOCKED — FROZEN`** | 群攻派生伤害不会再次触发新的群攻。 |
+| **Chain → Chain** | **`BLOCKED — FROZEN`** | 铁索真实反馈不会再次触发铁索。该结论现已由直接机制确认，不再依赖旧提取器分母。 |
+| **Share Damage → Share** | **`BLOCKED — FROZEN`** | 分担扣兵属于被动数值结算，不重新触发分担。 |
+| **Combo2 → Combo3** | `BLOCKED` | 当前研究强支持连击仅额外产生第二次普通攻击。 |
 
 ---
 
-## 二、 群攻 / 分担直接确认后的递归边界
-
-### 1. Cleave 派生伤害
-
-已经冻结：
+## 二、 群攻（Cleave）许可矩阵
 
 ```text
-Cleave → Cleave = BLOCKED
-Cleave → Counter = BLOCKED
 Cleave → Share = ALLOWED
 Cleave → FirstAid = ALLOWED
+Cleave → Chain = ALLOWED
+Cleave → Counter = BLOCKED
+Cleave → Cleave = BLOCKED
 ```
 
-群攻属于派生伤害，可以进入规避、抵御、分担与允许的伤后恢复流程，但 **不具备再次传播攻击型 Reaction 的资格**。
+群攻派生伤害可以进入分担、急救，并且群攻副目标受到合法伤害后可以立即 Inline 触发其自己的 Chain。
 
-### 2. Share Damage
+群攻不具备 Counter / Cleave 攻击型递归传播资格。
+
+---
+
+## 三、 铁索（Chain）许可矩阵
+
+### 3.1 可以触发 Chain 的来源
+
+```text
+Normal Attack Damage → Chain = ALLOWED
+Skill Damage → Chain = ALLOWED
+Periodic Damage → Chain = ALLOWED
+Cleave Damage → Chain = ALLOWED
+Counter Damage → Chain = ALLOWED
+```
+
+只要是合法伤害结算、传播源节点在结算后仍存活且当前铁索有效，即可触发。
+
+### 3.2 不能触发 Chain 的来源
+
+```text
+Chain TRUE_FEEDBACK → Chain = BLOCKED
+Share Passive Numeric Settlement → Chain = BLOCKED
+```
+
+### 3.3 Chain 反馈不能承接的机制
+
+```text
+Chain → Evasion = BLOCKED
+Chain → Barrier = BLOCKED
+Chain → Target-side Damage Modifier = BLOCKED
+Chain → Share = BLOCKED
+Chain → Crit = BLOCKED
+Chain → FirstAid = BLOCKED
+Chain → Counter = BLOCKED
+Chain → Chain = BLOCKED
+Chain → Lifesteal = BLOCKED
+Chain → StrategyRecovery = BLOCKED
+Chain → 刚烈不屈等受击响应 = BLOCKED
+```
+
+铁索真实反馈属于受限派生数值结算，不重新打开完整 Hit / Damage Reaction 链。
+
+---
+
+## 四、 Share Damage 许可矩阵
 
 分担者被扣除的兵力属于：
 
@@ -45,78 +87,115 @@ Cleave → FirstAid = ALLOWED
 Passive Numeric Settlement
 ```
 
-而不是：
+不是：
 
 ```text
 New Hit Event
 New Damage Reaction Source
 ```
 
-因此已经冻结：
+因此：
 
 ```text
 Share Damage → Share = BLOCKED
 Share Damage → FirstAid = BLOCKED
 Share Damage → Counter = BLOCKED
+Share Damage → Chain = BLOCKED
 Share Damage → 刚烈不屈等受击响应 = BLOCKED
 ```
 
-这条规则从机制层直接切断 Share 的递归响应链。
+---
+
+## 五、 当前跨机制总矩阵
+
+| 触发源 | 承接机制 | 当前判定 | 说明 |
+|---|---|---:|---|
+| **Cleave** | Share | **ALLOWED — FROZEN** | 群攻可被分担。 |
+| **Cleave** | FirstAid | **ALLOWED — FROZEN** | 群攻实际承伤可触发急救。 |
+| **Cleave** | Chain | **ALLOWED — FROZEN** | 群攻副目标每个独立伤害段可触发自己的 Chain。 |
+| **Cleave** | Counter | **BLOCKED — FROZEN** | 群攻副目标不会因群攻触发反击。 |
+| **Cleave** | Cleave | **BLOCKED — FROZEN** | 群攻不递归群攻。 |
+| **Counter** | Chain | **ALLOWED — FROZEN** | 反击伤害后立即 Inline Chain。 |
+| **Chain** | Share | **BLOCKED — FROZEN** | TRUE_FEEDBACK 不可分担。 |
+| **Chain** | FirstAid | **BLOCKED — FROZEN** | TRUE_FEEDBACK 不触发急救。 |
+| **Chain** | Counter | **BLOCKED — FROZEN** | TRUE_FEEDBACK 不触发反击。 |
+| **Chain** | Chain | **BLOCKED — FROZEN** | TRUE_FEEDBACK 不递归铁索。 |
+| **Share Damage** | Share | **BLOCKED — FROZEN** | 被动数值结算。 |
+| **Share Damage** | FirstAid | **BLOCKED — FROZEN** | 被动数值结算。 |
+| **Share Damage** | Counter | **BLOCKED — FROZEN** | 被动数值结算。 |
+| **Share Damage** | Chain | **BLOCKED — FROZEN** | 被动数值结算不属于合法 Chain 触发伤害。 |
 
 ---
 
-## 三、 跨机制派生矩阵
+## 六、 递归与时序不能只靠 ReactionDepth
 
-| 触发源 (Source) | 承接机制 (Target) | 当前判定 | 说明 |
-| :--- | :--- | :---: | :--- |
-| **Cleave (群攻)** | Share (分担) | **ALLOWED — FROZEN** | 群攻可以进入分担。 |
-| **Cleave (群攻)** | FirstAid (急救) | **ALLOWED — FROZEN** | 群攻实际承伤可以触发急救。 |
-| **Cleave (群攻)** | Counter (反击) | **BLOCKED — FROZEN** | 群攻副目标不会因群攻触发反击。 |
-| **Cleave (群攻)** | Cleave (群攻) | **BLOCKED — FROZEN** | 群攻不会递归触发群攻。 |
-| **Share Damage** | Share | **BLOCKED — FROZEN** | 被动数值结算，不再开启分担。 |
-| **Share Damage** | FirstAid | **BLOCKED — FROZEN** | 被动数值结算，不产生受击急救响应。 |
-| **Share Damage** | Counter | **BLOCKED — FROZEN** | 被动数值结算，不产生反击响应。 |
-| **Counter (反击)** | FirstAid | ALLOWED（既有研究） | 被反击方受伤可触发急救。 |
-| **Counter (反击)** | Chain | ALLOWED（既有研究） | 谋略反击可进入连环反馈。 |
-| **Chain (连环)** | Share / FirstAid / Counter | **待独立复核** | 不允许从 Cleave 冻结矩阵自动类推 Chain。 |
-
----
-
-## 四、 模拟器工程防御规范
-
-当前至少需要明确区分三类运行时语义：
+当前至少需要区分：
 
 ```text
 1. Full Attack / Full Hit
-2. Derived Damage（例如 Cleave）
-3. Passive Numeric Settlement（例如 Share Damage）
+2. Cleave Derived Damage
+3. Chain TRUE_FEEDBACK
+4. Share Passive Numeric Settlement
 ```
 
-其中：
+并通过：
 
 ```text
-Derived Damage
-→ 可以拥有部分防护 / 分担 / 恢复回调
-→ 但可通过 provenance / recursion permission 禁止攻击型递归
-
-Passive Numeric Settlement
-→ 直接执行数值扣除
-→ 不重新打开受击 Reaction 链
+provenance / damage kind
++ permission matrix
++ timing policy
 ```
 
-因此不建议仅靠一个笼统的 `ReactionDepth <= 1` 解决所有递归问题。更准确的做法是让来源类型与递归许可矩阵共同裁决。
+共同裁决。
+
+单独使用 `ReactionDepth <= 1` 无法准确表达以下已经确认的合法链：
+
+```text
+Cleave → Chain = ALLOWED
+Counter → Chain = ALLOWED
+```
+
+同时也无法准确表达：
+
+```text
+Chain → Chain = BLOCKED
+Share → Chain = BLOCKED
+```
 
 ---
 
-## 五、 当前冻结状态
+## 七、 铁索特殊时序约束
+
+默认：
+
+```text
+Damage Instance → Chain INLINE
+```
+
+普通攻击主目标存在群攻时：
+
+```text
+Main target damage
+→ defer main-target Chain
+→ resolve all Cleave targets and their Inline Chains
+→ execute main-target Deferred Chain
+```
+
+Deferred Chain 执行时重新检查传播源存活和当前铁索状态，并动态读取当前 owner / ratio；触发伤害基数仍使用产生该 Deferred Chain 时保存的 damage value。
+
+---
+
+## 八、 当前冻结状态
 
 已经从待研究项中移除：
 
-- `Cleave → Cleave`；
-- `Cleave → Counter`；
-- `Cleave → Share`；
-- `Cleave → FirstAid`；
-- `Share Damage → Share`；
-- `Share Damage → FirstAid / Counter / 受击响应`。
+- `Cleave → Cleave / Counter / Share / FirstAid / Chain`；
+- `Chain → Chain / Share / FirstAid / Counter / Crit / Lifesteal / StrategyRecovery / 受击响应`；
+- `Counter → Chain`；
+- `Share Damage → Share / FirstAid / Counter / Chain / 受击响应`。
 
-Counter / Chain 自递归仍需等待提取器最后一轮语义正确性复核后再决定是否进入正式 FROZEN。
+仍未冻结的递归重点主要剩余：
+
+```text
+Counter → Counter（最终提取器语义复核）
+```
