@@ -3,12 +3,13 @@
 > **项目**: 三国志战略版战斗模拟器 V2  
 > **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
 > **数据基线**: 全盘扫描 32,660 份战报（逾 1,400 万条原始事件流）  
-> **状态**: `REPAIRED — CLEAVE / CHAIN / SHARE / DISTRIBUTION / COUNTERATTACK CORE MECHANICS FROZEN`  
+> **状态**: `REPAIRED — CLEAVE / CHAIN / SHARE / DISTRIBUTION / COUNTERATTACK CORE MECHANICS FROZEN; TAUNT AUDIT PASSED / READY FOR FREEZE`  
 > **群攻机制冻结记录**: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`  
 > **铁索机制冻结记录**: `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`  
 > **分担机制冻结记录**: `STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md`  
 > **分摊机制冻结记录**: `STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md`  
 > **反击机制冻结记录**: `STAGE9_COUNTERATTACK_MECHANICS_FREEZE_RECORD.md`  
+> **嘲讽最终一致性审计**: `STAGE9_TAUNT_FINAL_CONSISTENCY_AUDIT.md`  
 > **最高原则**: 
 > 1. 反例优先、控制变量优先、直接证据优先；
 > 2. 严禁将 NOT OBSERVED 写成 BLOCKED；
@@ -21,9 +22,10 @@
 
 ## 核心裁决原则全览 (12 个问题域统一裁决)
 
-### 1. 目标选择与重定向总顺序 (R2)
-- **流水线**: 存活池 → 阵营过滤 → 混乱判定 (JIT 即时) → 嘲讽/锁定检查 (若未混乱) → 意图目标 → 援护拦截 → 受击承伤者。
-- 混乱压制嘲讽、援护重定向、自援护等仍维持既有研究结论；最终证据评级仍受 Stage 9 提取器最后语义审计约束。
+### 1. 目标选择与重定向总顺序 (R2 + TAUNT Audit)
+- **流水线**: 存活池 → 阵营过滤 → 混乱判定 (JIT 即时) → 嘲讽/锁定检查 (若未被混乱分支抢占) → 意图目标 → 援护拦截 → 受击承伤者。
+- **混乱与嘲讽**：混乱在普通攻击 TargetSelector 层抢占嘲讽锁定分支，但不会把 `TauntInstance` 切换为 `SUPPRESSED`。两者可以同时 `ACTIVE`；混乱结束后若嘲讽仍未到期，只是下一次普通攻击重新获得 Taunt selector 执行机会，不产生因混乱本身导致的“暂时失效 / 继续生效”日志。
+- 援护重定向、自援护等仍维持既有研究结论；TAUNT 相关术语以 `STAGE9_TAUNT_FINAL_CONSISTENCY_AUDIT.md` 与后续 Freeze Record 为准。
 - Share / Distribution 均只检查援护等重定向后的 `FINAL_ACTUAL_DAMAGE_TARGET`，不得回头读取原始意图目标的状态。
 - Counter 只由最终实际承受普通攻击的实体进入 `ON_NORMAL_ATTACK_RECEIVED` 触发窗口；援护 / 嘲讽改变实际受击者后，由新的实际承受者检查自身反击列表。
 
@@ -442,7 +444,7 @@ C1 Counter kills original attacker
 
 其余 Battle Victory / commander death / skill-loop 等总终战规则仍维持既有 R5 研究状态。
 
-### 11. 多来源冲突与状态生命周期 (R6 + Frozen Records)
+### 11. 多来源冲突与状态生命周期 (R6 + Frozen Records + TAUNT Audit)
 
 #### 11.1 Chain 单实例覆盖 — FROZEN
 
@@ -514,9 +516,33 @@ Counter finite duration 由持有者自身 `ACTION_START` tick；False Report �
 
 Counter 净化不作为负面状态清除；统一 Dispel 语义尚无足够直接证据，按来源效果 dispellability 处理，属于非阻塞 deferred 项。
 
-#### 11.5 Duration / operational distinction
+#### 11.5 TAUNT 唯一槽位 — AUDIT PASSED / READY FOR FREEZE
 
-Share / Distribution / Counter 都必须能够表达：
+```text
+Effective_Instance_Limit = 1
+first apply = register
+same-source reapply while instance exists = REJECT
+cross-source reapply while instance exists = REJECT
+refresh = DISALLOWED
+overwrite = DISALLOWED
+current Taunt strength hierarchy = NONE
+```
+
+`ACTIVE / SUPPRESSED / source-dead stale instance` 均继续占用 TAUNT 槽位，只有 `REMOVED` 释放槽位。
+
+洞察位于新控制施加的前置免疫层，因此：
+
+```text
+Insight operational
+→ incoming Taunt rejected by immunity
+→ no slot-conflict evaluation required
+```
+
+TAUNT 的“同等或更强”日志属于通用冲突文案，不能反推存在隐藏高等级嘲讽。
+
+#### 11.6 Duration / operational distinction
+
+Share / Distribution / Counter / Taunt 都必须能够表达：
 
 ```text
 state.exists
@@ -524,9 +550,9 @@ state.exists
 state.isOperational()
 ```
 
-Share / Distribution 固定持续回合状态由 protected target 自身 ACTION_START 管理 duration；Counter 固定持续回合状态由 Counter holder 自身 ACTION_START 管理。
+Share / Distribution 固定持续回合状态由 protected target 自身 ACTION_START 管理 duration；Counter 固定持续回合状态由 Counter holder 自身 ACTION_START 管理。Taunt 按受控目标自身行动时间轴推进，SUPPRESSED 不暂停 duration。
 
-Share 的 sharer 死亡会即时使后续 Share operational check 失败；Distribution 的 participant 死亡在下一次 Damage-Time participant evaluation 中动态排除；CounterBatch 入队后则不因目标中途死亡撤销已入队 sibling Counter。
+Share 的 sharer 死亡会即时使后续 Share operational check 失败；Distribution 的 participant 死亡在下一次 Damage-Time participant evaluation 中动态排除；CounterBatch 入队后则不因目标中途死亡撤销已入队 sibling Counter；Taunt 来源死亡不会删除实例，只使后续 NormalAttack JIT 重定向失败。
 
 ### 12. 确定性与 RNG (R7 + Frozen Records)
 
@@ -651,7 +677,8 @@ actual committed troop loss drives statistics / wounded processing
 3. **Chain**: `TRUE_FEEDBACK`，跳过 Base Formula，并且进一步跳过 Evasion / Barrier / Modifier / Share / Distribution / hit callback 层，使用受限直接数值结算。
 4. **Share**: post-formula single-sharer partition；target-first commit；派生承担者损失为 attributed direct troop loss。
 5. **Distribution**: post-formula dynamic multi-participant partition；participants-first commit；派生承担者损失为 attributed direct troop loss。
-6. **结论**: Stage 9 设计需要能够表达不同派生类型的 provenance、permission matrix、timing policy、partition topology、reaction batch 与 attribution owner。当前事实**不构成 Stage 8 Formal Reopen**。
+6. **Taunt**: 普通攻击主目标 JIT 重定向控制状态；不新增伤害类型，不重开 Stage 8 伤害公式；其作用位于 NormalAttack target-resolution phase，并与 Guard 的后续重定向、Assault 的 EventTarget 继承解耦。
+7. **结论**: Stage 9 设计需要能够表达不同派生类型的 provenance、permission matrix、timing policy、partition topology、reaction batch、attribution owner 与 target-resolution override。当前事实**不构成 Stage 8 Formal Reopen**。
 
 ---
 
@@ -664,5 +691,6 @@ Chain Core Mechanics = FROZEN
 Share Core Mechanics = FROZEN
 Distribution Core Mechanics = FROZEN
 Counterattack Core Mechanics = FROZEN
-Next Functional State Research Target = TBD
+Taunt Mechanics = AUDIT_PASSED_READY_FOR_FREEZE
+Next Functional State Research Target = after Taunt formal freeze
 ```
