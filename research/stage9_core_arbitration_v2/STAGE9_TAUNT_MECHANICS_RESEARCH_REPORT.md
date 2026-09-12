@@ -1,6 +1,6 @@
 # Stage 9 嘲讽 / TAUNT 机制研究报告
 
-Status ID: `690081`（如后续官方状态表存在不同 ID，以官方 catalog 为准）  
+Status ID: `690106`  
 Official Name: `嘲讽`  
 English Name: `TAUNT`  
 Research Status: `RESEARCH_COMPLETE_PENDING_FINAL_FREEZE_AUDIT`
@@ -8,6 +8,15 @@ Research Status: `RESEARCH_COMPLETE_PENDING_FINAL_FREEZE_AUDIT`
 Research Consolidation Date: `2026-09-13`
 
 本文件为 `sgs-v2-battle-system` Stage 9 嘲讽机制专项研究的收敛报告。其目标不是重复堆砌逐轮问答，而是把已经通过战报检索、连续日志切片与交叉边界验证确认的结论，整理为可直接指导模拟器实现与后续冻结审计的机制合同。
+
+官方接口语义基线：
+
+```text
+state_id = taunt
+Hint ID = 690106
+官方分类 = 控制状态
+官方原文 = 控制状态，强迫目标的普通攻击以自身为目标
+```
 
 > 当前结论：嘲讽机制探索已完成，不再继续无边界扩题。后续仅需对本文做最终一致性审计，通过后再改为 `FROZEN`。
 
