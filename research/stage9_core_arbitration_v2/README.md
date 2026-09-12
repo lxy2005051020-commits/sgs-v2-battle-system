@@ -2,24 +2,25 @@
 
 > **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
 > **数据基线**: 全盘扫描 32,660 份战报（全量事件逾 1,400 万条）  
-> **最新状态**: `CLEAVE / CHAIN / SHARE / DISTRIBUTION / COUNTERATTACK CORE MECHANICS FROZEN`  
+> **最新状态**: `CLEAVE / CHAIN / SHARE / DISTRIBUTION / COUNTERATTACK CORE MECHANICS FROZEN; TAUNT RESEARCH COMPLETE, PENDING FINAL FREEZE AUDIT`  
 > **可复现性声明**: **PARTIALLY REPRODUCIBLE FROM REPOSITORY; FULL REPRODUCTION REQUIRES ORIGINAL BATTLE DATABASE**
 
 本目录为三国志战略版战斗模拟系统（V2）Stage 9（核心底层机制裁决）的第二轮定向实证研究规范与可复现档案库。
 
-在历史实证研究与提取器审计基础上，后续已对群攻（Cleave）、铁索连环（Chain）、分担（Damage Share）、分摊（Distribution）与反击（Counterattack）核心机制进行逐项人工确认，并分别建立独立冻结记录。若旧统计解释与最新冻结记录冲突，以最新冻结记录和总规为准。毕竟让同一个仓库同时相信两套互斥物理定律，多少有点奢侈。
+在历史实证研究与提取器审计基础上，后续已对群攻（Cleave）、铁索连环（Chain）、分担（Damage Share）、分摊（Distribution）与反击（Counterattack）核心机制进行逐项人工确认，并分别建立独立冻结记录。嘲讽（Taunt）已完成专项机制探索与 40 项阶段性结论收敛，当前进入最终一致性审计。若旧统计解释与最新冻结记录/专项研究报告冲突，以最新冻结记录、通过审计的专项报告和总规为准。毕竟让同一个仓库同时相信两套互斥物理定律，多少有点奢侈。
 
 ---
 
 ## 一、目录核心导航
 
-### 1. 核心规范与冻结记录
+### 1. 核心规范、冻结记录与专项报告
 - [`STAGE9_CORE_ARBITRATION_RULES_V2.md`](STAGE9_CORE_ARBITRATION_RULES_V2.md): Stage 9 核心底层裁决主文件。
 - [`STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`](STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md): 群攻核心机制冻结记录。
 - [`STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`](STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md): 铁索连环核心机制冻结记录。
 - [`STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md`](STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md): `690087 分担 / DAMAGE_SHARE` 正式实现合同。
 - [`STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md`](STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md): `690086 分摊 / DISTRIBUTION` 正式实现合同。
 - [`STAGE9_COUNTERATTACK_MECHANICS_FREEZE_RECORD.md`](STAGE9_COUNTERATTACK_MECHANICS_FREEZE_RECORD.md): **`690085 反击 / COUNTERATTACK` 正式实现合同**，覆盖 NormalAttack-only 触发、精确时序、独立兵刃伤害、权限矩阵、多来源反击列表、同源刷新、批次快照、实时上下文、死亡边界与生命周期。
+- [`STAGE9_TAUNT_MECHANICS_RESEARCH_REPORT.md`](STAGE9_TAUNT_MECHANICS_RESEARCH_REPORT.md): **`嘲讽 / TAUNT` 专项研究收敛报告**，覆盖唯一槽位、免疫准入、多源压制、来源死亡空挂、来源战法绑定、JIT 普攻索敌、混乱抢占、援护/突击事件目标继承、日志语义与 26 项最小测试矩阵。当前状态：`RESEARCH_COMPLETE_PENDING_FINAL_FREEZE_AUDIT`。
 - [`STAGE9_EVIDENCE_EXTRACTOR_AUDIT.md`](STAGE9_EVIDENCE_EXTRACTOR_AUDIT.md): 历史实证提取器审计与修复报告。
 - [`STAGE9_EVIDENCE_MATRIX_V2.md`](STAGE9_EVIDENCE_MATRIX_V2.md): 历史统计证据矩阵；若与后续直接冻结记录冲突，以冻结记录和总规为准。
 - [`STAGE9_V2_CONSISTENCY_AUDIT.md`](STAGE9_V2_CONSISTENCY_AUDIT.md): 历史内部一致性审计表。
@@ -70,8 +71,11 @@ FROZEN
 Stage 9 Counterattack Core Mechanics:
 FROZEN
 
+Stage 9 Taunt Mechanics Research:
+RESEARCH COMPLETE / PENDING FINAL FREEZE AUDIT
+
 Next Core Research Target:
-TBD / NEXT STATE
+TAUNT FINAL CONSISTENCY AUDIT → NEXT STATE
 ```
 
 ### Cleave confirmed
@@ -164,18 +168,45 @@ queued C2 still emits Execute and commits 0 troop loss to already-dead target
 original attacker death DOES cancel pending Assault / Combo / later owner-driven action
 ```
 
+### Taunt research confirmed — pending final freeze audit
+
+```text
+TAUNT = NormalAttack primary-target override
+UNIQUE_SLOT
+first-come / same-level mutual exclusion / no refresh / no overwrite
+Apply pipeline: Insight immunity → TAUNT slot conflict → register
+existing Taunt + Insight → state-level SUPPRESSED
+source-skill disabled → state-level SUPPRESSED
+multi-suppressor set; only last suppressor removal resumes
+SUPPRESSED duration continues; expiry/cleanse → REMOVED terminal state
+source death does not remove Taunt; stale instance still occupies slot
+source liveness checked JIT per NormalAttackInstance
+source stun/disarm/silence-like action restriction does not disable existing Taunt
+instant active-skill Taunt survives source's later active-skill silence
+Confusion > Taunt > DefaultTargetSelector
+Confusion shadows Taunt; does not suppress it
+NormalAttack permission gate occurs before Taunt resolution
+Combo creates new NormalAttackInstance and re-evaluates Taunt each hit
+ActiveSkill / Counter / Cleave secondary targets do not read Taunt
+Guard acts after Taunt intended-target selection
+single-target Assault inherits post-Guard FinalEventTarget
+FinalEventTarget dead before Assault effect → empty fire; no retarget
+1 / 2 / 4-turn Taunts share one target-action-timeline duration model
+```
+
 ---
 
 ## 三、仍待研究 / 审计的核心问题
 
 ```text
-1. stronger same-type control replacement
-2. same-type multi-reaction execution ordering outside frozen Counter pairwise rules
-3. remaining death atomic boundaries outside frozen Chain / Share / Distribution / Counter rules
-4. strict combo transition-matrix statistical closure
-5. exact universal Counter source comparator — DEFERRED_NON_BLOCKING
-6. universal Counter Dispel semantics — DEFERRED_NON_BLOCKING
-7. next functional state research target — TBD
+1. TAUNT final internal-consistency / wording / implementation-contract audit
+2. stronger same-type control replacement outside TAUNT (TAUNT itself resolved: no strength hierarchy)
+3. same-type multi-reaction execution ordering outside frozen Counter pairwise rules
+4. remaining death atomic boundaries outside frozen Chain / Share / Distribution / Counter rules
+5. strict combo transition-matrix statistical closure
+6. exact universal Counter source comparator — DEFERRED_NON_BLOCKING
+7. universal Counter Dispel semantics — DEFERRED_NON_BLOCKING
+8. next functional state research target — after TAUNT freeze audit
 ```
 
-当前 `690085 COUNTERATTACK / 反击` 已完成核心机制冻结，不再列为实现阻塞研究项。
+当前 `690085 COUNTERATTACK / 反击` 已完成核心机制冻结，不再列为实现阻塞研究项。`TAUNT / 嘲讽` 已停止机制扩题，下一步仅做最终一致性审计与冻结转换。
