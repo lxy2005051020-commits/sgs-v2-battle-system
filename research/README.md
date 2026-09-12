@@ -46,6 +46,10 @@ research/stage9_core_arbitration_v2/
 - `STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md` — `690086 分摊 / DISTRIBUTION` 正式实现合同
 - `STAGE9_COUNTERATTACK_MECHANICS_FREEZE_RECORD.md` — `690085 反击 / COUNTERATTACK` 正式实现合同
 
+当前新增专项研究报告：
+
+- `STAGE9_TAUNT_MECHANICS_RESEARCH_REPORT.md` — `嘲讽 / TAUNT` 40 项机制结论收敛；**研究完成，待最终一致性审计后 FROZEN**。
+
 其中：
 
 ```text
@@ -73,6 +77,16 @@ research/stage9_core_arbitration_v2/
 → Counter → Chain / FirstAid / Lifesteal allowed
 → queued sibling Counter survives target death as 0-loss execution
 → original attacker death cancels pending Assault / Combo
+
+TAUNT research complete, pending freeze audit
+→ NormalAttack primary-target override only
+→ unique occupied slot; first-come, no refresh, no overwrite
+→ multi-suppressor lifecycle (Insight / source-skill disabled)
+→ source death retains instance but disables JIT redirect
+→ Confusion shadows Taunt by TargetSelector priority, not suppression
+→ duration follows target action timeline and continues while suppressed
+→ Guard can redirect final recipient after Taunt selects intended target
+→ EventTarget-based single-target Assault inherits final recipient
 ```
 
 分担与分摊具有已冻结的非对称优先级：
@@ -81,7 +95,7 @@ research/stage9_core_arbitration_v2/
 DAMAGE_SHARE > DISTRIBUTION
 ```
 
-以上合同均可作为战斗模拟器正式实现依据。
+以上已冻结合同可作为战斗模拟器正式实现依据；嘲讽报告需通过最终冻结审计后再升级为正式实现冻结合同。
 
 ---
 
