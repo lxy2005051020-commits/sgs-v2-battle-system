@@ -3,9 +3,10 @@
 Status ID: `690106`  
 Official Name: `嘲讽`  
 English Name: `TAUNT`  
-Research Status: `RESEARCH_COMPLETE_PENDING_FINAL_FREEZE_AUDIT`
+Research Status: `AUDIT_PASSED_READY_FOR_FREEZE`
 
 Research Consolidation Date: `2026-09-13`
+Final Consistency Audit Date: `2026-09-13`
 
 本文件为 `sgs-v2-battle-system` Stage 9 嘲讽机制专项研究的收敛报告。其目标不是重复堆砌逐轮问答，而是把已经通过战报检索、连续日志切片与交叉边界验证确认的结论，整理为可直接指导模拟器实现与后续冻结审计的机制合同。
 
@@ -18,7 +19,7 @@ Hint ID = 690106
 官方原文 = 控制状态，强迫目标的普通攻击以自身为目标
 ```
 
-> 当前结论：嘲讽机制探索已完成，不再继续无边界扩题。后续仅需对本文做最终一致性审计，通过后再改为 `FROZEN`。
+> 当前结论：嘲讽机制探索与最终一致性审计均已完成，审计未发现阻塞性机制矛盾；已修复跨文档术语与证据分级问题。本文当前为 `AUDIT_PASSED_READY_FOR_FREEZE`，下一步只做正式冻结转换，不再扩展嘲讽本体研究问题。
 
 ---
 
@@ -53,7 +54,7 @@ Overwrite: DISALLOWED
 TargetResolution: JUST_IN_TIME
 DurationClock: TARGET_ACTION_TIMELINE
 Suppression: MULTI_SOURCE
-ResearchStatus: COMPLETE_PENDING_FREEZE_AUDIT
+ResearchStatus: AUDIT_PASSED_READY_FOR_FREEZE
 ```
 
 关键不变量：
@@ -127,7 +128,7 @@ source dead but instance retained
 
 持续时间长短、战法类型、来源属性都不构成更高优先级。
 
-冻结候选规则：
+正式候选规则：
 
 ```text
 First-Come, First-Served
@@ -545,7 +546,7 @@ canCastActiveSkill
 
 不改变 A 作为被攻击目标的合法性，也不自动禁用其已建立的嘲讽。
 
-已实证样本中，孙坚处于震慑、无法行动时，周瑜仍正常执行来自【江东猛虎】的嘲讽并普通攻击孙坚。
+已实证样本中，孙坚处于震慑、无法行动时，周瑜仍正常执行来自【江东猛虎】的嘲讽并普通攻击孙坚。当前仓库关键直接样本索引以“震慑”案例为代表；缴械、计穷、虚弱属于同一来源自身行为限制维度，机制结论按专项研究裁决保留，但不把代表性震慑样本伪装成四类状态各自都有一份同等直接切片。
 
 ---
 
@@ -588,15 +589,29 @@ CanNormalAttackCheck BEFORE TauntTargetOverride
 
 ### 11.2 JIT 状态读取
 
-若 X 行动开始时仍有嘲讽，但主动战法阶段：
+若 X 行动开始时仍有嘲讽，普通攻击并不会保存该时点的目标快照。正式进入普通攻击目标解析时，必须读取最新世界状态。
+
+直接战报已经确认的同行动边界：
 
 ```text
-获得洞察
-净化删除嘲讽
-或主动战法先击杀嘲讽来源
+X 开始行动时 Taunt 仍有效
+→ 主动战法阶段获得洞察
+→ Taunt 立即 SUPPRESSED
+→ 随后同次行动普通攻击自由索敌
 ```
 
-则随后普通攻击立即读取最新世界状态，嘲讽不再按旧快照执行。
+同一 JIT 合同还要求：
+
+```text
+若普通攻击前 Taunt 已被净化物理删除
+→ 本次索敌不得再读取旧 Taunt
+
+若普通攻击前来源已被击杀
+→ source.is_alive() == false
+→ 本次静默跳过 TauntTargetOverride
+```
+
+其中“行动中获得洞察后立即自由普攻”为直接连续日志证据；“行动中净化删除后自由普攻”属于已冻结 JIT + REMOVED 终态的必然工程结果，除非后续另归档直接净化切片，不得把它冒充成同等级原始战报直接证据。
 
 ---
 
@@ -1004,7 +1019,7 @@ def select_normal_attack_primary_target(attacker):
     return default_enemy_selector(attacker)
 ```
 
-在现行三战规则中，没有独立于死亡之外的“存活但不可被普通攻击选中”状态，因此：
+在现行三战规则中，没有独立于死亡之外、会使敌方普通攻击无法选择该存活单位的目标不可选中状态，因此对 TAUNT 来源有效性：
 
 ```text
 source.isValidNormalAttackTargetFor(attacker)
@@ -1128,6 +1143,23 @@ source.is_alive()
 
 该样本与“连击每刀独立重判嘲讽”的独立证据共同构成新 NormalAttackInstance 模型。
 
+### 21.7 证据分级说明
+
+本报告区分：
+
+```text
+DIRECT LOG FACT
+→ 有连续战报日志直接展示该边界
+
+COMPOSED MECHANISM CONCLUSION
+→ 由两个或以上已分别直接确认的机制合同组合得到的必然运行结果
+
+ENGINEERING CONSEQUENCE
+→ 为保持上述外部行为所必须采用的实现约束
+```
+
+例如“行动中获得洞察后，本次随后普攻立即跳过嘲讽”属于直接连续日志；“普通攻击前净化已物理删除 Taunt 后不得继续读取旧 Taunt”属于 JIT + REMOVED 终态的组合机制结论。两者在实现预期上相同，但证据层级不得混写。
+
 ---
 
 ## 22. 最小测试矩阵
@@ -1152,8 +1184,8 @@ source.is_alive()
 | T14 | 缴械 + 嘲讽 | 普攻资格失败，不执行嘲讽 |
 | T15 | 连击 + 嘲讽 | 每刀独立执行嘲讽 JIT |
 | T16 | 第一刀击杀嘲讽来源 | 第二刀默认索敌，不执行嘲讽 |
-| T17 | 主动阶段获得洞察/净化 | 随后同次行动普攻自由索敌 |
-| T18 | 主动阶段击杀嘲讽来源 | 随后普攻自由索敌 |
+| T17 | 主动阶段获得洞察（直接实证）/普通攻击前净化删除 Taunt（JIT 合同推导） | 随后同次行动普攻不读取旧嘲讽 |
+| T18 | 主动阶段击杀嘲讽来源 | 随后普攻 JIT source-alive 检查失败，自由索敌 |
 | T19 | 反击者处于嘲讽 | 反击仍打触发者，不执行嘲讽 |
 | T20 | 群攻者处于嘲讽 | 主目标被锁；次级目标正常 |
 | T21 | 嘲讽目标被援护 | 援护者成为 FinalAttackTarget |
@@ -1225,13 +1257,21 @@ Confusion
     only shadows Taunt in TargetSelector priority
 ```
 
-当前研究已完成 40 项阶段性机制确认并完成收敛。
+当前研究已完成 40 项阶段性机制确认、收敛与最终一致性审计。
+
+审计结果：
+
+```text
+MECHANISM CONTRADICTIONS: 0 blocking
+DOCUMENTATION TERMINOLOGY / PROVENANCE ISSUES: repaired
+FREEZE READINESS: PASS
+```
 
 下一步仅进行：
 
 ```text
-FINAL CONSISTENCY AUDIT
-→ resolve any wording / implementation-contract inconsistency
-→ mark FROZEN
-→ optionally extract concise Stage 9 implementation contract
+FORMAL FREEZE CONVERSION
+→ create TAUNT freeze record
+→ mark report / indexes FROZEN
+→ no further TAUNT mechanism expansion unless new direct counterexample appears
 ```
