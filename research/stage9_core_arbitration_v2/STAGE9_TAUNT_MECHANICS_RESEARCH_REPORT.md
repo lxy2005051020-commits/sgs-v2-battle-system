@@ -3,12 +3,14 @@
 Status ID: `690106`  
 Official Name: `嘲讽`  
 English Name: `TAUNT`  
-Research Status: `AUDIT_PASSED_READY_FOR_FREEZE`
+Research Status: `FROZEN`
 
 Research Consolidation Date: `2026-09-13`
 Final Consistency Audit Date: `2026-09-13`
+Freeze Date: `2026-09-13`
+Freeze Record: `STAGE9_TAUNT_MECHANICS_FREEZE_RECORD.md`
 
-本文件为 `sgs-v2-battle-system` Stage 9 嘲讽机制专项研究的收敛报告。其目标不是重复堆砌逐轮问答，而是把已经通过战报检索、连续日志切片与交叉边界验证确认的结论，整理为可直接指导模拟器实现与后续冻结审计的机制合同。
+本文件为 `sgs-v2-battle-system` Stage 9 嘲讽机制专项研究的收敛报告。其目标不是重复堆砌逐轮问答，而是把已经通过战报检索、连续日志切片与交叉边界验证确认的结论，整理为可直接指导模拟器实现与后续审计的机制合同。
 
 官方接口语义基线：
 
@@ -19,7 +21,7 @@ Hint ID = 690106
 官方原文 = 控制状态，强迫目标的普通攻击以自身为目标
 ```
 
-> 当前结论：嘲讽机制探索与最终一致性审计均已完成，审计未发现阻塞性机制矛盾；已修复跨文档术语与证据分级问题。本文当前为 `AUDIT_PASSED_READY_FOR_FREEZE`，下一步只做正式冻结转换，不再扩展嘲讽本体研究问题。
+> 当前结论：嘲讽机制探索与最终一致性审计均已完成并通过，正式冻结记录已建立。本文与 `STAGE9_TAUNT_MECHANICS_FREEZE_RECORD.md` 共同构成 TAUNT 实现依据；如历史研究表述冲突，以 Freeze Record 为最高优先级。TAUNT 不再扩展本体研究问题，除非出现新官方规则或可复现直接反例。
 
 ---
 
@@ -54,7 +56,7 @@ Overwrite: DISALLOWED
 TargetResolution: JUST_IN_TIME
 DurationClock: TARGET_ACTION_TIMELINE
 Suppression: MULTI_SOURCE
-ResearchStatus: AUDIT_PASSED_READY_FOR_FREEZE
+ResearchStatus: FROZEN
 ```
 
 关键不变量：
@@ -128,7 +130,7 @@ source dead but instance retained
 
 持续时间长短、战法类型、来源属性都不构成更高优先级。
 
-正式候选规则：
+正式冻结规则：
 
 ```text
 First-Come, First-Served
@@ -1257,21 +1259,14 @@ Confusion
     only shadows Taunt in TargetSelector priority
 ```
 
-当前研究已完成 40 项阶段性机制确认、收敛与最终一致性审计。
+当前研究已完成 40 项阶段性机制确认、收敛、最终一致性审计与正式冻结转换。
 
-审计结果：
-
-```text
-MECHANISM CONTRADICTIONS: 0 blocking
-DOCUMENTATION TERMINOLOGY / PROVENANCE ISSUES: repaired
-FREEZE READINESS: PASS
-```
-
-下一步仅进行：
+最终状态：
 
 ```text
-FORMAL FREEZE CONVERSION
-→ create TAUNT freeze record
-→ mark report / indexes FROZEN
-→ no further TAUNT mechanism expansion unless new direct counterexample appears
+FINAL CONSISTENCY AUDIT: PASS
+FREEZE RECORD: STAGE9_TAUNT_MECHANICS_FREEZE_RECORD.md
+TAUNT CORE MECHANICS: FROZEN
 ```
+
+后续不再扩展 TAUNT 本体研究，除非出现新官方规则、可复现直接反例或客户端规则版本变化。
