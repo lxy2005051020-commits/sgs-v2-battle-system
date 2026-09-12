@@ -45,11 +45,12 @@ research/stage9_core_arbitration_v2/
 - `STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md` — `690087 分担 / DAMAGE_SHARE` 正式实现合同
 - `STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md` — `690086 分摊 / DISTRIBUTION` 正式实现合同
 - `STAGE9_COUNTERATTACK_MECHANICS_FREEZE_RECORD.md` — `690085 反击 / COUNTERATTACK` 正式实现合同
+- `STAGE9_TAUNT_MECHANICS_FREEZE_RECORD.md` — `690106 嘲讽 / TAUNT` 正式实现合同，`FROZEN`
 
-当前新增专项研究与审计记录：
+TAUNT 相关配套资料：
 
-- `STAGE9_TAUNT_MECHANICS_RESEARCH_REPORT.md` — `690106 嘲讽 / TAUNT` 40 项机制结论收敛；当前状态 `AUDIT_PASSED_READY_FOR_FREEZE`。
-- `STAGE9_TAUNT_FINAL_CONSISTENCY_AUDIT.md` — TAUNT 最终一致性审计；**PASS / READY_FOR_FREEZE**。
+- `STAGE9_TAUNT_MECHANICS_RESEARCH_REPORT.md` — 40 项机制结论收敛，已标记 `FROZEN`。
+- `STAGE9_TAUNT_FINAL_CONSISTENCY_AUDIT.md` — 最终一致性审计，`PASS`；冻结前门禁已全部通过。
 
 其中：
 
@@ -79,16 +80,17 @@ research/stage9_core_arbitration_v2/
 → queued sibling Counter survives target death as 0-loss execution
 → original attacker death cancels pending Assault / Combo
 
-690106 TAUNT — audit passed, ready for freeze
+690106 TAUNT — FROZEN
 → NormalAttack primary-target override only
 → unique occupied slot; first-come, no refresh, no overwrite
+→ Apply: Insight immunity → slot conflict → register
 → multi-suppressor lifecycle (Insight / source-skill disabled)
 → source death retains instance but disables JIT redirect
 → Confusion shadows Taunt by TargetSelector priority, not lifecycle suppression
 → duration follows target action timeline and continues while suppressed
 → Guard can redirect final recipient after Taunt selects intended target
 → EventTarget-based single-target Assault inherits final recipient
-→ final audit repaired old R2 terminology and old R6 stronger-replacement ambiguity
+→ 1 / 2 / 4-turn Taunts share the same target-action duration model
 ```
 
 分担与分摊具有已冻结的非对称优先级：
@@ -97,7 +99,19 @@ research/stage9_core_arbitration_v2/
 DAMAGE_SHARE > DISTRIBUTION
 ```
 
-以上已冻结合同可作为战斗模拟器正式实现依据。嘲讽已经通过最终一致性审计，但尚未执行最后一步 Freeze Record 转换，因此当前准确状态是 `AUDIT_PASSED_READY_FOR_FREEZE`，不是 `FROZEN`。
+以上冻结合同均可作为战斗模拟器正式实现依据。`690106 TAUNT / 嘲讽` 已完成研究、最终一致性审计和正式 Freeze Record 转换，不再属于待审计项。
+
+下一状态研究目标：
+
+```text
+690103 CONFUSION / 混乱
+```
+
+之后再进入：
+
+```text
+690081 COMBO / 连击
+```
 
 ---
 
