@@ -2,14 +2,15 @@
 
 > **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
 > **数据文件**: `evidence/r11_confusion_taunt_data.json`, `evidence/r2_self_rescue_data.json`, `evidence/r2_combo_rescue_data.json`, `evidence/raw_slices/EM-01_*`, `evidence/raw_slices/EM-03_*`  
-> **核心任务**: 定向实证混乱 × 嘲讽判定冲突（BF-01），确立“自援护”合法性，建立三级目标解耦模型。
+> **核心任务**: 定向实证混乱 × 嘲讽判定冲突（BF-01），确立“自援护”合法性，建立三级目标解耦模型。  
+> **2026-09-13 TAUNT 专项审计术语修订**: 本文旧版“混乱压制嘲讽”仅指目标选择结果上的抢占。它**不表示** `TauntInstance` 进入 `SUPPRESSED` 生命周期状态；混乱与嘲讽可同时保持 `ACTIVE`，由 `ConfusionTargetSelector` 在普通攻击 JIT 索敌时优先于 `TauntTargetSelector` 执行。
 
 ---
 
 ## 一、 混乱 × 嘲讽判定冲突的定向实证 (BF-01)
 
 ### 1. 样本提取标准与全量检索
-为解决“混乱压制嘲讽”与“嘲讽优先”的互斥问题，检索全库 1,349 份含混乱与嘲讽战报，严格筛选出：
+为解决“混乱目标选择优先于嘲讽”与“嘲讽优先”的互斥问题，检索全库 1,349 份含混乱与嘲讽战报，严格筛选出：
 $$\text{Attacker 处于混乱状态} + \text{Attacker 处于嘲讽状态} + \text{实际发动普通攻击 (cfg 9)}$$
 共提取出 **1,397 例** 处于双重状态下的普通攻击完整样本。
 
@@ -23,7 +24,24 @@ $$\text{Attacker 处于混乱状态} + \text{Attacker 处于嘲讽状态} + \tex
 - **歧义样本**: **0 例**
 
 ### 3. 裁决结论 (Grade A — FROZEN FACT)
-**混乱状态完全压制嘲讽状态的目标锁定**。武将一旦陷入混乱，无论是否同时处于嘲讽状态，均跳过嘲讽锁定逻辑，直接进入全场（含友军）无差别目标选择池。
+**混乱在普通攻击目标选择层完全抢占嘲讽锁定分支。**武将一旦处于混乱且实际进入普通攻击索敌，无论是否同时持有有效嘲讽，均先走混乱目标选择，直接进入全场（含友军）无差别目标池。
+
+必须严格区分：
+
+```text
+TargetSelector preemption / shadowing
+!=
+StatusLifecycle SUPPRESSION
+```
+
+即：
+
+```text
+Confusion = ACTIVE
+Taunt = ACTIVE
+```
+
+混乱期间不会因为混乱本身打印“嘲讽暂时失效”；混乱结束后也不会因为混乱本身打印“嘲讽继续生效”。若嘲讽尚未到期，下一次普通攻击仅因混乱分支不再抢占而重新获得执行机会。
 
 ---
 
