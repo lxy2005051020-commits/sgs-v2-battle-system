@@ -3,12 +3,13 @@
 > **项目**: 三国志战略版战斗模拟器 V2  
 > **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
 > **数据基线**: 全盘扫描 32,660 份战报（逾 1,400 万条原始事件流）  
-> **状态**: `REPAIRED — CLEAVE / CHAIN / SHARE / DISTRIBUTION / COUNTERATTACK CORE MECHANICS FROZEN; TAUNT AUDIT PASSED / READY FOR FREEZE`  
+> **状态**: `REPAIRED — CLEAVE / CHAIN / SHARE / DISTRIBUTION / COUNTERATTACK / TAUNT CORE MECHANICS FROZEN`  
 > **群攻机制冻结记录**: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`  
 > **铁索机制冻结记录**: `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`  
 > **分担机制冻结记录**: `STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md`  
 > **分摊机制冻结记录**: `STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md`  
 > **反击机制冻结记录**: `STAGE9_COUNTERATTACK_MECHANICS_FREEZE_RECORD.md`  
+> **嘲讽机制冻结记录**: `STAGE9_TAUNT_MECHANICS_FREEZE_RECORD.md`  
 > **嘲讽最终一致性审计**: `STAGE9_TAUNT_FINAL_CONSISTENCY_AUDIT.md`  
 > **最高原则**: 
 > 1. 反例优先、控制变量优先、直接证据优先；
@@ -22,10 +23,10 @@
 
 ## 核心裁决原则全览 (12 个问题域统一裁决)
 
-### 1. 目标选择与重定向总顺序 (R2 + TAUNT Audit)
+### 1. 目标选择与重定向总顺序 (R2 + TAUNT Freeze)
 - **流水线**: 存活池 → 阵营过滤 → 混乱判定 (JIT 即时) → 嘲讽/锁定检查 (若未被混乱分支抢占) → 意图目标 → 援护拦截 → 受击承伤者。
 - **混乱与嘲讽**：混乱在普通攻击 TargetSelector 层抢占嘲讽锁定分支，但不会把 `TauntInstance` 切换为 `SUPPRESSED`。两者可以同时 `ACTIVE`；混乱结束后若嘲讽仍未到期，只是下一次普通攻击重新获得 Taunt selector 执行机会，不产生因混乱本身导致的“暂时失效 / 继续生效”日志。
-- 援护重定向、自援护等仍维持既有研究结论；TAUNT 相关术语以 `STAGE9_TAUNT_FINAL_CONSISTENCY_AUDIT.md` 与后续 Freeze Record 为准。
+- 援护重定向、自援护等仍维持既有研究结论；TAUNT 相关术语以 `STAGE9_TAUNT_MECHANICS_FREEZE_RECORD.md` 为最高优先级。
 - Share / Distribution 均只检查援护等重定向后的 `FINAL_ACTUAL_DAMAGE_TARGET`，不得回头读取原始意图目标的状态。
 - Counter 只由最终实际承受普通攻击的实体进入 `ON_NORMAL_ATTACK_RECEIVED` 触发窗口；援护 / 嘲讽改变实际受击者后，由新的实际承受者检查自身反击列表。
 
@@ -444,7 +445,7 @@ C1 Counter kills original attacker
 
 其余 Battle Victory / commander death / skill-loop 等总终战规则仍维持既有 R5 研究状态。
 
-### 11. 多来源冲突与状态生命周期 (R6 + Frozen Records + TAUNT Audit)
+### 11. 多来源冲突与状态生命周期 (R6 + Frozen Records + TAUNT Freeze)
 
 #### 11.1 Chain 单实例覆盖 — FROZEN
 
@@ -516,7 +517,7 @@ Counter finite duration 由持有者自身 `ACTION_START` tick；False Report �
 
 Counter 净化不作为负面状态清除；统一 Dispel 语义尚无足够直接证据，按来源效果 dispellability 处理，属于非阻塞 deferred 项。
 
-#### 11.5 TAUNT 唯一槽位 — AUDIT PASSED / READY FOR FREEZE
+#### 11.5 TAUNT 唯一槽位 — FROZEN
 
 ```text
 Effective_Instance_Limit = 1
@@ -691,6 +692,6 @@ Chain Core Mechanics = FROZEN
 Share Core Mechanics = FROZEN
 Distribution Core Mechanics = FROZEN
 Counterattack Core Mechanics = FROZEN
-Taunt Mechanics = AUDIT_PASSED_READY_FOR_FREEZE
-Next Functional State Research Target = after Taunt formal freeze
+Taunt Core Mechanics = FROZEN
+Next Functional State Research Target = 690103 CONFUSION
 ```
