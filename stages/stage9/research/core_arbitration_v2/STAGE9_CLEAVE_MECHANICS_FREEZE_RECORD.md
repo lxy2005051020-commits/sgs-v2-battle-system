@@ -7,21 +7,38 @@
 
 ---
 
-## 1. 群攻伤害基数
+## 1. 群攻伤害基数与伤害层映射（RF-P06 冻结 / CLVS9-B01 关闭）
 
-群攻以触发该群攻的主攻击 **最终结算伤害** 为派生基数，再乘群攻比例：
+群攻以触发该群攻的主攻击 **实际扣除兵力（ActualTargetTroopLoss）** 为派生基数，再乘群攻比例并向下取整（FLOOR）：
 
 ```text
-MainAttackFinalDamage
-→ × CleaveRatio
-→ CleaveDerivedDamage
+ActualTargetTroopLoss = min(Dtarget, mainTarget.currentTroops)
+CleaveDerivedCalculatedDamage = floor(ActualTargetTroopLoss × CleaveRatio)
 ```
 
 即：
 
 ```text
-CleaveDerivedDamage = MainAttackFinalDamage × CleaveRatio
+MainAttackFinalDamage ≡ ActualTargetTroopLoss
 ```
+
+### 1.1 伤害分层与候选排除
+
+根据 RF-P06 专项实证研究（33,728 场战报全量扫描，109 场分担样本，178 场过量击杀样本）：
+
+1. **排除 `Dtotal`**：当主攻击受到伤害分担（DAMAGE_SHARE）或分摊（DISTRIBUTION）时，群攻派生基数严格采用原目标分担后的理论分配量 `Dtarget`，绝不采用未经分割的理论总伤害 `Dtotal`（`Dtotal` 预测值与实战存在重大偏差，已被 100% 证伪淘汰）。
+2. **排除未截断的理论分配量（Overkill 裁决）**：当主目标剩余兵力不足（`Dtarget > mainTarget.currentTroops`，如 1000 伤害打 100 残兵）时，群攻派生基数严格截断为主目标的实际扣除兵力（100），绝不基于未截断的理论分配量（1000）派生伤害。
+3. **排除 `CreditedDamage` 运行时概念**：`CreditedDamage` 属于战后统计归因层，运行时派生伤害直接锚定于提交阶段的实际扣兵层 `ActualTargetTroopLoss`。
+
+### 1.2 取整规则（Integerization Policy）
+
+群攻乘法取整采用 **`FLOOR`**：
+
+```text
+CleaveDerivedCalculatedDamage = floor(ActualTargetTroopLoss × CleaveRatio)
+```
+
+与 CHAIN 机制保持一致，彻底排除 `ROUND_HALF_UP`、`ROUND_HALF_EVEN` 及 `CEIL`。
 
 群攻副目标 **不重新执行基础攻防伤害公式**。
 
@@ -83,6 +100,12 @@ Cleave → FirstAid = ALLOWED
 ```
 
 群攻属于“派生伤害”，能够进入部分防护、分担与伤后恢复流程，但 **不具备再次传播攻击型 Reaction 的资格**。
+
+### 3.1 恢复触发模型与恢复基数（RF-P06 冻结 / CLVS9-M01 关闭）
+
+1. **触发粒度**：群攻对多名副目标造成伤害时，每命中一个副目标均独立产生一次 `DamageEvent`。倒戈/攻心的判定与结算为 **`PER-SECONDARY DAMAGE EVENT`**，各副目标分别独立判定并恢复兵力，不合并为单笔总伤害恢复。
+2. **分担（Share）恢复基数**：当群攻副目标具有分担状态时，攻击方倒戈/攻心恢复基数严格只读取该副目标的实际结算伤害 `Dtarget`，分担者承担的被动兵损 `Dsharer` 不计入恢复基数（继承 DAMAGE_SHARE P0 规则）。
+3. **分摊（Distribution）恢复基数**：群攻副目标受到分摊时，群攻模块仅对外发射标准 `DamageEvent`（带有副目标 `Dtarget` 与物理归因）。分摊承担者的被动扣兵是否被计入倒戈/攻心，属于 `690094 LIFE_STEAL` / `690095 STRATEGY_LIFE_STEAL` 状态自身合同的仲裁边界，群攻模块不越权私自包含承担者兵损。
 
 ---
 
@@ -155,16 +178,24 @@ Share Damage → Share = BLOCKED
 
 以下群攻核心问题不再列为 Stage 9 待研究项：
 
-- 群攻伤害基数；
-- 是否重新跑副目标基础伤害公式；
-- 是否可规避；
-- 是否可抵御及抵御次数消耗；
-- 是否重新吃副目标自身伤害增减修正；
-- 是否可分担；
-- 是否触发急救；
-- 是否触发反击；
-- 是否递归触发群攻；
-- 倒戈 / 攻心与 DamageType 的关系；
-- 群攻触发分担后，Share Damage 是否继续触发受击响应。
+- 群攻伤害基数与伤害层映射（`MainAttackFinalDamage ≡ ActualTargetTroopLoss`，`CLVS9-B01 = CLOSED`）；
+- 群攻乘法取整规则（`FLOOR`，`CLVS9-B01 = CLOSED`）；
+- 群攻派生倒戈/攻心恢复基数与分担/分摊边界（`PER-SECONDARY DAMAGE EVENT`，`CLVS9-M01 = CLOSED`）；
+- 是否重新跑副目标基础伤害公式（否，`BLOCKED`）；
+- 是否可规避（是，`ALLOWED`）；
+- 是否可抵御及抵御次数消耗（是，`ALLOWED`，消耗 1 次抵御）；
+- 是否重新吃副目标自身伤害增减修正（否，`BLOCKED`）；
+- 是否可分担（是，`ALLOWED`）；
+- 是否触发急救（是，`ALLOWED`）；
+- 是否触发反击（否，`BLOCKED`）；
+- 是否递归触发群攻（否，`BLOCKED`）；
+- 倒戈 / 攻心与 DamageType 的关系（继承 DamageType 并在允许条件下触发）；
+- 群攻触发分担后，Share Damage 是否继续触发受击响应（被动扣损，不触发受击 Reaction）。
 
-**最终状态：`CLEAVE CORE MECHANICS FROZEN`。**
+以下问题明确保持 OPEN，留待后续专用 Package 解决：
+- `CLVS9-B02`：690084 完整状态生命周期、重施加、多来源共存与倍率绑定（属于 RF-P07）；
+- `CLVS9-B03`：副目标候选池、数量、稳定排序队列与 JIT 存活重校验（属于 RF-P07）；
+- `CLVS9-B04`：主目标死亡、攻击者死亡、副将/主将阵亡终战边界（属于 RF-P04）。
+
+**最终状态：`CLEAVE CORE MECHANICS FROZEN (RF-P06 RE-FROZEN)`。**  
+（注：本文件不重命名为 FULL CONTRACT FROZEN，完整状态合同等待 RF-P07。）
