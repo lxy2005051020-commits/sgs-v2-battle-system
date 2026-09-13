@@ -1,4 +1,4 @@
-# Stage 9：Cross-Mechanism Runtime Orchestration / Design Frozen — Pending Freeze Audit
+# Stage 9：Cross-Mechanism Runtime Orchestration / Build Prompt Audit Failed — Repair Required
 
 [返回阶段索引](../README.md)
 
@@ -8,7 +8,7 @@
 Stage 8 = FROZEN
 Formal Stage8 Reopen = NO
 
-Stage9 Design = FROZEN — PENDING FREEZE AUDIT
+Stage9 Design = FROZEN — FREEZE AUDIT PASSED
 Stage9 Design Audit Round 1 = COMPLETE / REPAIR REQUIRED
 Stage9 Design Repair Round 1 = COMPLETE
 Stage9 Design Audit Round 2 = COMPLETE / REPAIR REQUIRED
@@ -19,10 +19,13 @@ STAGE9.md = DESIGN FROZEN — FREEZE AUDIT PASSED
 Stage9 Design Frozen = YES
 Design Freeze Verified = YES
 Build Prompt Authored = YES
-Build Prompt Audited = NO
+Stage9 Build Prompt Audit = COMPLETE / FAIL — REPAIR REQUIRED
+Build Prompt Approved = NO
 Production Implementation = NOT STARTED
-Build Prompt = DRAFT — AUDIT REQUIRED
 Production Implementation Authorized = NO
+
+Open Build Prompt finding:
+BPA-M01 = MAJOR / OPEN
 ```
 
 Stage 9 只在 Stage 8 已冻结 seams 周围做 orchestration、target arbitration、derived operation、partition、typed settlement 与 finalization coordination；**不替换 Stage 8 Damage Pipeline**。
@@ -32,8 +35,9 @@ Stage 9 只在 Stage 8 已冻结 seams 周围做 orchestration、target arbitrat
 - [STAGE9.md — DESIGN FROZEN](STAGE9.md)
 - [Stage9 Design Freeze Record](STAGE9_DESIGN_FREEZE.md)
 - [Stage9 Design Freeze Audit — PASS](audits/STAGE9_DESIGN_FREEZE_AUDIT.md)
-- [Stage9 Build Prompt — DRAFT / AUDIT REQUIRED](STAGE9_BUILD_PROMPT.md)
+- [Stage9 Build Prompt — REPAIR REQUIRED](STAGE9_BUILD_PROMPT.md)
 - [Stage9 Build Prompt Authoring Report](STAGE9_BUILD_PROMPT_AUTHORING_REPORT.md)
+- [Stage9 Build Prompt Audit — FAIL / REPAIR REQUIRED](audits/STAGE9_BUILD_PROMPT_AUDIT.md)
 - [Stage9 Design Audit Round 3 — PASS](audits/STAGE9_DESIGN_AUDIT_ROUND3.md)
 - [Stage9 Authoring Report](STAGE9_AUTHORING_REPORT.md)
 - [Stage9 Design Audit Round 1](audits/STAGE9_DESIGN_AUDIT_ROUND1.md)
@@ -44,6 +48,8 @@ Stage 9 只在 Stage 8 已冻结 seams 周围做 orchestration、target arbitrat
 `STAGE9.md` 负责“已冻结玩法语义如何映射为可实现、可测试、可审计的代码架构”，不负责重新研究玩法。
 
 `STAGE9_DESIGN_FREEZE.md` 冻结施工设计；它与未来 production implementation 完成后的 `STAGE9_FREEZE_RECORD.md` 不是同一个生命周期记录。
+
+`STAGE9_BUILD_PROMPT_AUDIT.md` 是当前 Build Prompt 审计 authority。首轮审计未授权 implementation；唯一开放项 `BPA-M01` 要求 Build Prompt 的 change-control / STOP wording 与冻结的 `public runtime contract -> Design Reopen` 规则完全一致。
 
 `STAGE9_AUTHORING_REPORT.md` 保留 authoring 时点历史记录；当前 file plan / phase graph / ownership 以 `STAGE9.md`、Round3 Audit 与 `STAGE9_DESIGN_FREEZE.md` 为准。
 
@@ -80,11 +86,32 @@ Planned NEW production files = 16
 Planned MODIFY production files = 17
 ```
 
+## Current Build Prompt audit status
+
+```text
+Build Prompt phase mapping = 8/8
+Build Prompt NEW file mapping = 16/16
+Build Prompt MODIFY file mapping = 17/17
+Build Prompt invariant mapping = 42/42
+Build Prompt regression mapping = 45/45
+Build Prompt architecture mapping = 12/12
+Stage8 reopen = 0
+P0 semantic conflict = 0
+
+BPA-M01:
+Build Prompt STOP/change-control wording weakens the frozen
+"public runtime contract -> Design Reopen" rule.
+
+Severity = MAJOR
+Status = OPEN
+```
+
 ## Current entry points
 
 ### Authoring admission / current authority
 
 - [Stage9 Design Freeze Record](STAGE9_DESIGN_FREEZE.md)
+- [Stage9 Build Prompt Audit](audits/STAGE9_BUILD_PROMPT_AUDIT.md)
 - [Stage9 Design Audit Round 3](audits/STAGE9_DESIGN_AUDIT_ROUND3.md)
 - [Pre-Spec Delta Audit](audits/STAGE9_PRE_SPEC_DELTA_AUDIT.md)
 - [Stage 9 Authority Map + Mechanism Status Matrix](docsync/STAGE9_AUTHORITY_MAP.md)
@@ -142,13 +169,13 @@ Research Debt: YES
 
 ## Historical material policy
 
-九份 independent contract audit 与 R1-R8 evidence reports 是 **HISTORICAL** 研究/审计快照。Current closure status 以 current mechanism/shared P0、RF-P01..P07、RF-C01、RF-C02、Global Final Audit、Pre-Spec Delta Audit，以及当前 Stage9 design repair/audit/freeze chain 为准。
+九份 independent contract audit 与 R1-R8 evidence reports 是 **HISTORICAL** 研究/审计快照。Current closure status 以 current mechanism/shared P0、RF-P01..P07、RF-C01、RF-C02、Global Final Audit、Pre-Spec Delta Audit，以及当前 Stage9 design repair/audit/freeze/build-prompt chain 为准。
 
 ## Next step
 
 ```text
 NEXT STEP:
-Stage9 Build Prompt Audit
+Stage9 Build Prompt Repair
 ```
 
-Build Prompt 已编写完成（DRAFT），处于审计就绪状态。在 Stage9 Build Prompt Audit 正式通过前，不得执行 Build Prompt，不得开始 Stage9 production implementation。
+Repair 只能修复 `BPA-M01` 的 Build Prompt wording，不得修改 production/tests/Stage8/P0，不得开始 Phase 9.1。Repair 完成后下一步为 `Stage9 Build Prompt Re-Audit`；只有 Re-Audit PASS 才能授权 production implementation。
