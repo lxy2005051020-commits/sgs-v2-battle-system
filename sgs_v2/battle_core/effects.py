@@ -5,7 +5,9 @@ from dataclasses import dataclass, field
 from .damage_system import DamageRequest
 from .enums import DamageSourceType, DamageType
 from .numeric_validation import validate_nonnegative_finite
+from .operation_identity import SourceType
 from .recovery_system import RecoveryRequest
+from .skill_runtime import SkillSlot
 from .state_runtime_params import EmptyStateRuntimeParams, StateRuntimeParams
 
 
@@ -29,6 +31,33 @@ def _validate_state_provenance_pair(
 
 
 @dataclass(frozen=True, slots=True)
+class EffectSourceRef:
+    """Stage9 canonical pre-operation effect provenance."""
+
+    stage9_source_type: SourceType
+    source_unit_id: str | None = None
+    source_skill_id: str | None = None
+    source_skill_slot: SkillSlot | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.stage9_source_type, SourceType):
+            raise TypeError(
+                f"stage9_source_type must be a SourceType, got {type(self.stage9_source_type)}"
+            )
+        _validate_optional_id(self.source_unit_id, "source_unit_id")
+        _validate_optional_id(self.source_skill_id, "source_skill_id")
+        if self.source_skill_slot is not None and not isinstance(self.source_skill_slot, SkillSlot):
+            raise TypeError(
+                f"source_skill_slot must be a SkillSlot or None, got {type(self.source_skill_slot)}"
+            )
+        if self.stage9_source_type == SourceType.ACTIVE_SKILL:
+            if self.source_unit_id is None or not self.source_unit_id.strip():
+                raise ValueError("source_unit_id is required for ACTIVE_SKILL EffectSourceRef")
+            if self.source_skill_id is None or not self.source_skill_id.strip():
+                raise ValueError("source_skill_id is required for ACTIVE_SKILL EffectSourceRef")
+
+
+@dataclass(frozen=True, slots=True)
 class DamageEffect:
     source_id: str
     target_id: str
@@ -38,6 +67,7 @@ class DamageEffect:
     source_skill_id: str | None = None
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
+    source_ref: EffectSourceRef | None = None
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -59,6 +89,18 @@ class DamageEffect:
             self.source_state_id,
             self.source_state_instance_id,
         )
+        if self.source_ref is not None:
+            if not isinstance(self.source_ref, EffectSourceRef):
+                raise TypeError("source_ref must be an EffectSourceRef or None")
+            if self.source_ref.source_unit_id is not None and self.source_ref.source_unit_id != self.source_id:
+                raise ValueError(
+                    f"source_ref.source_unit_id '{self.source_ref.source_unit_id}' does not match source_id '{self.source_id}'"
+                )
+            if self.source_skill_id is not None and self.source_ref.source_skill_id is not None:
+                if self.source_ref.source_skill_id != self.source_skill_id:
+                    raise ValueError(
+                        f"source_ref.source_skill_id '{self.source_ref.source_skill_id}' does not match source_skill_id '{self.source_skill_id}'"
+                    )
 
     def to_request(self) -> DamageRequest:
         return DamageRequest(
@@ -84,6 +126,7 @@ class ApplyStateEffect:
     runtime_params: StateRuntimeParams = field(
         default_factory=EmptyStateRuntimeParams
     )
+    source_ref: EffectSourceRef | None = None
 
     def __post_init__(self) -> None:
         if not self.state_id:
@@ -94,6 +137,19 @@ class ApplyStateEffect:
             raise ValueError("source_id cannot be empty when provided")
         if self.source_skill_id == "":
             raise ValueError("source_skill_id cannot be empty when provided")
+        if self.source_ref is not None:
+            if not isinstance(self.source_ref, EffectSourceRef):
+                raise TypeError("source_ref must be an EffectSourceRef or None")
+            if self.source_id is not None and self.source_ref.source_unit_id is not None:
+                if self.source_ref.source_unit_id != self.source_id:
+                    raise ValueError(
+                        f"source_ref.source_unit_id '{self.source_ref.source_unit_id}' does not match source_id '{self.source_id}'"
+                    )
+            if self.source_skill_id is not None and self.source_ref.source_skill_id is not None:
+                if self.source_ref.source_skill_id != self.source_skill_id:
+                    raise ValueError(
+                        f"source_ref.source_skill_id '{self.source_ref.source_skill_id}' does not match source_skill_id '{self.source_skill_id}'"
+                    )
 
 
 @dataclass(frozen=True, slots=True)

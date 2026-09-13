@@ -82,8 +82,18 @@ from .effects import (
     ApplyStateEffect,
     DamageEffect,
     Effect,
+    EffectSourceRef,
     RecoverEffect,
     RemoveStateEffect,
+)
+from .execution_right_system import (
+    BattleTerminationState,
+    DamageSettlementPermit,
+    FinalizationProjectionPermit,
+    FutureAdmissionPermit,
+    FutureBranchKind,
+    LegacyFinalizationBarrier,
+    PermitStatus,
 )
 from .hit_resolution_system import (
     HitAllowedResult,
@@ -100,6 +110,23 @@ from .official_state_catalog import (
     OfficialStateId,
     register_official_state_definitions,
 )
+from .operation_identity import (
+    ActionId,
+    ChainTraversalId,
+    CleaveEffectId,
+    CounterBatchEntryId,
+    DamageInstanceId,
+    DirectTroopLossId,
+    FinalizationId,
+    NormalAttackInstanceId,
+    OperationIdAllocator,
+    OperationLineage,
+    PartitionTransactionId,
+    ReactionBatchId,
+    SourceType,
+    TargetResolutionId,
+)
+from .reaction_permission_policy import ReactionPermissionPolicy
 from .recovery_system import (
     RecoveryPreventionReason,
     RecoveryPreventedResult,
@@ -122,7 +149,12 @@ from .skill_resolver import (
     SkillResolutionStatus,
     SkillResolver,
 )
-from .skill_runtime import SkillRuntime
+from .skill_runtime import (
+    LoadedSkillRef,
+    LoadedSkillSet,
+    SkillRuntime,
+    SkillSlot,
+)
 from .stage7_state_params import (
     PeriodicDamageStateParams,
     PeriodicRecoveryStateParams,
@@ -132,6 +164,24 @@ from .stage8_state_params import (
     Stage8PierceParams,
     Stage8ProbabilityParams,
 )
+from .stage9_integerization import (
+    ExactRatio,
+    exact_ratio_from_legacy_config_float,
+    floor_product_int_ratio,
+    round_half_up_divide_int,
+    round_half_up_product_int_ratio,
+)
+from .stage9_state_params import (
+    ChainStateParams,
+    CleaveStateParams,
+    ComboStateParams,
+    CounterStateParams,
+    DamageShareStateParams,
+    DistributionStateParams,
+    GuardStateParams,
+    TauntStateParams,
+)
+from .stage9_trace import Stage9DiagnosticTraceSink, Stage9TraceEntry
 from .state_definition import StateDefinition
 from .state_instance import StateInstance
 from .state_lifecycle_system import StateLifecycleSystem
@@ -223,6 +273,7 @@ __all__ = [
     "ApplyStateEffect",
     "RemoveStateEffect",
     "RecoverEffect",
+    "EffectSourceRef",
     "HitAllowedResult",
     "HitPreventedResult",
     "HitPreventionReason",
@@ -255,6 +306,9 @@ __all__ = [
     "SkillResolutionStatus",
     "SkillResolver",
     "SkillRuntime",
+    "SkillSlot",
+    "LoadedSkillRef",
+    "LoadedSkillSet",
     "PeriodicDamageStateParams",
     "PeriodicRecoveryStateParams",
     "Stage8ProbabilityParams",
@@ -275,4 +329,42 @@ __all__ = [
     "TroopSystem",
     "VictorySystem",
     "WeaponBaseDamageFormula",
+    # Stage9 Phase 9.1 Foundational Contracts
+    "ActionId",
+    "NormalAttackInstanceId",
+    "TargetResolutionId",
+    "DamageInstanceId",
+    "PartitionTransactionId",
+    "ReactionBatchId",
+    "CounterBatchEntryId",
+    "CleaveEffectId",
+    "ChainTraversalId",
+    "DirectTroopLossId",
+    "FinalizationId",
+    "SourceType",
+    "OperationLineage",
+    "OperationIdAllocator",
+    "ExactRatio",
+    "exact_ratio_from_legacy_config_float",
+    "floor_product_int_ratio",
+    "round_half_up_product_int_ratio",
+    "round_half_up_divide_int",
+    "CleaveStateParams",
+    "ChainStateParams",
+    "DamageShareStateParams",
+    "DistributionStateParams",
+    "TauntStateParams",
+    "GuardStateParams",
+    "CounterStateParams",
+    "ComboStateParams",
+    "ReactionPermissionPolicy",
+    "FutureBranchKind",
+    "BattleTerminationState",
+    "LegacyFinalizationBarrier",
+    "PermitStatus",
+    "FutureAdmissionPermit",
+    "DamageSettlementPermit",
+    "FinalizationProjectionPermit",
+    "Stage9TraceEntry",
+    "Stage9DiagnosticTraceSink",
 ]
