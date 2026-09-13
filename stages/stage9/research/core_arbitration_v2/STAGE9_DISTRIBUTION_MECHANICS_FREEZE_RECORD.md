@@ -697,7 +697,7 @@ CrossSource DISTRIBUTION → REPLACE
 本合同不冻结：
 
 - 【义心昭烈】内部具体比例公式；
-- 主将承担者致死时对后续承担者/原目标的提交边界（DSTS9-B02，全库样本为 0，保持 EMPIRICALLY UNOBSERVED / OPEN）；
+- 主将承担者致死时对后续承担者/原目标的提交边界（DSTS9-B02：实证状态保持 EMPIRICALLY UNOBSERVED / OPEN；模拟器运行层通过 `STAGE9_BATTLE_FINALIZATION_BARRIER_CONTRACT.md` 采纳显式工程默认完成规划提交后移交终战屏障，达成运行时确定性，不阻塞 Stage 9 设计准入）；
 - 普通基础兵刃/谋略伤害公式；
 - 伤兵系统自身精确比例、取整和回合死淘；
 - 官方源码内部类名、函数名、字段名；

@@ -106,9 +106,9 @@ COMPLETED
 > **State physical cleanup does not automatically revoke already acquired execution rights.**
 单位死亡后状态实例从数据结构中清除，但已经合法准入、正在执行队列中的微事务或反应继续按各自规则结算完毕。
 
-### Rule 7: 终战时机委托（Finalization Delegation）
-> **Battle finalization timing and exact barrier mechanics are delegated to RF-P04.**
-本文件不冻结胜负宣告的精确时机、无目标判定（`CBS9-B03`）或全军覆灭屏障。
+### Rule 7: 终战时机委托与屏障闭环（Finalization Delegation & Closure）
+> **Battle finalization timing and exact barrier mechanics are governed by RF-P04.**
+终战屏障细节、胜负宣告时机与无目标/胜负区分已由 `STAGE9_BATTLE_FINALIZATION_BARRIER_CONTRACT.md`（RF-P04）正式冻结闭环。已准入操作在屏障前完成排空，未来分支严格禁入。
 
 ---
 

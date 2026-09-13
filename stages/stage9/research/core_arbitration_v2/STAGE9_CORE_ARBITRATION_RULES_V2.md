@@ -11,6 +11,8 @@
 > **反击机制冻结记录**: `STAGE9_COUNTERATTACK_MECHANICS_FREEZE_RECORD.md`  
 > **嘲讽机制冻结记录**: `STAGE9_TAUNT_MECHANICS_FREEZE_RECORD.md`  
 > **嘲讽最终一致性审计**: `STAGE9_TAUNT_FINAL_CONSISTENCY_AUDIT.md`  
+> **执行权与死亡作用域合同**: `STAGE9_EXECUTION_RIGHT_AND_DEATH_SCOPE_CONTRACT.md`  
+> **战斗终结屏障核心合同**: `STAGE9_BATTLE_FINALIZATION_BARRIER_CONTRACT.md`  
 > **最高原则**: 
 > 1. 反例优先、控制变量优先、直接证据优先；
 > 2. 严禁将 NOT OBSERVED 写成 BLOCKED；

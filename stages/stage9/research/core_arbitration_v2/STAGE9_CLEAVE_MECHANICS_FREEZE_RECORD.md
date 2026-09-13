@@ -227,10 +227,13 @@ Share Damage → Share = BLOCKED
 - 是否触发反击（否，`BLOCKED`）；
 - 是否递归触发群攻（否，`BLOCKED`）；
 - 倒戈 / 攻心与 DamageType 的关系（继承 DamageType 并在允许条件下触发）；
-- 群攻触发分担后，Share Damage 是否继续触发受击响应（被动扣损，不触发受击 Reaction）。
+- 群攻触发分担后，Share Damage 是否继续触发受击响应（被动扣损，不触发受击 Reaction）；
+- 群攻死亡与终战屏障规则（详见 `STAGE9_BATTLE_FINALIZATION_BARRIER_CONTRACT.md`，`CLVS9-B04 = CLOSED`）：
+  - Case A：主目标普攻致死不阻断群攻准入与执行（169/169 战报闭环）；
+  - Case B：攻击者群攻下游反应阵亡，后续未执行群攻因存活门禁取消；
+  - Case C：次要目标阵亡完成当前微步，后续次要目标执行 JIT 存活校验；
+  - Case D：次要目标为主将且阵亡，当前群攻效果已规划的剩余次要目标继续执行扣兵（5/5 战报闭环），所有已准入操作排空并提交主将连带扣兵（cfg 209）后才到达终战屏障（cfg 157）；
+  - Case E：群攻下游铁索连环传播遵从铁索原子遍历规则。
 
-以下问题明确保持 OPEN，留待后续专用 Package 解决：
-- `CLVS9-B04`：主目标死亡、攻击者死亡、副将/主将阵亡终战边界（属于 RF-P04）。
-
-**最终状态：`CORE + STATE + TARGET CONTRACT FROZEN (RF-P07 RE-FROZEN)`。**  
-（注：本文件不重命名为 FULL CONTRACT FROZEN，死亡/终战屏障等待 RF-P04。）
+**最终状态：`FULL CONTRACT FROZEN (RF-P07 + RF-P04 RE-FROZEN)`。**  
+（注：群攻核心、伤害层、状态容器、目标排序及死亡终战屏障已全部闭环。）
