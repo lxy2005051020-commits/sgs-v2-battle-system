@@ -8,24 +8,28 @@
 Stage 8 = FROZEN
 Formal Stage8 Reopen = NO
 
-Remaining Architecture Blockers = 0
-Remaining Runtime Ambiguities   = 0
-Remaining Pre-Spec Findings     = 0
-
 STAGE9 SPEC AUTHORING ADMISSION = READY
+Stage9 Design Audit Round 1 = COMPLETE / REPAIR REQUIRED
+Stage9 Design Repair Round 1 = COMPLETE
+Stage9 Design Audit Round 2 = REQUIRED / NOT EXECUTED
+
 STAGE9.md = DRAFT — DESIGN AUDIT REQUIRED
 Stage9 FROZEN = NO
 Ready for implementation = NO
 ```
 
-Stage 9 只在 Stage 8 已冻结 seams 周围做 orchestration、target arbitration、derived operation、partition 与 finalization coordination；**不替换 Stage 8 Damage Pipeline**。
+Stage 9 只在 Stage 8 已冻结 seams 周围做 orchestration、target arbitration、derived operation、partition、typed settlement 与 finalization coordination；**不替换 Stage 8 Damage Pipeline**。
 
 ## Implementation design authority
 
 - [STAGE9.md — DRAFT / DESIGN AUDIT REQUIRED](STAGE9.md)
 - [Stage9 Authoring Report](STAGE9_AUTHORING_REPORT.md)
+- [Stage9 Design Audit Round 1](audits/STAGE9_DESIGN_AUDIT_ROUND1.md)
+- [Stage9 Design Repair Round 1](audits/STAGE9_DESIGN_REPAIR_ROUND1.md)
 
 `STAGE9.md` 负责“已冻结玩法语义如何映射为可实现、可测试、可审计的代码架构”，不负责重新研究玩法。
+
+`STAGE9_AUTHORING_REPORT.md` 保留 authoring 时点历史记录；Round1 repair 后的最新 file plan / phase graph / ownership 以 `STAGE9.md` 与 `STAGE9_DESIGN_REPAIR_ROUND1.md` 为准。
 
 ## Current entry points
 
@@ -87,13 +91,13 @@ Research Debt: YES
 
 ## Historical material policy
 
-九份 independent contract audit 与 R1-R8 evidence reports 是 **HISTORICAL** 研究/审计快照。Current closure status 以 current mechanism/shared P0、RF-P01..P07、RF-C01、RF-C02、Global Final Audit 与 Pre-Spec Delta Audit 为准。
+九份 independent contract audit 与 R1-R8 evidence reports 是 **HISTORICAL** 研究/审计快照。Current closure status 以 current mechanism/shared P0、RF-P01..P07、RF-C01、RF-C02、Global Final Audit、Pre-Spec Delta Audit，以及当前 Stage9 design repair/audit chain 为准。
 
 ## Next step
 
 ```text
 NEXT STEP:
-Stage9 Design Audit Round 1
+Stage9 Design Audit Round 2
 ```
 
-在设计审计完成并正式冻结前，不创建 `STAGE9_BUILD_PROMPT.md`，不开始 Stage9 production implementation。
+在 Round 2 独立审计通过并正式冻结前，不创建 `STAGE9_BUILD_PROMPT.md`，不开始 Stage9 production implementation。

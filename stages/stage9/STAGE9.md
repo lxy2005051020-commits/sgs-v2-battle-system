@@ -2,8 +2,10 @@
 
 > STATUS: **DRAFT — DESIGN AUDIT REQUIRED**  
 > Authoring baseline (battle): `4745d061345181aaf12c454ada9890d7b69c5598`  
+> Round1 repair baseline (battle): `05512d198c9016410ca14be2e40eb0c913cd1b77`  
 > Authority baseline (state): `15ed915435f328a6ecd8f488d98b5b9e13c913b5`  
 > Authoring date: 2026-09-13  
+> Round1 repair date: 2026-09-13  
 > This document is **Implementation Design Authority**, not gameplay research and not implementation approval.
 
 ---
@@ -23,16 +25,14 @@ STAGE9.md
 
 Runtime Representation Authority
 =
-STAGE9.md
-  derived from RF-C01
+STAGE9.md derived from RF-C01
 
 Regression Semantic Authority
 =
-RF-C01 regression contracts
-+ current P0
+RF-C01 regression contracts + current P0
 ```
 
-`STAGE9.md` does not redefine gameplay. It may only **consume / organize / map / implement** frozen rules.
+`STAGE9.md` does not redefine gameplay. It may only consume, organize, map, and implement frozen rules.
 
 Authority priority:
 
@@ -45,27 +45,23 @@ Authority priority:
 6. historical audit/research only as provenance
 ```
 
-If a gameplay-affecting design cannot be uniquely derived from the authority set, the implementation section must stop at:
+If a gameplay-affecting design cannot be uniquely derived from the authority set, implementation stops at:
 
 ```text
 SPEC BLOCKED BY AUTHORITY GAP
 ```
 
-No implementation convenience may silently become a game rule.
+No implementation convenience may silently become a gameplay rule.
 
-### 0.2 Authoring admission
-
-Current gate consumed by this document:
+### 0.2 Current admission state
 
 ```text
-DELTA VERDICT = PASS
-STAGE9 SPEC AUTHORING ADMISSION = READY
-Remaining blocking findings = 0
-Remaining pre-spec findings = 0
-P0 semantic change = 0
-Runtime ambiguity = 0
-P0 conflict = 0
-Stage8 reopen = NO
+Round1 design audit       = COMPLETE / FAIL — REPAIR REQUIRED
+Round1 design repair      = COMPLETE IN THIS SPEC REVISION
+Round2 design audit       = NOT EXECUTED
+Stage9 FROZEN             = NO
+Ready for implementation  = NO
+STATUS                    = DRAFT — DESIGN AUDIT REQUIRED
 ```
 
 `DSTS9-B02` remains deliberately dual-status:
@@ -77,38 +73,52 @@ DESIGN: NOT BLOCKING
 RESEARCH DEBT: YES
 ```
 
-This document never upgrades it back into a blocker and never relabels the runtime default as empirically proven official behavior.
+This document never relabels that project runtime default as empirically proven official behavior.
 
-### 0.3 Stage 8 boundary
+### 0.3 Stage8 boundary
 
 ```text
 Stage8 = FROZEN
 Formal Stage8 Reopen = NO
 ```
 
-Stage9 wraps, coordinates, redirects, partitions, derives, schedules and finalizes around Stage8 seams. It does not replace Stage8.
+Stage9 wraps, coordinates, redirects, partitions, derives, schedules, settles assigned target amounts, and finalizes around frozen Stage8 seams. It does not replace or reinterpret Stage8 formulas.
 
 ---
 
 ## 1. Goals
 
-Stage9 turns frozen cross-mechanism semantics into an implementable runtime architecture with one explicit control-flow owner, strong operation identity, deterministic ordering, local admission barriers, testable provenance, and an explicit battle-finalization barrier.
+Stage9 turns frozen cross-mechanism semantics into an implementable runtime architecture with:
 
-The design must make the following questions answerable from types and call sites rather than from call-stack folklore:
+- one explicit NormalAttack lifecycle owner;
+- strong operation identity and source provenance;
+- deterministic ordering with project defaults clearly labeled;
+- a typed `Dtotal -> Dtarget -> ActualTargetTroopLoss` settlement chain;
+- one global future-admission seam per future branch;
+- one semantic finalization owner;
+- an acyclic dependency graph;
+- independently green implementation phases;
+- test seams for all 42 invariants and 45 mandatory regressions.
 
-- Which Action / NormalAttack / DamageInstance owns this work?
-- Which target identity is being used at this phase?
-- Is the work admitted, executing, cancelled locally, or not yet admitted?
-- Is a troop change a normal DamageEvent, a derived damage event, a restricted feedback, or attributed direct troop loss?
-- Which callbacks are legal for this source identity?
-- Has victory merely latched, or is the battle finalized?
+The design must make these questions answerable from types and call sites:
 
-Engineering design rule:
+```text
+Which Action / NormalAttack / DamageInstance owns this work?
+Which target identity applies at this phase?
+Is work not admitted, admitted, executing, locally cancelled, or completed?
+Which exact damage layer is being consumed?
+Which callbacks are legal for this source identity?
+Has victory only latched, or is the battle FINALIZED?
+```
+
+Engineering rule:
 
 ```text
 explicit orchestration > implicit event ordering
 strong identity > booleans
+single semantic owner > duplicate convenience owners
 local typed policy > string inspection
+exact numeric input > binary-float rounding accidents
 ```
 
 ---
@@ -131,19 +141,20 @@ DSTS9-B02 empirical closure
 new official PRNG assumptions
 ```
 
-Assault is represented only as an ordered/admitted dispatch seam because the current production tree has no Assault runtime. Stage9 does not invent Assault gameplay semantics.
+Assault remains only an ordered/admitted dispatch seam because current production has no Assault runtime. Stage9 does not invent Assault gameplay semantics.
 
-No global `enable_stage9=true` feature flag is introduced. Incremental implementation uses composition-root registration and isolated fixtures.
+No global `enable_stage9=true` flag is introduced. Incremental implementation uses the composition root and real, completed phase-local services only. Production code must never route into a Stage9 placeholder/stub/TODO coordinator.
 
 ---
 
 ## 3. Frozen Inputs
 
-Mandatory authoring inputs:
+Mandatory inputs remain:
 
 - `stages/stage9/docsync/STAGE9_AUTHORITY_MAP.md`
 - `stages/stage9/audits/STAGE9_GLOBAL_CROSS_MECHANISM_FINAL_AUDIT.md`
 - `stages/stage9/audits/STAGE9_PRE_SPEC_DELTA_AUDIT.md`
+- `stages/stage9/audits/STAGE9_DESIGN_AUDIT_ROUND1.md`
 - `stages/stage9/hardening/STAGE9_TYPED_RUNTIME_CONTRACTS.md`
 - `stages/stage9/hardening/STAGE9_RUNTIME_INVARIANTS.md`
 - `stages/stage9/hardening/STAGE9_REGRESSION_CONTRACTS.md`
@@ -155,7 +166,7 @@ Mandatory authoring inputs:
 - `stages/stage8/STAGE8.md`
 - `stages/stage8/STAGE8_DESIGN_FREEZE.md`
 - `stages/stage8/STAGE8_FREEZE_RECORD.md`
-- current `sgs_v2/battle_core/` and `tests/` layout at the authoring baseline.
+- current `sgs_v2/battle_core/` and `tests/` layout at the Round1 repair baseline.
 
 Mechanism state IDs consumed by Stage9:
 
@@ -171,13 +182,13 @@ Mechanism state IDs consumed by Stage9:
 | 690103 | CONFUSION | `OfficialStateId.CONFUSION` |
 | 690106 | TAUNT | `OfficialStateId.TAUNT` |
 
-`DAMAGE_SPLIT` is a production compatibility name only. Current Stage9 canonical terminology is **DISTRIBUTION**.
+`DAMAGE_SPLIT` is a production compatibility name only. Stage9 canonical terminology is **DISTRIBUTION**.
 
 ---
 
-## 4. Stage8 Boundary
+## 4. Stage8 Boundary and Damage Settlement Contract
 
-Frozen Stage8 pipeline remains:
+### 4.1 Frozen Stage8 calculation pipeline
 
 ```text
 DamageRequest
@@ -192,78 +203,220 @@ DamageRequest
 → DamageModifierSystem
 → finalization
 → DamageResult + DamagePipelineTrace
-→ DamageResolutionSystem
-→ TroopSystem
 ```
 
-Stage9 rules:
+Frozen rules:
 
 1. `DamageSystem.calculate()` remains the only standard Stage8 theoretical-damage entry.
-2. Stage9 never adds Cleave/Chain/Share/Distribution flags to `DamageRequest` merely to smuggle non-Stage8 semantics through the pipeline.
-3. Standard main/skill/Counter damage may produce a legitimate `DamageRequest`; `AttributedDirectTroopLoss` never does.
-4. `DamageResult.final_damage` keeps its Stage8 meaning. Stage9 treats it as pre-partition `Dtotal` for partition-eligible standard DamageEvents and never mutates it into `Dtarget`.
-5. A future narrow `DamageResolutionSystem` settlement overload may accept an explicitly assigned target amount while preserving the original `DamageResult`; existing `apply_result()` remains behavior-compatible as `assigned = final_damage`.
-6. Stage8 formula classes, prevention semantics, formula policy, modifier ownership, `DamagePipelineTrace`, and frozen base formulas are **DO NOT TOUCH** for Stage9 semantics.
-7. Cleave is a typed derived path. Chain TRUE_FEEDBACK and Share/Distribution direct loss are restricted paths. None reruns the Stage8 base formula.
+2. `DamageResult.final_damage` **ALWAYS means the Stage8 final theoretical integer**. In Stage9 partition-eligible standard damage this is `Dtotal`.
+3. `DamageResult.requested_damage` remains the existing compatibility alias of `final_damage`; it must never be redefined to mean `Dtarget`.
+4. Stage9 never mutates or clones a `DamageResult` merely to overwrite `final_damage` with a partitioned amount.
+5. Stage8 formula classes, prevention semantics, formula policy, modifier ownership, `DamagePipelineTrace`, and frozen base formulas are **DO NOT TOUCH**.
+6. Stage9 exact-ratio helpers apply only at Stage9 P0 integerization call sites; the Stage8 float formula pipeline is not converted wholesale.
 
-This is an engineering extension around a frozen seam, not a Stage8 semantic reopen.
+### 4.2 Unique settlement request — `DamageSettlementRequest`
+
+Assigned target settlement is represented by a typed command, never an optional positional amount on `apply_result()`.
+
+```python
+DamageSettlementRequest(
+    damage_result: DamageResult,                  # immutable Stage8 result; final_damage == Dtotal
+    assigned_target_damage: int,                 # Dtarget submitted to TroopSystem
+    damage_instance_id: DamageInstanceId | None, # required for STAGE9 origin
+    lineage: OperationLineage | None,             # required for STAGE9 origin
+    origin: SettlementOrigin,                    # STAGE9 | LEGACY_COMPAT
+)
+```
+
+Validation:
+
+```text
+origin == STAGE9
+→ damage_instance_id != None
+→ lineage != None
+
+origin == LEGACY_COMPAT
+→ damage_instance_id == None
+→ lineage == None
+→ assigned_target_damage == damage_result.final_damage
+
+assigned_target_damage >= 0
+```
+
+A Stage9 standard path may never use `LEGACY_COMPAT` to evade operation identity.
+
+### 4.3 Unique settlement result — Model A
+
+**Model A is frozen.** Existing `DamageResolutionResult` is upgraded into the one settlement-result type. No long-lived parallel `Stage9DamageSettlementResult` exists.
+
+```python
+DamageResolutionResult(
+    damage: DamageResult,                 # Stage8 theoretical result
+    assigned_target_damage: int,          # Dtarget
+    actual_target_troop_loss: int,        # clamp result
+    target_troops_before: int,
+    target_troops_after: int,
+    target_defeated: bool,
+    credited_damage: int,                 # explicit attribution layer
+    troop_change: TroopChangeResult | None,
+    damage_instance_id: DamageInstanceId | None,
+    lineage: OperationLineage | None,
+)
+```
+
+Compatibility/read-only projections may include:
+
+```text
+dtotal           = damage.final_damage
+requested_damage = assigned_target_damage
+defeated          = target_defeated
+```
+
+Existing `damage`, `troop_change`, and `target_defeated` callers remain source-compatible where practical. No compatibility property may collapse `Dtotal`, `Dtarget`, and actual loss.
+
+For ordinary positive standard target settlement:
+
+```text
+credited_damage = actual_target_troop_loss
+```
+
+unless a currently frozen mechanism P0 defines a different attribution fact on a separate typed path. Share/Distribution direct loss keeps its own attribution type and does not reuse this field as a hit.
+
+A prevented Stage8 result never mutates troops: its settlement/result surface records zero actual target loss and produces no `DAMAGE_DEALT`; existing `DAMAGE_PREVENTED` semantics remain observation-only.
+
+### 4.4 Settlement API
+
+Legacy convenience path:
+
+```python
+DamageResolutionSystem.resolve(context, request: DamageRequest)
+```
+
+means:
+
+```text
+DamageSystem.calculate(request)
+→ DamageSettlementRequest(
+     damage_result=result,
+     assigned_target_damage=result.final_damage,
+     origin=LEGACY_COMPAT,
+  )
+→ settle(...)
+```
+
+Therefore Stage1-8 compatibility preserves:
+
+```text
+Dtotal == Dtarget
+DAMAGE_DEALT.requested_damage == DamageResult.final_damage
+```
+
+Stage9 standard path:
+
+```text
+DamageSystem.calculate()
+→ immutable DamageResult(final_damage=Dtotal)
+→ exactly-one partition plan
+→ Dtarget
+→ DamageSettlementRequest(origin=STAGE9, assigned_target_damage=Dtarget, ids/lineage present)
+→ DamageResolutionSystem.settle(...)
+→ DamageResolutionResult
+```
+
+`apply_result(context, damage)` may remain only as a legacy full-settlement wrapper. It may not gain an optional `assigned_amount` argument.
+
+### 4.5 `DAMAGE_DEALT` event meaning
+
+For `DAMAGE_DEALT`:
+
+```text
+payload.requested_damage
+=
+actual requested settlement amount submitted to TroopSystem
+=
+DamageResolutionResult.assigned_target_damage
+=
+Dtarget on Stage9 partitioned paths
+```
+
+It is not `Dtotal` on partitioned paths.
+
+Consumers needing `Dtotal` read `DamageResolutionResult.damage.final_damage`; consumers needing actual committed troop change read `actual_target_troop_loss`.
+
+`DAMAGE_PREVENTED` is not a troop-settlement fact and does not redefine this `DAMAGE_DEALT.requested_damage` contract.
+
+### 4.6 DAMAGE_FACT ownership matrix
+
+| Semantic layer | Typed owner | Authoritative field | Consumer examples |
+|---|---|---|---|
+| `Dtotal` | `DamageResult` | `final_damage` | partition planning, theoretical trace |
+| `Dtarget` | `DamageSettlementRequest` | `assigned_target_damage` | TroopSystem settlement |
+| `ActualTargetTroopLoss` | `DamageResolutionResult` | `actual_target_troop_loss` | Cleave basis, recovery/stat, death edge |
+| `CreditedDamage` | `DamageResolutionResult` / direct attribution type | explicit `credited_damage` / direct-loss credit field | statistics/recovery attribution where permitted |
+| `UnitDeathFact` | concrete settlement/direct-loss edge | explicit typed fact | finalization + trace |
+
+```text
+NO FIELD ALIASING ACROSS SEMANTIC LAYERS.
+```
+
+This is Stage9 settlement plumbing around a frozen Stage8 result, not a Stage8 gameplay semantic reopen.
 
 ---
 
 ## 5. Existing Architecture Baseline
 
-Current production facts relevant to Stage9:
+Current production facts:
 
-- `BattleEngine` owns round/action phase progression and currently checks `VictorySystem` at coarse barriers.
-- `BattleSystems` is the explicit composition root.
-- `ActionSystem` currently performs actor/Stun gate then calls `NormalAttackSystem`.
-- `NormalAttackSystem` already owns normal-attack permission, target selection, standard weapon `DamageRequest`, NORMAL_ATTACK fact ordering, and settlement.
+- `BattleEngine` owns round/action phase progression and currently owns terminal compatibility side effects through `_finish()`.
+- `BattleSystems` is the composition root.
+- `ActionSystem` currently performs alive/STUN gate then calls `NormalAttackSystem`.
+- `NormalAttackSystem` currently owns physical normal attack permission/target/settlement.
 - `TargetSystem` is the common target/RNG query seam.
 - `DamageSystem` owns the frozen Stage8 theoretical pipeline.
-- `DamageResolutionSystem` owns Stage8 `DamageResult` settlement and current damage/death facts.
+- `DamageResolutionSystem` owns current settlement and damage/death fact publication.
 - `TroopSystem` is the sole troop mutation boundary.
-- `VictorySystem` is currently a pure world-state evaluator returning `BattleResult`.
+- `VictorySystem` is already a pure world-state evaluator returning `BattleResult`.
 - `EventBus` explicitly documents facts-only semantics.
-- `StateLifecycleSystem` is the sole formal apply/remove/expire write entry.
-- `StateRegistry` stores instances and deterministic query data, though current lookup is linear.
+- `StateLifecycleSystem` is the sole formal state apply/remove/expire writer.
+- `StateRegistry` is the sole state container.
 - `TriggerSystem` produces ordered Effects and does not execute side effects.
-- `RecoverySystem` delegates troop writes to `TroopSystem`.
-- `EffectExecutor` currently routes every `DamageEffect` directly to `DamageResolutionSystem.resolve()`.
-- `RandomSystem` is the unique battle RNG.
-- `UnitRuntime` has lineup position but no skill-slot identity; source-bound Stage9 state metadata must therefore carry authoritative apply-time source skill slot when P0 ordering requires it.
+- `EffectExecutor` currently routes `DamageEffect` directly to `DamageResolutionSystem.resolve()`.
+- `SkillRuntime` currently has owner+definition but no slot; Round1 repair assigns the ingress below.
+- `RandomSystem` remains the unique battle RNG.
 
 ### 5.1 EXISTING_ARCHITECTURE_IMPACT_MATRIX
 
 | Existing component | Stage9 action | Why |
 |---|---|---|
-| `BattleEngine` | MODIFY narrowly | delegate victory latch/finalization barriers; preserve phase loop |
-| `BattleContext` | MODIFY narrowly | hold stable per-battle operation-id allocator + termination record only |
-| `BattleSystems` | MODIFY | wire new Stage9 coordinators/policies; remains composition root |
-| `ActionOrderSystem` | KEEP | existing deterministic ordering/RNG seam is sufficient |
-| `ActionSystem` | MODIFY | allocate `ActionId`, ACTION_START Stage9 maintenance/grant, call master NormalAttack |
-| `NormalAttackSystem` | MODIFY / MASTER OWNER | existing owner becomes orchestration-first master; delegates mechanism-local work |
-| `TargetSystem` | KEEP / CALL | low-level candidate/random seam; no Guard/Combo lifecycle ownership |
-| `AttributeSystem` | KEEP / CALL | live combat stat source for standard Counter damage |
+| `BattleEngine` | MODIFY narrowly | outer loop + future-action gate + finalized-result projection |
+| `BattleContext` | MODIFY narrowly | operation-id allocator + small termination record only |
+| `BattleSystems` | MODIFY | compose/inject Stage9 services |
+| `ActionOrderSystem` | KEEP | existing ordering seam |
+| `ActionSystem` | MODIFY | ActionId, ActionStart maintenance/grant |
+| `NormalAttackSystem` | MODIFY / MASTER OWNER | orchestration-first master only |
+| `TargetSystem` | KEEP / CALL | candidate/random primitives only |
+| `AttributeSystem` | KEEP / CALL | live combat stats source |
 | `DamageSystem` | KEEP / DO NOT TOUCH semantics | frozen Stage8 calculation owner |
-| `DamageResolutionSystem` | MODIFY only at settlement seam | preserve Stage8 behavior; allow explicit assigned-target settlement without changing `DamageResult` |
-| `TroopSystem` | KEEP / CALL | sole troop mutation boundary |
-| `VictorySystem` | MODIFY narrowly | expose pure victory evaluation used by finalization coordinator; keep compatibility behavior |
-| `RandomSystem` | KEEP | unique RNG |
-| `EventBus` | KEEP semantics | observation only; additional facts allowed, never authoritative control flow |
-| `StateLifecycleSystem` | KEEP / CALL | Stage9 maintenance delegates physical writes here |
-| `StateRegistry` | KEEP storage; adapter above it | no second state runtime |
-| `TriggerSystem` | KEEP | existing typed hook/effect collector |
-| `RecoverySystem` | KEEP | existing recovery execution seam |
-| `EffectExecutor` | MODIFY narrowly | standard DamageEffect routes through Stage9 DamageInstance coordinator so partition/finalization cannot be bypassed |
+| `DamageResolutionSystem` | MODIFY settlement seam only | typed assigned-target settlement |
+| `TroopSystem` | KEEP / CALL | sole troop mutation primitive |
+| `VictorySystem` | **KEEP / CALL** | already pure; no Round1 repair edit required |
+| `RandomSystem` | KEEP | sole RNG |
+| `EventBus` | KEEP semantics / observation additions only | never control flow |
+| `StateLifecycleSystem` | MODIFY provenance ingress only | store supplied source slot; mutation ownership unchanged |
+| `StateInstance` | MODIFY provenance metadata only | store optional source slot |
+| `StateRegistry` | KEEP | sole state container |
+| `SkillRuntime` | MODIFY provenance | authoritative loaded-skill slot carrier |
+| `SkillResolver` | MODIFY provenance propagation | pass runtime slot to Effects |
+| `effects.py` | MODIFY provenance carrier | Damage/ApplyState Effects carry source slot |
+| `effect_result.py` | MODIFY | stable Stage9 DamageEffect result shape |
+| `EffectExecutor` | MODIFY narrowly | DamageEffect routes through completed DamageInstance path |
 | Stage8 formula/resolver internals | DO NOT TOUCH | frozen authority boundary |
 
-No BattleEngine 2.0 is introduced.
+No BattleEngine 2.0 and no second state runtime are introduced.
 
 ---
 
-## 6. Design Principles
-
-Stage9 freezes these engineering principles:
+## 6. Design Principles and Deterministic Defaults
 
 ```text
 1. orchestration over mutation
@@ -276,32 +429,28 @@ Stage9 freezes these engineering principles:
 8. DirectTroopLoss bypasses DamagePipeline
 9. no low-level battle finalization
 10. deterministic runtime for every reachable path
+11. engineering defaults are never mislabeled as official order
 ```
 
 Additional rules:
 
 - EventBus fact publication never substitutes for coordinator calls.
-- No core ordering depends on subscriber registration order.
-- No ordering depends on dict/hash iteration or object address.
-- State adapters may know official state identity; mechanism-independent low-level systems must not dispatch on skill names.
-- Invalid identity/provenance, illegal recursive dispatch, double admission/consume, and duplicate finalization are programmer/domain errors, not silent skips.
-- JIT dead-target/member invalidation explicitly defined by P0 is a safe skip, not an exception.
-- Performance target is indexed/current-state lookup, not repeated `states × units × history` scans per DamageEvent.
+- No core ordering depends on subscriber registration, dict/hash iteration, or object address.
+- Operation IDs are **NEVER gameplay ordering keys**.
+- Invalid identity/provenance, illegal recursive dispatch, double admission/consume, missing required source slot, and conflicting duplicate finalization are programmer/domain errors.
+- P0-defined dead/invalid planned member is a typed local skip/cancel, not an exception.
 
-### 6.1 Deterministic comparators
+### 6.1 Comparator labels
 
-Central reusable comparators:
+| Comparator | Runtime rule | Authority label |
+|---|---|---|
+| battle/unit slot | lineup order, then stable `unit_id` only if a tie still exists | `PROJECT_DETERMINISTIC_DEFAULT` for `unit_id`; **NOT EMPIRICALLY PROVEN / NOT OFFICIAL ORDER** |
+| Cleave source effects | authoritative `source_skill_slot` ascending | P0-derived; missing required slot = domain error |
+| Cleave secondary targets | `GLOBAL_SLOT_ASCENDING` | P0-derived |
+| Chain traversal | stable global slot ascending, monotonic cursor | P0-derived |
+| Counter fallback where universal comparator remains open | stable mechanism-local source/instance fallback | `PROJECT_DETERMINISTIC_DEFAULT`; **NOT EMPIRICALLY PROVEN / NOT OFFICIAL ORDER** |
 
-```text
-unit slot order      = team + LineupPosition(COMMANDER, DEPUTY_1, DEPUTY_2) + unit_id tie breaker
-skill slot order     = authoritative source_skill_slot ascending
-reaction batch order = mechanism P0 comparator, then stable instance identity tie breaker only where authority permits
-Cleave effect order  = source_skill_slot ascending
-Cleave target order  = GLOBAL_SLOT_ASCENDING
-Chain traversal      = battle slot ascending / P0 one-pass order
-```
-
-No comparator invents an official universal Counter order where the P0 intentionally leaves only a deterministic project default/fidelity note.
+Stable state-instance identity may be used only as a deterministic fallback where P0 explicitly leaves fidelity open. Operation IDs never resolve gameplay ties.
 
 ---
 
@@ -309,42 +458,36 @@ No comparator invents an official universal Counter order where the P0 intention
 
 ```text
 BattleEngine
+  ├─ BattleFinalizationCoordinator
+  │    ├─ VictorySystem (pure evaluator)
+  │    ├─ termination state/record
+  │    └─ ExecutionRightSystem / FutureAdmissionGate read of termination state
   │
-  ├─ ActionSystem
-  │    ├─ Stage9StateRuntime / maintenance
-  │    ├─ ActionId + ComboActionGrant
-  │    └─ NormalAttackSystem  ← UNIQUE NORMAL-ATTACK MASTER
-  │         ├─ TargetResolutionSystem
-  │         │    ├─ ConfusionSelectorPolicy
-  │         │    ├─ TauntSelectorPolicy
-  │         │    ├─ TargetSystem
-  │         │    └─ GuardRedirectResolver
-  │         ├─ DamageInstanceCoordinator
-  │         │    ├─ DamageSystem.calculate (Stage8 standard damage only)
-  │         │    ├─ DamagePartitionCoordinator
-  │         │    ├─ DamageResolutionSystem target settlement
-  │         │    └─ DirectTroopLossResolver
-  │         ├─ CleaveSystem
-  │         │    └─ DerivedDamageSystem<CLEAVE>
-  │         ├─ ChainSystem / ChainTraversal
-  │         ├─ CounterSystem / CounterBatch
-  │         ├─ Assault dispatch port
-  │         └─ Combo checkpoint
-  │
-  └─ BattleFinalizationCoordinator
-       ├─ VictorySystem (pure condition evaluation)
-       ├─ FutureAdmissionGate / ExecutionRight
-       └─ BattleTerminationState
+  └─ ActionSystem
+       ├─ Stage9StateRuntime / maintenance
+       ├─ ActionId + ComboActionGrant
+       └─ NormalAttackSystem  ← UNIQUE NORMAL-ATTACK MASTER
+            ├─ TargetResolutionSystem
+            ├─ DamageInstanceCoordinator
+            │    ├─ DamageSystem.calculate (Stage8)
+            │    ├─ DamagePartitionCoordinator
+            │    ├─ DamageResolutionSystem.settle
+            │    ├─ DirectTroopLossResolver
+            │    └─ DamageCallbackAdmissionPoint for new Chain traversal
+            ├─ CleaveSystem
+            │    └─ CleaveDerivedDamageResolver
+            │         └─ same DamageCallbackAdmissionPoint after eligible derived settlement
+            ├─ ChainSystem
+            ├─ CounterSystem
+            │    └─ DamageInstanceCoordinator for positive live-target Counter damage
+            ├─ AssaultDispatchPort
+            └─ Combo checkpoint
 
-Cross-cutting:
-OperationIdentity / OperationLineage
-ReactionPermissionPolicy
-Stage9OperationTrace (observation only)
-StateRegistry + StateLifecycleSystem (single existing state runtime)
-RandomSystem (single existing RNG)
+BattleSystems = composition root for every service above.
+BattleContext = battle data + ID allocator + small termination record, NOT a service locator.
 ```
 
-### 7.1 Global NormalAttack sequence
+### 7.1 NormalAttack sequence
 
 ```python
 execute_normal_attack(action_scope, actor, *, combo_checkpoint_allowed):
@@ -353,7 +496,7 @@ execute_normal_attack(action_scope, actor, *, combo_checkpoint_allowed):
         return blocked_result
 
     na = new_normal_attack_instance(action_scope)
-    target = target_resolution.resolve(na, actor)  # selector → Guard once → lock
+    target = target_resolution.resolve(na, actor)  # selector -> Guard once -> lock
     if target is None:
         return no_target_result
 
@@ -363,24 +506,18 @@ execute_normal_attack(action_scope, actor, *, combo_checkpoint_allowed):
         target=target.post_redirect_actual_target,
     )
 
-    admit_and_resolve_immediate_post_hit_work(main)
-
-    if cleave_window_qualified(main):
-        resolve_cleave_effects_and_inline_secondary_chain(main)
-        resolve_deferred_main_target_chain_if_eligible(main)
-    else:
-        resolve_main_target_chain_inline_if_eligible(main)
-
-    resolve_counter_batch_if_admitted(na, target.post_redirect_actual_target)
-
-    if future_admission.can_admit(ASSAULT, action_scope) and actor.is_alive:
-        assault_dispatch_port.dispatch(action_scope, na)
+    resolve_already_admitted_local_post_hit_work(main)
+    admit_next_cleave_effect_if_any(main)
+    admit_counter_batch_if_triggered(na, target.post_redirect_actual_target)
+    admit_assault_if_registered(action_scope, na)
 
     if combo_checkpoint_allowed:
         combo.try_run_checkpoint(action_scope, na)
 
     return normal_attack_result
 ```
+
+New Chain traversal admission is owned by the shared damage-callback admission point when a resolved damage fact is Chain-eligible; NormalAttack does not duplicate that gate.
 
 `NormalAttack #2` calls the same master with `combo_checkpoint_allowed=False`.
 
@@ -391,32 +528,36 @@ allocate DamageInstanceId + lineage
 → construct legitimate Stage8 DamageRequest
 → DamageSystem.calculate
 → freeze Dtotal = DamageResult.final_damage
-→ resolve exactly one partition plan: NONE / SHARE / DISTRIBUTION
-→ execute target/direct-loss transaction using typed plan
-→ produce ActualTargetTroopLoss / direct-loss facts / UnitDeathFact(s)
-→ admit only source-permitted local callbacks
-→ notify finalization owner of death/victory facts
+→ exactly one partition plan: NONE / SHARE / DISTRIBUTION
+→ obtain Dtarget
+→ typed DamageSettlementRequest(Dtarget)
+→ target settlement + direct-loss transaction steps
+→ explicit ActualTargetTroopLoss / CreditedDamage / UnitDeathFact(s)
+→ permitted already-admitted local callbacks
+→ submit Chain-eligible resolved-damage fact to the one DamageCallbackAdmissionPoint
+→ notify finalization coordinator of death/barrier facts
 → complete DamageInstance barrier
 ```
 
-No partition rewrites the Stage8 `DamageResult`.
+No partition rewrites the Stage8 result.
 
 ### 7.3 Finalization sequence
 
 ```text
-UnitDeathFact
-→ VictorySystem.evaluate
-→ VictoryConditionSatisfied
-→ BattleFinalizationCoordinator latch
-→ reject FutureBranch admission
-→ current admitted operation follows its P0 local drain/cancel rule
-→ operation barrier reached
-→ commander collateral / other shared terminal work if authoritative
-→ FINALIZATION_BARRIER
-→ BattleFinalized
+UnitDeathFact or macro victory evaluation point
+→ VictorySystem.check / resolve_max_rounds
+→ BattleFinalizationCoordinator.evaluate_and_latch(...)
+→ RUNNING -> VICTORY_LATCHED / DRAINING_ADMITTED_WORK
+→ FutureAdmissionGate rejects new global FutureBranches
+→ admitted local operations obey their P0 drain/cancel rules
+→ notify_operation_completed(...)
+→ try_finalize(...)
+→ FINALIZED + immutable FinalizationResult
+→ BattleEngine._apply_finalized_battle_result(FinalizationResult)
+→ context.ended/context.result + BATTLE_END + BATTLE_ENDED compatibility projection
 ```
 
-`VICTORY_LATCHED != FINALIZED` is structural, not a logging convention.
+`VICTORY_LATCHED != FINALIZED` is structural.
 
 ---
 
@@ -424,42 +565,46 @@ UnitDeathFact
 
 ### 8.1 Strong identities
 
-All IDs are immutable typed values allocated by one per-`BattleContext` `OperationIdAllocator` using deterministic monotonic sequences. They are not inferred from event sequence, skill name or Python object identity.
+All IDs are immutable typed values allocated by one per-battle `OperationIdAllocator` using deterministic monotonic sequences. IDs are runtime/trace identity, never gameplay priority.
 
-| ID | Generator | Lifetime | Parent | Persisted? |
+| ID | Generator | Lifetime | Parent | Status |
 |---|---|---|---|---|
-| `ActionId` | ActionSystem | one unit Action | root | trace/test only |
-| `NormalAttackInstanceId` | NormalAttackSystem | one physical standard NA | ActionId | trace/test only |
-| `TargetResolutionId` | TargetResolutionSystem | one NA target resolve | NormalAttackId | trace/test only |
-| `DamageInstanceId` | Damage/Derived coordinator | one concrete damage event | NA/parent damage | trace/test only |
-| `PartitionTransactionId` | DamagePartitionCoordinator | one partition transaction | DamageInstanceId | trace/test only |
-| `ReactionBatchId` | CounterSystem | one admitted reaction batch | NormalAttackId | trace/test only |
-| `CounterBatchEntryId` | CounterSystem | one batch entry | ReactionBatchId | trace/test only |
-| `CleaveEffectId` | CleaveSystem | one source-bound effect execution | NormalAttackId | trace/test only |
-| `ChainTraversalId` | ChainSystem | one traversal | DamageInstanceId | trace/test only |
-| `DirectTroopLossId` | DirectTroopLossResolver | one direct loss commit | PartitionTransactionId | trace/test only |
+| `ActionId` | ActionSystem | one unit Action | root | required |
+| `NormalAttackInstanceId` | NormalAttackSystem | one physical NA | ActionId | required |
+| `TargetResolutionId` | TargetResolutionSystem | one target resolve | NormalAttackId | **TRACE_ONLY SUPPORTING ID** |
+| `DamageInstanceId` | damage/derived owner | one damage event | NA/parent damage | required |
+| `PartitionTransactionId` | partition coordinator | one transaction | DamageInstanceId | required |
+| `ReactionBatchId` | CounterSystem | one admitted batch | NormalAttackId | required |
+| `CounterBatchEntryId` | CounterSystem | one batch entry | ReactionBatchId | required |
+| `CleaveEffectId` | CleaveSystem | one effect execution | NormalAttackId | required |
+| `ChainTraversalId` | ChainSystem | one traversal | DamageInstanceId | required |
+| `DirectTroopLossId` | DirectTroopLossResolver | one direct commit | PartitionTransactionId | required |
 
-IDs are serializable strings in trace fixtures but not written into gameplay state unless an authoritative state contract requires a reference.
-
-### 8.2 Source identity
-
-Stage9 defines a separate typed `SourceType` for orchestration/permission/provenance:
+`TargetResolutionId` is retained only because it improves #1/#2 target trace correlation:
 
 ```text
-NORMAL_ATTACK
-ACTIVE_SKILL
-ASSAULT
-PERIODIC_DAMAGE
-CLEAVE
-COUNTER
-CHAIN_TRUE_FEEDBACK
-SHARE_DIRECT_LOSS
-DISTRIBUTION_DIRECT_LOSS
+not a gameplay prerequisite
+not a gameplay ordering key
+removable later without gameplay semantic change
 ```
 
-`SourceType` is not `DamageType`. A Cleave may inherit `WEAPON | STRATEGY` while remaining `sourceType=CLEAVE`.
+### 8.2 Source identity vs Stage8 damage source
 
-For legitimate standard Stage8 damage, Stage9 maps to existing `DamageSourceType` without expanding Stage8 semantics. For non-Stage8 operations there is no fake `DamageRequest` mapping.
+`SourceType` is Stage9 orchestration/provenance/permission identity. `DamageSourceType` is Stage8 formula-source classification.
+
+| `SourceType` | Stage8 mapping | Rule |
+|---|---|---|
+| `NORMAL_ATTACK` | `DamageSourceType.NORMAL_ATTACK` | legitimate standard request |
+| `ACTIVE_SKILL` | `DamageSourceType.SKILL` | legitimate standard request |
+| `PERIODIC_DAMAGE` | `DamageSourceType.CONTINUOUS` | legitimate standard request |
+| `COUNTER` | `DamageSourceType.COUNTER` | legitimate positive Counter request |
+| `ASSAULT` | none until authoritative Assault damage path exists | no invented mapping |
+| `CLEAVE` | **NO fake mapping** | Cleave-specific derived route |
+| `CHAIN_TRUE_FEEDBACK` | **NO fake mapping** | restricted feedback route |
+| `SHARE_DIRECT_LOSS` | **NO fake mapping** | direct troop loss |
+| `DISTRIBUTION_DIRECT_LOSS` | **NO fake mapping** | direct troop loss |
+
+Only legitimate Stage8 `DamageRequest` construction performs the one-way mapping.
 
 ### 8.3 OperationLineage
 
@@ -475,28 +620,7 @@ OperationLineage(
 )
 ```
 
-This is intentionally small. Mechanism-local data stays in mechanism-local types.
-
-### 8.4 Type dependency graph
-
-```text
-OperationId types + SourceType
-        ↓
-OperationLineage
-        ↓
-ActionScope / NormalAttackInstance
-        ↓
-TargetResolutionResult     DamageInstanceContext
-        ↓                         ↓
-CleaveEffect / ChainTraversal   PartitionPlan
-CounterBatch                   DirectTroopLoss
-        \                         /
-         → ExecutionRight / OperationBarrier
-                    ↓
-          BattleFinalizationCoordinator
-```
-
-No `Stage9Context` containing every queue/state/mechanism is permitted.
+Mechanism-local data stays in mechanism-local types.
 
 ---
 
@@ -504,21 +628,22 @@ No `Stage9Context` containing every queue/state/mechanism is permitted.
 
 ### 9.1 Immutable result
 
+Round1 repair removes redundant `selected_target`.
+
 ```python
 TargetResolutionResult(
-    resolution_id: TargetResolutionId,
+    resolution_id: TargetResolutionId,  # TRACE_ONLY SUPPORTING ID
     normal_attack_id: NormalAttackInstanceId,
-    selected_target: str,
     intended_attack_target: str,
     post_redirect_actual_target: str,
     redirect_source: str | None,
-    redirect_reason: RedirectReason,  # NONE | GUARD
+    redirect_reason: RedirectReason,    # NONE | GUARD
 )
 ```
 
-All fields are immutable semantic identities. A generic mutable `target_id` that changes meaning is forbidden.
+There is exactly one selector pass before `intended_attack_target` is frozen. No extra RNG call exists merely to populate a DTO.
 
-### 9.2 Pipeline and responsibility
+### 9.2 Pipeline
 
 ```text
 TargetResolutionSystem
@@ -529,75 +654,68 @@ TargetResolutionSystem
   5. freeze IntendedAttackTarget
   6. GuardRedirectResolver exactly once
   7. freeze PostRedirectActualTarget
-  8. return TargetResolutionResult
+  8. return immutable result
 ```
 
-Rules:
+Rules remain:
 
-- Confusion shadows Taunt only at selector arbitration; it does not physically delete/suppress Taunt.
+- Confusion shadows Taunt only for current selector arbitration; it does not delete/suppress Taunt.
 - Guard never recursively redirects the guarder.
-- Share/Distribution query the concrete DamageEvent recipient after redirect.
+- Share/Distribution use the concrete DamageEvent recipient after redirect.
 - Counter holder and Cleave anchor use `post_redirect_actual_target`.
-- Cleave secondaries do **not** rerun selector/Confusion/Taunt/Guard.
-- Combo #2 allocates a fresh `NormalAttackInstanceId`, `TargetResolutionId`, selector pass and Guard pass. It keeps the same `ActionId/rootActionId` and locked Combo grant provenance.
-
-Authority: Core Arbitration + CONFUSION / TAUNT / GUARD P0 + RF-C01 Target contracts.
+- Cleave secondaries do not rerun selector/Confusion/Taunt/Guard.
+- Combo #2 allocates a fresh NormalAttack instance and fresh target-resolution pass.
 
 ---
 
 ## 10. NormalAttack Orchestration
 
-### 10.1 Chosen master owner
+### 10.1 Unique master
 
-**Existing `NormalAttackSystem` is extended into the unique master NormalAttack orchestrator.**
+Existing `NormalAttackSystem` is the unique NormalAttack master because it already owns the production physical-attack entry.
 
-Reason: it already owns the production normal-attack entry and `ActionSystem` already depends on it. Creating a parallel `NormalAttackOrchestrator` would produce two lifecycle owners or force a compatibility facade with no engineering gain.
-
-`NormalAttackSystem` becomes orchestration-first and delegates local work. It does not absorb mechanism algorithms.
-
-### 10.2 Ownership
-
-Master owns:
+It may own only:
 
 ```text
 normal-attack permission
 NormalAttackInstanceId
-TargetResolution
-main DamageInstance dispatch
-relative phase ordering
-local-child admission points
-CounterBatch window
-Assault window ordering
+calling TargetResolutionSystem
+calling main DamageInstanceCoordinator
+relative ordering of component calls
+future-branch admission call sites assigned to the NA lifecycle
+CounterBatch trigger-window placement
+Assault-window placement
 Combo checkpoint reachability
 completion barrier
+collecting typed results
 ```
 
-Local mechanisms return typed facts/results. They may not advance the master lifecycle:
+It is explicitly forbidden to own:
 
 ```text
-ComboSystem cannot run main hit / Counter / Cleave
-CounterSystem cannot dispatch next Combo
-CleaveSystem cannot end Action
-ChainSystem cannot finalize battle
+target-selection algorithms
+Share/Distribution partition math
+state storage mutation
+Cleave algorithm
+Chain traversal algorithm
+CounterBatch internals
+finalization writes
+Stage8 damage formulas
 ```
 
-### 10.3 Action relationship
+### 10.2 Action relationship
 
-`ActionSystem` owns `ActionId`, ActionStart maintenance/grant and Action-level cancellation. `NormalAttackSystem` owns each NormalAttack instance. This allows Combo #1/#2 to share one `ActionId` without sharing target/damage identities.
+`ActionSystem` owns `ActionId`, ActionStart maintenance/grant, and Action-level cancellation. `NormalAttackSystem` owns each NormalAttack instance. Combo #1/#2 therefore share one `ActionId` but never share target/damage identities.
 
-### 10.4 Assault seam
+### 10.3 Assault seam
 
-Current production has no Assault runtime. Stage9 defines a narrow `AssaultDispatchPort` contract only for ordering/admission. Default composition has no registered Assault producer. This is a system registration boundary, not a global gameplay boolean.
+`AssaultDispatchPort` remains an ordering/admission port only. No Assault producer is registered by default. No gameplay semantics are invented.
 
 ---
 
 ## 11. Combo
 
-### 11.1 Runtime model
-
-`ComboStateInstance` is a typed view over the physical `StateInstance` (690081), not a second state object store.
-
-`ComboActionGrant`:
+`ComboStateInstance` is a typed view over physical state 690081, not a second state store.
 
 ```python
 ComboActionGrant(
@@ -609,160 +727,102 @@ ComboActionGrant(
 )
 ```
 
-`ComboCheckpointState`:
-
-```text
-NOT_REACHED | REACHED | CONSUMED | BLOCKED
-```
-
-Lifecycle:
-
 ```text
 ACTION_START maintenance
 → effective Combo read
-→ grant created if operational
-→ physical REMOVE of granting instance before consume = revoke
-→ ordinary SUPPRESS after valid grant = does not revoke this Action grant
-→ checkpoint atomic consume = CONSUMED
-→ Action end = dispose grant/checkpoint scope
+→ grant if operational
+→ physical REMOVE before consume revokes grant
+→ ordinary SUPPRESS after valid grant does not revoke current Action grant
+→ checkpoint atomic consume once
+→ Action end disposes Action-local scope
 ```
 
-### 11.2 Checkpoint seam
-
-Conceptual API:
-
-```python
-try_run_combo_checkpoint(action_scope, first_normal_attack_result)
-```
-
-Required behavior:
+Checkpoint:
 
 ```text
-actor/action local gate permits reaching checkpoint
-→ mark checkpoint REACHED exactly once
+local actor/action gate permits reaching checkpoint
+→ checkpoint REACHED once
 → validate grant
-→ atomic consume exactly once
-→ emit cfg230-equivalent Combo execution fact
-→ standard can_normal_attack() gate
-→ can_admit_new_work(COMBO_SECOND_NORMAL_ATTACK)
+→ atomic consume once
+→ cfg230-equivalent fact
+→ standard can_normal_attack gate
+→ FutureAdmissionGate at Combo #2 caller edge
 → allocate fresh NormalAttack #2 only if admitted
-→ fresh target resolution / Guard
-→ call same NormalAttackSystem with combo_checkpoint_allowed=False
+→ fresh target/Guard
+→ same NormalAttackSystem, combo_checkpoint_allowed=False
 ```
 
-Important authority nuance: a victory-latched path may still have a consumed checkpoint/cfg230 fact where P0 allows it, but **must never allocate or dispatch NormalAttack #2**. Actor death before checkpoint reach cancels the future branch and produces no dead-actor Combo consume path.
-
-No consume refund/retry exists after atomic consume. Per Action:
-
-```text
-checkpoint reached <= 1
-cfg230 / consume <= 1
-physical NormalAttack <= 2
-```
+After victory latch, P0 may still allow an already-admitted consumed checkpoint/cfg230 fact, but `NormalAttack #2` allocation is a future branch and is blocked.
 
 ---
 
 ## 12. Damage Partition
 
-### 12.1 Unified arbitration, separate transactions
+### 12.1 Arbitration
 
-`DamagePartitionCoordinator` unifies only qualification and typed result selection:
+`DamagePartitionCoordinator` performs only:
 
 ```text
-DamageInstance + final actual DamageEvent target + Dtotal
+DamageInstance + actual DamageEvent target + Dtotal
 → exactly one effective plan
-   NONE | SHARE | DISTRIBUTION
+  NONE | SHARE | DISTRIBUTION
 ```
 
-Share and Distribution transaction algorithms remain separate. No Stage9 engineering decision invents precedence; replacement/precedence follows current P0.
-
-A `DamageInstanceId` can create at most one `PartitionTransactionId`.
+Share > Distribution precedence follows frozen P0. Share and Distribution keep separate transaction logic.
 
 ### 12.2 Semantic damage layers
 
-| Semantic layer | Stage9 / production mapping |
+| Semantic layer | Carrier |
 |---|---|
-| `Dtotal` | standard path: immutable `DamageResult.final_damage` before partition; derived path: typed calculated input before partition |
-| `Dtarget` | partition-plan field only; never overwrites `DamageResult.final_damage` |
-| `ActualTargetTroopLoss` | target `TroopChangeResult.actual_change` at commit |
-| `CreditedDamage` | attribution/statistics fact based on actual committed loss under P0 |
-| `DerivedCalculatedDamage` | typed Cleave/Chain calculated amount before target clamp/settlement |
-| `AttributedDirectTroopLoss` | non-DamageEvent direct-loss operation for Share/Distribution recipients |
+| `Dtotal` | `DamageResult.final_damage` |
+| `Dtarget` | partition plan and then `DamageSettlementRequest.assigned_target_damage` |
+| `ActualTargetTroopLoss` | `DamageResolutionResult.actual_target_troop_loss` |
+| `CreditedDamage` | explicit settlement/direct attribution field |
+| `DerivedCalculatedDamage` | Cleave-specific derived result before clamp |
+| `AttributedDirectTroopLoss` | separate non-DamageEvent direct-loss result |
 
-### 12.3 DamageShareTransactionPlan
-
-```python
-DamageShareTransactionPlan(
-    transaction_id,
-    parent_damage_instance_id,
-    target,
-    sharer,
-    dtotal,
-    share_ratio,
-    dsharer_theoretical,
-    dtarget,
-)
-```
-
-Arithmetic and commit:
+### 12.3 Share
 
 ```text
 DsharerTheoretical = ROUND_HALF_UP(Dtotal × ShareRatio)
 Dtarget = Dtotal - DsharerTheoretical
 
-commit target Dtarget
-→ target death check
-→ if target died: TARGET_DEATH_INTERRUPT; pending sharer work discarded
-→ else: commit sharer AttributedDirectTroopLoss
+settle target Dtarget
+→ if target died: TARGET_DEATH_INTERRUPT; discard pending sharer work
+→ else commit sharer AttributedDirectTroopLoss
 ```
 
-Theoretical vs actual sharer loss remains separate. Overflow is discarded.
+Theoretical and actual sharer loss remain separate; overflow is discarded.
 
-### 12.4 DistributionTransactionPlan
+### 12.4 Distribution
 
-```python
-DistributionTransactionPlan(
-    transaction_id,
-    parent_damage_instance_id,
-    target,
-    participant_ids: tuple[str, ...],
-    n,
-    dtotal,
-    ratio,
-    dtarget,
-    dtransfer,
-    dparticipant,
-    runtime_authority,
-)
-```
-
-Plan creation is immutable:
+Immutable plan freezes:
 
 ```text
+participant tuple
+N
+Dtotal
+ratio
 Dtarget = ROUND_HALF_UP(Dtotal × (1-ratio))
 Dtransfer = Dtotal - Dtarget
-Dparticipant = ROUND_HALF_UP(Dtransfer / N), N > 0
+Dparticipant = ROUND_HALF_UP(Dtransfer / N)
 ```
 
-Execution follows Distribution P0 ordering. If a planned participant becomes invalid: `SKIP` only. Never change participant tuple, N, Dtarget or Dparticipant; never add a newly eligible participant; never repair remainder.
+Execution may JIT skip an invalid planned participant, but never recompute `N`, `Dtarget`, `Dparticipant`, participants, or remainder.
 
-`DSTS9-B02` is implemented as a replaceable **Distribution local transaction policy**:
+`DSTS9-B02` remains a Distribution-local policy:
 
 ```text
 PROJECT_RUNTIME_DEFAULT
 NOT EMPIRICALLY PROVEN
-commander participant death
-→ admitted fixed transaction continues local planned work
-→ finalization at transaction barrier
+commander participant death during admitted fixed transaction
+→ continue local planned work
+→ finalization after transaction barrier
 ```
-
-Replacing future evidence changes this local policy, not the global finalization architecture.
 
 ---
 
 ## 13. Attributed Direct Troop Loss
-
-Formal type:
 
 ```python
 AttributedDirectTroopLoss(
@@ -783,58 +843,43 @@ AttributedDirectTroopLoss(
 `DirectTroopLossResolver`:
 
 ```text
-validate typed provenance
-→ call TroopSystem.apply_damage
+validate provenance
+→ TroopSystem.apply_damage
 → clamp actual loss
-→ create attributed loss fact
-→ create UnitDeathFact if transition alive→dead
-→ update attribution/statistics seam
+→ attributed direct-loss fact
+→ UnitDeathFact on alive→dead edge
+→ explicit attribution/stat seam
+→ finalization observation/barrier notification
 ```
 
-It does **not** call:
-
-```text
-DamageSystem / DamageRequest
-HitResolution
-Defense / Reduction
-Evasion / Resistance
-FirstAid
-Counter / Chain / Share / Distribution
-base formulas
-generic Hurt callbacks
-```
-
-This is the formal bypass path required by P0. EventBus may observe the result; subscriber callbacks cannot convert it back into a hit.
+It never calls DamageSystem/HitResolution/base formulas/Counter/Chain/Share/Distribution/FirstAid/generic Hurt callbacks.
 
 ---
 
 ## 14. Cleave
 
-### 14.1 State container
+### 14.1 State and ordering
 
-Cleave 690084 remains in the existing `StateRegistry`. `Stage9StateRuntime.cleave_effects(holder)` returns typed views of source-bound state instances.
+Cleave state remains in `StateRegistry`; `Stage9StateRuntime` returns typed views. Cleave source ordering uses authoritative `StateInstance.source_skill_slot`.
 
-Required metadata for a source-bound Cleave instance is carried in typed `StateRuntimeParams`, including authoritative apply-time `cleave_ratio` and `source_skill_slot` when the source contract requires slot ordering.
-
-Container behavior references CLEAVE P0, not duplicated rules:
+For a skill-sourced Cleave state where P0 requires skill-slot order:
 
 ```text
-SOURCE_BOUND_EFFECT_LIST
-same-source REFRESH
-cross-source COEXIST
-SKILL_SLOT_ORDER
-permanent / temporary duration
-suppression
-source death semantics
-holder death semantics
+source_skill_slot is required
+None = domain error
+skill_id ordering fallback = FORBIDDEN
 ```
 
-Physical apply/remove/expiry still goes through `StateLifecycleSystem`.
+### 14.2 Cleave-specific derived boundary
 
-### 14.2 Derived request
+Round1 removes speculative generic `DerivedDamageSystem<T>`. The owner is:
+
+```text
+CleaveDerivedDamageResolver
+```
 
 ```python
-DerivedDamageRequestCleave(
+CleaveDerivedDamageRequest(
     damage_instance_id,
     cleave_effect_id,
     lineage,
@@ -842,10 +887,8 @@ DerivedDamageRequestCleave(
     damage_type=inherited_weapon_or_strategy,
     base_fact=ACTUAL_TARGET_TROOP_LOSS,
     base_amount,
-    ratio,
-    integerization=FLOOR,
+    ratio: ExactRatio,
     secondary_target,
-    normal_attack_identity=False,
     permission_policy,
 )
 ```
@@ -857,169 +900,93 @@ CleaveDerivedCalculatedDamage
 = FLOOR(ActualTargetTroopLoss × CleaveRatio)
 ```
 
-No `WeaponBaseDamageFormula` / `StrategyBaseDamageFormula`, coefficient recomputation, target generic damage-modifier rerun, Crit reroll, selector, Guard, Combo or Counter identity is entered.
+No Stage8 base formula, coefficient recomputation, generic modifier rerun, Crit reroll, selector, Guard, Combo, or Counter identity is entered.
 
-### 14.3 Derived downstream seam
+If the resolved Cleave-derived damage is Chain-eligible under P0, the resolver submits the resolved fact to the **same** `DamageCallbackAdmissionPoint`; it does not construct a traversal or call the global future gate independently.
 
-`DerivedDamageSystem` owns Cleave's typed restricted path. It does not fabricate a Stage8 `DamageRequest`.
+Chain is not forced through the Cleave-derived abstraction; Chain keeps its own restricted feedback route.
 
-The policy supports P0-allowed downstream gates:
-
-```text
-Evasion / Resistance
-one effective Share or Distribution partition
-FirstAid
-Chain
-eligible recovery
-Troop settlement
-```
-
-“ALLOW” means Stage9 must not structurally block an authoritative existing/future binding. It does **not** authorize Stage9 to invent deferred Evasion/Resistance mechanics currently outside their own evidence gate.
-
-### 14.4 Queue and admission
-
-Effect order:
+### 14.3 Effect queue
 
 ```text
 CleaveEffect A: secondary 1 → secondary 2
-then
-CleaveEffect B: secondary 1 → secondary 2
+then CleaveEffect B: secondary 1 → secondary 2
 ```
 
-Each effect creates an immutable `secondary_identity_plan` ordered by `GLOBAL_SLOT_ASCENDING`. Each step revalidates JIT alive/legal state. No replacement and no revisit.
-
-No secondary reruns Confusion/Taunt/Guard.
-
-Admission grain is **one CleaveEffect**. Once admitted, the current effect follows its local P0 drain/gate behavior. After victory latch, a later independent effect not yet admitted is blocked. Attacker/holder liveness gates remain mechanism-local and may cancel work where CLEAVE P0 explicitly requires it.
-
-Cleave anchor is `PostRedirectActualTarget`; a pre-Guard intended target may be an ordinary secondary if otherwise eligible.
+Each admitted effect freezes its secondary identity plan. Each secondary is local work inside the already-admitted effect and does not re-query the global FutureAdmissionGate. JIT liveness still applies. The next independent CleaveEffect has its own global admission check.
 
 ---
 
 ## 15. Chain
 
-### 15.1 ChainTraversal
+`ChainSystem` owns a one-pass `ChainTraversal`.
 
-`ChainSystem` owns one-pass traversal identified by `ChainTraversalId` and a `visited_slots` set keyed by stable battle slot, not Unit object address.
-
-```text
-slot visited → never revisit in traversal
-later unvisited slot becomes linked before its turn → may join if live eligible
-passed slot → never re-enter
-```
-
-### 15.2 ChainDeferredWork
-
-```python
-ChainDeferredWork(
-    traversal_id,
-    immutable_trigger_snapshot={
-        parent_damage_instance_id,
-        trigger_node_identity,
-        trigger_damage,
-        trigger_provenance,
-    },
-    live_execution_lookup={
-        trigger_node_identity,
-        chain_state_slot_key,
-        candidate_side_key,
-    },
-    visited_slots,
-)
-```
-
-Snapshot only:
+### 15.1 Monotonic slot cursor
 
 ```text
-trigger damage
-trigger node
-parent/source provenance
+fixed global slot order
+cursor begins before first slot
+for each slot in ascending order:
+    cursor advances to that slot exactly once
+    live-read current eligibility at that moment
+    if eligible: execute once
+    if ineligible: pass once
+once cursor passes a slot: never inspect that slot again
+later higher slot may become eligible before cursor reaches it and may join
+cursor never rewinds
 ```
 
-Live execution read:
+Forbidden:
 
 ```text
-trigger/source alive
-current Chain state existence
-current owner
-current ratio/effect metadata
-candidate alive
-candidate linked
+while exists unvisited eligible identity:
+    rescan all slots
 ```
 
-Main-target Chain is inline when no Cleave. When Cleave exists it is deferred while Cleave secondaries may trigger Chain inline, then main-target Deferred Chain executes if still locally eligible.
+because an already-passed slot must never re-enter.
 
-### 15.3 Restricted feedback
+### 15.2 Deferred work
 
-`CHAIN_TRUE_FEEDBACK` is not a standard Stage8 DamageRequest and does not inherit `DamageType`. Its restricted settlement blocks Chain recursion, Share, Distribution, Counter, FirstAid, Guard, Crit and recovery paths forbidden by P0.
+Snapshot only trigger facts (`parent_damage_instance_id`, trigger node, trigger damage, provenance). Execution-time state/owner/ratio/candidate eligibility remains live-read where P0 requires it.
 
-Integerization is `FLOOR(TriggerNodeResolvedDamage × CurrentChainRatio)`.
+`CHAIN_TRUE_FEEDBACK` is not a Stage8 `DamageRequest`; it has its own restricted settlement and permission set.
 
 ---
 
 ## 16. Counter
 
-### 16.1 CounterBatch admission
-
-```python
-CounterBatch(
-    reaction_batch_id,
-    parent_normal_attack_id,
-    target_original_attacker,
-    entries: tuple[CounterBatchEntry, ...],
-)
-```
-
-Each entry:
-
-```python
-CounterBatchEntry(
-    entry_id,
-    reaction_batch_id,
-    counter_instance_identity,
-    owner,
-    source,
-    source_skill,
-    damage_rate,
-    batch_order,
-)
-```
-
-At the trigger window, eligible Counter states and deterministic order are snapshotted. State suppression/removal/expiry after admission does not revoke an admitted entry.
-
-### 16.2 Execution-time gates
-
-Immediately before each entry:
+Counter remains three layers:
 
 ```text
-read owner alive?
-read target alive?
-read live combat stats/modifiers for standard Counter damage
+trigger-time eligible-state snapshot
+→ immutable CounterBatch entries
+→ execution-time owner/target liveness gates
 ```
 
-- owner dead → `CANCELLED_BY_LOCAL_GATE`, no execution.
-- target alive → create a legitimate independent Stage8 weapon `DamageRequest` with existing `DamageSourceType.COUNTER`, then use the Stage9 DamageInstance/partition/finalization path.
-- target already dead → explicit terminal path:
+Positive live-target Counter creates a legitimate Stage8 weapon request mapped to `DamageSourceType.COUNTER` and uses the Stage9 standard `DamageInstanceCoordinator` path.
+
+Dead-target admitted sibling uses an explicit Counter terminal result:
 
 ```text
 CounterExecute fact
-→ attributed zero troop loss / zero terminal result
+→ attributed zero troop loss
 → complete entry
 ```
 
-The dead-target path never invokes Stage8 base formula, Evasion, Resistance, partition, Chain or FirstAid.
+No fake Stage8 DamageResult or base-formula call is created.
 
-Counter is not NormalAttack identity, so Counter→Counter, Cleave and Assault are blocked even though Counter's positive-damage path is standard weapon damage.
+Ordering:
 
-Exact official universal Counter comparator/dispel fidelity is `DEFERRED_NON_BLOCKING`; project ordering remains deterministic and isolated behind the Counter comparator.
+- if current Counter P0 supplies authoritative slot metadata, use it;
+- where universal comparator fidelity remains open and an eligible source has no slot, use the isolated Counter `PROJECT_DETERMINISTIC_DEFAULT` fallback;
+- the fallback is **NOT EMPIRICALLY PROVEN / NOT OFFICIAL ORDER**;
+- never substitute `skill_id` sorting for skill-slot sorting.
 
 ---
 
-## 17. Execution Right
+## 17. Execution Right / Future Admission
 
 ### 17.1 Semantic states
-
-The architecture expresses:
 
 ```text
 NOT_ADMITTED
@@ -1030,132 +997,249 @@ CANCELLED_BY_LOCAL_GATE
 CANCELLED_BEFORE_ADMISSION
 ```
 
-These may be represented by typed local scopes/results rather than one giant mutable global enum.
+### 17.2 FUTURE_ADMISSION_CALLER_MATRIX
 
-### 17.2 FutureAdmissionGate
+Every global future branch has **EXACTLY ONE authoritative gate caller**.
 
-Conceptual API:
+| Future branch | Exactly-one authoritative caller | Gate point |
+|---|---|---|
+| next Action | `BattleEngine` | immediately before dispatching the next Action lifecycle after macro checks |
+| Assault | `NormalAttackSystem` master | immediately before `AssaultDispatchPort.dispatch` |
+| Combo #2 | Combo checkpoint owned from NormalAttack lifecycle | after consume/local attack permission, before allocating NormalAttack #2 |
+| new CounterBatch | `NormalAttackSystem` post-hit reaction admission point | before constructing/admitting a new CounterBatch snapshot |
+| new ChainTraversal | shared `DamageCallbackAdmissionPoint` | resolved standard/derived damage producer submits a fact; this point alone calls the global gate and returns an admitted traversal token |
+| next unadmitted CleaveEffect | `CleaveSystem` effect-loop boundary | before creating/freezing the next independent CleaveEffect plan |
 
-```python
-can_admit_new_work(work_kind, operation_context, termination_state) -> bool
-```
+`DamageCallbackAdmissionPoint` is a narrow execution-right admission seam (implemented with the execution-right/Chain admission contracts, not a second gameplay system). `DamageInstanceCoordinator` and `CleaveDerivedDamageResolver` may submit eligible resolved-damage facts to it; neither independently calls the Chain future gate. `ChainSystem` requires an admitted traversal token and cannot self-admit.
 
-After `VICTORY_LATCHED`, block FutureBranches including:
+### 17.3 Already-admitted work does not re-query the future gate
+
+Examples:
 
 ```text
-next Action
-unadmitted Assault
-NormalAttack #2
-new CounterBatch
-new unrelated ChainTraversal
-next independent CleaveEffect not yet admitted
+Counter sibling already in admitted batch
+next slot inside an admitted ChainTraversal
+next secondary inside current admitted CleaveEffect
+next planned Distribution participant
+pending Share sharer step inside admitted Share transaction
+current DamageInstance local callback already admitted by its operation contract
 ```
 
-It does not retroactively erase work already admitted by the P0-defined trigger/admission point.
+These use local liveness/P0 rules only. Re-running the global gate inside them would violate RF-P03/RF-P04 drain semantics.
 
-No mechanism may use scattered:
+### 17.4 No-bypass enforcement
 
-```python
-if context.ended:
-    return
+```text
+one injectable FutureAdmissionGate service
+→ only assigned caller owners possess the branch-specific global admission capability
+→ Chain traversal constructor requires an admitted token from DamageCallbackAdmissionPoint
+→ local steps receive operation-local scope, not a second global admission decision
+→ architecture tests assert future-branch constructors/allocators are dominated by their assigned gate
+→ tests reject direct allocation after VICTORY_LATCHED
 ```
 
-as its semantic gate. `context.ended` is terminal compatibility state only after `FINALIZED`.
-
-### 17.3 Operation barrier matrix
-
-| Operation | Admission point | Completion boundary | Local gate | Finalization interaction |
-|---|---|---|---|---|
-| `DamageInstance` | dispatch accepted with valid lineage | target/direct settlement + permitted local callbacks complete | participant legality / typed permission | death fact may latch victory; instance completes current boundary |
-| `ShareTransaction` | partition plan created | target commit + survive/sharer commit OR target-death interrupt | sharer live before direct commit | local interrupt owns only transaction; then barrier notification |
-| `DistributionTransaction` | fixed plan created | planned participant/target steps drained | each participant JIT validity; invalid=SKIP | admitted plan drains under P0 / DSTS9 default |
-| `ChainTraversal` | Chain trigger admitted | one-pass traversal boundary | source/current state/candidate live reads | admitted traversal drains after victory latch |
-| `CounterBatch` | trigger snapshot complete | all entries completed/cancelled locally | owner liveness; dead target zero terminal | admitted siblings remain; finalize after batch |
-| `CleaveEffect` | effect admitted and secondary plan fixed | current effect plan traversed | attacker/secondary liveness per P0 | current effect local rule; next unadmitted effect blocked after latch |
-| `NormalAttackInstance` | normal attack dispatch admitted | all authoritative pre-completion synchronous work done | actor/target permission | future Assault/Combo admission may be blocked |
-| `Action` | ActionOrder entry passes action-start gate | Action end barrier | actor action permission | no new Action after latch |
+`context.ended` is never a semantic future-work gate. It becomes true only after finalized compatibility projection.
 
 ---
 
 ## 18. Battle Finalization
 
-### 18.1 Unique owner
+### 18.1 Ownership split
 
-New `BattleFinalizationCoordinator` is the only writer of the global termination state and the only component permitted to transition to `FINALIZED`.
+`VictorySystem` remains a pure evaluator. No Stage9 core edit is required for its gameplay behavior.
 
-`VictorySystem` remains the pure evaluator of current victory conditions / max-round result. It does not finalize the battle by itself.
-
-### 18.2 State
+`BattleFinalizationCoordinator` is the **unique semantic owner** of:
 
 ```text
-RUNNING
-→ VICTORY_LATCHED
-→ DRAINING_ADMITTED_WORK
-→ FINALIZED
+BattleTerminationState
+victory latch identity/result
+RUNNING -> VICTORY_LATCHED
+VICTORY_LATCHED -> DRAINING_ADMITTED_WORK
+DRAINING_ADMITTED_WORK -> FINALIZED
+final operation-drain barrier
+termination-state fact consumed by future-admission policy
 ```
 
-A small `BattleTerminationRecord` is stored per `BattleContext` because it is truly cross-mechanism battle state. It contains only the termination enum, latched result/condition provenance, and idempotency metadata; it is not a generic Stage9 context bag.
+`BattleEngine` remains outer loop and the **unique legacy terminal projection owner**, but only after receiving an immutable finalized result.
 
-Read access is available to admission policies. Write access belongs only to `BattleFinalizationCoordinator`.
+### 18.2 Writer matrix
 
-### 18.3 Fact separation
+| Field/effect | Unique writer | Rule |
+|---|---|---|
+| termination state | `BattleFinalizationCoordinator` | only coordinator transitions it |
+| victory latch / finalized result | `BattleFinalizationCoordinator` | semantic decision owner |
+| `context.ended` | `BattleEngine` finalized-result projection | written only when coordinator is `FINALIZED` |
+| `context.result` | `BattleEngine` finalized-result projection | copied from immutable finalized result |
+| `BATTLE_END` phase | `BattleEngine` finalized-result projection | compatibility projection only |
+| `BATTLE_ENDED` event | `BattleEngine` finalized-result projection | exactly once |
+
+Coordinator decides; Engine projects. They do not co-own finalization.
+
+### 18.3 `_finish()` compatibility treatment
+
+Preferred replacement:
+
+```python
+BattleEngine._apply_finalized_battle_result(finalization_result)
+```
+
+Precondition:
 
 ```text
-Troop mutation/death detector
-→ UnitDeathFact
+finalization_result.state == FINALIZED
+coordinator termination read-view == FINALIZED
+```
 
-VictorySystem
-→ VictoryConditionSatisfied
+It may only:
 
+```text
+context.ended = True
+context.result = finalization_result.battle_result
+enter BATTLE_END
+publish BATTLE_ENDED once
+return battle_result
+```
+
+It may not evaluate victory, latch victory, decide drain completion, or decide whether finalization is allowed.
+
+If `_finish` is temporarily retained for source compatibility, its contract must be mechanically equivalent and accept only coordinator-produced finalized input.
+
+### 18.4 Dependency direction
+
+```text
+BattleEngine
+→ BattleFinalizationCoordinator
+→ VictorySystem
+
+NEVER:
 BattleFinalizationCoordinator
-→ Victory latch / drain state / BattleFinalized
+→ BattleEngine._finish / _apply_finalized_battle_result
 ```
 
-These are never collapsed into one boolean.
+The coordinator returns `FinalizationResult | None`; Engine consumes it.
 
-`BattleEngine._finish` becomes an outer compatibility/phase publication step invoked only after the coordinator reports `FINALIZED`; no damage/reaction subsystem calls it.
+### 18.5 Coordinator API
 
-### 18.4 Idempotency
+Names may vary mechanically, semantics may not:
 
-- repeated observation of the same death fact cannot create a second latch;
-- `FINALIZED → FINALIZED` is rejected or no-op only when the same finalization identity/result is supplied; conflicting duplicate write is a domain error;
-- only one `BATTLE_ENDED` terminal fact is emitted.
+```python
+observe_death_fact(...)
+evaluate_and_latch(...)
+can_admit_future_work(...)
+notify_operation_completed(...)
+try_finalize(...) -> FinalizationResult | None
+```
+
+Macro max-round handling remains:
+
+```text
+BattleEngine reaches existing max-round boundary
+→ coordinator evaluates supplied `VictorySystem.resolve_max_rounds` result
+→ latch/drain/finalize
+→ Engine projects finalized result
+```
+
+### 18.6 Existing Engine/Stage7 ordering compatibility
+
+Migrating semantic finalization must preserve current externally observable macro ordering unless a frozen P0 explicitly overrides it:
+
+```text
+RoundStart hook processing completes before its existing victory barrier
+Action execution completes before UNIT_ACTION_END compatibility publication
+UNIT_ACTION_ENDED remains published before terminal BATTLE_END projection for the current action path
+BATTLE_END / BATTLE_ENDED are emitted only after coordinator FINALIZED
+max-round result rules remain VictorySystem-owned
+```
+
+Coordinator observation may latch victory earlier inside admitted work, but Engine terminal projection does not jump ahead of the existing macro compatibility publication point. This preserves Stage7 hook/action event ordering while allowing Stage9 local drain semantics.
+
+### 18.7 Finalization test seam
+
+Tests read typed fields/results, never log strings:
+
+```text
+termination_state
+victory_latched / latched_result
+finalized / finalized_result
+operation barrier state
+legacy BATTLE_END phase/event publication
+```
+
+Repeated observation of the same fact is idempotent; conflicting duplicate finalization is a domain error; `BATTLE_ENDED` is emitted exactly once.
 
 ---
 
 ## 19. Recursion / Permission Policy
 
-`ReactionPermissionPolicy` is a centralized typed table over `SourceType`, `NormalAttackIdentity` and `OperationLineage`. Mechanism code asks the policy; it does not scatter `if source == ...` branches.
-
-Minimum matrix:
+`ReactionPermissionPolicy` is a centralized typed table over `SourceType`, NormalAttack identity, and lineage.
 
 | From | Cleave | Counter | Chain | Share | Distribution | FirstAid / Recovery |
 |---|---:|---:|---:|---:|---:|---:|
-| NORMAL_ATTACK | ALLOW by trigger P0 | ALLOW | ALLOW | ALLOW | ALLOW | ALLOW where existing recovery P0 permits |
+| NORMAL_ATTACK | ALLOW by trigger P0 | ALLOW | ALLOW | ALLOW | ALLOW | ALLOW where P0 permits |
 | CLEAVE | BLOCK | BLOCK | ALLOW | ALLOW | ALLOW | ALLOW by Cleave P0 |
 | COUNTER | BLOCK | BLOCK | ALLOW | ALLOW | ALLOW | ALLOW by Counter P0 |
-| CHAIN_TRUE_FEEDBACK | N/A/BLOCK | BLOCK | BLOCK | BLOCK | BLOCK | BLOCK |
+| CHAIN_TRUE_FEEDBACK | BLOCK/N/A | BLOCK | BLOCK | BLOCK | BLOCK | BLOCK |
 | SHARE_DIRECT_LOSS | BLOCK | BLOCK | BLOCK | BLOCK | BLOCK | BLOCK |
 | DISTRIBUTION_DIRECT_LOSS | BLOCK | BLOCK | BLOCK | BLOCK | BLOCK | BLOCK |
 
-NormalAttack-only target selection, Guard, Assault and Combo are available only to `NormalAttackIdentity=true`; derived/reaction damage cannot reopen them.
-
-Illegal recursive dispatch that contradicts this table is a domain error in tests/debug builds and a hard blocked result in production policy, with a trace record. It is not silently reinterpreted as another source type.
+NormalAttack-only selector/Guard/Assault/Combo paths require NormalAttack identity.
 
 ---
 
-## 20. Integerization
+## 20. Exact Numeric Representation
 
-Stage9 introduces pure explicit numeric helpers, for example:
+### 20.1 `ExactRatio`
+
+Stage9 freezes a rational representation:
 
 ```python
-floor_damage(exact_value) -> int
-round_half_up_damage(exact_value) -> int
+ExactRatio(
+    numerator: int,
+    denominator: int,  # > 0, normalized/reduced
+)
 ```
 
-Implementation must use deterministic decimal/rational semantics appropriate to authoritative inputs and must not delegate gameplay semantics to Python `round()` or environment-dependent default rounding.
+It represents finite decimal ratio/config input exactly. Stage9 integerization uses integer/rational math, not binary float multiplication.
 
-Call-site matrix:
+### 20.2 Ingress boundary
+
+Preferred:
+
+```text
+raw textual decimal config
+→ Decimal(raw_text) for validation/parsing
+→ exact numerator/denominator
+→ ExactRatio
+```
+
+If an existing surface exposes only `float`, compatibility conversion is exactly:
+
+```python
+Decimal(str(value))
+```
+
+then converted to `ExactRatio`.
+
+Forbidden:
+
+```python
+Decimal(value)
+Fraction(value)
+float multiplication then floor/round
+Python round()
+```
+
+This boundary does not change Stage8 `DamageRequest.coefficient`, Stage8 formula types, or Stage8 result semantics.
+
+### 20.3 Integerization API
+
+```python
+floor_product_int_ratio(base: int, ratio: ExactRatio) -> int
+round_half_up_product_int_ratio(base: int, ratio: ExactRatio) -> int
+round_half_up_divide_int(numerator: int, denominator: int) -> int
+```
+
+For nonnegative gameplay quantities these can be exact integer arithmetic. Ratio range restrictions belong to mechanism P0/call sites.
 
 | Call site | Rule |
 |---|---|
@@ -1165,50 +1249,91 @@ Call-site matrix:
 | Distribution `Dtarget` | `ROUND_HALF_UP` |
 | Distribution participant | `ROUND_HALF_UP` |
 
-Regression vectors in RF-C01 are the executable oracle.
+RF-C01 vectors remain the executable oracle.
 
 ---
 
-## 21. State Runtime Integration
+## 21. State Runtime Integration and `source_skill_slot`
 
 ### 21.1 No second state runtime
 
-Stage9 state truth remains:
-
 ```text
 BattleContext.states : StateRegistry
-StateLifecycleSystem : only physical apply/remove/expiry writer
+StateLifecycleSystem : only physical state mutation writer
+Stage9StateRuntime   : typed read/maintenance adapter only
 ```
 
-`Stage9StateRuntime` is a typed read/maintenance adapter, not a second store.
+### 21.2 Authoritative slot producer
 
-Responsibilities:
+`SkillDefinition` does not own slot because a static definition may be equipped in different positions.
 
-- resolve Stage9 `StateInstance` into mechanism-specific typed views;
-- deterministic source-bound ordering;
-- compute operationality/suppression using current P0;
-- perform ACTION_START maintenance by calling `StateLifecycleSystem.remove/apply` as required;
-- create Action-local Combo grants outside physical state storage;
-- expose indexed lookup hooks so implementation does not repeatedly scan all battle history.
+The authoritative producer/carrier boundary is the holder-specific **loaded `SkillRuntime` entry**:
 
-### 21.2 Typed runtime params
+```python
+SkillRuntime(
+    definition,
+    owner_id,
+    skill_slot: int | None,
+    enabled=True,
+)
+```
 
-New `stage9_state_params.py` carries only data required by P0, such as:
+The production call site that constructs the loaded runtime and already knows the equipped position must supply `skill_slot`; `SkillRuntime` validates/stores it. Downstream systems never infer slot from `skill_id`.
+
+Semantic source triple:
 
 ```text
-Cleave: ratio, source_skill_slot, duration metadata where required
-Counter: damage rate, source_skill_slot/order metadata where authoritative
-Distribution: ratio + source binding metadata
-DamageShare: ratio + sharer/source binding metadata
-Chain: ratio + owner/source metadata
-Guard/Taunt/Confusion/Combo: only parameters actually required by their P0
+source_unit_id
+source_skill_id
+source_skill_slot
 ```
 
-`source_id`, `source_skill_id`, apply/expiry anchors remain existing `StateInstance` fields where already modeled. Do not duplicate them gratuitously.
+Implementation may wrap the triple in `SourceSkillRef` or retain validated explicit fields; producer and propagation semantics are frozen.
 
-### 21.3 Lifecycle
+### 21.3 Propagation chain
 
-Apply/reapply/duration/suppression/source death/holder death semantics are referenced from each mechanism P0. STAGE9.md does not rewrite those contracts.
+```text
+loaded SkillRuntime(skill_slot known when applicable)
+→ SkillResolver
+→ DamageEffect / ApplyStateEffect source provenance
+→ EffectExecutor
+→ StateLifecycleSystem.apply(... source_skill_slot=...)
+→ StateInstance.source_skill_slot
+→ Stage9StateRuntime typed view
+→ Cleave / Counter ordering
+```
+
+`DamageEffect` may carry slot for Stage9 lineage/provenance, but `DamageRequest` remains a Stage8 formula request and gains no slot field solely for orchestration.
+
+### 21.4 No-slot handling
+
+Legitimate non-skill or unknown-slot sources use:
+
+```text
+source_skill_slot = None
+```
+
+Examples: system-applied, external command/system source, compatibility fixture.
+
+Rules:
+
+- never auto-fill `0`, `999`, hash, or `skill_id` order;
+- P0-required skill-slot ordering (notably skill-sourced Cleave ordering) + `None` -> domain error before ordering/execution;
+- Counter areas whose universal comparator remains intentionally open may use isolated `PROJECT_DETERMINISTIC_DEFAULT` fallback;
+- mechanisms not depending on slot accept `None`.
+
+### 21.5 INV-18 enforcement
+
+```text
+TYPE:
+source_skill_slot exists explicitly as Optional[int] throughout apply provenance.
+
+RUNTIME:
+Stage9StateRuntime / mechanism adapter rejects missing slot whenever applicable P0 requires it.
+
+ARCHITECTURE:
+StateRegistry never guesses slot; StateLifecycleSystem stores supplied provenance only.
+```
 
 ---
 
@@ -1216,205 +1341,200 @@ Apply/reapply/duration/suppression/source death/holder death semantics are refer
 
 Stage9 does not redesign Stage7 Trigger/Recovery.
 
-- `TriggerSystem` stays a fact-to-Effect collector at typed hooks.
-- `RecoverySystem` stays recovery execution owner and `TroopSystem.restore` remains the write boundary.
-- EventBus facts may be observed by report/trace code; core Stage9 sequencing never depends on subscriber order.
+- `TriggerSystem` stays fact-to-Effect collector.
+- `RecoverySystem` stays recovery execution owner.
+- `TroopSystem.restore` stays write boundary.
+- EventBus remains observation-only.
+- Stage9 decides source eligibility and exact damage-fact layer; Recovery logic is not duplicated.
 
-Damage-event eligibility:
+Damage-event basis:
 
 ```text
-NormalAttack standard damage: existing eligible recovery hooks by P0
-Counter positive standard DamageEvent: Lifesteal / StrategyRecovery / FirstAid where Counter P0 allows
-Cleave derived DamageEvent: eligible recovery / FirstAid where Cleave P0 allows
+NormalAttack standard damage: existing eligible recovery hooks
+Counter positive standard DamageEvent: permitted hooks under Counter P0
+Cleave derived DamageEvent: permitted hooks under Cleave P0
 Chain TRUE_FEEDBACK: blocked where Chain P0 blocks
-Share/Distribution AttributedDirectTroopLoss: NEVER recovery damage basis
+Share/Distribution direct loss: never recovery damage basis
 Counter dead-target zero terminal: no damage basis
 ```
 
-`CreditedDamage` and recovery basis use the precise mechanism P0 layer, not a generic `final_damage` alias.
+Recovery/stat attribution consumes the exact actual/credited field required by P0, never infers from `Dtotal` or `Dtarget` by name coincidence.
 
 ---
 
 ## 23. Trace & Observability
 
-### 23.1 Stage9OperationTrace
+### 23.1 Lifecycle
 
-New test/diagnostic trace records typed immutable observations:
+`Stage9OperationTrace` is battle-scoped observation only.
 
-```text
-Action admitted/completed/cancelled
-NormalAttackInstance created/completed
-TargetResolution result
-DamageInstance created/calculated/settled
-Partition selected/transaction steps
-Derived damage calculation
-CounterBatch admission/entry result
-ChainTraversal slots
-CleaveEffect admission/secondary result
-FutureAdmission decision
-Victory latch
-Finalization
-```
-
-Minimum IDs in records:
+Production default:
 
 ```text
-ActionId
-NormalAttackInstanceId
-TargetResolutionId
-DamageInstanceId
-PartitionTransactionId
-ReactionBatchId / CounterBatchEntryId
-CleaveEffectId
-ChainTraversalId
-DirectTroopLossId
+lightweight
+configurable
+bounded by a finite record budget
+battle lifetime only
+overflow deterministic: drop-oldest bounded ring + dropped-count metadata
+not persisted into gameplay state
+not serialized as authoritative battle state
+never read for gameplay decisions
 ```
 
-Trace is **observability only**. Runtime code may write to a `Stage9TraceSink`; it may never query previous trace contents to make gameplay decisions.
+Tests:
 
-### 23.2 EventBus rule
+```text
+full-detail sink enabled for fixture lifetime
+may retain all records needed by the test
+deterministic typed records + IDs
+```
+
+A no-op sink may exist for disabled diagnostics, but gameplay must be identical under no-op/bounded/full sinks.
+
+### 23.2 Trace records
+
+Trace may observe:
+
+```text
+Action admission/completion/cancel
+NormalAttack creation/completion
+TargetResolution
+DamageInstance calculation + Dtotal
+Settlement Dtarget + actual loss + credited damage
+Partition plan/steps
+Cleave calculation/effect/secondary
+CounterBatch admission/entries
+ChainTraversal cursor/slots
+FutureAdmission decisions
+victory latch/drain/finalization
+```
+
+### 23.3 EventBus rule
 
 ```text
 Event = observation / notification
 Coordinator call = authoritative control flow
 ```
 
-New facts such as victory latch/direct loss may be published for reporting, but the coordinator must already have made the decision.
-
-### 23.3 Error policy
-
-| Fault | Handling |
-|---|---|
-| invalid operation identity / wrong parent | domain error / assertion |
-| missing required provenance | constructor/domain error |
-| illegal recursive dispatch | permission denial + diagnostic assertion/test failure |
-| double Guard resolution | domain error |
-| double Combo checkpoint/consume | domain error |
-| duplicate partition plan for one DamageInstance | domain error |
-| duplicate CounterBatch admission | domain error |
-| conflicting duplicate finalization | domain error |
-| P0-defined dead/invalid planned member | safe typed SKIP/cancel result |
+No Stage9 finalization/reaction sequencing depends on subscriber order.
 
 ---
 
-## 24. Runtime Invariants
+## 24. Runtime Invariants — Round1 Re-coverage
 
-All 42 RF-C01 invariants are mapped. “Structural” means the type/control-flow shape prevents the invalid state; “runtime” means an explicit guard/assertion is required; “test” means a regression/golden trace proves behavior.
+All 42 RF-C01 invariants remain mapped.
 
-| Invariant | Enforcement |
+| Invariant | Primary enforcement |
 |---|---|
-| INV-01 | structural: frozen typed target fields; test |
-| INV-02 | structural TargetResolution pipeline; test |
-| INV-03 | runtime one Guard pass per `NormalAttackInstanceId`; test |
-| INV-04 | structural downstream APIs accept actual target identity; test |
-| INV-05 | structural per-DamageInstance recipient; test |
-| INV-06 | allocator + fresh TargetResolution for #2; test |
-| INV-07 | separate StateInstance / grant / checkpoint types |
-| INV-08 | ActionSystem ordering structural; test |
-| INV-09 | grant transition runtime guard; test |
-| INV-10 | checkpoint idempotency runtime assertion; test |
-| INV-11 | atomic consume idempotency assertion; test |
-| INV-12 | `combo_checkpoint_allowed=False` on #2 + test |
-| INV-13 | derived Cleave type fixes `normalAttackIdentity=false` |
-| INV-14 | constructor requires `ActualTargetTroopLoss`; test |
-| INV-15 | explicit `floor_damage`; unit test |
-| INV-16 | DerivedDamageSystem has no base-formula/modifier call edge; architecture test |
-| INV-17 | ReactionPermissionPolicy; test |
-| INV-18 | immutable effect/secondary plans + comparators + JIT test |
-| INV-19 | separate `AttributedDirectTroopLoss` type |
-| INV-20 | DirectTroopLossResolver has no DamageSystem/HitResolution dependency; architecture test |
-| INV-21 | required provenance constructor fields + trace test |
-| INV-22 | partition enum/result exactly one; runtime assertion + test |
-| INV-23 | state replacement lifecycle P0 adapter; test |
-| INV-24 | Share transaction method order structural; test |
-| INV-25 | target-death terminal enum; test |
-| INV-26 | separate theoretical/actual fields; test |
-| INV-27 | frozen tuple + N in Distribution plan; test |
-| INV-28 | frozen calculated fields; test |
-| INV-29 | typed participant `SKIP`; test |
-| INV-30 | plan has no add/replan operation; test |
-| INV-31 | `runtime_authority=PROJECT_RUNTIME_DEFAULT`; regression + trace label |
-| INV-32 | ChainDeferredWork snapshot schema restricts fields; test |
-| INV-33 | live lookup performed at execute; test |
-| INV-34 | visited-slot set + deterministic loop; test |
-| INV-35 | `CHAIN_TRUE_FEEDBACK` permission set; architecture/test |
-| INV-36 | CounterBatch entries frozen tuple; test |
-| INV-37 | separate admission and owner-liveness result; test |
-| INV-38 | explicit zero-loss terminal result; architecture/test |
-| INV-39 | separate UnitDeathFact / latch / finalized types/state; test |
-| INV-40 | FutureAdmissionGate + local operation barrier matrix; test |
-| INV-41 | only BattleFinalizationCoordinator writes FINALIZED; architecture/test |
-| INV-42 | SourceType + lineage + IDs + centralized permission; architecture/test |
+| INV-01 | TYPE: immutable intended/actual target fields |
+| INV-02 | STRUCTURAL: selector pipeline before Guard |
+| INV-03 | RUNTIME ASSERTION: one Guard pass / NA |
+| INV-04 | TYPE: downstream actual-target contracts |
+| INV-05 | TYPE: recipient belongs to concrete settlement |
+| INV-06 | STRUCTURAL: fresh #2 instance/resolution |
+| INV-07 | TYPE: physical/operational/grant types separate |
+| INV-08 | STRUCTURAL: ActionStart maintenance sequencing |
+| INV-09 | RUNTIME ASSERTION: grant transition |
+| INV-10 | RUNTIME ASSERTION: checkpoint ceiling |
+| INV-11 | RUNTIME ASSERTION: atomic consume ceiling |
+| INV-12 | RUNTIME ASSERTION: <=2 physical NormalAttacks |
+| INV-13 | TYPE: Cleave source/identity |
+| INV-14 | STRUCTURAL: actual target troop loss is Cleave input |
+| INV-15 | RUNTIME ASSERTION: exact FLOOR helper/vector |
+| INV-16 | STRUCTURAL: CleaveDerivedDamageResolver has no Stage8 base-formula edge |
+| INV-17 | TYPE: centralized permission policy |
+| INV-18 | **TYPE + RUNTIME: authoritative source-slot chain; required missing slot rejected** |
+| INV-19 | TYPE: direct loss distinct from DamageEvent |
+| INV-20 | STRUCTURAL: direct loss bypasses HitResolution |
+| INV-21 | TYPE: explicit provenance fields/value object |
+| INV-22 | RUNTIME ASSERTION: exactly-one partition |
+| INV-23 | STRUCTURAL: lifecycle replacement adapter |
+| INV-24 | STRUCTURAL: Share target-first |
+| INV-25 | STRUCTURAL: lethal target local interrupt |
+| INV-26 | TYPE: Dtotal/Dtarget/actual/credit fields distinct |
+| INV-27 | TYPE: frozen participants/N |
+| INV-28 | TYPE: frozen calculated fields |
+| INV-29 | STRUCTURAL: skip-only fixed plan |
+| INV-30 | STRUCTURAL: no participant append/replan |
+| INV-31 | STRUCTURAL: labeled Distribution local default |
+| INV-32 | TYPE: deferred trigger snapshot schema |
+| INV-33 | STRUCTURAL: execution-time live state lookup |
+| INV-34 | RUNTIME ASSERTION: monotonic Chain cursor |
+| INV-35 | STRUCTURAL: restricted Chain settlement |
+| INV-36 | TYPE: immutable CounterBatch entries |
+| INV-37 | STRUCTURAL: global admission vs local liveness separated |
+| INV-38 | TYPE: explicit Counter zero terminal |
+| INV-39 | TYPE: death fact/latch/finalized separation |
+| INV-40 | **STRUCTURAL: caller matrix + branch-specific gate capability + no-bypass architecture test** |
+| INV-41 | **STRUCTURAL: coordinator alone mutates termination state; Engine only projects finalized result** |
+| INV-42 | STRUCTURAL: SourceType + lineage + permission mapping |
+
+Recomputed primary categories:
 
 ```text
-Mapped = 42
-Unmapped = 0
-Contradiction = 0
+STRUCTURAL        = 18
+TYPE-ENFORCED     = 16
+RUNTIME ASSERTION = 8
+TEST-ONLY         = 0
+UNENFORCED        = 0
+TOTAL             = 42
 ```
+
+Architecture tests supplement structural enforcement; no invariant relies on test-only enforcement.
 
 ---
 
-## 25. Regression Mapping
+## 25. Regression Mapping and Testability
 
-Future Stage9 tests use minimal deterministic fixtures first; battle-report compatibility fixtures may be added as a higher-level validation layer but are not the only oracle.
+Mandatory gameplay contract count remains exactly **45**. Round1 repair adds seams, not gameplay IDs.
 
-Test layers:
-
-```text
-unit        → integerization, plan construction, permission, IDs
-integration → target/NormalAttack/partition/reaction/finalization
-trace       → cross-operation ordering/admission/finalization identity
-```
-
-| Regression ID | Planned test | Fixture needed | Core assertion |
-|---|---|---|---|
-| REG-TGT-01 | `test_stage9_target_resolution.py` | Confusion + Taunt actor | Confusion selector wins only current selection |
-| REG-TGT-02 | same | shadowed Taunt across attacks | Taunt lifecycle remains |
-| REG-TGT-03 | same | B guarded by C | intended=B, actual=C |
-| REG-TGT-04 | same | B→C guard, C→D guard | exactly one redirect |
-| REG-TGT-05 | same | Combo #2 changed legality | fresh NA/target IDs |
-| REG-TGT-06 | same | Guard changes between hits | #2 reruns Guard |
-| REG-TGT-07 | same | B intended, C guard | B may be Cleave secondary |
-| REG-CMB-01 | `test_stage9_combo.py` | expiring Combo at ActionStart | no grant after maintenance |
-| REG-CMB-02 | same | remove granting instance | grant revoked before consume |
-| REG-CMB-03 | same | suppress after grant | current grant retained |
-| REG-CMB-04 | same | consume then #2 gate fail | no refund / cfg230 once / <=2 attacks |
-| REG-CMB-05 | same | attacker dies in #1 downstream | no future Assault/#2/cfg230 path |
-| REG-CLV-01 | `test_stage9_cleave.py` | target 55, ratio 54% | base 55, result 29 |
-| REG-CLV-02 | same | derived request with formula spies | no base/modifier/Crit re-entry |
-| REG-CLV-03 | same | permission spies | allow/block matrix exact |
-| REG-CLV-04 | same | effects A/B + later dead secondary | effect-major + JIT skip |
-| REG-CLV-05 | same | Guard B→C | Cleave anchor C |
-| REG-CHN-01 | `test_stage9_chain.py` | old 20%, new live 30%, trigger 500 | snapshot trigger + live ratio |
-| REG-CHN-02 | same | dynamic later slot link | one-pass, later unvisited may join |
-| REG-CHN-03 | same | commander death mid traversal | current traversal drains before finalization |
-| REG-CHN-04 | same | feedback permission spies | restricted settlement only |
-| REG-SHR-01 | `test_stage9_partition.py` | nonlethal Share | target first then sharer direct loss |
-| REG-SHR-02 | same | lethal target | pending sharer discarded |
-| REG-SHR-03 | same | callback spies on sharer loss | direct loss is not hit |
-| REG-SHR-04 | same | Distribution replaced by Share | one partition; no resurrection |
-| REG-DST-01 | same | plan `[P1,P2]`, P2 invalid | SKIP, no recompute |
-| REG-DST-02 | same | ordinary participant dies | fixed plan continues |
-| REG-DST-03 | same | commander participant dies | labeled project default drains plan |
-| REG-DST-04 | same | participant direct loss | not a DamageEvent |
-| REG-CTR-01 | `test_stage9_counter.py` | admitted entry then state removed | entry retained |
-| REG-CTR-02 | same | owner dies before entry | local cancel only |
-| REG-CTR-03 | same | C1 kills commander, C2 admitted | C2 zero terminal then finalize |
-| REG-CTR-04 | same | target dead before sibling | no Stage8 weapon pipeline |
-| REG-CTR-05 | same | Counter kills original actor | future Assault/Combo cancelled |
-| FINAL_01_CHAIN_COMMANDER_DEATH | `test_stage9_finalization.py` | Chain traversal commander kill | latch→drain traversal→finalize |
-| FINAL_02_COUNTER_SIBLING | same | admitted C1/C2 | sibling drains after latch |
-| FINAL_03_COMBO_BATTLE_END | same | #1 victory | no #2 allocation/target resolution |
-| FINAL_04_CLEAVE_COMMANDER_SECONDARY | same | current effect secondary commander kill | current effect local drain; next effect blocked |
-| FINAL_05_SHARE_COMMANDER_TARGET | same | lethal commander target Share | local death interrupt then finalize |
-| FINAL_06_DISTRIBUTION_COMMANDER_PARTICIPANT | same | commander participant | runtime-default transaction drain |
-| REG-INT-01 | `test_stage9_integerization.py` | 396 × 28.28% | FLOOR = 111 |
-| REG-INT-02 | same | 470 × 15% | HALF_UP=71; target=399 |
-| REG-INT-03 | same | 251 × 50% | target HALF_UP=126 |
-| REG-INT-04 | same | 353 / 2 | participant HALF_UP=177, no repair |
-| REG-INT-05 | same | 55 × 54% | Cleave FLOOR=29 |
-
-Additional `tests/test_stage9_golden_trace.py` will prove cross-mechanism operation identity/order without replacing the 45 semantic contracts.
+| Regression ID | Planned test | Core assertion |
+|---|---|---|
+| REG-TGT-01 | `test_stage9_target_resolution.py` | Confusion selector wins only current selection |
+| REG-TGT-02 | same | Taunt lifecycle remains while shadowed |
+| REG-TGT-03 | same | intended=B, actual=C under Guard |
+| REG-TGT-04 | same | exactly one redirect |
+| REG-TGT-05 | same | Combo #2 fresh NA + trace-only target-resolution ID |
+| REG-TGT-06 | same | #2 reruns Guard |
+| REG-TGT-07 | same | pre-Guard intended target may be Cleave secondary |
+| REG-CMB-01 | `test_stage9_combo.py` | maintenance before grant |
+| REG-CMB-02 | same | physical remove revokes grant |
+| REG-CMB-03 | same | suppress after grant retains current grant |
+| REG-CMB-04 | same | consume once/no refund/<=2 attacks |
+| REG-CMB-05 | same | death/victory blocks future Assault/#2 allocation |
+| REG-CLV-01 | `test_stage9_cleave.py` | actual target loss base; 55×54%=29 FLOOR |
+| REG-CLV-02 | same | no base-formula/modifier/Crit re-entry |
+| REG-CLV-03 | same | permission matrix exact |
+| REG-CLV-04 | same | effect-major + JIT skip + source-slot order |
+| REG-CLV-05 | same | post-Guard actual target is Cleave anchor |
+| REG-CHN-01 | `test_stage9_chain.py` | trigger snapshot + live ratio |
+| REG-CHN-02 | same | monotonic one-pass; later higher slot may join |
+| REG-CHN-03 | same | admitted traversal drains after commander-death latch |
+| REG-CHN-04 | same | restricted feedback only |
+| REG-SHR-01 | `test_stage9_partition.py` | target settlement first, then sharer direct loss |
+| REG-SHR-02 | same | lethal target discards pending sharer |
+| REG-SHR-03 | same | direct loss is not a hit |
+| REG-SHR-04 | same | Share precedence; one partition |
+| REG-DST-01 | same | invalid planned participant SKIP/no recompute |
+| REG-DST-02 | same | fixed plan continues ordinary participant death |
+| REG-DST-03 | same | commander participant labeled project default drain |
+| REG-DST-04 | same | participant direct loss is not DamageEvent |
+| REG-CTR-01 | `test_stage9_counter.py` | admitted entry retained after state removal |
+| REG-CTR-02 | same | dead owner cancels only local entry |
+| REG-CTR-03 | same | admitted sibling zero terminal after target death, then finalize |
+| REG-CTR-04 | same | dead-target sibling never enters Stage8 formula |
+| REG-CTR-05 | same | Counter victory blocks future Assault/Combo branches |
+| FINAL_01_CHAIN_COMMANDER_DEATH | `test_stage9_finalization.py` | latch→admitted traversal drain→finalize |
+| FINAL_02_COUNTER_SIBLING | same | admitted Counter sibling drains after latch |
+| FINAL_03_COMBO_BATTLE_END | same | no NormalAttack #2 allocation after victory latch |
+| FINAL_04_CLEAVE_COMMANDER_SECONDARY | same | current effect local drain; next effect blocked |
+| FINAL_05_SHARE_COMMANDER_TARGET | same | Share target-death interrupt then finalize |
+| FINAL_06_DISTRIBUTION_COMMANDER_PARTICIPANT | same | runtime-default admitted transaction drain |
+| REG-INT-01 | `test_stage9_integerization.py` | 396×28.28% FLOOR=111 |
+| REG-INT-02 | same | 470×15% HALF_UP=71; target=399 |
+| REG-INT-03 | same | 251×50% target HALF_UP=126 |
+| REG-INT-04 | same | 353/2 participant HALF_UP=177, no repair |
+| REG-INT-05 | same | 55×54% FLOOR=29 |
 
 ```text
 Target          = 7/7
@@ -1427,63 +1547,117 @@ Counter         = 5/5
 Finalization    = 6/6
 Integerization  = 5/5
 TOTAL           = 45/45
+Untestable      = 0
 Unmapped        = 0
 Semantic Conflict = 0
 ```
 
----
+### 25.1 Required settlement/fact seam tests — not new gameplay IDs
 
-## 26. Source File Plan
-
-All paths use the real flat `sgs_v2/battle_core/` package layout.
-
-### 26.1 NEW production files
-
-| File | Responsibility | Authority/dependencies | Primary future tests |
-|---|---|---|---|
-| `operation_identity.py` | typed IDs, allocator, SourceType, lineage | RF-C01 | identity/trace |
-| `stage9_trace.py` | observation-only trace sink/records | RF-C01 | golden trace |
-| `stage9_integerization.py` | FLOOR / ROUND_HALF_UP helpers | RF-P01 + mechanism P0 | integerization |
-| `stage9_state_params.py` | typed state runtime metadata | mechanism P0 | state/Combo/Cleave/Counter |
-| `stage9_state_runtime.py` | typed StateRegistry adapter + ActionStart maintenance | mechanism P0 + Stage3/4 lifecycle | state integration |
-| `target_resolution_system.py` | selector policies + single Guard pass + immutable result | Core + Confusion/Taunt/Guard P0 | target |
-| `reaction_permission_policy.py` | centralized recursion/callback matrix | Core + RF-C01 | permission |
-| `execution_right_system.py` | work kinds, admission decisions, operation barriers | RF-P03/RF-P04 | finalization |
-| `damage_instance_coordinator.py` | standard Stage8 damage → partition → settlement orchestration | Stage8 + RF-C01 | partition/integration |
-| `damage_partition_system.py` | exactly-one resolver + Share/Distribution plans | Share/Distribution P0 | partition |
-| `direct_troop_loss_system.py` | attributed direct-loss settlement | Share/Distribution P0 | partition |
-| `derived_damage_system.py` | typed Cleave derived path / derived settlement interfaces | CLEAVE P0/RF-P06 | Cleave |
-| `cleave_system.py` | source-bound effects, queue, secondary plans/admission | CLEAVE P0/RF-P07/RF-P04 | Cleave |
-| `chain_system.py` | traversal/deferred work/restricted feedback | CHAIN P0 | Chain |
-| `counter_system.py` | CounterBatch/entries/live gates/zero terminal | COUNTER P0 | Counter |
-| `battle_finalization_coordinator.py` | termination state owner, latch/drain/finalize | RF-P04 | finalization |
-
-Planned new production files: **16**.
-
-### 26.2 MODIFY production files
-
-| File | Planned change | Semantic constraint |
-|---|---|---|
-| `context.py` | add typed per-battle ID allocator + small termination record | no giant Stage9Context |
-| `battle_systems.py` | compose/inject Stage9 systems | composition only |
-| `engine.py` | use finalization coordinator at macro barriers | no mechanism logic in engine |
-| `action_system.py` | ActionId, ActionStart maintenance/grant, master dispatch | preserve Stun/action ownership |
-| `normal_attack_system.py` | become master orchestration owner, delegate local work | no mechanism algorithm duplication |
-| `damage_resolution_system.py` | narrow assigned-target settlement seam preserving original DamageResult | no Stage8 calculation change |
-| `effect_executor.py` | route standard DamageEffect through DamageInstanceCoordinator | no Trigger semantics change |
-| `victory_system.py` | pure condition evaluation API + compatibility wrapper | finalization ownership moves to coordinator, victory rules unchanged |
-| `official_state_catalog.py` | bind Stage9 typed runtime param types where required | IDs/text unchanged |
-| `events.py` | add Stage9 observation facts if needed | EventBus never controls flow |
-| `__init__.py` | export intentionally public Stage9 types only | minimize public surface |
-
-Planned modified production files: **11**.
-
-Existing control-flow classes planned for modification: **8** (`BattleContext`, `BattleSystems`, `BattleEngine`, `ActionSystem`, `NormalAttackSystem`, `DamageResolutionSystem`, `EffectExecutor`, `VictorySystem`).
-
-### 26.3 DO NOT TOUCH Stage8 semantics
+A supporting fixture must realize:
 
 ```text
-damage_system.py formula semantics
+Dtotal != Dtarget != ActualTargetTroopLoss
+```
+
+and prove separately:
+
+1. partition test reads `Dtotal` from `DamageResult.final_damage` and `Dtarget` from settlement request/result;
+2. Cleave base test reads only `actual_target_troop_loss`;
+3. recovery/stat attribution test reads the explicit actual/credited field required by its seam;
+4. event payload test proves `DAMAGE_DEALT.requested_damage == Dtarget` while Dtotal remains on `DamageResult`.
+
+These are seam/architecture assertions inside planned Stage9 groups, not extra gameplay regression IDs.
+
+### 25.2 Finalization observation seam
+
+`FINAL_01..06` assert typed:
+
+```text
+termination_state
+victory_latched
+finalized
+operation-drain completion
+BATTLE_END / BATTLE_ENDED compatibility publication
+```
+
+No finalization regression may depend on string-log parsing.
+
+---
+
+## 26. Source File Plan — Recomputed After Round1 Repair
+
+All paths are under the flat `sgs_v2/battle_core/` package unless stated otherwise.
+
+### 26.1 Planned NEW production files — 16
+
+| File | Responsibility |
+|---|---|
+| `operation_identity.py` | typed IDs, allocator, SourceType, lineage |
+| `stage9_trace.py` | bounded production/full-test observation sink |
+| `stage9_integerization.py` | `ExactRatio` + exact FLOOR/HALF_UP helpers |
+| `stage9_state_params.py` | mechanism typed runtime params |
+| `stage9_state_runtime.py` | typed StateRegistry adapter + ordering validation |
+| `target_resolution_system.py` | selector + Guard single-pass immutable result |
+| `reaction_permission_policy.py` | centralized recursion/callback permissions |
+| `execution_right_system.py` | FutureAdmissionGate, admitted tokens, operation barriers, DamageCallbackAdmissionPoint contract |
+| `damage_instance_coordinator.py` | standard Stage8 damage orchestration/fact boundary |
+| `damage_partition_system.py` | exactly-one partition + Share/Distribution plans |
+| `direct_troop_loss_system.py` | attributed direct-loss settlement |
+| `cleave_derived_damage_system.py` | Cleave-specific derived calculation/settlement seam |
+| `cleave_system.py` | source-bound effects/secondary plans/admission |
+| `chain_system.py` | monotonic traversal/deferred/restricted feedback |
+| `counter_system.py` | CounterBatch/entries/live gates/zero terminal |
+| `battle_finalization_coordinator.py` | unique termination/latch/drain/finalize owner |
+
+```text
+Planned NEW = 16
+```
+
+### 26.2 Planned MODIFY production files — 16
+
+| File | Planned change | Constraint |
+|---|---|---|
+| `context.py` | OperationIdAllocator + small termination record | no services/queues/policies/trace/mechanism state |
+| `battle_systems.py` | compose/inject Stage9 systems | composition root only |
+| `engine.py` | future Action gate + finalized-result projection | no mechanism algorithms/termination decision |
+| `action_system.py` | ActionId, ActionStart maintenance/grant | no direct registry mutation |
+| `normal_attack_system.py` | thin master orchestration | no local mechanism algorithms/finalization writes |
+| `damage_resolution_system.py` | typed settlement request, upgraded result, `settle()` | `DamageResult.final_damage` untouched |
+| `effect_executor.py` | route DamageEffect through completed DamageInstance path | no Trigger semantic change |
+| `effect_result.py` | upgrade `DamageEffectResult` narrow stable result | no coordinator internals exposed |
+| `skill_runtime.py` | authoritative optional `skill_slot` carrier | slot belongs to holder runtime |
+| `skill_resolver.py` | propagate source slot into Effects | no slot inference |
+| `effects.py` | carry source slot on Damage/ApplyState Effects | `DamageRequest` Stage8 shape unchanged |
+| `state_instance.py` | store `source_skill_slot: int | None` | provenance only |
+| `state_lifecycle_system.py` | accept/store/publish supplied source slot | generic lifecycle does not guess slot |
+| `official_state_catalog.py` | bind Stage9 typed runtime params where required | IDs/text unchanged |
+| `events.py` | Stage9 observation facts where needed | EventBus never controls flow |
+| `__init__.py` | intentional public exports only | minimize surface |
+
+```text
+Planned MODIFY = 16
+```
+
+### 26.3 KEEP / CALL — not modified by default
+
+```text
+victory_system.py          # already pure evaluator
+state_registry.py          # sole state store
+skill_definition.py        # static definition; no slot ownership
+target_system.py           # target primitives
+troop_system.py            # sole troop mutation primitive
+attribute_system.py        # live attributes
+random_system.py           # sole RNG
+recovery_system.py         # Stage7 recovery semantics
+trigger_system.py          # Stage7 trigger semantics
+rule_hook_system.py        # explicit hook route
+```
+
+### 26.4 DO NOT TOUCH Stage8 gameplay semantics
+
+```text
+damage_system.py calculation semantics
 damage_prevention_system.py
 hit_resolution_system.py semantics
 damage_formula_policy_system.py
@@ -1491,17 +1665,41 @@ damage_modifier_system.py
 weapon_damage_formula.py
 strategy_damage_formula.py
 damage_pipeline_trace.py meaning
-random_system.py PRNG contract
-attribute_system.py final-attribute ownership
-recovery_system.py recovery semantics
-trigger_system.py trigger semantics
+DamageResult.final_damage meaning
 ```
 
-If implementation discovers that one of these semantic owners must materially change, Stage9 implementation stops and requests a formal authority/reopen decision rather than silently editing it.
+If a frozen owner must materially change gameplay semantics, implementation stops for a formal authority/reopen decision.
 
-### 26.4 Future test files
+### 26.5 `DamageEffectResult` compatibility
 
-Planned Stage9 test groups:
+`effect_result.py` is explicitly in the plan.
+
+Upgrade existing `DamageEffectResult`, do not return a giant coordinator aggregate:
+
+```python
+DamageEffectResult(
+    effect: DamageEffect,
+    damage_instance_id: DamageInstanceId,
+    settlement_result: DamageResolutionResult,
+)
+```
+
+A read-only compatibility property:
+
+```text
+resolution -> settlement_result
+```
+
+may preserve existing callers/tests. Partition plan, reaction queue, mutable coordinator state, and finalization internals are not exposed.
+
+Dependency direction:
+
+```text
+EffectExecutor → DamageInstanceCoordinator
+NEVER DamageInstanceCoordinator → EffectExecutor
+```
+
+### 26.6 Future test groups
 
 ```text
 tests/test_stage9_operation_identity.py
@@ -1516,7 +1714,7 @@ tests/test_stage9_integerization.py
 tests/test_stage9_golden_trace.py
 ```
 
-This authoring round creates none of them.
+This repair round creates none of them.
 
 ---
 
@@ -1524,127 +1722,139 @@ This authoring round creates none of them.
 
 | Existing component | KEEP / MODIFY | Integration contract |
 |---|---|---|
-| BattleEngine | MODIFY | outer phase loop retained; no direct low-level death finalization |
-| BattleContext | MODIFY | only stable cross-mechanism ID/termination infrastructure |
+| BattleEngine | MODIFY | outer loop; unique finalized projection; no semantic finalization decision |
+| BattleContext | MODIFY | ID allocator + small termination record only |
 | BattleSystems | MODIFY | single composition root |
-| ActionSystem | MODIFY | Action scope owner; does not own reaction internals |
-| NormalAttackSystem | MODIFY | unique NormalAttack master owner |
-| TargetSystem | KEEP | target candidate/RNG primitives only |
-| DamageSystem | KEEP | Stage8 theoretical pipeline owner |
-| DamageResolutionSystem | MODIFY | backward-compatible settlement seam only |
-| TroopSystem | KEEP | only troop mutation writer |
-| VictorySystem | MODIFY | condition evaluator, not finalization writer |
-| EventBus | KEEP | observation only |
-| State system | KEEP + adapter | StateRegistry/StateLifecycle remain single truth/write path |
-| Trigger system | KEEP | no anonymous subscriber-based Stage9 master flow |
-| Recovery system | KEEP | Stage7 recovery owner; Stage9 controls event eligibility only |
-| EffectExecutor | MODIFY | standard DamageEffect cannot bypass Stage9 partition/finalization seam |
+| ActionSystem | MODIFY | Action scope/maintenance |
+| NormalAttackSystem | MODIFY | unique thin NormalAttack master |
+| TargetSystem | KEEP | candidate/RNG primitives only |
+| DamageSystem | KEEP | frozen Stage8 theoretical owner |
+| DamageResolutionSystem | MODIFY | typed backward-compatible settlement seam |
+| TroopSystem | KEEP | sole troop mutation writer |
+| VictorySystem | **KEEP / CALL** | pure evaluator already correct |
+| EventBus | KEEP semantics | observation only |
+| StateRegistry | KEEP | one store |
+| StateLifecycleSystem | MODIFY provenance only | one physical writer |
+| SkillRuntime/Resolver/Effects | MODIFY provenance | authoritative source-slot chain |
+| Trigger/Recovery | KEEP | no semantic redesign |
+| EffectExecutor/effect_result | MODIFY | standard DamageEffect uses narrow Stage9 path/result |
 | RandomSystem | KEEP | sole RNG |
-| AttributeSystem | KEEP | live combat stats source |
-
-Minimal-intrusion test: no design requires edits to twenty Stage8 formula entrances. The main integration is composition + orchestration around existing boundaries.
+| AttributeSystem | KEEP | live combat stats |
 
 ---
 
-## 28. Implementation Phases
+## 28. Implementation Phases — Reordered After Round1 Repair
 
-Every phase must end with a green build, all pre-Stage9 tests green, and the phase's new regression subset green. No Big Bang merge is permitted.
+### 28.0 Universal phase green gate
 
-### Phase 9.1 — Foundation / Identity / Provenance
+Every phase independently satisfies:
 
-**Goal:** strong IDs, lineage, SourceType, trace sink, integerization, state params.  
-**Files:** new identity/trace/integerization/state-param files; narrow `context.py`/exports.  
-**New Types:** all operation IDs, allocator, `OperationLineage`, `SourceType`, numeric helpers.  
-**Modified Systems:** BattleContext only for stable per-battle infra.  
-**Dependencies:** RF-C01, RF-P01.  
-**Tasks:** implement constructors/validation/serialization; trace must be write-only from gameplay perspective.  
-**Required Tests:** identity uniqueness, lineage validation, five integerization vectors.  
-**Exit Gate:** deterministic IDs; REG-INT-01..05 pass; old tests green.  
-**Forbidden Scope:** target/mechanism behavior.
+```text
+all existing tests green
+new phase tests green
+no production call points to placeholder/stub/TODO Stage9 service
+no production path depends on a later-phase semantic owner
+Stage8 frozen semantics still green
+```
 
-### Phase 9.2 — State Adapter + Target Arbitration + Guard
+Temporary production stub latch/coordinator is forbidden.
 
-**Goal:** typed Stage9 state views and immutable target-resolution pipeline.  
-**Files:** state runtime/params, target resolution, catalog binding, BattleSystems wiring.  
-**New Types:** `TargetResolutionResult`, redirect reason, selector policies.  
-**Modified Systems:** catalog/composition only; `TargetSystem` remains unchanged.  
-**Dependencies:** 9.1, Confusion/Taunt/Guard P0.  
-**Tasks:** selector precedence, Guard once, deterministic result/trace, ActionStart maintenance primitives.  
-**Required Tests:** REG-TGT-01..04 plus state adapter tests.  
-**Exit Gate:** immutable identity and Guard single-pass proven.  
-**Forbidden Scope:** Combo/Cleave/partition.
+### Phase 9.1 — Identity / Provenance Types / Exact Numeric Utilities
 
-### Phase 9.3 — NormalAttack Master + Combo
+**Goal:** foundational value types only.  
+**Creates:** operation identities, `SourceType`, lineage, trace contracts, `ExactRatio`, integerization helpers, Stage9 state params.  
+**Prepares:** loaded `SkillRuntime.skill_slot` contract; no Stage9 mechanism production route yet.  
+**Required tests:** ID/lineage validation, numeric ingress, REG-INT-01..05.  
+**Exit:** exact numeric boundary and provenance types complete.  
+**Forbidden:** production damage/finalization reroute.
 
-**Goal:** make existing NormalAttackSystem the single orchestration owner and add Action-local Combo model.  
-**Files:** ActionSystem, NormalAttackSystem, state runtime, execution-right initial seam.  
-**New Types:** `ActionScope`, `NormalAttackInstance`, Combo grant/checkpoint.  
-**Modified Systems:** ActionSystem / NormalAttackSystem.  
-**Dependencies:** 9.1-9.2.  
-**Tasks:** #1 lifecycle shell, fresh #2, no recursive checkpoint, Assault dispatch port ordering.  
-**Required Tests:** REG-TGT-05..07, REG-CMB-01..05.  
-**Exit Gate:** one Action has <=2 attacks; fresh target/Guard #2; old normal-attack tests green.  
-**Forbidden Scope:** mechanism math not yet implemented.
+### Phase 9.2 — Execution Right + Finalization Infrastructure
 
-### Phase 9.4 — DamageInstance / Partition / DirectTroopLoss
+**Goal:** install real semantic termination owner before Stage9 production damage depends on it.  
+**Creates:** `ExecutionRightSystem`, `BattleFinalizationCoordinator`, termination record/result/admitted-token contracts.  
+**Modifies:** `context.py`, `battle_systems.py`, `engine.py`; `VictorySystem` remains KEEP/CALL.  
+**Tasks:** migrate Engine terminal decision to coordinator, keep Engine finalized projection, install next-Action gate, preserve current engine/hook terminal ordering.  
+**Required tests:** current victory/engine tests + state/projection/idempotency tests.  
+**Exit:** one termination writer, one compatibility projection writer, no coordinator→Engine edge.  
+**Forbidden:** mechanism-local drain inventions.
 
-**Goal:** one standard DamageInstance path with exactly-one partition and typed direct loss.  
-**Files:** damage coordinator, partition, direct loss; narrow DamageResolutionSystem/EffectExecutor wiring.  
-**New Types:** partition plans/results, direct-loss type, damage execution result.  
-**Modified Systems:** DamageResolutionSystem / EffectExecutor / BattleSystems.  
-**Dependencies:** 9.1 identity; Stage8 frozen seam.  
-**Tasks:** preserve `DamageResult`; Share target-first; Distribution fixed plan; provenance.  
-**Required Tests:** REG-SHR-01..04, REG-DST-01..04 except finalization-specific full barrier may use stub latch.  
-**Exit Gate:** one partition only; direct loss cannot enter hit pipeline; old Stage8 tests green.  
-**Forbidden Scope:** alter Stage8 formula/modifier semantics.
+### Phase 9.3 — Target Arbitration + State Provenance Ingress
 
-### Phase 9.5 — Cleave + Chain
+**Goal:** complete source-slot chain and immutable target resolution.  
+**Modifies:** `skill_runtime.py`, `skill_resolver.py`, `effects.py`, `state_lifecycle_system.py`, `state_instance.py`, catalog/composition surfaces.  
+**Creates:** `Stage9StateRuntime`, target-resolution system.  
+**Tasks:** runtime slot producer, Effect propagation, StateInstance metadata, required-slot validation, Confusion/Taunt/default selector, Guard once, remove `selectedTarget`.  
+**Required tests:** REG-TGT-01..04 + provenance/no-slot tests.  
+**Exit:** no forbidden slot inference; target result immutable.  
+**Forbidden:** partition/reaction production routing.
 
-**Goal:** derived Cleave path and Chain traversal/deferred split.  
-**Files:** derived damage, Cleave, Chain, permission policy.  
-**New Types:** Cleave effect/plan/request, ChainTraversal/DeferredWork.  
-**Modified Systems:** NormalAttack orchestration wiring only.  
-**Dependencies:** 9.2 target identity, 9.4 partition, 9.1 numeric/lineage.  
-**Tasks:** ActualTargetTroopLoss base; effect-major; JIT; Chain inline/deferred; restricted feedback.  
-**Required Tests:** REG-CLV-01..05, REG-CHN-01..04.  
-**Exit Gate:** no formula re-entry; one-pass traversal; permission matrix enforced.  
-**Forbidden Scope:** implement deferred Evasion/Resistance gameplay without authority.
+### Phase 9.4 — Settlement Seam + Isolated DamageInstance Core
 
-### Phase 9.6 — CounterBatch
+**Goal:** complete B1 typed settlement and build DamageInstance core against real finalization infrastructure.  
+**Modifies:** `damage_resolution_system.py`; creates isolated coordinator.  
+**Tasks:** Model A upgrade, typed request, legacy mapping, `DAMAGE_DEALT.requested_damage=Dtarget`, explicit death/credit facts.  
+**Important:** `EffectExecutor` remains on legacy route until Phase 9.5 completes partition/direct-loss dependencies. The coordinator is tested directly; no production caller points to an incomplete coordinator.  
+**Required tests:** legacy compatibility + `Dtotal != Dtarget != actual` seam + finalization notifications.  
+**Exit:** unique settlement contract; old Stage1-8 behavior preserved.  
+**Forbidden:** Stage8 calculation semantic change.
 
-**Goal:** trigger-time admission snapshot + execution-time local gates + zero terminal.  
-**Files:** counter system, permission policy, NormalAttack wiring.  
-**New Types:** CounterBatch/Entry/terminal result.  
-**Modified Systems:** composition/NormalAttack only.  
-**Dependencies:** 9.3 NA identity, 9.4 standard damage path, 9.5 permission framework.  
-**Tasks:** final-actual-target holder, immutable batch, live stats, target-dead zero path.  
-**Required Tests:** REG-CTR-01..05.  
-**Exit Gate:** admitted siblings stable; no dead-target Stage8 request.  
-**Forbidden Scope:** claim exact official universal comparator fidelity.
+### Phase 9.5 — Partition + DirectTroopLoss + Production Damage Route
 
-### Phase 9.7 — Execution Right + Finalization
+**Goal:** complete standard Stage9 damage path before routing production DamageEffect through it.  
+**Creates:** partition/direct-loss systems.  
+**Modifies at phase end:** `effect_executor.py`, `effect_result.py`, composition.  
+**Tasks:** Share/Distribution plans, target-first/skip-only behavior, direct loss, narrow DamageEffect result, death/finalization/barrier notifications.  
+**Production switch:** only after all 9.5 dependencies are real/green, route `EffectExecutor -> DamageInstanceCoordinator`.  
+**Required tests:** REG-SHR-01..04, REG-DST-01..04, EffectExecutor compatibility tests.  
+**Exit:** production DamageEffect cannot bypass partition/finalization seam.
 
-**Goal:** explicit victory latch/drain/finalization and remove scattered battle-end control from mechanism paths.  
-**Files:** execution right, finalization coordinator; BattleEngine/VictorySystem/context/events wiring.  
-**New Types:** termination state/record, UnitDeathFact, admission decisions, barriers.  
-**Modified Systems:** Engine / VictorySystem / Action/NormalAttack integration.  
-**Dependencies:** 9.3-9.6 operation barriers exist.  
-**Tasks:** latch once; future admission gate; DSTS9 local policy; terminal publication.  
-**Required Tests:** FINAL_01..06 plus golden state-transition traces.  
-**Exit Gate:** only finalization coordinator writes FINALIZED; all finalization regressions pass; pre-Stage9 victory tests green.  
-**Forbidden Scope:** empirical research for DSTS9-B02.
+### Phase 9.6 — NormalAttack Master + Combo
 
-### Phase 9.8 — Full Regression / Integration
+**Goal:** make existing NormalAttackSystem the thin lifecycle master and add Action-local Combo.  
+**Tasks:** ActionId/NA IDs, fresh #2 target pass, Combo grant/checkpoint, Assault admission, caller ownership for Combo #2 and Assault.  
+**Required tests:** REG-TGT-05..07, REG-CMB-01..05, existing normal-attack tests.  
+**Exit:** one Action <=2 attacks; no recursive checkpoint; future branches gate once.  
+**Forbidden:** embed Cleave/Chain/Counter algorithms.
 
-**Goal:** close all 42 invariants and 45 contracts against full composed runtime.  
-**Files:** Stage9 test groups only unless defects require authority-consistent fixes.  
-**New Types:** none by default.  
-**Modified Systems:** only defect fixes within frozen design.  
-**Dependencies:** 9.1-9.7.  
-**Tasks:** unit + integration + golden trace, battle-report compatibility fixtures as supplemental checks, performance sanity.  
-**Required Tests:** 45/45 contracts, invariant architecture tests, all existing tests, demo/CI.  
-**Exit Gate:** existing tests all green; new Stage9 suite green; invariant mapped/verified 42/42; regression 45/45.  
-**Forbidden Scope:** new mechanism research or semantic expansion.
+### Phase 9.7 — Cleave + Chain + Counter
+
+**Goal:** add real local mechanism services and remaining future-admission edges.  
+**Creates:** Cleave-derived, Cleave, Chain, Counter, permission completion; wires shared DamageCallbackAdmissionPoint.  
+**Tasks:** actual-loss Cleave basis, effect-major sequencing, monotonic Chain cursor, Counter batch/zero terminal, next-Cleave/new-Chain/new-CounterBatch gate ownership.  
+**Required tests:** REG-CLV-01..05, REG-CHN-01..04, REG-CTR-01..05.  
+**Exit:** all future-admission families covered; local admitted work never re-gates globally.
+
+### Phase 9.8 — Full Integration / 45 Regressions
+
+**Goal:** close all 42 invariants and 45 contracts on fully composed runtime.  
+**Tasks:** FINAL_01..06, golden trace, architecture no-bypass/no-cycle tests, all existing tests, CI/demo compatibility.  
+**Exit:** 42/42 enforced, 45/45 green, no dependency cycles, no Stage8 reopen.  
+**Forbidden:** new gameplay research/semantic expansion.
+
+### 28.1 PHASE_DEPENDENCY_GRAPH
+
+```text
+9.1 identity / provenance types / exact numeric
+  ↓
+9.2 real execution-right + finalization infrastructure
+  ↓
+9.3 target arbitration + source-slot/state ingress
+  ↓
+9.4 typed settlement seam + isolated DamageInstance core
+  ↓
+9.5 partition + direct loss + EffectExecutor production reroute
+  ↓
+9.6 NormalAttack master + Combo/Assault branch admission
+  ↓
+9.7 Cleave + Chain + Counter + remaining admission edges
+  ↓
+9.8 full integration / 42 invariants / 45 regressions
+```
+
+```text
+Dependency cycles               = 0
+Forward production dependencies = 0
+```
 
 ---
 
@@ -1656,20 +1866,11 @@ Every phase must end with a green build, all pre-Stage9 tests green, and the pha
 RESEARCH_DEBT
 NON_BLOCKING
 RUNTIME DEFAULT INSTALLED
-
 Empirical: OPEN / UNOBSERVED
 Runtime: CLOSED BY PROJECT_RUNTIME_DEFAULT
 ```
 
-Implementation isolates this in the Distribution local transaction policy:
-
-```text
-commander participant death during admitted fixed plan
-→ continue locally planned transaction
-→ finalization at transaction barrier
-```
-
-Future evidence may replace that local policy and its regression expectation without rewriting `BattleFinalizationCoordinator`, operation identities, partition planning, or Stage8.
+The default remains isolated inside Distribution’s local transaction policy.
 
 ### 29.2 Counter fidelity
 
@@ -1678,62 +1879,119 @@ exact official universal comparator fidelity = DEFERRED_NON_BLOCKING
 universal dispel fidelity                    = DEFERRED_NON_BLOCKING
 ```
 
-Neither is a Stage9 spec blocker because current reachable runtime remains deterministic.
+Project fallback ordering remains deterministic and clearly non-official.
 
 ---
 
-## 30. Acceptance Gate
+## 30. Dependency / Boundary Acceptance Gate
 
-### 30.1 Authoring self-audit
+### 30.1 Authoritative call/dependency edges
 
-```text
-Authority Trace Audit       = PASS
-Stage8 Boundary Audit       = PASS
-42 Invariant Coverage Audit = PASS (42/42)
-45 Regression Mapping Audit = PASS (45/45)
-File Plan Completeness      = PASS
-Dependency Cycle Audit      = PASS
-P0 Semantic Drift Audit     = PASS (0)
-```
-
-Dependency direction intentionally remains:
+The following edges are authoritative. Arrows mean **consumer calls/depends on provider**:
 
 ```text
-identity/state/policy
-→ target/damage local services
-→ mechanism local systems
-→ NormalAttack master
-→ Action / Engine
-→ Finalization owner
+BattleEngine → ActionSystem
+BattleEngine → BattleFinalizationCoordinator
+BattleFinalizationCoordinator → VictorySystem
+BattleFinalizationCoordinator → BattleTerminationRecord
+
+ActionSystem → Stage9StateRuntime
+ActionSystem → NormalAttackSystem
+
+NormalAttackSystem → TargetResolutionSystem
+NormalAttackSystem → DamageInstanceCoordinator
+NormalAttackSystem → CleaveSystem
+NormalAttackSystem → CounterSystem
+NormalAttackSystem → FutureAdmissionGate (only its assigned Assault/CounterBatch/Combo branch edges)
+
+EffectExecutor → DamageInstanceCoordinator
+CounterSystem → DamageInstanceCoordinator
+
+DamageInstanceCoordinator → DamageSystem
+DamageInstanceCoordinator → DamagePartitionCoordinator
+DamageInstanceCoordinator → DamageResolutionSystem
+DamageInstanceCoordinator → DirectTroopLossResolver
+DamageInstanceCoordinator → DamageCallbackAdmissionPoint
+DamageInstanceCoordinator → finalization observation/barrier port
+
+CleaveSystem → CleaveDerivedDamageResolver
+CleaveSystem → FutureAdmissionGate (next independent CleaveEffect only)
+CleaveDerivedDamageResolver → DamagePartitionCoordinator / settlement primitive as P0 permits
+CleaveDerivedDamageResolver → DamageCallbackAdmissionPoint
+
+DamageCallbackAdmissionPoint → FutureAdmissionGate
+ChainSystem ← admitted ChainTraversal token from DamageCallbackAdmissionPoint
+ChainSystem → restricted Chain settlement primitive
+
+BattleSystems → constructs/injects every service above
 ```
 
-Mechanism-local systems do not import the master to advance its lifecycle. Finalization does not import mechanism implementations; it consumes operation/admission facts.
-
-### 30.2 Authoring gate
+Forbidden reverse/shortcut edges:
 
 ```text
-Stage8 reopen                    = NO
-P0 semantic drift                = 0
-unmapped invariants              = 0
-unmapped regressions             = 0
-production changes this round    = 0
-test changes this round          = 0
-DSTS9-B02 blocker                = NO
+BattleFinalizationCoordinator -X-> BattleEngine
+local mechanism system        -X-> NormalAttackSystem to advance lifecycle
+DamageInstanceCoordinator     -X-> EffectExecutor
+ChainSystem                   -X-> self-admit a new traversal
+StateRegistry                 -X-> infer source_skill_slot
+EventBus subscriber           -X-> become Stage9 orchestration owner
 ```
 
-### 30.3 Public surface
+This edge set has no required static dependency cycle. Ports/protocols may be used where needed to keep finalization observation and admitted-token flow acyclic.
 
-Intended Stage10+ stable/public concepts are deliberately small:
+### 30.2 BattleContext anti-service-locator boundary
+
+Allowed new per-battle fields:
 
 ```text
-ActionId / NormalAttackInstanceId / DamageInstanceId
-OperationLineage / SourceType
-TargetResolutionResult
-BattleTerminationState read view
-Future admission query/port where later stages need ordered dispatch
+OperationIdAllocator
+small BattleTerminationRecord/read state
 ```
 
-Mechanism queue internals, mutable transaction states, grant/checkpoint implementation classes, trace storage internals and local policy helpers remain Stage9-internal unless a later design explicitly promotes them.
+Forbidden in `BattleContext`:
+
+```text
+BattleSystems
+mechanism systems
+queues
+policies
+trace service
+mechanism mutable runtime bags
+```
+
+Those remain owned/composed by `BattleSystems` or operation-local scopes.
+
+### 30.3 Round1 repair final gate
+
+```text
+BLOCKER remaining               = 0
+MAJOR remaining                 = 0
+MINOR remaining                 = 0
+DOC_ONLY remaining              = 0
+
+Unowned runtime facts           = 0
+Unspecified reachable paths     = 0
+Unenforced invariants           = 0
+Dependency cycles               = 0
+Forward production dependency   = 0
+Untestable mandatory regression = 0
+
+P0 semantic change              = 0
+new gameplay rule               = 0
+Stage8 semantic reopen          = 0
+planned NEW production files    = 16
+planned MODIFY production files = 16
+42 invariants                   = 42/42 enforced
+45 regressions                  = 45/45 testable/mapped
+```
+
+The five Round1 previously unspecified path families are closed:
+
+1. `Dtarget -> typed settlement -> event/result fact meanings`;
+2. `EffectExecutor -> DamageInstanceCoordinator -> narrow DamageEffectResult`;
+3. `source_skill_slot` producer -> Effect -> lifecycle -> StateInstance -> adapter/order;
+4. finalization semantic state -> Engine compatibility projection/publication;
+5. every global future branch -> exactly-one FutureAdmissionGate caller edge.
 
 ### 30.4 Current document status
 
@@ -1741,14 +1999,17 @@ Mechanism queue internals, mutable transaction states, grant/checkpoint implemen
 STAGE9.md
 STATUS: DRAFT — DESIGN AUDIT REQUIRED
 
-NOT FROZEN
-NOT READY FOR IMPLEMENTATION
+Stage9 FROZEN = NO
+Ready for implementation = NO
+Round2 Design Audit = REQUIRED
 ```
+
+Round1 repair does not authorize implementation or Build Prompt creation.
 
 Next permitted step:
 
 ```text
-Stage9 Design Audit Round 1
+Stage9 Design Audit Round 2
 ```
 
-Do not create `STAGE9_BUILD_PROMPT.md` and do not begin production implementation before the design audit/freeze workflow authorizes it.
+Do not create `STAGE9_BUILD_PROMPT.md`, do not begin production implementation, and do not declare Stage9 FROZEN before Round2 independently verifies this repaired design.
