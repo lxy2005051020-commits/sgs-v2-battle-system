@@ -42,6 +42,34 @@ CleaveDerivedCalculatedDamage = floor(ActualTargetTroopLoss × CleaveRatio)
 
 群攻副目标 **不重新执行基础攻防伤害公式**。
 
+### 1.3 多来源群攻与执行比较器（RF-P07 冻结 / CLVS9-B02 关闭）
+
+1. **容器模型（Container Model）**：`SOURCE_BOUND_EFFECT_LIST`。同一武将可同时具备多个不同来源的群攻状态（如马超【槊血纵横】+【瞋目横矛】），状态之间**独立并存（COEXIST）**，各自独立保存其来源倍率，绝不合并为单一倍率（`MERGED_RATIO_STATE` 证伪淘汰）。
+2. **执行比较器（Execution Comparator）**：多群攻按**战法栏位升序（`SKILL_SLOT_ORDER`: Slot 0 固有战法 $\to$ Slot 1 第二战法 $\to$ Slot 2 第三战法）**依次判定并执行。在全库 121 例多群攻实证样本中，Slot 0 $\to$ Slot 1/2 顺序达成率为 **100.0%**（121/121）。
+
+### 1.4 状态生命周期与同源刷新（RF-P07 冻结 / CLVS9-B02 关闭）
+
+1. **同源重施加（Same-source Reapply）**：**`REFRESH`**。同技能再次施加群攻时，触发 `[武将]身上的「群攻」效果已刷新`（实测检出 203 例），重置其持续时间，不叠加层数，不产生冗余实例，不因已存在而拒绝。
+2. **时效模型（Duration Model）**：
+   - 被动/指挥固有型（`PERMANENT_SOURCE_BOUND`）：永久生效，无持续回合倒计时。
+   - 主动/突击赋予型（`TEMPORARY_TIMED`）：受持续回合管理（如瞋目横矛持续 2 回合），到期在行动维护阶段注销并输出 `「群攻」效果已消失`（检出 1,283 例）。
+3. **控制与压制（Suppression）**：若行动者处于缴械（Disarm）或震慑（Stun）状态而无法发动普通攻击，则无法进入群攻派生触发流程；若普通攻击已成功命中并进入派生阶段，群攻派生伤害不受后续缴械影响。
+
+### 1.5 副目标候选池与援护重定向（RF-P07 冻结 / CLVS9-B03 关闭）
+
+1. **候选池范围**：主受击目标（`actualTarget`）所在部队的全部**存活队友**。严格排除攻击者自身，严格排除主受击目标自身。
+2. **援护重定向（Guard Redirection）**：当普通攻击触发援护（A 攻击 B，C 援护 B $\to$ `actualTarget = C`）时，被援护的原目标 B 作为合法存活队友，**100% 具备被群攻副目标选中的资格并承受溅射**（全库 15/15 例援护群攻样本 100% 证实）。
+3. **副目标数量（Target Count）**：由当前部队合法存活队友数量决定。标准 3 人满编队命中 **2 名副目标**；若已有 1 名队友阵亡，则仅命中剩余 **1 名存活副目标**；无存活队友时副目标队列为空，绝不对已阵亡目标发出 0 兵损群攻。
+
+### 1.6 副目标稳定排序与 JIT 重校验（RF-P07 冻结 / CLVS9-B03 关闭）
+
+1. **确定性排序规则**：副目标严格遵循 **全局站位升序（`GLOBAL_SLOT_ASCENDING`: pos 1 主将 $\to$ pos 2 副将1 $\to$ pos 3 副将2，排除 actualTarget）**：
+   - 当 `actualTarget = pos 1` 时，副目标受击顺序严格为 **`(pos 2, pos 3)`**（实测 431 例）。
+   - 当 `actualTarget = pos 2` 时，副目标受击顺序严格为 **`(pos 1, pos 3)`**（实测 469 例）。
+   - 当 `actualTarget = pos 3` 时，副目标受击顺序严格为 **`(pos 1, pos 2)`**（实测 534 例）。
+2. **多来源队列编排（Queue Composition）**：严格遵循 **`EFFECT_MAJOR_ORDER`**。前一个 Cleave Effect 完整遍历并结算其全部副目标后，后一个 Cleave Effect 才开始完整遍历其副目标队列。
+3. **JIT 存活重校验（JIT Liveness Revalidation）**：副目标计划在执行到自身受击步时重新校验 `target.currentTroops > 0`。若副目标在前序结算中阵亡，直接跳过（SKIP）；已访问槽位绝不回溯（NO REVISIT）。
+
 ---
 
 ## 2. 群攻派生伤害的防护与修正边界
@@ -176,11 +204,20 @@ Share Damage → Share = BLOCKED
 
 ## 7. 冻结声明
 
-以下群攻核心问题不再列为 Stage 9 待研究项：
+以下群攻核心机制、状态生命周期与副目标排序规则已全部冻结，不再列为 Stage 9 待研究项：
 
 - 群攻伤害基数与伤害层映射（`MainAttackFinalDamage ≡ ActualTargetTroopLoss`，`CLVS9-B01 = CLOSED`）；
 - 群攻乘法取整规则（`FLOOR`，`CLVS9-B01 = CLOSED`）；
 - 群攻派生倒戈/攻心恢复基数与分担/分摊边界（`PER-SECONDARY DAMAGE EVENT`，`CLVS9-M01 = CLOSED`）；
+- 690084 状态容器模型（`SOURCE_BOUND_EFFECT_LIST`，多来源独立共存，`CLVS9-B02 = CLOSED`）；
+- 690084 同源重施加规则（`REFRESH`，刷新持续时间，`CLVS9-B02 = CLOSED`）；
+- 多来源群攻执行比较器（`SKILL_SLOT_ORDER`: Slot 0 $\to$ Slot 1 $\to$ Slot 2，`CLVS9-B02 = CLOSED`）；
+- 状态时效模型（`PERMANENT_SOURCE_BOUND` 固有型与 `TEMPORARY_TIMED` 赋予型，`CLVS9-B02 = CLOSED`）；
+- 副目标候选池范围与排除原则（存活队友，排除自身与实际主目标，`CLVS9-B03 = CLOSED`）；
+- 援护重定向原目标副目标资格（100% 具备副目标受击资格，`CLVS9-B03 = CLOSED`）；
+- 副目标确定性稳定排序规则（`GLOBAL_SLOT_ASCENDING`: pos 1 $\to$ pos 2 $\to$ pos 3 排除 actualTarget，`CLVS9-B03 = CLOSED`）；
+- 多群攻队列组织方式（`EFFECT_MAJOR_ORDER`，`CLVS9-B03 = CLOSED`）；
+- JIT 存活重校验规则（步前存活重读，阵亡直接跳过 SKIP，已访问槽位不回溯，`CLVS9-B03 = CLOSED`）；
 - 是否重新跑副目标基础伤害公式（否，`BLOCKED`）；
 - 是否可规避（是，`ALLOWED`）；
 - 是否可抵御及抵御次数消耗（是，`ALLOWED`，消耗 1 次抵御）；
@@ -193,9 +230,7 @@ Share Damage → Share = BLOCKED
 - 群攻触发分担后，Share Damage 是否继续触发受击响应（被动扣损，不触发受击 Reaction）。
 
 以下问题明确保持 OPEN，留待后续专用 Package 解决：
-- `CLVS9-B02`：690084 完整状态生命周期、重施加、多来源共存与倍率绑定（属于 RF-P07）；
-- `CLVS9-B03`：副目标候选池、数量、稳定排序队列与 JIT 存活重校验（属于 RF-P07）；
 - `CLVS9-B04`：主目标死亡、攻击者死亡、副将/主将阵亡终战边界（属于 RF-P04）。
 
-**最终状态：`CLEAVE CORE MECHANICS FROZEN (RF-P06 RE-FROZEN)`。**  
-（注：本文件不重命名为 FULL CONTRACT FROZEN，完整状态合同等待 RF-P07。）
+**最终状态：`CORE + STATE + TARGET CONTRACT FROZEN (RF-P07 RE-FROZEN)`。**  
+（注：本文件不重命名为 FULL CONTRACT FROZEN，死亡/终战屏障等待 RF-P04。）
