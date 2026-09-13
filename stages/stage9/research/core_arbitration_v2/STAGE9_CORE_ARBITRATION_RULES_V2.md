@@ -133,12 +133,18 @@ Distribution participant derived loss → 普通受击响应 = BLOCKED
 
 ### 6. 派生伤害 / 分流数学语义 (R3 + Frozen Records)
 
+本节仅作为 Core orchestration summary；各数值规则的 semantic owner 仍是对应 mechanism P0 / Freeze Record，Core 只消费并引用这些已冻结规则。
+
 #### 6.1 SPLIT / DAMAGE_SHARE — FROZEN
 
+Mechanism-owned numeric rule:
+
 ```text
-Dsharer = round(Dtotal × R)
+Dsharer = ROUND_HALF_UP(Dtotal × ShareRatio)
 Dtarget = Dtotal - Dsharer
 ```
+
+Authority: `STAGE9_DAMAGE_SHARE_MECHANICS_FREEZE_RECORD.md`.
 
 关键性质：
 
@@ -169,13 +175,15 @@ Dtarget = Dtotal
 no effective distribution
 ```
 
-若 `N > 0`：
+若 `N > 0`，mechanism-owned numeric rule 为：
 
 ```text
-Dtarget = round(Dtotal × (1 - R))
+Dtarget = ROUND_HALF_UP(Dtotal × (1 - DistributionRatio))
 Dtransfer = Dtotal - Dtarget
-Dparticipant = round(Dtransfer / N)
+Dparticipant = ROUND_HALF_UP(Dtransfer / N)
 ```
+
+Authority: `STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md`.
 
 每个承担者使用相同 `Dparticipant`，不使用最后一人吃余数规则。由于第二次独立取整，不要求：
 
@@ -211,17 +219,33 @@ CounterDamage
 
 #### 6.5 COPY / Cleave — FROZEN
 
+Mechanism-owned numeric rule:
+
 ```text
-CleaveDerivedDamage = MainAttackFinalDamage × CleaveRatio
+CleaveDerivedCalculatedDamage
+= FLOOR(
+    ActualTargetTroopLoss
+    × CleaveRatio
+  )
 ```
+
+Authority: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`.
 
 群攻继承原攻击 DamageType，并使用自身许可矩阵。
 
 #### 6.6 TRUE_FEEDBACK / Chain — FROZEN
 
+Mechanism-owned numeric rule:
+
 ```text
-ChainCalculatedDamage = TriggerNodeResolvedDamage × CurrentChainRatio
+ChainCalculatedDamage
+= FLOOR(
+    TriggerNodeResolvedDamage
+    × CurrentChainRatio
+  )
 ```
+
+Authority: `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`.
 
 Chain 为独立 `TRUE_FEEDBACK` 类型，不继承原始兵刃 / 谋略 DamageType。
 
@@ -229,12 +253,12 @@ Chain 为独立 `TRUE_FEEDBACK` 类型，不继承原始兵刃 / 谋略 DamageTy
 
 ### 7. 理论 / 计算伤害 vs 实际兵力损失
 
-群攻：使用主攻击最终结算伤害作为派生基数。
+群攻：派生基数固定为主目标实际成功提交的兵力损失 `ActualTargetTroopLoss`；计算值按 Cleave P0 使用 `FLOOR(ActualTargetTroopLoss × CleaveRatio)`。
 
 铁索：
 
 ```text
-ChainCalculatedDamage = TriggerNodeResolvedDamage × CurrentChainRatio
+ChainCalculatedDamage = FLOOR(TriggerNodeResolvedDamage × CurrentChainRatio)
 AppliedTroopLoss = min(ChainCalculatedDamage, CurrentTroops)
 CreditedDamage = AppliedTroopLoss
 ```
@@ -266,9 +290,10 @@ ActualTargetTroopLoss = min(Dtarget, target.currentTroops)
 #### 8.1 Cleave — FROZEN
 
 ```text
-MainAttackFinalDamage
+ActualTargetTroopLoss
 → × CleaveRatio
-→ CleaveDerivedDamage
+→ FLOOR
+→ CleaveDerivedCalculatedDamage
 → Evasion
 → Barrier
 → no target-side damage modifier re-entry
@@ -276,6 +301,8 @@ MainAttackFinalDamage
 → Troop Loss
 → allowed recovery callbacks
 ```
+
+Authority: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`. Core does not own or redefine the Cleave numeric rule.
 
 群攻：
 - 可规避；
@@ -291,6 +318,8 @@ MainAttackFinalDamage
 ```text
 TriggerNodeResolvedDamage
 → × CurrentChainRatio
+→ FLOOR
+→ ChainCalculatedDamage
 → TRUE_FEEDBACK
 → no Evasion
 → no Barrier
@@ -300,6 +329,8 @@ TriggerNodeResolvedDamage
 → restricted troop-loss settlement
 → no hit-response callback chain
 ```
+
+Authority: `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`. Core does not own or redefine the Chain numeric rule.
 
 Chain 不触发急救、反击、倒戈、攻心、刚烈等响应，也不再次触发 Chain。
 

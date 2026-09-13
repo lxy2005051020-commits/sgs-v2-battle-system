@@ -147,14 +147,14 @@ Across 109 `SHARE` partition cases, the observed Cleave damage on secondary targ
   - Hypothesis A ($D_{total}$): $\lfloor 685 \times 0.54 \rfloor = 369 \implies$ **REJECTED** (discrepancy $+55$, 100% contradiction).
   - Hypothesis B ($D_{target}$): $\lfloor 582 \times 0.54 \rfloor = \lfloor 314.28 \rfloor = \mathbf{314} \implies$ **CONFIRMED (EXACT MATCH)**.
 
-### Decisive Proof 2 (`战报_1105099_pid1100193.json` Event 112-128)
-- Attacker: 马云騄, Skill: 【瞋目横矛】 ($R = 62\%$).
-- Main target: 赵云, has 【严阵以待】 ($15.00\%$ Share).
-- Main target loss: $D_{target} = 475$.
-- Theoretical pre-share damage: $D_{total} \approx 559$.
-- Secondary target 主公 observed Cleave damage: **`295`**.
-  - Hypothesis A ($D_{total}$): $\lfloor 559 \times 0.62 \rfloor = 346 \implies$ **REJECTED** (discrepancy $+51$).
-  - Hypothesis B ($D_{target}$): $\lfloor 475 \times 0.62 \rfloor = \lfloor 294.5 \rfloor \to \mathbf{295}$ (or 294.5 with round half up on .5 boundary) $\implies$ **CONFIRMED**.
+### Archived Valid Example (`战报_2235624_pid2306204.json`)
+- Source: archived `CLEAVE_DAMAGE_LAYER_EVIDENCE.json`; no new battle-report scan or re-derivation was performed for this cleanup.
+- Main-hit base: $\mathbf{ActualTargetTroopLoss} = 635$ (non-overkill share case, therefore equal to the archived target loss for this event).
+- Cleave ratio: $R = 54\%$.
+- Exact product: $635 \times 0.54 = 342.90$.
+- Authoritative integerization: $\lfloor 342.90 \rfloor = \mathbf{342}$.
+- Archived observed Cleave damage: **`342`** (`pred_dtarget = 342`, exact match).
+- The malformed non-authoritative `战报_1105099_pid1100193.json` supporting example was removed from this proof section. The Frozen conclusion is unchanged: Cleave derives from `ActualTargetTroopLoss` and integerizes with `FLOOR`.
 
 ---
 
