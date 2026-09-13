@@ -1,6 +1,6 @@
 # STAGE 9 — Cross-Mechanism Runtime Orchestration
 
-> STATUS: **DRAFT — DESIGN AUDIT REQUIRED**  
+> STATUS: **DESIGN FROZEN — FREEZE AUDIT REQUIRED**  
 > Authoring baseline (battle): `4745d061345181aaf12c454ada9890d7b69c5598`  
 > Round1 repair baseline (battle): `05512d198c9016410ca14be2e40eb0c913cd1b77`  
 > Round2 audit baseline (battle): `fbeca591fd9d5df014035a5aa643f15bb5389c68`  
@@ -8,6 +8,11 @@
 > Authoring date: 2026-09-13  
 > Round1 repair date: 2026-09-13  
 > Round2 design repair date: 2026-09-13  
+> Round3 design audit: `PASS`  
+> Design freeze reviewed commit: `394d32e40b6584db9814f46dfbf44a2d5e753893`  
+> Design freeze reviewed `STAGE9.md` blob: `8972452d68d6c71e45563a9a2ec5d70826978c9b`  
+> Design freeze approving audit commit: `524438ef97f8170fd81d026f82f7ecf6ae828a90`  
+> Design freeze date: 2026-09-13  
 > This document is **Implementation Design Authority**, not gameplay research and not implementation approval.
 
 ---
@@ -58,14 +63,20 @@ No implementation convenience may silently become a gameplay rule.
 ### 0.2 Current admission state
 
 ```text
-Round1 design audit       = COMPLETE / FAIL — REPAIR REQUIRED
-Round1 design repair      = COMPLETE
-Round2 design audit       = COMPLETE / FAIL — REPAIR REQUIRED
-Round2 design repair      = COMPLETE IN THIS SPEC REVISION
-Round3 design audit       = REQUIRED / NOT EXECUTED
-Stage9 FROZEN             = NO
-Ready for implementation  = NO
-STATUS                    = DRAFT — DESIGN AUDIT REQUIRED
+Round1 design audit                = COMPLETE / FAIL — REPAIR REQUIRED
+Round1 design repair               = COMPLETE
+Round2 design audit                = COMPLETE / FAIL — REPAIR REQUIRED
+Round2 design repair               = COMPLETE IN THIS SPEC REVISION
+Round3 design audit                = COMPLETE / PASS
+Stage9 Design Frozen               = YES
+Stage9 Final Implementation Frozen = NO
+Design Freeze Admission            = ELIGIBLE / CONSUMED
+Implementation specification       = FROZEN
+Implementation Design Ready        = YES
+Build Prompt Admission             = PENDING FREEZE AUDIT
+Build Prompt Authoring             = PENDING FREEZE AUDIT
+Production Implementation          = NOT STARTED
+STATUS                             = DESIGN FROZEN — FREEZE AUDIT REQUIRED
 ```
 
 `DSTS9-B02` remains deliberately dual-status:
@@ -2678,22 +2689,24 @@ planned MODIFY production files = 17
 
 ```text
 STAGE9.md
-STATUS: DRAFT — DESIGN AUDIT REQUIRED
+STATUS: DESIGN FROZEN — FREEZE AUDIT REQUIRED
 
-Stage9 FROZEN = NO
-Ready for implementation = NO
-Round2 Design Repair = COMPLETE
-Round3 Design Audit = REQUIRED
+Stage9 Design Frozen = YES
+Stage9 Final Implementation Frozen = NO
+Round3 Design Audit = PASS
+Design Freeze Admission = ELIGIBLE / CONSUMED
+Implementation specification = FROZEN
+Implementation Design Ready = YES
+Build Prompt Authoring = PENDING FREEZE AUDIT
+Production Implementation = NOT STARTED
 ```
 
-Round2 repair does not authorize implementation, Build Prompt creation, or Design Freeze.
+Design Freeze does not authorize implementation or Build Prompt creation. It records the status transition of the Round3-approved implementation specification without changing its semantic design body.
 
 Next permitted step:
 
 ```text
-Stage9 Design Audit Round 3
+Stage9 Design Freeze Audit
 ```
 
-Round3 is a final repaired-design verification. Only a pure PASS may then admit a separate Stage9 Design Freeze step.
-
-Do not create `STAGE9_BUILD_PROMPT.md`, do not begin production implementation, and do not declare Stage9 FROZEN before Round3 independently verifies this repaired design.
+Do not create `STAGE9_BUILD_PROMPT.md` and do not begin production implementation before the separate Freeze Audit verifies this freeze commit.
