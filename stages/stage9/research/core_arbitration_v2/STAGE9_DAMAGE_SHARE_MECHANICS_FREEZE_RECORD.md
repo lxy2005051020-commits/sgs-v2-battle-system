@@ -374,7 +374,16 @@ TARGET_DEATH_INTERRUPT
 
 即使前面已经计算出分担份额，该份额也不会再执行。
 
-这遵循项目全局死亡硬终止原则，同时明确了分担内部的 commit 顺序。
+### 11.1 经验实证闭环（SHS9-B02 冻结）
+
+经 RF-P05 无偏 lethal-first 提取器对全库 2,128 份分担战报（共 13,834 次分担事件）扫描验证：
+- 提取到符合致死门禁的原目标阵亡样本 **128 例**（覆盖【严阵以待】、【闭月】、【校胜帷幄】、【护卫】等全部分担来源）；
+- **128 / 128 例（100.0%）**在原目标兵力归 0 阵亡后，未提交的 $D_{\text{sharer}}$ 均被**完全取消 / 丢弃**，分担者实际扣兵为严格的 **0**，且无任何后续延迟提交（`TARGET_DEATH_CANCELS_PENDING_SHARER`）；
+- 验证分担者存活且兵力充足时同样免受扣兵；
+- 彻底排除非致死情况下分担者正常扣兵的 20 例对照组（`SHARE_CONTROL` 100% 提交分担扣兵）；
+- 完整证据集固化于 `stages/stage9/research/partition_transaction_death/SHARE_LETHAL_TARGET_EVIDENCE.json`。
+
+此项冻结正式关闭 Finding **`SHS9-B02`**。
 
 ---
 
@@ -946,7 +955,7 @@ T24 shared actual troop loss enters wounded processing
 - 与援护、规避、抵御、分摊、普通减伤的关键顺序；
 - 终伤后拆分公式与取整（SHS9-B01：ROUND_HALF_UP）；
 - target-first commit；
-- target death interrupt；
+- target death interrupt（SHS9-B02：经 128 例无混杂致死样本 100% 验证，原目标因 Dtarget 阵亡后，未提交的 Dsharer 立即丢弃，分担者本次扣兵严格为 0）；
 - sharer overflow；
 - 多段 / 多目标逐实例实时校验；
 - 生命周期与 Turn Start duration ownership；
@@ -962,7 +971,6 @@ T24 shared actual troop loss enters wounded processing
 本合同不冻结：
 
 - 各来源战法的具体 `R` 数学公式；
-- 致死原目标对分担者未提交份额的精确保留/取消（SHS9-B02，留待 RF-P05）；
 - 普通基础兵刃/谋略伤害公式；
 - AOE targetQueue 的具体目标排序规则；
 - 伤兵系统自己的精确生成比例、取整和回合死淘公式；
