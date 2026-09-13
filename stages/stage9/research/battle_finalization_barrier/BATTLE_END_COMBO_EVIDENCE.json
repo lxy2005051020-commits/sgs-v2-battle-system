@@ -1,0 +1,1993 @@
+{
+  "stats": {
+    "total_files_scanned": 32999,
+    "total_battle_ending_normal_attacks": 16407,
+    "commander_kills": 11552,
+    "first_attack_kills": 15393,
+    "first_attack_with_combo_potential": 4676,
+    "combo_checkpoints_after_lethal_victory": 688,
+    "second_attacks_after_lethal_victory": 131
+  },
+  "sample_cases": [
+    {
+      "file": "战报_1069622_pid1064640.json",
+      "group_idx": 4,
+      "actor": "黄月英",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [勇城卫]由于主将[勇城卫]阵亡，损失了兵力70（631）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力49（445）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1071964_pid1066990.json",
+      "group_idx": 1,
+      "actor": "董卓",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [董卓]执行来自【酒池肉林】的「倒戈」效果",
+        "55: [董卓]恢复了兵力10（1892）",
+        "724: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力63（570）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力150（1350）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068837_pid1063881.json",
+      "group_idx": 0,
+      "actor": "周瑜",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [王异]执行来自【文武双全】的「文全[预备]」效果",
+        "138: [王异]的智力提高了23.30 (246.30)",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力53（477）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力55（501）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070541_pid1065559.json",
+      "group_idx": 2,
+      "actor": "程普",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [程普]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [程普]恢复了兵力7（1233）",
+        "724: ",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068838_pid1063850.json",
+      "group_idx": 2,
+      "actor": "吕蒙",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "16: [吕蒙]来自[吕蒙]【白衣渡江】的「白衣渡江」效果因几率没有生效",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力111（1004）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力40（369）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068496_pid1063510.json",
+      "group_idx": 2,
+      "actor": "诸葛亮",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力90（813）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1049707_pid1044769.json",
+      "group_idx": 0,
+      "actor": "高览",
+      "attack_idx": 1,
+      "victim": "游骑",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [游骑]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [死士]由于主将[游骑]阵亡，损失了兵力10（90）",
+        "157: 防守方主将[游骑]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070494_pid1065512.json",
+      "group_idx": 2,
+      "actor": "袁绍",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力94（846）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068492_pid1063508.json",
+      "group_idx": 3,
+      "actor": "主公",
+      "attack_idx": 1,
+      "victim": "周瑜",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [周瑜]兵力为0，无法再战",
+        "736: ",
+        "96: [主公]执行来自【国之桢干】的「倒戈」效果",
+        "55: [主公]恢复了兵力69（4328）",
+        "724: ",
+        "733: ",
+        "157: 防守方主将[周瑜]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068835_pid1063874.json",
+      "group_idx": 3,
+      "actor": "司马懿",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力28（259）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069523_pid1064541.json",
+      "group_idx": 1,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力31（288）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1049608_pid1044668.json",
+      "group_idx": 0,
+      "actor": "张飞",
+      "attack_idx": 1,
+      "victim": "死士",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [死士]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[死士]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068488_pid1063505.json",
+      "group_idx": 7,
+      "actor": "张任",
+      "attack_idx": 1,
+      "victim": "陆逊",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [陆逊]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [主公]由于主将[陆逊]阵亡，损失了兵力98（891）",
+        "209: [貂蝉]由于主将[陆逊]阵亡，损失了兵力226（2034）",
+        "157: 攻击方主将[陆逊]兵力为0，无法再战，防守方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1004818_pid1000080.json",
+      "group_idx": 0,
+      "actor": "赵云",
+      "attack_idx": 1,
+      "victim": "开路先锋",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [开路先锋]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[开路先锋]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070489_pid1065507.json",
+      "group_idx": 3,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力36（329）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069517_pid1064535.json",
+      "group_idx": 3,
+      "actor": "公孙瓒",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070488_pid1065506.json",
+      "group_idx": 2,
+      "actor": "夏侯渊",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力40（363）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力117（1057）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069510_pid1064528.json",
+      "group_idx": 3,
+      "actor": "朱儁",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [勇城卫]由于主将[勇城卫]阵亡，损失了兵力41（375）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力15（142）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068811_pid1063828.json",
+      "group_idx": 1,
+      "actor": "刘晔",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1045219_pid1040267.json",
+      "group_idx": 1,
+      "actor": "游骑",
+      "attack_idx": 1,
+      "victim": "吕玲绮",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [吕玲绮]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [朱儁]由于主将[吕玲绮]阵亡，损失了兵力1（11）",
+        "157: 攻击方主将[吕玲绮]兵力为0，无法再战，防守方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068809_pid1063821.json",
+      "group_idx": 4,
+      "actor": "庞统",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068806_pid1063825.json",
+      "group_idx": 2,
+      "actor": "太史慈",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [太史慈]执行来自【神射】的「神射[预备]」效果",
+        "149: [勇城卫]已经死亡，无法获得「统率降低」效果",
+        "149: [勇城卫]已经死亡，无法获得「武力降低」效果",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068477_pid1063494.json",
+      "group_idx": 0,
+      "actor": "孙权",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "16: [孙权]来自[孙权]【坐断东南】的「坐断东南[预备]」效果因几率没有生效",
+        "733: ",
+        "209: [勇城卫]由于主将[勇城卫]阵亡，损失了兵力200（1800）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力51（466）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1045114_pid1040161.json",
+      "group_idx": 0,
+      "actor": "军士",
+      "attack_idx": 1,
+      "victim": "高览",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [高览]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [关羽]由于主将[高览]阵亡，损失了兵力1（11）",
+        "157: 攻击方主将[高览]兵力为0，无法再战，防守方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070479_pid1065497.json",
+      "group_idx": 1,
+      "actor": "太史慈",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [太史慈]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [太史慈]恢复了兵力0（3571）",
+        "724: ",
+        "96: [太史慈]执行来自【神射】的「神射[预备]」效果",
+        "149: [勇城卫]已经死亡，无法获得「统率降低」效果",
+        "149: [勇城卫]已经死亡，无法获得「武力降低」效果",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070479_pid1065497.json",
+      "group_idx": 1,
+      "actor": "太史慈",
+      "attack_idx": 2,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [太史慈]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [太史慈]恢复了兵力0（3571）",
+        "724: ",
+        "96: [太史慈]执行来自【神射】的「神射[预备]」效果",
+        "149: [勇城卫]已经死亡，无法获得「统率降低」效果",
+        "149: [勇城卫]已经死亡，无法获得「武力降低」效果",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069504_pid1064522.json",
+      "group_idx": 1,
+      "actor": "曹操",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [勇城卫]由于主将[勇城卫]阵亡，损失了兵力49（442）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力147（1324）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1044974_pid1040021.json",
+      "group_idx": 0,
+      "actor": "游骑",
+      "attack_idx": 1,
+      "victim": "张飞",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [张飞]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [许褚]由于主将[张飞]阵亡，损失了兵力1（9）",
+        "157: 攻击方主将[张飞]兵力为0，无法再战，防守方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068803_pid1063819.json",
+      "group_idx": 1,
+      "actor": "袁绍",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [袁绍]执行来自【国之桢干】的「倒戈」效果",
+        "55: [袁绍]恢复了兵力0（3757）",
+        "724: ",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068469_pid1063487.json",
+      "group_idx": 1,
+      "actor": "张飞",
+      "attack_idx": 1,
+      "victim": "颜良",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [颜良]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [潘璋]由于主将[颜良]阵亡，损失了兵力281（2534）",
+        "157: 防守方主将[颜良]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068841_pid1063887.json",
+      "group_idx": 4,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068464_pid1063486.json",
+      "group_idx": 0,
+      "actor": "魏延",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力156（1404）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070474_pid1065492.json",
+      "group_idx": 6,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力82（742）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力30（271）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069502_pid1064520.json",
+      "group_idx": 4,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [张宝]执行来自【兵无常势】的「兵无常势[预备]」效果",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068800_pid1063822.json",
+      "group_idx": 1,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力36（332）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069501_pid1064519.json",
+      "group_idx": 3,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [张宝]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [张宝]恢复了兵力3（1884）",
+        "724: ",
+        "733: ",
+        "209: [勇城卫]由于主将[勇城卫]阵亡，损失了兵力122（1100）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力6（58）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070450_pid1065468.json",
+      "group_idx": 3,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068796_pid1063801.json",
+      "group_idx": 3,
+      "actor": "吕蒙",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [吕蒙]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [吕蒙]恢复了兵力3（1003）",
+        "724: ",
+        "16: [吕蒙]来自[吕蒙]【白衣渡江】的「白衣渡江」效果因几率没有生效",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力1（13）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070448_pid1065466.json",
+      "group_idx": 1,
+      "actor": "主公",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [主公]执行来自【兵无常势】的「兵无常势[预备]」效果",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力70（630）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069499_pid1064517.json",
+      "group_idx": 4,
+      "actor": "袁绍",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068445_pid1063439.json",
+      "group_idx": 5,
+      "actor": "胡车儿",
+      "attack_idx": 1,
+      "victim": "赵云",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [赵云]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 攻击方主将[赵云]兵力为0，无法再战，防守方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068793_pid1063814.json",
+      "group_idx": 2,
+      "actor": "皇甫嵩",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068444_pid1063438.json",
+      "group_idx": 7,
+      "actor": "周瑜",
+      "attack_idx": 1,
+      "victim": "黄忠",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [黄忠]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[黄忠]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069450_pid1064467.json",
+      "group_idx": 4,
+      "actor": "法正",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力43（390）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068792_pid1063813.json",
+      "group_idx": 0,
+      "actor": "郭淮",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [郭淮]执行来自【乱世奸雄】的「乱世奸雄」效果",
+        "55: [曹操]恢复了兵力0（3700）",
+        "724: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068790_pid1063807.json",
+      "group_idx": 1,
+      "actor": "皇甫嵩",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力37（339）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070421_pid1065439.json",
+      "group_idx": 5,
+      "actor": "蒋琬",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068787_pid1063797.json",
+      "group_idx": 3,
+      "actor": "孙策",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力33（301）",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力26（240）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070542_pid1065560.json",
+      "group_idx": 2,
+      "actor": "法正",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [法正]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [法正]恢复了兵力0（719）",
+        "724: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力67（606）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070418_pid1065436.json",
+      "group_idx": 2,
+      "actor": "张允",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力36（329）",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力25（233）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068786_pid1063796.json",
+      "group_idx": 3,
+      "actor": "皇甫嵩",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068428_pid1063429.json",
+      "group_idx": 0,
+      "actor": "诸葛亮",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "16: [诸葛亮]来自[主公]【白毦兵】的「白毦兵[预备]」效果因几率没有生效",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1025176_pid1020342.json",
+      "group_idx": 5,
+      "actor": "黄盖",
+      "attack_idx": 1,
+      "victim": "徐盛",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [徐盛]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [张燕]由于主将[徐盛]阵亡，损失了兵力169（1524）",
+        "209: [潘凤]由于主将[徐盛]阵亡，损失了兵力39（356）",
+        "157: 防守方主将[徐盛]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070417_pid1065435.json",
+      "group_idx": 3,
+      "actor": "郭淮",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068784_pid1063810.json",
+      "group_idx": 3,
+      "actor": "夏侯惇",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [夏侯惇]执行来自【酒池肉林】的「倒戈」效果",
+        "55: [夏侯惇]恢复了兵力0（2094）",
+        "724: ",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_101410_pid101301.json",
+      "group_idx": 0,
+      "actor": "全琮",
+      "attack_idx": 1,
+      "victim": "颜良",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [颜良]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 攻击方主将[颜良]兵力为0，无法再战，防守方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070414_pid1065432.json",
+      "group_idx": 1,
+      "actor": "刘晔",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [刘晔]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [刘晔]恢复了兵力2（2078）",
+        "724: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力3（31）",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力23（210）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069358_pid1064375.json",
+      "group_idx": 4,
+      "actor": "王异",
+      "attack_idx": 1,
+      "victim": "钟会",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [钟会]兵力为0，无法再战",
+        "736: ",
+        "96: [王异]执行来自【文武双全】的「攻心」效果",
+        "55: [王异]恢复了兵力0（4326）",
+        "724: ",
+        "96: [王异]执行来自【文武双全】的「文全[预备]」效果",
+        "64: [王异]身上的「智力增加」效果已达最大叠加层数",
+        "733: ",
+        "157: 防守方主将[钟会]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068780_pid1063791.json",
+      "group_idx": 2,
+      "actor": "甘宁",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力40（363）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068423_pid1063420.json",
+      "group_idx": 6,
+      "actor": "周瑜",
+      "attack_idx": 1,
+      "victim": "于禁",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [于禁]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [曹彰]由于主将[于禁]阵亡，损失了兵力98（890）",
+        "157: 防守方主将[于禁]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068421_pid1063458.json",
+      "group_idx": 0,
+      "actor": "张飞",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力27（250）",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力70（630）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069355_pid1064372.json",
+      "group_idx": 5,
+      "actor": "主公",
+      "attack_idx": 1,
+      "victim": "马超",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [马超]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [韩遂]由于主将[马超]阵亡，损失了兵力575（5178）",
+        "157: 防守方主将[马超]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068775_pid1063786.json",
+      "group_idx": 3,
+      "actor": "刘晔",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力15（140）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068418_pid1063417.json",
+      "group_idx": 0,
+      "actor": "太史慈",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [太史慈]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [太史慈]恢复了兵力0（5000）",
+        "724: ",
+        "96: [太史慈]执行来自【锦帆军】的「锦帆军」效果",
+        "149: [强城卫]已经死亡，无法获得「溃逃」效果",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力70（630）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070405_pid1065423.json",
+      "group_idx": 4,
+      "actor": "赵云",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力8（79）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068774_pid1063799.json",
+      "group_idx": 1,
+      "actor": "陈宫",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068413_pid1063464.json",
+      "group_idx": 0,
+      "actor": "曹操",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1008900_pid1004122.json",
+      "group_idx": 0,
+      "actor": "李典",
+      "attack_idx": 1,
+      "victim": "城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [李典]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [李典]恢复了兵力0（2586）",
+        "724: ",
+        "733: ",
+        "209: [城卫]由于主将[城卫]阵亡，损失了兵力20（180）",
+        "157: 防守方主将[城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068843_pid1063856.json",
+      "group_idx": 2,
+      "actor": "法正",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力50（452）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068771_pid1063785.json",
+      "group_idx": 2,
+      "actor": "程昱",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力49（441）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070402_pid1065420.json",
+      "group_idx": 6,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [张宝]执行来自【乱世奸雄】的「乱世奸雄」效果",
+        "55: [曹操]恢复了兵力0（869）",
+        "96: [张宝]执行来自【兵无常势】的「兵无常势[预备]」效果",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069291_pid1064307.json",
+      "group_idx": 2,
+      "actor": "甘宁",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力18（163）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力96（873）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068770_pid1063784.json",
+      "group_idx": 1,
+      "actor": "主公",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068842_pid1063854.json",
+      "group_idx": 2,
+      "actor": "主公",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力64（585）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力6（63）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069277_pid1064293.json",
+      "group_idx": 5,
+      "actor": "李典",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [李典]执行来自【国之桢干】的「倒戈」效果",
+        "55: [李典]恢复了兵力0（3713）",
+        "724: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力61（550）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力81（731）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068406_pid1063398.json",
+      "group_idx": 6,
+      "actor": "周瑜",
+      "attack_idx": 1,
+      "victim": "孟获",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [孟获]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[孟获]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068765_pid1063781.json",
+      "group_idx": 2,
+      "actor": "陶谦",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力84（765）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力28（259）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1008732_pid1003954.json",
+      "group_idx": 0,
+      "actor": "袁绍",
+      "attack_idx": 1,
+      "victim": "城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [城卫]由于主将[城卫]阵亡，损失了兵力20（180）",
+        "209: [城卫]由于主将[城卫]阵亡，损失了兵力20（180）",
+        "157: 防守方主将[城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070396_pid1065414.json",
+      "group_idx": 4,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069267_pid1064283.json",
+      "group_idx": 1,
+      "actor": "皇甫嵩",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力31（288）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1008613_pid1003834.json",
+      "group_idx": 0,
+      "actor": "太史慈",
+      "attack_idx": 1,
+      "victim": "城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [太史慈]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [太史慈]恢复了兵力0（4887）",
+        "724: ",
+        "96: [太史慈]执行来自【文武双全】的「武全[预备]」效果",
+        "138: [太史慈]的武力提高了21.70 (294.67)",
+        "96: [太史慈]执行来自【神射】的「神射[预备]」效果",
+        "149: [城卫]已经死亡，无法获得「统率降低」效果",
+        "149: [城卫]已经死亡，无法获得「武力降低」效果",
+        "733: ",
+        "209: [城卫]由于主将[城卫]阵亡，损失了兵力20（180）",
+        "157: 防守方主将[城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068403_pid1063394.json",
+      "group_idx": 6,
+      "actor": "关羽",
+      "attack_idx": 1,
+      "victim": "许褚",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [许褚]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [文聘]由于主将[许褚]阵亡，损失了兵力250（2255）",
+        "157: 防守方主将[许褚]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068764_pid1063780.json",
+      "group_idx": 1,
+      "actor": "主公",
+      "attack_idx": 1,
+      "victim": "马超",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [马超]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[马超]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070395_pid1065413.json",
+      "group_idx": 2,
+      "actor": "李典",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069265_pid1064281.json",
+      "group_idx": 1,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [张宝]执行来自【乱世奸雄】的「乱世奸雄」效果",
+        "55: [曹操]恢复了兵力0（1898）",
+        "724: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力33（301）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068763_pid1063779.json",
+      "group_idx": 1,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068401_pid1063463.json",
+      "group_idx": 2,
+      "actor": "袁绍",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [袁绍]执行来自【酒池肉林】的「倒戈」效果",
+        "55: [袁绍]恢复了兵力4（864）",
+        "724: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力14（132）",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力37（334）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068760_pid1063776.json",
+      "group_idx": 1,
+      "actor": "赵云",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力114（1033）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069222_pid1064239.json",
+      "group_idx": 0,
+      "actor": "郭淮",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 2,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [勇城卫]由于主将[勇城卫]阵亡，损失了兵力200（1800）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力116（1044）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070387_pid1065405.json",
+      "group_idx": 1,
+      "actor": "刘晔",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力44（401）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069212_pid1064228.json",
+      "group_idx": 3,
+      "actor": "诸葛亮",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力14（130）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1008220_pid1003447.json",
+      "group_idx": 0,
+      "actor": "太史慈",
+      "attack_idx": 1,
+      "victim": "城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [城卫]兵力为0，无法再战",
+        "736: ",
+        "96: [太史慈]执行来自【锦帆百翎】的「倒戈」效果",
+        "55: [太史慈]恢复了兵力0（1800）",
+        "724: ",
+        "96: [太史慈]执行来自【神射】的「神射[预备]」效果",
+        "149: [城卫]已经死亡，无法获得「统率降低」效果",
+        "149: [城卫]已经死亡，无法获得「武力降低」效果",
+        "733: ",
+        "209: [城卫]由于主将[城卫]阵亡，损失了兵力20（180）",
+        "157: 防守方主将[城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068758_pid1063775.json",
+      "group_idx": 3,
+      "actor": "张宝",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068395_pid1063381.json",
+      "group_idx": 0,
+      "actor": "吕布",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": true,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "16: [吕布]来自[郭嘉]【十胜十败】的「胜论[预备]」效果因几率没有生效",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力55（504）",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力70（630）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070386_pid1065404.json",
+      "group_idx": 4,
+      "actor": "甘宁",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1069157_pid1064174.json",
+      "group_idx": 2,
+      "actor": "黄月英",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力60（549）",
+        "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力99（892）",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068393_pid1063380.json",
+      "group_idx": 6,
+      "actor": "刘备",
+      "attack_idx": 1,
+      "victim": "张绣",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [张绣]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [丁奉]由于主将[张绣]阵亡，损失了兵力135（1223）",
+        "157: 防守方主将[张绣]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070383_pid1065401.json",
+      "group_idx": 2,
+      "actor": "甘宁",
+      "attack_idx": 1,
+      "victim": "强城卫",
+      "victim_pos": 3,
+      "is_commander": false,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [强城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力26（234）",
+        "209: [强城卫]由于主将[强城卫]阵亡，损失了兵力48（437）",
+        "157: 防守方主将[强城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1068729_pid1063746.json",
+      "group_idx": 0,
+      "actor": "勇城卫",
+      "attack_idx": 1,
+      "victim": "张辽",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [张辽]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 攻击方主将[张辽]兵力为0，无法再战，防守方胜利！"
+      ]
+    },
+    {
+      "file": "战报_1070382_pid1065400.json",
+      "group_idx": 3,
+      "actor": "刘晔",
+      "attack_idx": 1,
+      "victim": "勇城卫",
+      "victim_pos": 1,
+      "is_commander": true,
+      "has_combo_potential": false,
+      "combo_checkpoint_found": false,
+      "second_attack_found": false,
+      "events_between_death_and_victory": [
+        "163: [勇城卫]兵力为0，无法再战",
+        "736: ",
+        "733: ",
+        "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+      ]
+    }
+  ]
+}
