@@ -1,4 +1,4 @@
-# Stage 9：Contract Closure / Current Authority Navigation
+# Stage 9：Cross-Mechanism Runtime Orchestration / Design Audit Pending
 
 [返回阶段索引](../README.md)
 
@@ -10,23 +10,30 @@ Formal Stage8 Reopen = NO
 
 Remaining Architecture Blockers = 0
 Remaining Runtime Ambiguities   = 0
-RF-C01 Hardening Findings Open  = 0
-RF-C02 DOC_DRIFT Open           = 0
+Remaining Pre-Spec Findings     = 0
 
-STAGE9 DESIGN ADMISSION = READY
-STAGE9.md created       = NO
-Global Final Audit      = NOT EXECUTED IN RF-C02
+STAGE9 SPEC AUTHORING ADMISSION = READY
+STAGE9.md = DRAFT — DESIGN AUDIT REQUIRED
+Stage9 FROZEN = NO
+Ready for implementation = NO
 ```
 
 Stage 9 只在 Stage 8 已冻结 seams 周围做 orchestration、target arbitration、derived operation、partition 与 finalization coordination；**不替换 Stage 8 Damage Pipeline**。
 
+## Implementation design authority
+
+- [STAGE9.md — DRAFT / DESIGN AUDIT REQUIRED](STAGE9.md)
+- [Stage9 Authoring Report](STAGE9_AUTHORING_REPORT.md)
+
+`STAGE9.md` 负责“已冻结玩法语义如何映射为可实现、可测试、可审计的代码架构”，不负责重新研究玩法。
+
 ## Current entry points
 
-### RF-C02 documentation closure
+### Authoring admission / current authority
 
-- [RF-C02 DOC_DRIFT Ledger](docsync/RF_C02_DOC_DRIFT_LEDGER.md)
+- [Pre-Spec Delta Audit](audits/STAGE9_PRE_SPEC_DELTA_AUDIT.md)
 - [Stage 9 Authority Map + Mechanism Status Matrix](docsync/STAGE9_AUTHORITY_MAP.md)
-- [RF-C02 Documentation Sync Report](docsync/RF_C02_DOCUMENTATION_SYNC_REPORT.md)
+- [Global Cross-Mechanism Final Audit](audits/STAGE9_GLOBAL_CROSS_MECHANISM_FINAL_AUDIT.md)
 
 ### Shared P0 arbitration
 
@@ -64,7 +71,7 @@ Stage 9 只在 Stage 8 已冻结 seams 周围做 orchestration、target arbitrat
 | 690097 | CHAIN_LINK / 铁索连环 | FROZEN | YES | NO current blocking debt |
 | 690087 | DAMAGE_SHARE / 分担 | FROZEN | YES | NO current blocking debt |
 | 690086 | DISTRIBUTION / 分摊 | RUNTIME_READY_WITH_RESEARCH_DEBT | YES | `DSTS9-B02` empirical OPEN / UNOBSERVED; runtime CLOSED BY EXPLICIT PROJECT_RUNTIME_DEFAULT |
-| 690085 | COUNTERATTACK / 反击 | FROZEN | YES | non-blocking fidelity notes remain for universal comparator/dispel; no runtime ambiguity |
+| 690085 | COUNTERATTACK / 反击 | FROZEN | YES | non-blocking universal comparator/dispel fidelity notes |
 
 ## Distribution dual status
 
@@ -80,17 +87,13 @@ Research Debt: YES
 
 ## Historical material policy
 
-九份 independent contract audit 与 R1-R8 evidence reports 是 **HISTORICAL** 研究/审计快照。其 findings 与当时 verdict 保持可追踪，不因 repair 被改写。
-
-[`audits/STAGE9_OPEN_FINDING_CONSOLIDATION.md`](audits/STAGE9_OPEN_FINDING_CONSOLIDATION.md) 是 **HISTORICAL CONSOLIDATION SNAPSHOT**：它记录当时的 raw findings、architecture-impacting findings 与 repair-package plan，不是当前 open-finding 状态表。Current closure status 以 RF-P01..P07、RF-C01、RF-C02 与后续 final audit 为准。
-
-[`research/core_arbitration_v2/README.md`](research/core_arbitration_v2/README.md) 负责研究档案导航，不再声明某个已经 FROZEN 的机制为 “Next Core Research Target”。
+九份 independent contract audit 与 R1-R8 evidence reports 是 **HISTORICAL** 研究/审计快照。Current closure status 以 current mechanism/shared P0、RF-P01..P07、RF-C01、RF-C02、Global Final Audit 与 Pre-Spec Delta Audit 为准。
 
 ## Next step
 
 ```text
 NEXT STEP:
-Stage9 Global Cross-Mechanism Final Audit
+Stage9 Design Audit Round 1
 ```
 
-RF-C02 到此停止，不执行该 final audit，也不创建 `STAGE9.md`。
+在设计审计完成并正式冻结前，不创建 `STAGE9_BUILD_PROMPT.md`，不开始 Stage9 production implementation。
