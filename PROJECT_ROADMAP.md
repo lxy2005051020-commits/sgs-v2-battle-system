@@ -536,7 +536,7 @@ ModifyAttributeEffect
 ModifyDamageEffect
 ```
 
-是否在 Stage 5 第一批加入，需要在 `STAGE5.md` 中重新审计，不应仅凭路线图直接实现。
+是否在 Stage 5 第一批加入，需要在 `stages/stage5/STAGE5.md` 中重新审计，不应仅凭路线图直接实现。
 
 ## 9.2 Stage 5 的关键难点：状态运行参数
 
@@ -1141,7 +1141,7 @@ Stage 4 最终审计
 → Stage 4 FROZEN
 
 里程碑 2
-研究并编写 STAGE5.md
+研究并编写 stages/stage5/STAGE5.md
 → Effect
 → 状态运行参数合同
 → EffectExecutor
@@ -1170,10 +1170,10 @@ Stage 6 SkillDefinition / SkillRuntime
 详细施工规则仍以对应：
 
 ```text
-STAGE3.md
-STAGE4.md
-未来 STAGE5.md
-未来 STAGE6.md
+stages/stage3/STAGE3.md
+stages/stage4/STAGE4.md
+未来 stages/stage5/STAGE5.md
+未来 stages/stage6/STAGE6.md
 ...
 ```
 

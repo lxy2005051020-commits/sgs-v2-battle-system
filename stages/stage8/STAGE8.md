@@ -341,7 +341,7 @@ lxy2005051020-commits/sgs-state-mechanics-research
 Stage 8 production mapping 的正式 Evidence Matrix 固定存放：
 
 ```text
-research/stage8_evidence_matrix/STAGE8_EVIDENCE_MATRIX.md
+stages/stage8/STAGE8_EVIDENCE_MATRIX.md
 ```
 
 Matrix 中引用外部研究时必须记录：
@@ -2247,7 +2247,7 @@ finite
 Stage 8 v2 不再用模糊的 “EVIDENCE GATE” 占位作为施工 scope 开关；正式 artifact：
 
 ```text
-research/stage8_evidence_matrix/STAGE8_EVIDENCE_MATRIX.md
+stages/stage8/STAGE8_EVIDENCE_MATRIX.md
 ```
 
 必须存在并给出唯一 verdict。
@@ -2286,7 +2286,7 @@ weakness compatibility migration
 正式文件：
 
 ```text
-research/stage8_evidence_matrix/STAGE8_EVIDENCE_MATRIX.md
+stages/stage8/STAGE8_EVIDENCE_MATRIX.md
 ```
 
 每个候选至少记录：
@@ -2820,7 +2820,7 @@ sgs_v2/battle_core/__init__.py
 文档 / 研究：
 
 ```text
-research/stage8_evidence_matrix/STAGE8_EVIDENCE_MATRIX.md
+stages/stage8/STAGE8_EVIDENCE_MATRIX.md
 ```
 
 如果某官方状态没有 PASS：
@@ -3508,7 +3508,7 @@ STAGE8.md v2 修订（当前）
 ↓
 STAGE8.md DESIGN FROZEN
 ↓
-prompts/STAGE8_BUILD_PROMPT.md
+stages/stage8/STAGE8_BUILD_PROMPT.md
 ↓
 Stage 8 施工分支
 ↓

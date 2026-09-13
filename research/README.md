@@ -33,7 +33,7 @@ stage9_core_arbitration_v1 第一轮实证研究（历史对比资料）
 ## Stage 9 核心底层裁决实证资料 (v2 - 当前规范基线)
 
 ```text
-research/stage9_core_arbitration_v2/
+stages/stage9/research/core_arbitration_v2/
 ```
 
 针对 v1 审计反馈开展的第二轮定向反例与控制变量实证研究。通过大规模战报统计与边缘案例穷举，完成了目标重定向、群攻/连环派生管线、分担/分摊数学模型以及反击触发、时序、伤害管线、多来源批次与死亡边界等核心机制的严格实证，并建立了对应冻结合同。
@@ -118,7 +118,7 @@ DAMAGE_SHARE > DISTRIBUTION
 ## Stage 9 核心底层裁决实证资料 (v1 - 历史参考)
 
 ```text
-research/stage9_core_arbitration_v1/
+stages/stage9/research/core_arbitration_v1/
 ```
 
 第一轮探索性战报实证归纳，厘清了目标重定向、意图与承伤者解耦、普攻生命周期等初版 12 项公共底层裁决规则，供版本沿革比对参考。

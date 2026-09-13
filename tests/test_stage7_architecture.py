@@ -156,8 +156,8 @@ def test_damage_system_stage7_boundary_does_not_gain_recovery_or_trigger_executi
 def test_evidence_matrix_gate_keeps_official_periodic_states_deferred() -> None:
     matrix = (
         ROOT_DIR
-        / "research"
-        / "stage7_evidence_matrix"
+        / "stages"
+        / "stage7"
         / "STAGE7_EVIDENCE_MATRIX.md"
     ).read_text(encoding="utf-8")
     deferred = (

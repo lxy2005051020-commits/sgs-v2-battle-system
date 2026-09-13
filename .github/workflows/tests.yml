@@ -43,6 +43,6 @@ jobs:
             tests
             data
             research
-            stages/stage8
+            stages
           if-no-files-found: error
           retention-days: 1

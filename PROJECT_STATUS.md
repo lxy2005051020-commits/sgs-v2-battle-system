@@ -38,7 +38,7 @@ GitHub Actions:
 success
 ```
 
-正式审计：`STAGE4_FINAL_AUDIT.md`
+正式审计：`stages/stage4/STAGE4_FINAL_AUDIT.md`
 
 状态：`✅ FROZEN`
 
@@ -60,9 +60,9 @@ GitHub Actions:
 success
 ```
 
-正式施工文档：`STAGE5.md`
+正式施工文档：`stages/stage5/STAGE5.md`
 
-正式审计：`STAGE5_FINAL_AUDIT.md`
+正式审计：`stages/stage5/STAGE5_FINAL_AUDIT.md`
 
 状态：`✅ FROZEN`
 
@@ -70,9 +70,9 @@ success
 
 # Stage 6 封版基线
 
-正式施工文档：`STAGE6.md`
+正式施工文档：`stages/stage6/STAGE6.md`
 
-正式审计：`STAGE6_FINAL_AUDIT.md`
+正式审计：`stages/stage6/STAGE6_FINAL_AUDIT.md`
 
 最终审计结果：
 
@@ -115,13 +115,13 @@ success
 
 # Stage 7 封版基线
 
-正式施工合同：`STAGE7.md`
+正式施工合同：`stages/stage7/STAGE7.md`
 
-正式施工 Prompt：`prompts/STAGE7_BUILD_PROMPT.md`
+正式施工 Prompt：`stages/stage7/STAGE7_BUILD_PROMPT.md`
 
-Evidence Matrix：`research/stage7_evidence_matrix/STAGE7_EVIDENCE_MATRIX.md`
+Evidence Matrix：`stages/stage7/STAGE7_EVIDENCE_MATRIX.md`
 
-最终独立审计：`STAGE7_FINAL_AUDIT.md`
+最终独立审计：`stages/stage7/STAGE7_FINAL_AUDIT.md`
 
 ## 最终审计结论
 
@@ -159,7 +159,7 @@ python demo.py = success
 
 ## 最终审计文档进入分支
 
-`STAGE7_FINAL_AUDIT.md` 提交：
+`stages/stage7/STAGE7_FINAL_AUDIT.md` 提交：
 
 `b144e6f76272971dbd469502adbcddaed6747063`
 
@@ -198,7 +198,7 @@ workflow conclusion = success
 ```text
 Stage 7 implementation
 +
-STAGE7_FINAL_AUDIT.md
+stages/stage7/STAGE7_FINAL_AUDIT.md
 进入 main
 +
 main exact HEAD pytest / demo / GitHub Actions success
@@ -243,7 +243,7 @@ strategy_lifesteal
 
 # Stage 8 设计冻结、实现与封版基线
 
-从 Stage 8 开始采用“一阶段一目录”组织阶段资料：
+各阶段资料现已统一采用“一阶段一目录”组织；Stage 8 目录为：
 
 `stages/stage8/`
 
@@ -277,7 +277,7 @@ Stage 8 最终封版证据：
 
 `stages/stage8/STAGE8_FREEZE_RECORD.md`
 
-旧路径仅保留兼容入口，不再作为新阶段资料的正式存放位置。
+旧路径与当前路径的对应关系见 `stages/PATH_MIGRATION.md`；阶段资料以各自的 `stages/stageN/` 目录为正式存放位置。
 
 Stage 8 v1 设计提交：
 

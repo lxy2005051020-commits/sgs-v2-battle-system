@@ -4,7 +4,7 @@
 
 Stage 8 已完成设计冻结、实现、独立审计、Final Audit、main 合并与 main exact-head 封版验证。Stage 9 尚未开始，但现在可以进入新的独立设计阶段。
 
-从 Stage 8 开始，阶段资料统一按“一阶段一目录”管理。production code 继续按职责放在 `sgs_v2/`，测试继续放在 `tests/`；阶段目录只收纳设计合同、Evidence、施工 Prompt、审计与封版材料。别把源码也按 Stage 切成考古层，那会把整洁从美德变成事故。
+各阶段资料已统一按“一阶段一目录”管理，见[阶段索引](../README.md)。production code 继续按职责放在 `sgs_v2/`，测试继续放在 `tests/`；本目录收纳 Stage 8 的设计合同、Evidence、施工 Prompt、审计与封版材料。
 
 ## Canonical files
 

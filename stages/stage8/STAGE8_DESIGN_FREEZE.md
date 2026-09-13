@@ -340,7 +340,7 @@ Damage-reduction pierce infrastructure may identify `INCOMING_REDUCTION`, but of
 Formal matrix:
 
 ```text
-research/stage8_evidence_matrix/STAGE8_EVIDENCE_MATRIX.md
+stages/stage8/STAGE8_EVIDENCE_MATRIX.md
 ```
 
 Current production gate remains:
@@ -456,7 +456,7 @@ STAGE8.md
 + STAGE8_DESIGN_FREEZE.md
 + STAGE8_EVIDENCE_MATRIX.md
 ↓
-prompts/STAGE8_BUILD_PROMPT.md
+stages/stage8/STAGE8_BUILD_PROMPT.md
 ↓
 Stage 8 implementation branch
 ↓
