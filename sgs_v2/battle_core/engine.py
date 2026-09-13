@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from .battle_finalization_coordinator import FinalizationResult
 from .battle_systems import BattleSystems
 from .context import BattleContext, BattleResult
 from .enums import BattlePhase
 from .events import EventType
+from .execution_right_system import FutureBranchKind, LegacyFinalizationBarrier
 from .rule_hooks import RoundStartHook, UnitActionStartHook
 
 
@@ -34,9 +36,16 @@ class BattleEngine:
             },
         )
 
-        initial_result = self.systems.victory_system.check(self.context)
-        if initial_result is not None:
-            return self._finish(initial_result)
+        # Barrier 1: INITIAL_SETTLED
+        self.systems.finalization_coordinator.observe_legacy_barrier(
+            self.context,
+            LegacyFinalizationBarrier.INITIAL_SETTLED,
+        )
+        claim = self.systems.finalization_coordinator.claim_finalized_projection()
+        if claim is not None:
+            permit, fin_res = claim
+            self.systems.finalization_coordinator.consume_projection_permit(permit)
+            return self._apply_finalized_battle_result(fin_res)
 
         for round_no in range(1, self.context.max_rounds + 1):
             self.context.current_round = round_no
@@ -56,9 +65,17 @@ class BattleEngine:
                 self.context,
                 RoundStartHook(round_no=round_no),
             )
-            result = self.systems.victory_system.check(self.context)
-            if result is not None:
-                return self._finish(result)
+
+            # Barrier 2: ROUND_START_HOOKS_SETTLED
+            self.systems.finalization_coordinator.observe_legacy_barrier(
+                self.context,
+                LegacyFinalizationBarrier.ROUND_START_HOOKS_SETTLED,
+            )
+            claim = self.systems.finalization_coordinator.claim_finalized_projection()
+            if claim is not None:
+                permit, fin_res = claim
+                self.systems.finalization_coordinator.consume_projection_permit(permit)
+                return self._apply_finalized_battle_result(fin_res)
 
             self._enter_phase(BattlePhase.ACTION_ORDER)
             order = self.systems.action_order_system.determine_order(self.context)
@@ -87,12 +104,36 @@ class BattleEngine:
                         actor_id=actor.unit_id,
                     ),
                 )
-                result = self.systems.victory_system.check(self.context)
 
-                if result is None and actor.is_alive:
-                    self._enter_phase(BattlePhase.UNIT_ACTION)
-                    self.systems.action_system.execute(self.context, actor)
-                    result = self.systems.victory_system.check(self.context)
+                # Barrier 3: UNIT_ACTION_START_HOOKS_SETTLED
+                self.systems.finalization_coordinator.observe_legacy_barrier(
+                    self.context,
+                    LegacyFinalizationBarrier.UNIT_ACTION_START_HOOKS_SETTLED,
+                )
+
+                if (
+                    actor.is_alive
+                    and not self.systems.finalization_coordinator.is_latched_or_finalized
+                ):
+                    parent_scope = f"round_{round_no}_actor_{actor.unit_id}"
+                    permit = self.systems.future_admission_gate.request_admission(
+                        branch_kind=FutureBranchKind.NEXT_ACTION,
+                        parent_scope_identity=parent_scope,
+                        id_allocator=self.context.id_allocator,
+                    )
+                    if permit is not None:
+                        self._enter_phase(BattlePhase.UNIT_ACTION)
+                        self.systems.legacy_action_dispatch_adapter.dispatch(
+                            context=self.context,
+                            actor=actor,
+                            permit=permit,
+                            parent_scope_identity=parent_scope,
+                        )
+                        # Barrier 4: ACTION_SETTLED
+                        self.systems.finalization_coordinator.observe_legacy_barrier(
+                            self.context,
+                            LegacyFinalizationBarrier.ACTION_SETTLED,
+                        )
 
                 self._enter_phase(BattlePhase.UNIT_ACTION_END)
                 self.context.event_bus.publish(
@@ -102,8 +143,11 @@ class BattleEngine:
                     actor_id=actor.unit_id,
                 )
 
-                if result is not None:
-                    return self._finish(result)
+                claim = self.systems.finalization_coordinator.claim_finalized_projection()
+                if claim is not None:
+                    permit, fin_res = claim
+                    self.systems.finalization_coordinator.consume_projection_permit(permit)
+                    return self._apply_finalized_battle_result(fin_res)
 
             self._enter_phase(BattlePhase.ROUND_END)
             self.context.event_bus.publish(
@@ -118,11 +162,28 @@ class BattleEngine:
                 phase=BattlePhase.ROUND_END.value,
             )
 
-            result = self.systems.victory_system.check(self.context)
-            if result is not None:
-                return self._finish(result)
+            # Barrier 5: ROUND_END_SETTLED
+            self.systems.finalization_coordinator.observe_legacy_barrier(
+                self.context,
+                LegacyFinalizationBarrier.ROUND_END_SETTLED,
+            )
+            claim = self.systems.finalization_coordinator.claim_finalized_projection()
+            if claim is not None:
+                permit, fin_res = claim
+                self.systems.finalization_coordinator.consume_projection_permit(permit)
+                return self._apply_finalized_battle_result(fin_res)
 
-        return self._finish(self.systems.victory_system.resolve_max_rounds(self.context))
+        # Barrier 6: MAX_ROUND_SETTLED
+        self.systems.finalization_coordinator.observe_legacy_barrier(
+            self.context,
+            LegacyFinalizationBarrier.MAX_ROUND_SETTLED,
+        )
+        claim = self.systems.finalization_coordinator.claim_finalized_projection()
+        if claim is None:
+            raise RuntimeError("MAX_ROUND_SETTLED failed to produce finalization result")
+        permit, fin_res = claim
+        self.systems.finalization_coordinator.consume_projection_permit(permit)
+        return self._apply_finalized_battle_result(fin_res)
 
     def _enter_phase(self, phase: BattlePhase) -> None:
         self.context.current_phase = phase.value
@@ -133,9 +194,18 @@ class BattleEngine:
             payload={"phase": phase.value},
         )
 
-    def _finish(self, result: BattleResult) -> BattleResult:
+    def _apply_finalized_battle_result(
+        self,
+        result: FinalizationResult,
+    ) -> BattleResult:
+        legacy_result = BattleResult(
+            winner_team_id=result.winner_team_id,
+            reason=result.reason,
+            rounds_completed=result.rounds_completed,
+            final_troops=dict(result.final_troops_snapshot),
+        )
         self.context.ended = True
-        self.context.result = result
+        self.context.result = legacy_result
 
         self._enter_phase(BattlePhase.BATTLE_END)
         self.context.event_bus.publish(
@@ -143,10 +213,10 @@ class BattleEngine:
             phase=self.context.current_phase,
             round_no=self.context.current_round,
             payload={
-                "winner_team_id": result.winner_team_id,
-                "reason": result.reason.value,
-                "rounds_completed": result.rounds_completed,
-                "final_troops": result.final_troops,
+                "winner_team_id": legacy_result.winner_team_id,
+                "reason": legacy_result.reason.value,
+                "rounds_completed": legacy_result.rounds_completed,
+                "final_troops": legacy_result.final_troops,
             },
         )
-        return result
+        return legacy_result

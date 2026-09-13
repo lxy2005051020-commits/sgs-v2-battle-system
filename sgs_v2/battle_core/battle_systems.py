@@ -18,6 +18,8 @@ from .target_system import TargetSystem
 from .trigger_system import TriggerSystem
 from .troop_system import TroopSystem
 from .victory_system import VictorySystem
+from .battle_finalization_coordinator import BattleFinalizationCoordinator
+from .execution_right_system import FutureAdmissionGate, LegacyActionDispatchAdapter
 
 
 @dataclass(slots=True)
@@ -51,6 +53,9 @@ class BattleSystems:
     skill_resolver: SkillResolver = field(init=False)
     trigger_system: TriggerSystem = field(init=False)
     rule_hook_system: RuleHookSystem = field(init=False)
+    finalization_coordinator: BattleFinalizationCoordinator = field(init=False)
+    future_admission_gate: FutureAdmissionGate = field(init=False)
+    legacy_action_dispatch_adapter: LegacyActionDispatchAdapter = field(init=False)
 
     def __post_init__(self) -> None:
         self.action_order_system = ActionOrderSystem(self.attribute_system)
@@ -83,4 +88,14 @@ class BattleSystems:
         self.rule_hook_system = RuleHookSystem(
             self.trigger_system,
             self.effect_executor,
+        )
+        self.finalization_coordinator = BattleFinalizationCoordinator(
+            victory_system=self.victory_system,
+        )
+        self.future_admission_gate = FutureAdmissionGate(
+            coordinator=self.finalization_coordinator,
+        )
+        self.legacy_action_dispatch_adapter = LegacyActionDispatchAdapter(
+            action_system=lambda: self.action_system,
+            gate=self.future_admission_gate,
         )

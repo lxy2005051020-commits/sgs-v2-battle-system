@@ -2,9 +2,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-from .operation_identity import DamageInstanceId, FinalizationId
+from .operation_identity import DamageInstanceId, FinalizationId, OperationIdAllocator
+
+if TYPE_CHECKING:
+    from .action_system import ActionSystem
+    from .battle_finalization_coordinator import BattleFinalizationCoordinator
+    from .context import BattleContext
+    from .unit import UnitRuntime
 
 
 def _forbid_ordering(cls_name: str, op: str) -> None:
@@ -141,3 +147,165 @@ class FinalizationProjectionPermit:
 
     def __ge__(self, other: Any) -> bool:
         _forbid_ordering("FinalizationProjectionPermit", ">=")
+
+
+class FutureAdmissionGate:
+    """
+    Single global future-admission authority in Stage9.
+    Governs global future branches:
+    NEXT_ACTION, ASSAULT, COMBO_SECOND_NORMAL_ATTACK, COUNTER_BATCH, CHAIN_TRAVERSAL, CLEAVE_EFFECT.
+    Phase 9.2 production activates NEXT_ACTION; others maintain typed capability support.
+    """
+
+    def __init__(
+        self,
+        coordinator: BattleFinalizationCoordinator,
+        id_allocator: OperationIdAllocator | None = None,
+    ) -> None:
+        from .battle_finalization_coordinator import BattleFinalizationCoordinator
+
+        if not isinstance(coordinator, BattleFinalizationCoordinator):
+            raise TypeError(
+                f"coordinator must be BattleFinalizationCoordinator, got {type(coordinator)}"
+            )
+        self._coordinator = coordinator
+        self._id_allocator = id_allocator
+        self._issued_permits: dict[str, FutureAdmissionPermit] = {}
+        self._consumed_permits: set[str] = set()
+
+    @property
+    def coordinator(self) -> BattleFinalizationCoordinator:
+        return self._coordinator
+
+    def can_admit(self, branch_kind: FutureBranchKind) -> bool:
+        if not isinstance(branch_kind, FutureBranchKind):
+            raise TypeError(
+                f"branch_kind must be FutureBranchKind, got {type(branch_kind)}"
+            )
+        return self._coordinator.termination_state == BattleTerminationState.RUNNING
+
+    def request_admission(
+        self,
+        branch_kind: FutureBranchKind,
+        parent_scope_identity: str,
+        id_allocator: OperationIdAllocator | None = None,
+    ) -> FutureAdmissionPermit | None:
+        if not isinstance(branch_kind, FutureBranchKind):
+            raise TypeError(
+                f"branch_kind must be FutureBranchKind, got {type(branch_kind)}"
+            )
+        if not isinstance(parent_scope_identity, str) or not parent_scope_identity.strip():
+            raise ValueError("parent_scope_identity cannot be empty or whitespace")
+
+        if not self.can_admit(branch_kind):
+            return None
+
+        alloc = id_allocator or self._id_allocator
+        if alloc is None:
+            alloc = OperationIdAllocator()
+            self._id_allocator = alloc
+
+        permit_id = alloc.allocate_permit_id("prm_fwd")
+        permit = FutureAdmissionPermit(
+            permit_id=permit_id,
+            branch_kind=branch_kind,
+            parent_scope_identity=parent_scope_identity,
+            termination_generation=self._coordinator.termination_generation,
+        )
+        self._issued_permits[permit.permit_id] = permit
+        return permit
+
+    def consume_permit(
+        self,
+        permit: FutureAdmissionPermit,
+        expected_branch_kind: FutureBranchKind,
+        expected_parent_scope_identity: str,
+    ) -> None:
+        if not isinstance(permit, FutureAdmissionPermit):
+            raise TypeError(f"Expected FutureAdmissionPermit, got {type(permit)}")
+        if not isinstance(expected_branch_kind, FutureBranchKind):
+            raise TypeError(
+                f"expected_branch_kind must be FutureBranchKind, got {type(expected_branch_kind)}"
+            )
+        if (
+            not isinstance(expected_parent_scope_identity, str)
+            or not expected_parent_scope_identity.strip()
+        ):
+            raise ValueError("expected_parent_scope_identity cannot be empty or whitespace")
+
+        if permit.permit_id not in self._issued_permits:
+            raise ValueError(f"Permit {permit.permit_id} was not issued by this gate")
+        if permit.permit_id in self._consumed_permits:
+            raise RuntimeError(
+                f"FutureAdmissionPermit {permit.permit_id} has already been consumed"
+            )
+        if permit.branch_kind != expected_branch_kind:
+            raise ValueError(
+                f"Branch kind mismatch: permit has {permit.branch_kind}, expected {expected_branch_kind}"
+            )
+        if permit.parent_scope_identity != expected_parent_scope_identity:
+            raise ValueError(
+                f"Parent scope identity mismatch: permit has {permit.parent_scope_identity}, "
+                f"expected {expected_parent_scope_identity}"
+            )
+        if permit.termination_generation != self._coordinator.termination_generation:
+            raise RuntimeError(
+                f"Stale permit: termination generation changed from {permit.termination_generation} "
+                f"to {self._coordinator.termination_generation}"
+            )
+        self._consumed_permits.add(permit.permit_id)
+
+
+class LegacyActionDispatchAdapter:
+    """
+    Phase 9.2 compatibility bridge for NEXT_ACTION dispatch before Phase 9.6 real ActionScope.
+
+    Responsibilities:
+    - Receives gate-issued NEXT_ACTION FutureAdmissionPermit.
+    - Validates branch kind and parent scope identity.
+    - Consumes permit exactly once via gate.
+    - Delegates to existing ActionSystem.execute.
+    - Does NOT create ActionScope, does NOT allocate ActionId, does NOT do target selection,
+      does NOT own NormalAttack lifecycle or finalization.
+    """
+
+    def __init__(
+        self,
+        action_system: Any,
+        gate: FutureAdmissionGate,
+    ) -> None:
+        if not isinstance(gate, FutureAdmissionGate):
+            raise TypeError(
+                f"gate must be FutureAdmissionGate, got {type(gate)}"
+            )
+        self._action_system = action_system
+        self._gate = gate
+
+    @property
+    def action_system(self) -> Any:
+        if callable(self._action_system) and not hasattr(self._action_system, "execute"):
+            return self._action_system()
+        return self._action_system
+
+    @property
+    def gate(self) -> FutureAdmissionGate:
+        return self._gate
+
+    def dispatch(
+        self,
+        context: BattleContext,
+        actor: UnitRuntime,
+        permit: FutureAdmissionPermit,
+        parent_scope_identity: str,
+    ) -> None:
+        if permit.branch_kind != FutureBranchKind.NEXT_ACTION:
+            raise ValueError(
+                f"LegacyActionDispatchAdapter only handles NEXT_ACTION, got {permit.branch_kind}"
+            )
+        self._gate.consume_permit(
+            permit=permit,
+            expected_branch_kind=FutureBranchKind.NEXT_ACTION,
+            expected_parent_scope_identity=parent_scope_identity,
+        )
+        self.action_system.execute(context, actor)
+

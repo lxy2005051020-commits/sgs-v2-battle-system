@@ -7,6 +7,7 @@ from .random_system import RandomSystem
 from .state_registry import StateRegistry
 from .unit import UnitRuntime
 from .enums import BattleEndReason, LineupPosition
+from .operation_identity import OperationIdAllocator
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,6 +40,7 @@ class BattleContext:
     result: BattleResult | None = None
 
     metadata: dict[str, object] = field(default_factory=dict)
+    id_allocator: OperationIdAllocator = field(default_factory=OperationIdAllocator)
 
     def __post_init__(self) -> None:
         if not self.battle_id:

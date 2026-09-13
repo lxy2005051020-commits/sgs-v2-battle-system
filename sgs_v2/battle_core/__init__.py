@@ -86,12 +86,19 @@ from .effects import (
     RecoverEffect,
     RemoveStateEffect,
 )
+from .battle_finalization_coordinator import (
+    BattleFinalizationCoordinator,
+    BattleTerminationRecord,
+    FinalizationResult,
+)
 from .execution_right_system import (
     BattleTerminationState,
     DamageSettlementPermit,
     FinalizationProjectionPermit,
+    FutureAdmissionGate,
     FutureAdmissionPermit,
     FutureBranchKind,
+    LegacyActionDispatchAdapter,
     LegacyFinalizationBarrier,
     PermitStatus,
 )
@@ -367,4 +374,10 @@ __all__ = [
     "FinalizationProjectionPermit",
     "Stage9TraceEntry",
     "Stage9DiagnosticTraceSink",
+    # Stage9 Phase 9.2 Finalization & Future Admission
+    "BattleFinalizationCoordinator",
+    "BattleTerminationRecord",
+    "FinalizationResult",
+    "FutureAdmissionGate",
+    "LegacyActionDispatchAdapter",
 ]
