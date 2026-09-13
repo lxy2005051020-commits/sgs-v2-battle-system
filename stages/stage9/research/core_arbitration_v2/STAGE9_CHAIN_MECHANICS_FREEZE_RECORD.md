@@ -75,6 +75,21 @@ ChainRatio = 50%
 → 这 500 不会再次暴击
 ```
 
+### 2.1 反馈数值计算与取整策略（CHNS9-B01 冻结）
+
+铁索连环计算伤害公式：
+
+```text
+ChainCalculatedDamage = floor(TriggerNodeResolvedDamage × ChainRatio)
+```
+
+取整规则经 1,657 条真实战报边界样本验证（100.0% 吻合，0 矛盾）：
+- 采用 **`FLOOR`**（向下取整 / 向零截断 `math.floor`）；
+- **不采用**四舍五入（`ROUND_HALF_UP` 存在 808 例反例，`CEIL` 存在 1,656 例反例）；
+- 例：`396 × 28.28% = 111.9888 → 111`（若四舍五入为 112 判伪）；`753 × 28.28% = 212.9484 → 212`；`265 × 22.58% = 59.837 → 59`。
+
+此项冻结正式关闭 Finding `CHNS9-B01`。
+
 ---
 
 ## 3. 铁索反馈的防护、修正与后续响应边界
@@ -591,6 +606,7 @@ Stage 9 因此需要能够表达不同 `DerivedDamageKind` / provenance 对应�
 以下铁索核心问题不再列为 Stage 9 待研究项：
 
 - 触发伤害基数与比例；
+- 反馈数值取整策略：`floor(TriggerNodeResolvedDamage * ChainRatio)`（CHNS9-B01）；
 - 0 伤害触发；
 - 源节点致死截断；
 - TRUE_FEEDBACK 类型；

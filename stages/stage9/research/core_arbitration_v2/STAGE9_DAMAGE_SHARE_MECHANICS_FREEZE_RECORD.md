@@ -274,7 +274,7 @@ DAMAGE_SHARE_TARGET = FINAL_ACTUAL_DAMAGE_TARGET
 
 ---
 
-## 9. Partition Algorithm / 取整与守恒
+## 9. Partition Algorithm / 取整与守恒（SHS9-B01 冻结）
 
 对于已确定的终伤：
 
@@ -291,15 +291,15 @@ R = ratioSnapshot
 理论拆分算法：
 
 ```text
-Dsharer_theoretical = round(Dtotal * R)
+Dsharer_theoretical = round_half_up(Dtotal * R)
 Dtarget             = Dtotal - Dsharer_theoretical
 ```
 
 关键规则：
 
 ```text
-先计算分担份额并取整
-→ 原目标取剩余值
+先计算分担份额并采用 ROUND_HALF_UP 取整
+→ 原目标取剩余值：Dtarget = Dtotal - Dsharer_theoretical
 ```
 
 因此理论分配严格满足：
@@ -308,9 +308,19 @@ Dtarget             = Dtotal - Dsharer_theoretical
 Dtarget + Dsharer_theoretical == Dtotal
 ```
 
-不得对两边分别独立四舍五入。
+不得对两边分别独立取整。
 
-`.5` 边界由 `Dsharer_theoretical` 的取整结果决定，原目标永远取整数余量。
+### 9.1 取整与 .5 边界裁决（SHS9-B01）
+
+分担份额取整必须严格执行 **`ROUND_HALF_UP`**（向正无穷四舍五入 / half ties round upward）：
+- 经 98 例精确 .5 边界真实战报验证（【严阵以待】$R = 15.00\% = 3/20$）：
+  - 偶数基数 $K$ 遇 $.5$（$N=47$，如 $70.5 \to 71, 106.5 \to 107, 82.5 \to 83, 64.5 \to 65$）：**100% 进位至 $K+1$**；
+  - 奇数基数 $K$ 遇 $.5$（$N=39$，如 $37.5 \to 38, 1.5 \to 2, 61.5 \to 62, 115.5 \to 116$）：**100% 进位至 $K+1$**；
+  - 彻底排除银行家舍入 `ROUND_HALF_EVEN`（偶数向偶数舍入假说）以及向下取整 `FLOOR`；
+  - 非边界小数部分 $< 0.5$ 正常舍去（如 $70.35 \to 70$），排除 `CEIL`。
+- 原目标永远取整数余量：$D_{\text{target}} = D_{\text{total}} - D_{\text{sharer\_theoretical}}$。
+
+此项冻结正式关闭 Finding `SHS9-B01`。
 
 ---
 
@@ -868,7 +878,7 @@ resolveDamageShare(event, actualTarget):
         return no-share
 
     Dtotal = event.preShareFinalDamage
-    Dsharer = round(Dtotal * state.ratioSnapshot)
+    Dsharer = round_half_up(Dtotal * state.ratioSnapshot)
     Dtarget = Dtotal - Dsharer
 
     commit target assigned loss first
@@ -928,7 +938,7 @@ T24 shared actual troop loss enters wounded processing
 - apply-time ratio snapshot；
 - DamageEvent 准入与取消区别；
 - 与援护、规避、抵御、分摊、普通减伤的关键顺序；
-- 终伤后拆分公式与取整；
+- 终伤后拆分公式与取整（SHS9-B01：ROUND_HALF_UP）；
 - target-first commit；
 - target death interrupt；
 - sharer overflow；

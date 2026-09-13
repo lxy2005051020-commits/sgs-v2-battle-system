@@ -110,7 +110,7 @@ DISTRIBUTION
 当当前合法承担者数量 `N > 0` 时：
 
 ```text
-Dtarget = round(Dtotal × (1 - R))
+Dtarget = round_half_up(Dtotal × (1 - R))
 Dtransfer = Dtotal - Dtarget
 ```
 
@@ -127,7 +127,7 @@ N = current legal participant count
 则每一个承担者获得**相同理论份额**：
 
 ```text
-Dparticipant = round(Dtransfer / N)
+Dparticipant = round_half_up(Dtransfer / N)
 ```
 
 所有承担者独立使用同一个 `Dparticipant`。
@@ -155,6 +155,20 @@ Dtarget + N × Dparticipant == Dtotal
 ```
 
 出现整数级取整偏差属于算法结果，不得为了“强行守恒”再把余数补到最后一个承担者。
+
+### 4.5 取整与 .5 边界裁决（DSTS9-B01 冻结）
+
+分摊机制中的两处取整均严格执行 **`ROUND_HALF_UP`**（向正无穷四舍五入 / half ties round upward）：
+1. **原目标保留份额 `Dtarget`**：
+   - 经 12 例 $R = 50.00\%$ 精确 .5 边界真实战报验证（如 $251 \times 0.5 = 125.5 \to 126, 407 \times 0.5 = 203.5 \to 204$）：**100% 进位至 $K+1$**；
+   - 小于 0.5 正常舍去（如 $622.386 \to 622$），大于 0.5 正常进位（如 $348.894 \to 349$）。
+2. **承担者分配份额 `Dparticipant`**：
+   - 经 34 例 $N = 2$ 精确 .5 边界真实战报验证：
+     - 偶数基数 $K$ 遇 $.5$（$N=17$，如 $353 / 2 = 176.5 \to 177, 165 / 2 = 82.5 \to 83$）：**100% 进位至 $K+1$**；
+     - 奇数基数 $K$ 遇 $.5$（$N=17$，如 $147 / 2 = 73.5 \to 74, 183 / 2 = 91.5 \to 92$）：**100% 进位至 $K+1$**；
+     - 彻底排除银行家舍入 `ROUND_HALF_EVEN` 以及向下取整 `FLOOR`。
+
+此项冻结正式关闭 Finding `DSTS9-B01`。
 
 ---
 
@@ -582,9 +596,9 @@ resolveDistribution(event, actualTarget):
     Dtotal = event.preDistributionFinalDamage
     R = state.ratioSnapshot
 
-    Dtarget = round(Dtotal * (1 - R))
+    Dtarget = round_half_up(Dtotal * (1 - R))
     Dtransfer = Dtotal - Dtarget
-    Dparticipant = round(Dtransfer / participants.count)
+    Dparticipant = round_half_up(Dtransfer / participants.count)
 
     for participant in participants:
         actualLoss = min(Dparticipant, participant.currentTroops)
@@ -613,8 +627,8 @@ resolveDistribution(event, actualTarget):
 T01 two participants receive equal assigned share
 T02 one participant alive -> N=1 and receives full transfer pool after rounding
 T03 N=0 -> target takes full Dtotal
-T04 target-first mathematical calculation uses round(Dtotal × (1-R))
-T05 participant share uses round(Dtransfer / N)
+T04 target-first mathematical calculation uses round_half_up(Dtotal × (1-R))
+T05 participant share uses round_half_up(Dtransfer / N)
 T06 no last-participant remainder assignment
 T07 participant Slot ASC commit order
 T08 participant dies during commit -> later participant still executes
@@ -646,10 +660,10 @@ T24 actual participant loss enters wounded processing
 
 - 分摊作为 Damage Partition 家族成员；
 - 正常伤害公式完成后读取 `Dtotal`；
-- 原目标理论份额的计算顺序；
+- 原目标理论份额的计算顺序与取整（DSTS9-B01：ROUND_HALF_UP）；
 - 转移池 `Dtransfer`；
 - 当前承担者数量 `N`；
-- 每个承担者相同独立理论份额；
+- 每个承担者相同独立理论份额与取整（DSTS9-B01：ROUND_HALF_UP）；
 - 不使用最后一人吃余数；
 - Damage-Time 动态参与者集合；
 - same-camp / alive / exclude actualTarget；
