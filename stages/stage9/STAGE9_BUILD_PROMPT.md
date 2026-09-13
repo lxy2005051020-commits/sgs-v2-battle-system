@@ -361,7 +361,7 @@ The commander-participant Distribution drain behavior is an engineering runtime 
 
 # 4. Exact Frozen Production File Plan
 
-Pure code-organization-equivalent adjustments are allowed only if semantic ownership, dependency direction, public contracts, and phase boundaries stay unchanged. Otherwise stop for Design Reopen.
+Pure code-organization-equivalent adjustments are allowed only if semantic ownership, dependency direction, public runtime contracts, and phase boundaries stay unchanged. Otherwise stop for Design Reopen.
 
 ## 4.1 Planned NEW production files — 16
 
@@ -1239,7 +1239,7 @@ DSTS9-B02 runtime default insufficient
 45-regression contract conflicts with frozen design
 architecture guarantee requires ownership/dependency change
 phase dependency must be reordered
-public contract must change in a gameplay-affecting way
+any required change to a frozen public runtime contract
 new state storage or mutation owner appears necessary
 EventBus control flow appears necessary
 ```
@@ -1266,7 +1266,7 @@ A pure code-organization adjustment does **not** require Design Reopen only when
 ```text
 semantic ownership
 dependency direction
-public semantic contracts
+public runtime contracts
 phase boundaries
 Stage8 boundary
 ```
