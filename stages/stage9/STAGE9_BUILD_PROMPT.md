@@ -113,15 +113,23 @@ Do not trust a pasted report, local checkout, cached SHA, or this document alone
 Frozen authority identity that must still be present in ancestry/history:
 
 ```text
-battle freeze verification baseline:
+Frozen audited design commit:
+394d32e40b6584db9814f46dfbf44a2d5e753893
+
+Round3 approval commit:
+524438ef97f8170fd81d026f82f7ecf6ae828a90
+
+Design Freeze commit:
+3bc2e2d0b2dffed4b718ae903abb835fa495f278
+
+Design Freeze Audit commit:
 e7e08ff4c4371fc96f58c54b21cd25265665c0f4
 
-audit(stage9): verify design freeze
+Frozen audited STAGE9.md blob:
+8972452d68d6c71e45563a9a2ec5d70826978c9b
 
-state authority baseline:
+State authority baseline:
 15ed915435f328a6ecd8f488d98b5b9e13c913b5
-
-docs(combo): close stale CBS9-B03 status banner
 ```
 
 The future implementation baseline may legitimately be a descendant because Build Prompt authoring/audit commits occur after the freeze verification. Therefore do **not** require `main == e7e08ff4...` at implementation time. Instead verify that every intervening commit is authorized Stage9 documentation/audit movement and that no unreviewed production/test/Stage8/P0 semantic drift occurred.

@@ -13,7 +13,7 @@ Stage 8 = FROZEN
 Formal Stage8 Reopen = NO
 Stage 9 = contract closure / orchestration research around Stage8 seams
 Stage 9 production implementation authority = NOT CREATED YET
-STAGE9.md = DESIGN FROZEN — PENDING FREEZE AUDIT
+STAGE9.md = DESIGN FROZEN — BUILD PROMPT AUTHORED (AUDIT REQUIRED)
 ```
 
 Stage 9 的 current authority、九机制状态与 RF-C02 文档同步结果统一从 [`stages/stage9/README.md`](stages/stage9/README.md) 进入；历史 audits/research 不因后续 repair 而被无痕改写。

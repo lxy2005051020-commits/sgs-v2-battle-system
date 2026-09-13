@@ -10,7 +10,7 @@
 - [Stage 6：Skill Runtime](stage6/README.md)
 - [Stage 7：Trigger / Recovery](stage7/README.md)
 - [Stage 8：Damage Pipeline — FROZEN](stage8/README.md)
-- [Stage 9：Cross-Mechanism Runtime Orchestration — DESIGN FROZEN / PENDING FREEZE AUDIT](stage9/README.md)
+- [Stage 9：Cross-Mechanism Runtime Orchestration — BUILD PROMPT AUTHORED / AUDIT REQUIRED](stage9/README.md)
 
 ```text
 Stage 8 = FROZEN
@@ -19,12 +19,12 @@ Stage 9 = wraps / coordinates / derives around Stage8 seams
 Stage 9 does NOT replace the Stage8 Damage Pipeline
 ```
 
-Stage 9 implementation design authority 已冻结：`stage9/STAGE9.md`，当前状态为 `DESIGN FROZEN — FREEZE AUDIT REQUIRED`。Production implementation 尚未开始，Build Prompt 尚未授权。
+Stage 9 implementation design authority 已冻结并经 Freeze Audit 验证。Build Prompt 已完成编写 (`stage9/STAGE9_BUILD_PROMPT.md`)，当前状态为 `DRAFT — BUILD PROMPT AUDIT REQUIRED`。Production implementation 尚未授权。
 
 当前下一步：
 
 ```text
-Stage9 Design Freeze Audit
+Stage9 Build Prompt Audit
 ```
 
 共享源码保留在 `sgs_v2/`，运行测试保留在 `tests/`。阶段状态以 [PROJECT_STATUS.md](../PROJECT_STATUS.md)、对应阶段 current authority 与 Stage 9 authority map 为准。

@@ -15,19 +15,25 @@ Stage9 Design Audit Round 2 = COMPLETE / REPAIR REQUIRED
 Stage9 Design Repair Round 2 = COMPLETE
 Stage9 Design Audit Round 3 = COMPLETE / PASS
 
-STAGE9.md = DESIGN FROZEN — FREEZE AUDIT REQUIRED
+STAGE9.md = DESIGN FROZEN — FREEZE AUDIT PASSED
 Stage9 Design Frozen = YES
-Stage9 Final Implementation Frozen = NO
+Design Freeze Verified = YES
+Build Prompt Authored = YES
+Build Prompt Audited = NO
 Production Implementation = NOT STARTED
-Build Prompt = NOT YET AUTHORIZED
+Build Prompt = DRAFT — AUDIT REQUIRED
+Production Implementation Authorized = NO
 ```
 
 Stage 9 只在 Stage 8 已冻结 seams 周围做 orchestration、target arbitration、derived operation、partition、typed settlement 与 finalization coordination；**不替换 Stage 8 Damage Pipeline**。
 
 ## Implementation design authority
 
-- [STAGE9.md — DESIGN FROZEN / FREEZE AUDIT REQUIRED](STAGE9.md)
+- [STAGE9.md — DESIGN FROZEN](STAGE9.md)
 - [Stage9 Design Freeze Record](STAGE9_DESIGN_FREEZE.md)
+- [Stage9 Design Freeze Audit — PASS](audits/STAGE9_DESIGN_FREEZE_AUDIT.md)
+- [Stage9 Build Prompt — DRAFT / AUDIT REQUIRED](STAGE9_BUILD_PROMPT.md)
+- [Stage9 Build Prompt Authoring Report](STAGE9_BUILD_PROMPT_AUTHORING_REPORT.md)
 - [Stage9 Design Audit Round 3 — PASS](audits/STAGE9_DESIGN_AUDIT_ROUND3.md)
 - [Stage9 Authoring Report](STAGE9_AUTHORING_REPORT.md)
 - [Stage9 Design Audit Round 1](audits/STAGE9_DESIGN_AUDIT_ROUND1.md)
@@ -142,7 +148,7 @@ Research Debt: YES
 
 ```text
 NEXT STEP:
-Stage9 Design Freeze Audit
+Stage9 Build Prompt Audit
 ```
 
-Design Freeze Audit 只验证 freeze commit 是否保持 Round3 已通过的设计正文语义不变，并确认本轮只有状态/冻结记录/导航变化。在该审计 PASS 前，不创建 `STAGE9_BUILD_PROMPT.md`，不开始 Stage9 production implementation。
+Build Prompt 已编写完成（DRAFT），处于审计就绪状态。在 Stage9 Build Prompt Audit 正式通过前，不得执行 Build Prompt，不得开始 Stage9 production implementation。
