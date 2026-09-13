@@ -1,80 +1,90 @@
-# Stage 9 核心底层裁决证据矩阵 (Evidence Matrix v2 - Post Freeze Sync)
+# Stage 9 Evidence Matrix V2 — RF-C02 Current Contract Overlay
 
-> **研究基线 Commit**: `de80a4ec30fb3bf50220a719011478116bd34e5b` (main)  
-> **数据基线**: 全盘扫描 32,660 份战报（全量事件逾 1,400 万条）  
-> **后续冻结记录**: `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md`, `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`  
-> **重要说明**: 本矩阵最初用于记录历史战报统计证据。后续 Cleave / Chain / Share Damage 的若干边界已经通过项目逐项机制确认正式冻结。若历史统计模型与冻结记录冲突，**以冻结记录和 `STAGE9_CORE_ARBITRATION_RULES_V2.md` 为当前唯一实现基线**。历史样本数仅保留用于证据溯源，不能覆盖后续已冻结规则。
+> 本文件同时保留历史证据 ID 与当前 P0 状态。历史样本强度不能覆盖 later Frozen Contract；current implementation semantics 以 [`../../docsync/STAGE9_AUTHORITY_MAP.md`](../../docsync/STAGE9_AUTHORITY_MAP.md) 指向的 authority 为准。
 
----
-
-## 置信度 / 状态口径
-
-- `A / B / C`: 历史战报统计证据强度。
-- `FROZEN — DIRECT`: 后续逐项机制确认后的项目冻结事实，不再依赖旧提取器模型来决定实现语义。
-- `PENDING`: 仍受提取器最终语义审计或额外机制确认约束。
-
----
-
-## 当前证据矩阵
-
-| ID | Mechanism | 当前统一 Claim | Evidence / Source | Cases / Denominator | Current Status | Remaining Unknowns |
-|---|---|---|---|---:|---|---|
-| EM-01 | 目标裁决顺序 | 混乱压制嘲讽锁定，进入无差别目标选择 | `r11_confusion_taunt_data.json` | 1,351 | 历史 A；仍受提取器最终审计约束 | 精确权重分布 |
-| EM-02 | 援护 vs 嘲讽 | 援护可在嘲讽目标决议后重定向实际承伤者 | 历史战报样本 | 89 | 历史 A | 无 |
-| EM-03 | 自援护 | 混乱攻击友军时可出现攻击者==援护者的自攻 | 历史样本 | 25 | 历史 A | 无 |
-| EM-04 | 目标解耦 | `intended_target` / `resolved_target` / `damage_recipient` 必须解耦 | 多类战报 | 3,250 | 历史 A | 无 |
-| EM-05 | 群攻基准点 | 群攻围绕实际承伤动作目标派生至其他合法副目标 | 群攻战报 | 18 | 历史 B | 样本有限 |
-| EM-06 | 反击承伤者 | 反击由实际受击者触发 | 历史样本 | 96 | 历史 A | 无 |
-| EM-07 | 突击受体 | 突击及控制作用于实际受击动作目标 | 历史样本 | 74 | 历史 A | 无 |
-| EM-08 | 普攻反应时序 | 群攻先于普通反击，反击先于突击，突击先于连击检查点 | `r1_lifecycle_data.json` | 182 | 历史 B | Chain 特殊 Inline / Deferred 已由 Chain Freeze 补充 |
-| EM-09 | 急救时点 | 普通可触发急救的伤害在扣兵后进入急救回调 | 历史样本 | 4,654 | 历史 A | 不适用于 Chain / Share passive settlement |
-| EM-10 | 零伤反应 | 普攻 0 伤仍可能继续产生其动作级后续机制 | `r1_edge_cases.json` | 281 | 历史 A | Chain 0 伤规则已单独冻结 |
-| EM-11 | Counter→Counter | 历史样本支持 BLOCKED | `r7_recursion_denominators.json` | 0 / 90 | **PENDING FINAL EXTRACTOR AUDIT** | 状态生命周期语义提取 |
-| EM-12 | Cleave→Cleave | 群攻派生伤害不会再次触发群攻 | `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md` | direct confirmation | **FROZEN — DIRECT** | 无 |
-| EM-13 | Chain→Chain | TRUE_FEEDBACK 不会再次触发 Chain | `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`; 历史统计亦为 0 触发 | historical 0 / 23,620 | **FROZEN — DIRECT** | 无 |
-| EM-14 | Share→Share | Share passive settlement 不再次触发 Share | Cleave/Share direct confirmation | direct confirmation | **FROZEN — DIRECT** | Share 上游数学仍待研究 |
-| EM-15 | Share 数学 | 历史统计支持 SPLIT / 守恒模型 | `r6_fendan_math_data.json` | 11,381 | 历史 A；**尚未作为本轮 Share Core Frozen** | ShareBase、致死边界、取整 |
-| EM-16 | Chain 反馈数学 | `TriggerNodeResolvedDamage × CurrentChainRatio`，对每个合法同阵营目标独立广播完整比例 | `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`; `r4_chain_damage_data.json` | 10,817+ history | **FROZEN — DIRECT** | 无核心未知 |
-| EM-17 | Cleave Pipeline | `MainAttackFinalDamage × ratio`；可 Evasion / Barrier / Share；**不重新吃副目标伤害增减** | `STAGE9_CLEAVE_MECHANICS_FREEZE_RECORD.md` | direct confirmation | **FROZEN — DIRECT** | Stage 9 工程接口 |
-| EM-18 | Chain Pipeline | TRUE_FEEDBACK；**不可 Evasion / Barrier / target modifier / Share**；不触发 FirstAid / Counter / Chain / 倒戈 / 攻心 / 刚烈等响应 | `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md` | direct confirmation | **FROZEN — DIRECT** | Stage 9 工程接口 |
-| EM-19 | 致死分担截断 | 历史样本中主目标致死时未观察到分担转嫁 | `r6_death_near_fendan.json` | 154 | 历史 B，**未冻结** | Share death atomic boundary |
-| EM-20 | 反击致死短路 | 攻击者反击中阵亡后续突击 / 连击短路 | 历史样本 | 113 | 历史 A | 无 |
-| EM-21 | 主将阵亡终战 | 当前原子动作与未来反应需分层裁决 | 历史样本 | 890 | 历史 A | 极端边界 |
-| EM-22 | Chain 传播目标死亡 | 当前目标死亡不阻止同一次 Chain 继续处理其他合法目标 | `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md`; 历史 chain-death samples | direct + historical 5 | **FROZEN — DIRECT** for Chain target-loop rule | 战斗全局终战仍由 R5 处理 |
-| EM-23 | 多控制冲突 | 重复同类控制多数 cfg23 拒绝；强覆盖弱仍未证实 | 历史样本 | 1,550 | 历史 B | stronger replacement |
-| EM-24 | 多反击触发 | 历史少量样本支持多反击按顺序独立触发 | 历史样本 | 8 | 历史 C | 执行顺序需继续确认 |
-| EM-25 | Combo 重索敌 | 第二击重新执行目标决议；严格 transition matrix 仍需统计封口 | 历史分层数据 | 34,639 | B+ / strong | strict iid/uniform proof |
-| EM-26 | 混乱即时判定 | 混乱按动作前即时状态参与目标决议 | 历史样本 | 320 | 历史 A | 无 |
-
----
-
-## Cleave / Chain 后冻结覆盖声明
-
-以下旧版断言已经正式废弃，不得再作为实现依据：
+## Status vocabulary
 
 ```text
-旧：Cleave → target-side damage modifier re-entry
-新：Cleave 不重新受到副目标自身伤害增减影响
-
-旧：Chain → target-side modifier / Barrier / Evasion re-entry
-新：Chain TRUE_FEEDBACK 不可规避、不可抵御、不吃目标侧增减伤
-
-旧：Chain → Share / FirstAid 可以触发
-新：Chain → Share / FirstAid = BLOCKED
-
-旧：Cleave→Cleave / Share→Share 仅 NOT OBSERVED
-新：两者均已通过后续直接机制确认升级为 BLOCKED — FROZEN
+HISTORICAL A/B/C = historical battle-report evidence strength
+FROZEN           = current P0 semantic closed for runtime
+RUNTIME_READY_WITH_RESEARCH_DEBT = deterministic runtime + explicit empirical debt
+SUPERSEDED       = lower-authority historical wording, not current authority
 ```
 
----
+## Nine-mechanism evidence / P0 status
 
-## 当前研究状态
+| Mechanism | Evidence status | P0 status | Current authority | Current open questions / research debt |
+|---|---|---|---|---|
+| CONFUSION | historical evidence + formal P0/P1 | FROZEN | state repo `states/control/confusion/MECHANISM_CONTRACT.md`; RF-P03 closes old residual death path as unreachable | none blocking |
+| TAUNT | direct freeze record + consistency audit | FROZEN | `STAGE9_TAUNT_MECHANICS_FREEZE_RECORD.md` | none blocking |
+| GUARD | formal contract + independent audit | FROZEN | `../../STATE_690098_GUARD_MECHANISM_CONTRACT.md` / state P0 owner | none blocking |
+| COMBO | focused evidence + RF-P02/P03/P04 | FROZEN | state repo `states/functional/combo/MECHANISM_CONTRACT.md` | none blocking; exact official PRNG internals are not claimed |
+| CLEAVE | direct freeze + RF-P06/P07/P04 empirical repairs | FROZEN | state repo `states/functional/cleave/MECHANISM_CONTRACT.md`; battle Freeze Record supports it | none blocking |
+| CHAIN_LINK | direct freeze + RF-P01 integerization | FROZEN | `STAGE9_CHAIN_MECHANICS_FREEZE_RECORD.md` | none blocking |
+| DAMAGE_SHARE | direct freeze + RF-P01/P03/P05 | FROZEN | state repo `states/functional/damage_share/MECHANISM_CONTRACT.md`; battle Freeze Record synchronized | none blocking |
+| DISTRIBUTION | direct freeze + RF-P01/P03/P04/P05 | RUNTIME_READY_WITH_RESEARCH_DEBT | `STAGE9_DISTRIBUTION_MECHANICS_FREEZE_RECORD.md` + Finalization Barrier | `DSTS9-B02`: empirical OPEN / UNOBSERVED; runtime CLOSED BY EXPLICIT PROJECT_RUNTIME_DEFAULT; design NOT BLOCKING |
+| COUNTERATTACK | direct freeze + independent audit + RF-P04 hardening | FROZEN | `STAGE9_COUNTERATTACK_MECHANICS_FREEZE_RECORD.md` | universal comparator/dispel fidelity remains non-blocking; runtime deterministic |
+
+## Historical EM trace with current disposition
+
+| ID | Historical topic | Historical evidence | RF-C02 current disposition |
+|---|---|---|---|
+| EM-01 | CONFUSION × TAUNT target arbitration | historical A | FROZEN by CONFUSION + TAUNT P0; no extractor-pending gate |
+| EM-02 | GUARD after TAUNT | historical A | FROZEN by TAUNT/GUARD target-resolution contracts |
+| EM-03 | attacker == protector case | historical A | behavior retained; old “自援护” wording is HISTORICAL, not Self_Guard definition |
+| EM-04 | target identity separation | historical A | FROZEN + typed by RF-C01 (`Selected/Intended/PostRedirect/DamageRecipient`) |
+| EM-05 | CLEAVE anchor around actual target | historical B | FROZEN by CLEAVE/GUARD P0 |
+| EM-06 | COUNTER owner = actual recipient | historical A | FROZEN by Counter P0 |
+| EM-07 | Assault follows actual attack target | historical A | historical supporting evidence; current lifecycle owner is shared arbitration / relevant mechanism P0 |
+| EM-08 | NormalAttack reaction order | historical B | current order owned by Core + RF-P02/P03/P04; R1 is historical evidence |
+| EM-09 | FirstAid callback timing | historical A | retained evidence; mechanism-specific permission policies still apply |
+| EM-10 | zero-damage action reactions | historical A | retained evidence; mechanism-specific zero/cancel rules govern current runtime |
+| EM-11 | Counter → Counter | historical 0/90 | FROZEN = BLOCKED by Counter P0; no pending extractor audit |
+| EM-12 | Cleave → Cleave | direct freeze | FROZEN = BLOCKED |
+| EM-13 | Chain → Chain | direct + historical | FROZEN = BLOCKED |
+| EM-14 | Share-derived loss → Share | direct freeze | FROZEN = BLOCKED; Share math no longer “next research” |
+| EM-15 | Share math | historical A | FROZEN; RF-P01 = ROUND_HALF_UP, RF-P05 = lethal-target transaction closure |
+| EM-16 | Chain feedback math | direct + historical | FROZEN; RF-P01 = FLOOR |
+| EM-17 | CLEAVE pipeline | direct freeze | FROZEN; canonical term `RESISTANCE`, damage layer completed by RF-P06 |
+| EM-18 | CHAIN restricted pipeline | direct freeze | FROZEN; TRUE_FEEDBACK restricted settlement |
+| EM-19 | lethal DAMAGE_SHARE target | historical B precursor | FROZEN by RF-P05: 128/128 controlled cases cancel pending sharer commit |
+| EM-20 | attacker killed during reaction | historical A precursor | SUPERSEDED as universal slogan; current rule is scoped admission/liveness + finalization (RF-P03/RF-P04) |
+| EM-21 | commander death / battle end | historical A precursor | FROZEN by RF-P04 explicit finalization barrier |
+| EM-22 | CHAIN target death continuation | direct + historical | FROZEN; admitted Chain traversal drains before finalization |
+| EM-23 | same-type control conflict | historical B | remains historical outside the nine-mechanism current P0 gate; no Stage9 runtime blocker created here |
+| EM-24 | multiple Counter execution | historical C precursor | CounterBatch semantics FROZEN; universal official comparator fidelity remains non-blocking |
+| EM-25 | COMBO fresh target resolution | historical B+ precursor | FROZEN as fresh standard NormalAttack resolution; exact official iid/uniform PRNG claim rejected |
+| EM-26 | CONFUSION JIT | historical A precursor | FROZEN = EACH ACTUAL TARGET SELECTION / JIT |
+
+## Distribution dual-status rule
 
 ```text
-Cleave Core Mechanics = FROZEN
-Chain Core Mechanics = FROZEN
-Share Core Mechanics = NEXT RESEARCH TARGET
-Counter self-recursion = PENDING FINAL EXTRACTOR AUDIT
+DSTS9-B02
+Empirical Status: OPEN / UNOBSERVED
+Runtime Status: CLOSED BY EXPLICIT PROJECT_RUNTIME_DEFAULT
+Design Admission: NOT BLOCKING
+Research Debt: YES
 ```
 
-历史评级统计不再用于宣称整个 Stage 9 已冻结；Stage 9 仍按专题逐个封闭。
+This is intentionally not collapsed into “CLOSED”.
+
+## Current research status
+
+```text
+CONFUSION      = FROZEN
+TAUNT          = FROZEN
+GUARD          = FROZEN
+COMBO          = FROZEN
+CLEAVE         = FROZEN
+CHAIN_LINK     = FROZEN
+DAMAGE_SHARE   = FROZEN
+DISTRIBUTION   = RUNTIME_READY_WITH_RESEARCH_DEBT
+COUNTERATTACK  = FROZEN
+
+Architecture blockers = 0
+Runtime ambiguities   = 0
+Stage8                = FROZEN
+Formal Stage8 Reopen  = NO
+```
+
+The next project step is the Global Cross-Mechanism Final Audit, not another “next core mechanism research target”.

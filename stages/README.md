@@ -9,11 +9,16 @@
 - [Stage 5：Effect](stage5/README.md)
 - [Stage 6：Skill Runtime](stage6/README.md)
 - [Stage 7：Trigger / Recovery](stage7/README.md)
-- [Stage 8：Damage Pipeline](stage8/README.md)
-- [Stage 9：核心裁决研究](stage9/README.md)
+- [Stage 8：Damage Pipeline — FROZEN](stage8/README.md)
+- [Stage 9：Contract Closure / Design Admission Ready](stage9/README.md)
 
-共享源码保留在 `sgs_v2/`，运行测试保留在 `tests/`，跨阶段状态目录保留在 `research/`。Stage 9 研究脚本和证据随研究目录完整归档。
+```text
+Stage 8 = FROZEN
+Formal Stage8 Reopen = NO
+Stage 9 = wraps / coordinates / derives around Stage8 seams
+Stage 9 does NOT replace the Stage8 Damage Pipeline
+```
 
-阶段状态以 [PROJECT_STATUS.md](../PROJECT_STATUS.md) 及对应阶段的正式合同为准。本次目录整理不改变阶段状态或历史验证结果。
+Stage 9 当前仍处于合同闭环与文档封口阶段。`STAGE9.md` 尚未创建；下一步是 Global Cross-Mechanism Final Audit，只有 final audit 通过后才允许正式编写 Stage 9 implementation design authority。
 
-旧路径对应关系见 [迁移清单](PATH_MIGRATION.md)。Stage 8 的四个旧入口仅包含跳转说明，已并入正式文件；历史提交中的旧路径仍可通过对应提交访问。
+共享源码保留在 `sgs_v2/`，运行测试保留在 `tests/`。阶段状态以 [PROJECT_STATUS.md](../PROJECT_STATUS.md)、对应阶段 current authority 与 Stage 9 authority map 为准。
