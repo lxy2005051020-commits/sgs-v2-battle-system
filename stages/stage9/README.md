@@ -11,7 +11,9 @@ Formal Stage8 Reopen = NO
 STAGE9 SPEC AUTHORING ADMISSION = READY
 Stage9 Design Audit Round 1 = COMPLETE / REPAIR REQUIRED
 Stage9 Design Repair Round 1 = COMPLETE
-Stage9 Design Audit Round 2 = REQUIRED / NOT EXECUTED
+Stage9 Design Audit Round 2 = COMPLETE / REPAIR REQUIRED
+Stage9 Design Repair Round 2 = COMPLETE
+Stage9 Design Audit Round 3 = REQUIRED / NOT EXECUTED
 
 STAGE9.md = DRAFT — DESIGN AUDIT REQUIRED
 Stage9 FROZEN = NO
@@ -26,10 +28,33 @@ Stage 9 只在 Stage 8 已冻结 seams 周围做 orchestration、target arbitrat
 - [Stage9 Authoring Report](STAGE9_AUTHORING_REPORT.md)
 - [Stage9 Design Audit Round 1](audits/STAGE9_DESIGN_AUDIT_ROUND1.md)
 - [Stage9 Design Repair Round 1](audits/STAGE9_DESIGN_REPAIR_ROUND1.md)
+- [Stage9 Design Audit Round 2](audits/STAGE9_DESIGN_AUDIT_ROUND2.md)
+- [Stage9 Design Repair Round 2](audits/STAGE9_DESIGN_REPAIR_ROUND2.md)
 
 `STAGE9.md` 负责“已冻结玩法语义如何映射为可实现、可测试、可审计的代码架构”，不负责重新研究玩法。
 
-`STAGE9_AUTHORING_REPORT.md` 保留 authoring 时点历史记录；Round1 repair 后的最新 file plan / phase graph / ownership 以 `STAGE9.md` 与 `STAGE9_DESIGN_REPAIR_ROUND1.md` 为准。
+`STAGE9_AUTHORING_REPORT.md` 保留 authoring 时点历史记录；当前 file plan / phase graph / ownership 以 `STAGE9.md` 与最新 design repair record 为准。
+
+## Round2 repair closure
+
+```text
+R2 findings repaired = 8/8
+BLOCKER remaining = 0
+MAJOR remaining = 0
+MINOR remaining = 0
+DOC_ONLY remaining = 0
+
+Legacy finalization barriers mapped = 6/6
+Unclassified production DamageEffect at Phase 9.5 gate = 0 required
+Unenforced invariants = 0
+Architecture tests READY = 12/12
+Architecture tests BLOCKED = 0
+
+P0 semantic change = 0
+Stage8 reopen = NO
+```
+
+Round2 repair introduces only implementation-safety contracts such as `LegacyFinalizationBarrier`, `EffectSourceRef`, typed `SkillSlot`, and one-shot permit capabilities. These are not new gameplay rules.
 
 ## Current entry points
 
@@ -97,7 +122,7 @@ Research Debt: YES
 
 ```text
 NEXT STEP:
-Stage9 Design Audit Round 2
+Stage9 Design Audit Round 3
 ```
 
-在 Round 2 独立审计通过并正式冻结前，不创建 `STAGE9_BUILD_PROMPT.md`，不开始 Stage9 production implementation。
+Round3 是 final repaired-design verification。只有 Round3 纯 PASS 后，才允许进入单独的 `Stage9 Design Freeze`。在此之前不创建 `STAGE9_BUILD_PROMPT.md`，不开始 Stage9 production implementation。
