@@ -556,19 +556,25 @@ state.exists
 state.isOperational()
 ```
 
-### 18.1 Protected Target Death
+### 18.1 Protected Target Death（SHS9-M01 冻结闭环）
 
-状态持有者死亡时遵循全局规则：
+状态持有者死亡时，分担机制仅拥有自身事务内部行为，不越权拥有整个外层 Action：
 
 ```text
-TARGET_DEATH
-→ CLEAR_ALL_STATES
-→ ABORT_REMAINING_STATE_RESOLUTION
-→ ABORT_REMAINING_ACTION
-→ REJECT_FUTURE_STATE_APPLICATION
+TARGET_DEATH (Protected Target)
+→ commit target assigned loss (Dtarget)
+→ emit TargetDeathFact
+→ apply Share-local transaction rule (discard pending Dsharer; see Section 11 & SHS9-B02)
+→ complete Share transaction
+→ delegate outer Action / reaction / finalization decisions to authoritative owner
 ```
 
-若同一来源分别保护多个目标，一个目标死亡不会删除其他目标自己的分担实例。
+规则定义：
+1. **Transaction-Scope Ownership**：分担 P0 仅拥有本分担微事务的切分、目标扣兵、死亡感知与待扣除份额决策；
+2. **委托外层调度**：分担 P0 不直接硬编码 `ABORT_REMAINING_ACTION`。外部 Action、反应栈（ReactionStack）或战斗终结由 Stage 9 全局调度器（Core Orchestrator / RF-P04 终战合同）裁决；
+3. 若同一来源分别保护多个目标，一个目标死亡不会删除其他目标自己的分担实例。
+
+此项冻结正式关闭 Finding `SHS9-M01`。
 
 ### 18.2 Sharer Death
 
@@ -948,13 +954,15 @@ T24 shared actual troop loss enters wounded processing
 - 正向/反向分担的物理来源与收益归属；
 - 运行时伤害量与战后统计口径；
 - 伤兵生成基数；
-- self-share 禁止。
+- self-share 禁止；
+- 保护目标阵亡仅拥有分担微事务语义，外层 Action/终战委托全局调度（SHS9-M01）。
 
 ### OUT OF SCOPE / DEFERRED
 
 本合同不冻结：
 
 - 各来源战法的具体 `R` 数学公式；
+- 致死原目标对分担者未提交份额的精确保留/取消（SHS9-B02，留待 RF-P05）；
 - 普通基础兵刃/谋略伤害公式；
 - AOE targetQueue 的具体目标排序规则；
 - 伤兵系统自己的精确生成比例、取整和回合死淘公式；

@@ -490,17 +490,23 @@ state.isOperational()
 
 固定持续回合实例由状态持有者自身的行动开始窗口管理 duration。
 
-状态持有者死亡遵循全局死亡硬终止：
+状态持有者死亡时，分摊机制仅拥有自身事务内部行为，不越权拥有整个外层 Action：
 
 ```text
-TARGET_DEATH
-→ CLEAR_ALL_STATES
-→ ABORT_REMAINING_STATE_RESOLUTION
-→ ABORT_REMAINING_ACTION
-→ REJECT_FUTURE_STATE_APPLICATION
+TARGET_DEATH (Protected Target)
+→ commit target assigned loss (Dtarget)
+→ emit TargetDeathFact
+→ apply Distribution-local transaction rule (see Section 11 & DSTS9-B02)
+→ complete Distribution transaction
+→ delegate outer Action / reaction / finalization decisions to authoritative owner
 ```
 
-承担者死亡只会在下一次 Damage-Time participant evaluation 时被动态排除，不要求旧状态实例整体失效。
+规则定义：
+1. **Transaction-Scope Ownership**：分摊 P0 仅拥有本分摊微事务内部参与者切分、扣兵顺序、死亡感知与待扣除份额决策；
+2. **委托外层调度**：分摊 P0 不直接硬编码 `ABORT_REMAINING_ACTION`。外部 Action、反应栈（ReactionStack）或战斗终结由 Stage 9 全局调度器（Core Orchestrator / RF-P04 终战合同）裁决；
+3. 承担者死亡只会在下一次 Damage-Time participant evaluation 时被动态排除，不要求旧状态实例整体失效。
+
+此项冻结正式关闭 Finding `DSTS9-M01`。
 
 ---
 
@@ -674,7 +680,8 @@ T24 actual participant loss enters wounded processing
 - attribution / statistics / wounded 基于实际 commit；
 - same-source refresh；
 - DAMAGE_SHARE > DISTRIBUTION；
-- 继承 DAMAGE_SHARE 的通用外围 DamageEvent 规则。
+- 继承 DAMAGE_SHARE 的通用外围 DamageEvent 规则；
+- 原目标阵亡仅拥有分摊微事务语义，外层 Action/终战委托全局调度（DSTS9-M01）。
 
 ### INHERITED_NON_BLOCKING
 
@@ -689,6 +696,7 @@ CrossSource DISTRIBUTION → REPLACE
 本合同不冻结：
 
 - 【义心昭烈】内部具体比例公式；
+- 致死原目标对分摊者未提交份额的精确保留/取消（DSTS9-B02，留待 RF-P05）；
 - 普通基础兵刃/谋略伤害公式；
 - 伤兵系统自身精确比例、取整和回合死淘；
 - 官方源码内部类名、函数名、字段名；
