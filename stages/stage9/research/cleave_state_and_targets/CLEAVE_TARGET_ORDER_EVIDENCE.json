@@ -1,0 +1,1652 @@
+{
+  "metadata": {
+    "total_files_scanned": 32999,
+    "total_sequences": 2596,
+    "total_guard_cases": 15,
+    "actual_target_excluded_count": 2061,
+    "actual_target_included_count": 535,
+    "guard_original_hit_count": 15
+  },
+  "pos_order_stats": {
+    "1": {
+      "(2, 3)": 431,
+      "(3,)": 50,
+      "(3, 3)": 103,
+      "(2,)": 67,
+      "(3, 2)": 3,
+      "(2, 2)": 4,
+      "(2, 3, 3)": 3,
+      "(1,)": 6,
+      "(2, 1, 3, 1)": 5,
+      "(2, 3, 2)": 1,
+      "(3, 3, 3)": 2,
+      "(1, 1, 3, 1)": 1,
+      "(1, 3, 1)": 1,
+      "(2, 3, 1)": 2,
+      "(2, 2, 3)": 1,
+      "(1, 3)": 13,
+      "(2, 1)": 2
+    },
+    "2": {
+      "(1,)": 67,
+      "(1, 3)": 469,
+      "(2, 3)": 124,
+      "(3,)": 12,
+      "(3, 3)": 8,
+      "(1, 2)": 17,
+      "(3, 2)": 7,
+      "(1, 3, 3)": 9,
+      "(2,)": 11,
+      "(1, 3, 1)": 5,
+      "(1, 2, 3, 2)": 3
+    },
+    "3": {
+      "(1, 2)": 534,
+      "(3,)": 27,
+      "(1, 3)": 202,
+      "(2, 2)": 73,
+      "(1,)": 72,
+      "(1, 3, 2)": 5,
+      "(3, 2)": 5,
+      "(2, 3)": 11,
+      "(2,)": 20,
+      "(1, 2, 2)": 7,
+      "(2, 3, 1, 2, 1)": 1,
+      "(2, 3, 1, 2)": 1,
+      "(1, 2, 3)": 3,
+      "(1, 3, 2, 3)": 1,
+      "(3, 3)": 187,
+      "(1, 2, 1)": 13,
+      "(1, 3, 3)": 1,
+      "(1, 1)": 6
+    }
+  },
+  "guard_samples": [
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "original_target": "主公",
+      "guarder": "程普",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "周瑜",
+        "主公"
+      ]
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "original_target": "主公",
+      "guarder": "程普",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "周瑜",
+        "主公"
+      ]
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "original_target": "周瑜",
+      "guarder": "程普",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "周瑜",
+        "主公"
+      ]
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "original_target": "周瑜",
+      "guarder": "程普",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "周瑜",
+        "主公"
+      ]
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "original_target": "主公",
+      "guarder": "程普",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "周瑜",
+        "主公"
+      ]
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "original_target": "主公",
+      "guarder": "程普",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "周瑜",
+        "主公"
+      ]
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "original_target": "主公",
+      "guarder": "程普",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "周瑜",
+        "主公"
+      ]
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "original_target": "主公",
+      "guarder": "程普",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "周瑜",
+        "主公"
+      ]
+    },
+    {
+      "file": "战报_2485675_pid2591202.json",
+      "original_target": "主公",
+      "guarder": "曹操",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "程昱",
+        "主公"
+      ]
+    },
+    {
+      "file": "战报_2487485_pid2593540.json",
+      "original_target": "主公",
+      "guarder": "董卓",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "张角",
+        "主公"
+      ]
+    },
+    {
+      "file": "战报_2505063_pid2616871.json",
+      "original_target": "太史慈",
+      "guarder": "程普",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "周瑜",
+        "太史慈"
+      ]
+    },
+    {
+      "file": "战报_2505063_pid2616871.json",
+      "original_target": "太史慈",
+      "guarder": "程普",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "周瑜",
+        "太史慈"
+      ]
+    },
+    {
+      "file": "战报_5245194_pid5889982.json",
+      "original_target": "蒋钦",
+      "guarder": "韩当",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "太史慈",
+        "蒋钦"
+      ]
+    },
+    {
+      "file": "战报_802347_pid798472.json",
+      "original_target": "赵云",
+      "guarder": "皇甫嵩",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "赵云",
+        "马超"
+      ]
+    },
+    {
+      "file": "战报_802347_pid798472.json",
+      "original_target": "赵云",
+      "guarder": "皇甫嵩",
+      "original_target_hit_by_cleave": true,
+      "secondary_hits": [
+        "赵云",
+        "马超"
+      ]
+    }
+  ],
+  "sample_sequences": [
+    {
+      "file": "战报_1045219_pid1040267.json",
+      "actual_target": "死士",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "死士",
+      "cleave_skill": "横扫",
+      "secondary_hits": [
+        {
+          "target": "游骑",
+          "pos": 1,
+          "loss": 6,
+          "rem": 94,
+          "event_idx": 8
+        }
+      ],
+      "secondary_pos_list": [
+        1
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "张飞",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "张飞",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "刘备",
+          "pos": 1,
+          "loss": 176,
+          "rem": 4135,
+          "event_idx": 135
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 176,
+          "rem": 4353,
+          "event_idx": 136
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "主公",
+      "actual_target_pos": 3,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "刘备",
+          "pos": 1,
+          "loss": 118,
+          "rem": 3263,
+          "event_idx": 243
+        },
+        {
+          "target": "张飞",
+          "pos": 2,
+          "loss": 118,
+          "rem": 2014,
+          "event_idx": 244
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "主公",
+      "actual_target_pos": 3,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "刘备",
+          "pos": 1,
+          "loss": 152,
+          "rem": 3111,
+          "event_idx": 246
+        },
+        {
+          "target": "张飞",
+          "pos": 2,
+          "loss": 152,
+          "rem": 1862,
+          "event_idx": 247
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "刘备",
+      "actual_target_pos": 1,
+      "is_guarded": false,
+      "original_target": "刘备",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 2,
+          "loss": 240,
+          "rem": 1622,
+          "event_idx": 253
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 240,
+          "rem": 4162,
+          "event_idx": 254
+        }
+      ],
+      "secondary_pos_list": [
+        2,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "刘备",
+      "actual_target_pos": 1,
+      "is_guarded": false,
+      "original_target": "刘备",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 2,
+          "loss": 311,
+          "rem": 1311,
+          "event_idx": 256
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 311,
+          "rem": 3851,
+          "event_idx": 257
+        }
+      ],
+      "secondary_pos_list": [
+        2,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "主公",
+      "actual_target_pos": 3,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "刘备",
+          "pos": 1,
+          "loss": 236,
+          "rem": 3172,
+          "event_idx": 323
+        },
+        {
+          "target": "张飞",
+          "pos": 2,
+          "loss": 236,
+          "rem": 1953,
+          "event_idx": 324
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "主公",
+      "actual_target_pos": 3,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "刘备",
+          "pos": 1,
+          "loss": 306,
+          "rem": 2866,
+          "event_idx": 326
+        },
+        {
+          "target": "张飞",
+          "pos": 2,
+          "loss": 306,
+          "rem": 1647,
+          "event_idx": 327
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "张飞",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "张飞",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "刘备",
+          "pos": 1,
+          "loss": 223,
+          "rem": 2643,
+          "event_idx": 333
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 223,
+          "rem": 3064,
+          "event_idx": 334
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "张飞",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "张飞",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "刘备",
+          "pos": 1,
+          "loss": 288,
+          "rem": 2355,
+          "event_idx": 336
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 288,
+          "rem": 2776,
+          "event_idx": 337
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "张飞",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "张飞",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "刘备",
+          "pos": 1,
+          "loss": 200,
+          "rem": 818,
+          "event_idx": 390
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 200,
+          "rem": 1943,
+          "event_idx": 391
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "张飞",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "张飞",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "刘备",
+          "pos": 1,
+          "loss": 208,
+          "rem": 528,
+          "event_idx": 460
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 208,
+          "rem": 2509,
+          "event_idx": 461
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "actual_target": "刘备",
+      "actual_target_pos": 1,
+      "is_guarded": false,
+      "original_target": "刘备",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 48,
+          "rem": 2177,
+          "event_idx": 517
+        }
+      ],
+      "secondary_pos_list": [
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 231,
+          "rem": 4269,
+          "event_idx": 21
+        },
+        {
+          "target": "程普",
+          "pos": 3,
+          "loss": 231,
+          "rem": 4262,
+          "event_idx": 22
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "程普",
+      "actual_target_pos": 3,
+      "is_guarded": true,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 141,
+          "rem": 4284,
+          "event_idx": 145
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 141,
+          "rem": 4081,
+          "event_idx": 146
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "程普",
+      "actual_target_pos": 3,
+      "is_guarded": true,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 141,
+          "rem": 4143,
+          "event_idx": 155
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 141,
+          "rem": 3940,
+          "event_idx": 156
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "程普",
+      "actual_target_pos": 3,
+      "is_guarded": true,
+      "original_target": "周瑜",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 161,
+          "rem": 4208,
+          "event_idx": 221
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 161,
+          "rem": 3779,
+          "event_idx": 222
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "程普",
+      "actual_target_pos": 3,
+      "is_guarded": true,
+      "original_target": "周瑜",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 209,
+          "rem": 3999,
+          "event_idx": 224
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 209,
+          "rem": 3570,
+          "event_idx": 225
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 202,
+          "rem": 3797,
+          "event_idx": 232
+        },
+        {
+          "target": "程普",
+          "pos": 3,
+          "loss": 202,
+          "rem": 1561,
+          "event_idx": 233
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 262,
+          "rem": 3535,
+          "event_idx": 236
+        },
+        {
+          "target": "程普",
+          "pos": 3,
+          "loss": 262,
+          "rem": 1299,
+          "event_idx": 237
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "程普",
+      "actual_target_pos": 3,
+      "is_guarded": true,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 171,
+          "rem": 2902,
+          "event_idx": 306
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 171,
+          "rem": 2278,
+          "event_idx": 307
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "程普",
+      "actual_target_pos": 3,
+      "is_guarded": true,
+      "original_target": "主公",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 221,
+          "rem": 2681,
+          "event_idx": 309
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 221,
+          "rem": 2057,
+          "event_idx": 310
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "程普",
+      "actual_target_pos": 3,
+      "is_guarded": true,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 65,
+          "rem": 2137,
+          "event_idx": 394
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 65,
+          "rem": 1992,
+          "event_idx": 395
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "actual_target": "程普",
+      "actual_target_pos": 3,
+      "is_guarded": true,
+      "original_target": "主公",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 84,
+          "rem": 2053,
+          "event_idx": 397
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 84,
+          "rem": 1908,
+          "event_idx": 398
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068306_pid1063323.json",
+      "actual_target": "孙坚",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "孙坚",
+      "cleave_skill": "矢志不移",
+      "secondary_hits": [
+        {
+          "target": "周瑜",
+          "pos": 1,
+          "loss": 63,
+          "rem": 3991,
+          "event_idx": 112
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 63,
+          "rem": 3093,
+          "event_idx": 113
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068357_pid1063369.json",
+      "actual_target": "刘备",
+      "actual_target_pos": 1,
+      "is_guarded": false,
+      "original_target": "刘备",
+      "cleave_skill": "矢志不移",
+      "secondary_hits": [
+        {
+          "target": "赵云",
+          "pos": 2,
+          "loss": 0,
+          "rem": 5000,
+          "event_idx": 46
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 0,
+          "rem": 4900,
+          "event_idx": 49
+        }
+      ],
+      "secondary_pos_list": [
+        2,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 204,
+          "rem": 3612,
+          "event_idx": 32
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 204,
+          "rem": 3574,
+          "event_idx": 34
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 265,
+          "rem": 3347,
+          "event_idx": 37
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 265,
+          "rem": 3309,
+          "event_idx": 40
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 197,
+          "rem": 3486,
+          "event_idx": 121
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 197,
+          "rem": 2688,
+          "event_idx": 124
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 256,
+          "rem": 3483,
+          "event_idx": 127
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 256,
+          "rem": 2432,
+          "event_idx": 130
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "法正",
+      "actual_target_pos": 3,
+      "is_guarded": false,
+      "original_target": "法正",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 241,
+          "rem": 2926,
+          "event_idx": 205
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 241,
+          "rem": 2949,
+          "event_idx": 208
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "法正",
+      "actual_target_pos": 3,
+      "is_guarded": false,
+      "original_target": "法正",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 313,
+          "rem": 2949,
+          "event_idx": 211
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 313,
+          "rem": 2636,
+          "event_idx": 213
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "张飞",
+      "actual_target_pos": 1,
+      "is_guarded": false,
+      "original_target": "张飞",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 243,
+          "rem": 2393,
+          "event_idx": 222
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 243,
+          "rem": 2915,
+          "event_idx": 225
+        }
+      ],
+      "secondary_pos_list": [
+        2,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "张飞",
+      "actual_target_pos": 1,
+      "is_guarded": false,
+      "original_target": "张飞",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 314,
+          "rem": 2415,
+          "event_idx": 229
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 314,
+          "rem": 2937,
+          "event_idx": 232
+        }
+      ],
+      "secondary_pos_list": [
+        2,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "法正",
+      "actual_target_pos": 3,
+      "is_guarded": false,
+      "original_target": "法正",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 249,
+          "rem": 2457,
+          "event_idx": 309
+        },
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 249,
+          "rem": 2575,
+          "event_idx": 310
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 257,
+          "rem": 1972,
+          "event_idx": 360
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 257,
+          "rem": 1124,
+          "event_idx": 361
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "张飞",
+      "actual_target_pos": 1,
+      "is_guarded": false,
+      "original_target": "张飞",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "主公",
+          "pos": 2,
+          "loss": 106,
+          "rem": 1433,
+          "event_idx": 472
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 106,
+          "rem": 734,
+          "event_idx": 473
+        }
+      ],
+      "secondary_pos_list": [
+        2,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 225,
+          "rem": 518,
+          "event_idx": 550
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 225,
+          "rem": 442,
+          "event_idx": 551
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 291,
+          "rem": 227,
+          "event_idx": 553
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 291,
+          "rem": 151,
+          "event_idx": 554
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 52,
+          "rem": 175,
+          "event_idx": 561
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 52,
+          "rem": 99,
+          "event_idx": 562
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "actual_target": "主公",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "张飞",
+          "pos": 1,
+          "loss": 67,
+          "rem": 108,
+          "event_idx": 564
+        },
+        {
+          "target": "法正",
+          "pos": 3,
+          "loss": 67,
+          "rem": 32,
+          "event_idx": 565
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068387_pid1063375.json",
+      "actual_target": "赵云",
+      "actual_target_pos": 1,
+      "is_guarded": false,
+      "original_target": "赵云",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "关羽",
+          "pos": 2,
+          "loss": 133,
+          "rem": 5830,
+          "event_idx": 42
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 133,
+          "rem": 5867,
+          "event_idx": 43
+        }
+      ],
+      "secondary_pos_list": [
+        2,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068387_pid1063375.json",
+      "actual_target": "关羽",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "关羽",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "赵云",
+          "pos": 1,
+          "loss": 161,
+          "rem": 5513,
+          "event_idx": 49
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 161,
+          "rem": 5706,
+          "event_idx": 54
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068387_pid1063375.json",
+      "actual_target": "关羽",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "关羽",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "赵云",
+          "pos": 1,
+          "loss": 152,
+          "rem": 5202,
+          "event_idx": 116
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 152,
+          "rem": 4988,
+          "event_idx": 117
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068387_pid1063375.json",
+      "actual_target": "关羽",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "关羽",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "赵云",
+          "pos": 1,
+          "loss": 157,
+          "rem": 5045,
+          "event_idx": 123
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 157,
+          "rem": 4831,
+          "event_idx": 125
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068387_pid1063375.json",
+      "actual_target": "赵云",
+      "actual_target_pos": 1,
+      "is_guarded": false,
+      "original_target": "赵云",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "关羽",
+          "pos": 2,
+          "loss": 130,
+          "rem": 5196,
+          "event_idx": 192
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 130,
+          "rem": 4701,
+          "event_idx": 193
+        }
+      ],
+      "secondary_pos_list": [
+        2,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068396_pid1063382.json",
+      "actual_target": "关羽",
+      "actual_target_pos": 2,
+      "is_guarded": false,
+      "original_target": "关羽",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "赵云",
+          "pos": 1,
+          "loss": 162,
+          "rem": 5422,
+          "event_idx": 41
+        },
+        {
+          "target": "主公",
+          "pos": 3,
+          "loss": 162,
+          "rem": 5403,
+          "event_idx": 42
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        3
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068396_pid1063382.json",
+      "actual_target": "主公",
+      "actual_target_pos": 3,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "赵云",
+          "pos": 1,
+          "loss": 163,
+          "rem": 5259,
+          "event_idx": 48
+        },
+        {
+          "target": "关羽",
+          "pos": 2,
+          "loss": 163,
+          "rem": 4854,
+          "event_idx": 49
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068396_pid1063382.json",
+      "actual_target": "主公",
+      "actual_target_pos": 3,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "槊血纵横",
+      "secondary_hits": [
+        {
+          "target": "赵云",
+          "pos": 1,
+          "loss": 108,
+          "rem": 5151,
+          "event_idx": 137
+        },
+        {
+          "target": "关羽",
+          "pos": 2,
+          "loss": 108,
+          "rem": 5135,
+          "event_idx": 142
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    },
+    {
+      "file": "战报_1068396_pid1063382.json",
+      "actual_target": "主公",
+      "actual_target_pos": 3,
+      "is_guarded": false,
+      "original_target": "主公",
+      "cleave_skill": "瞋目横矛",
+      "secondary_hits": [
+        {
+          "target": "赵云",
+          "pos": 1,
+          "loss": 140,
+          "rem": 5011,
+          "event_idx": 144
+        },
+        {
+          "target": "关羽",
+          "pos": 2,
+          "loss": 140,
+          "rem": 4995,
+          "event_idx": 145
+        }
+      ],
+      "secondary_pos_list": [
+        1,
+        2
+      ],
+      "actual_target_excluded": true
+    }
+  ]
+}
