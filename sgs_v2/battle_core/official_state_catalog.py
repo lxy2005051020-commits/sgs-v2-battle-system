@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 from .stage9_state_params import (
+    ComboStateParams,
     DamageShareStateParams,
     DistributionStateParams,
     GuardStateParams,
@@ -128,6 +129,7 @@ _OFFICIAL_STATE_RUNTIME_PARAMS_TYPES: dict[OfficialStateId, type[StateRuntimePar
     OfficialStateId.GUARD: GuardStateParams,
     OfficialStateId.DAMAGE_SHARE: DamageShareStateParams,
     OfficialStateId.DAMAGE_SPLIT: DistributionStateParams,
+    OfficialStateId.COMBO: ComboStateParams,
 }
 
 

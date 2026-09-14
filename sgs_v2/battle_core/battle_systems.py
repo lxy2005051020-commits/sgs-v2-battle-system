@@ -13,7 +13,11 @@ from .damage_resolution_system import DamageResolutionSystem
 from .damage_system import DamageSystem
 from .direct_troop_loss_system import DirectTroopLossResolver
 from .effect_executor import EffectExecutor
-from .execution_right_system import FutureAdmissionGate, LegacyActionDispatchAdapter
+from .execution_right_system import (
+    AssaultDispatchPort,
+    FutureAdmissionGate,
+    LegacyActionDispatchAdapter,
+)
 from .normal_attack_system import NormalAttackSystem
 from .recovery_system import RecoverySystem
 from .rule_hook_system import RuleHookSystem
@@ -62,6 +66,7 @@ class BattleSystems:
     finalization_coordinator: BattleFinalizationCoordinator = field(init=False)
     future_admission_gate: FutureAdmissionGate = field(init=False)
     legacy_action_dispatch_adapter: LegacyActionDispatchAdapter = field(init=False)
+    assault_dispatch_port: AssaultDispatchPort = field(init=False)
     stage9_state_runtime: Stage9StateRuntime = field(init=False)
     target_resolution_system: TargetResolutionSystem = field(init=False)
 
@@ -99,11 +104,35 @@ class BattleSystems:
             direct_troop_loss_resolver=self.direct_troop_loss_resolver,
             finalization_coordinator=self.finalization_coordinator,
         )
-        self.normal_attack_system = NormalAttackSystem(
-            self.target_system,
-            self.damage_resolution_system,
+        self.future_admission_gate = FutureAdmissionGate(
+            coordinator=self.finalization_coordinator,
         )
-        self.action_system = ActionSystem(self.normal_attack_system)
+        self.assault_dispatch_port = AssaultDispatchPort(
+            gate=self.future_admission_gate,
+        )
+        self.target_resolution_system = TargetResolutionSystem(
+            self.target_system,
+            self.stage9_state_runtime,
+        )
+        self.normal_attack_system = NormalAttackSystem(
+            target_system=self.target_system,
+            damage_resolution_system=self.damage_resolution_system,
+            target_resolution_system=self.target_resolution_system,
+            damage_instance_coordinator=self.damage_instance_coordinator,
+            future_admission_gate=self.future_admission_gate,
+            finalization_coordinator=self.finalization_coordinator,
+            assault_dispatch_port=self.assault_dispatch_port,
+            state_runtime=self.stage9_state_runtime,
+        )
+        self.action_system = ActionSystem(
+            normal_attack_system=self.normal_attack_system,
+            stage9_state_runtime=self.stage9_state_runtime,
+            state_lifecycle_system=self.state_lifecycle_system,
+        )
+        self.legacy_action_dispatch_adapter = LegacyActionDispatchAdapter(
+            action_system=lambda: self.action_system,
+            gate=self.future_admission_gate,
+        )
         self.recovery_system = RecoverySystem(self.troop_system)
         self.effect_executor = EffectExecutor(
             self.damage_instance_coordinator,
@@ -115,15 +144,4 @@ class BattleSystems:
         self.rule_hook_system = RuleHookSystem(
             self.trigger_system,
             self.effect_executor,
-        )
-        self.future_admission_gate = FutureAdmissionGate(
-            coordinator=self.finalization_coordinator,
-        )
-        self.legacy_action_dispatch_adapter = LegacyActionDispatchAdapter(
-            action_system=lambda: self.action_system,
-            gate=self.future_admission_gate,
-        )
-        self.target_resolution_system = TargetResolutionSystem(
-            self.target_system,
-            self.stage9_state_runtime,
         )

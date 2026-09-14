@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, TYPE_CHECKING
 
-from .operation_identity import DamageInstanceId, FinalizationId, OperationIdAllocator
+from .operation_identity import ActionId, DamageInstanceId, FinalizationId, OperationIdAllocator
 
 if TYPE_CHECKING:
     from .action_system import ActionSystem
@@ -169,7 +169,7 @@ class FutureAdmissionGate:
                 f"coordinator must be BattleFinalizationCoordinator, got {type(coordinator)}"
             )
         self._coordinator = coordinator
-        self._id_allocator = id_allocator
+        self._id_allocator = id_allocator or OperationIdAllocator()
         self._issued_permits: dict[str, FutureAdmissionPermit] = {}
         self._consumed_permits: set[str] = set()
 
@@ -200,9 +200,9 @@ class FutureAdmissionGate:
         if not self.can_admit(branch_kind):
             return None
 
-        alloc = id_allocator or self._id_allocator
+        alloc = self._id_allocator
         if alloc is None:
-            alloc = OperationIdAllocator()
+            alloc = id_allocator or OperationIdAllocator()
             self._id_allocator = alloc
 
         permit_id = alloc.allocate_permit_id("prm_fwd")
@@ -314,4 +314,184 @@ class LegacyActionDispatchAdapter:
             expected_parent_scope_identity=parent_scope_identity,
         )
         self.action_system.execute(context, actor)
+
+
+class ComboGrantState(str, Enum):
+    """Lifecycle state of an Action-local Combo grant."""
+
+    VALID = "VALID"
+    REVOKED_BY_PHYSICAL_REMOVE = "REVOKED_BY_PHYSICAL_REMOVE"
+    CONSUMED = "CONSUMED"
+
+
+@dataclass(slots=True)
+class ComboActionGrant:
+    """Action-local permission granted from a specific physical Combo StateInstance.
+
+    Freezes source provenance at grant creation. Liveness check confirms physical
+    instance still exists; physical removal before consume revokes the grant.
+    Ordinary suppression does NOT retroactively revoke an already-valid grant.
+    """
+
+    action_id: ActionId
+    granting_instance_id: str
+    source_unit: str
+    source_skill: str
+    state: ComboGrantState = ComboGrantState.VALID
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.action_id, ActionId):
+            raise TypeError("action_id must be ActionId")
+        if not isinstance(self.granting_instance_id, str) or not self.granting_instance_id.strip():
+            raise ValueError("granting_instance_id cannot be empty or whitespace")
+        if not isinstance(self.source_unit, str) or not self.source_unit.strip():
+            raise ValueError("source_unit cannot be empty or whitespace")
+        if not isinstance(self.source_skill, str) or not self.source_skill.strip():
+            raise ValueError("source_skill cannot be empty or whitespace for a valid ComboActionGrant")
+        if not isinstance(self.state, ComboGrantState):
+            raise TypeError(f"state must be ComboGrantState, got {type(self.state)}")
+
+    def is_valid(self, context: BattleContext) -> bool:
+        if self.state != ComboGrantState.VALID:
+            return False
+        try:
+            inst = context.states.get(self.granting_instance_id)
+        except KeyError:
+            inst = None
+        if inst is None:
+            self.state = ComboGrantState.REVOKED_BY_PHYSICAL_REMOVE
+            return False
+        return True
+
+    def consume(self) -> None:
+        if self.state != ComboGrantState.VALID:
+            raise RuntimeError(f"Cannot consume ComboActionGrant in state {self.state.value}")
+        self.state = ComboGrantState.CONSUMED
+
+    def revoke_by_physical_remove(self) -> None:
+        if self.state == ComboGrantState.VALID:
+            self.state = ComboGrantState.REVOKED_BY_PHYSICAL_REMOVE
+
+
+class ComboCheckpointState(str, Enum):
+    """State machine governing entry and consumption at the Combo Checkpoint boundary."""
+
+    NOT_REACHED = "NOT_REACHED"
+    REACHED = "REACHED"
+    CONSUMED = "CONSUMED"
+    BLOCKED = "BLOCKED"
+
+
+@dataclass(slots=True)
+class ActionScope:
+    """Real Stage9 admitted Action unit of work.
+
+    Maintains ActionId identity, actor, admitted status, combo grant,
+    checkpoint state, physical normal attack count (<= 2), and terminal state.
+    """
+
+    action_id: ActionId
+    actor_id: str
+    admitted: bool = True
+    combo_grant: ComboActionGrant | None = None
+    combo_checkpoint_state: ComboCheckpointState = ComboCheckpointState.NOT_REACHED
+    physical_normal_attack_count: int = 0
+    terminal: bool = False
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.action_id, ActionId):
+            raise TypeError("action_id must be ActionId")
+        if not isinstance(self.actor_id, str) or not self.actor_id.strip():
+            raise ValueError("actor_id cannot be empty or whitespace")
+        if not isinstance(self.combo_checkpoint_state, ComboCheckpointState):
+            raise TypeError(
+                f"combo_checkpoint_state must be ComboCheckpointState, got {type(self.combo_checkpoint_state)}"
+            )
+
+    def mark_terminal(self) -> None:
+        self.terminal = True
+
+
+def admit_action_scope(
+    context: BattleContext,
+    gate: FutureAdmissionGate,
+    permit: FutureAdmissionPermit,
+    actor: UnitRuntime,
+    parent_scope_identity: str,
+) -> ActionScope:
+    """Factory admitting real ActionScope.
+
+    Enforces strict architectural ordering:
+    1. Validates exact issued capability and consumes NEXT_ACTION permit.
+    2. ONLY AFTER successful consume: allocates ActionId from context.id_allocator.
+    3. Admits action_id into coordinator's active action scopes.
+    4. Returns admitted ActionScope.
+    """
+    if not isinstance(gate, FutureAdmissionGate):
+        raise TypeError("gate must be FutureAdmissionGate")
+    if not isinstance(permit, FutureAdmissionPermit):
+        raise TypeError("permit must be FutureAdmissionPermit")
+    if permit.branch_kind != FutureBranchKind.NEXT_ACTION:
+        raise ValueError(
+            f"ActionScope admission requires NEXT_ACTION, got {permit.branch_kind.value}"
+        )
+
+    # Step 1: Validate exact capability and consume permit FIRST
+    gate.consume_permit(
+        permit=permit,
+        expected_branch_kind=FutureBranchKind.NEXT_ACTION,
+        expected_parent_scope_identity=parent_scope_identity,
+    )
+
+    # Step 2: ONLY AFTER successful consume: allocate ActionId
+    action_id = context.id_allocator.allocate_action_id()
+
+    # Step 3: Register in coordinator barrier
+    gate.coordinator.admit_action_scope(context, action_id)
+
+    # Step 4: Construct and return ActionScope
+    return ActionScope(
+        action_id=action_id,
+        actor_id=actor.unit_id,
+        admitted=True,
+    )
+
+
+class AssaultDispatchPort:
+    """Stage9 typed admission seam for Assault skills.
+
+    In Phase 9.6, this is seam-only: no gameplay logic, no trigger chances,
+    no targeting, no damage formulas.
+    Validates and consumes an authentic FutureAdmissionPermit(FutureBranchKind.ASSAULT).
+    """
+
+    def __init__(self, gate: FutureAdmissionGate) -> None:
+        if not isinstance(gate, FutureAdmissionGate):
+            raise TypeError(f"gate must be FutureAdmissionGate, got {type(gate)}")
+        self._gate = gate
+
+    @property
+    def gate(self) -> FutureAdmissionGate:
+        return self._gate
+
+    def dispatch(
+        self,
+        context: BattleContext,
+        permit: FutureAdmissionPermit,
+        parent_scope_identity: str,
+        *,
+        actor: UnitRuntime,
+        actual_target_id: str,
+    ) -> None:
+        if not isinstance(permit, FutureAdmissionPermit):
+            raise TypeError("permit must be FutureAdmissionPermit")
+        if permit.branch_kind != FutureBranchKind.ASSAULT:
+            raise ValueError(f"Expected ASSAULT permit, got {permit.branch_kind.value}")
+        self._gate.consume_permit(
+            permit=permit,
+            expected_branch_kind=FutureBranchKind.ASSAULT,
+            expected_parent_scope_identity=parent_scope_identity,
+        )
+        # Seam-only in Phase 9.6: no default Assault producer registered.
+
 

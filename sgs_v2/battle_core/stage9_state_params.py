@@ -137,4 +137,16 @@ class CounterStateParams(StateRuntimeParams):
 @dataclass(frozen=True, slots=True)
 class ComboStateParams(StateRuntimeParams):
     """Runtime parameters for Combo state (e.g. state 690081)."""
-    pass
+
+    remaining_actions: int | None = None
+    is_suppressed: bool = False
+
+    def __post_init__(self) -> None:
+        if self.remaining_actions is not None:
+            if isinstance(self.remaining_actions, bool) or not isinstance(self.remaining_actions, int):
+                raise TypeError("remaining_actions must be an int or None")
+            if self.remaining_actions < 0:
+                raise ValueError("remaining_actions cannot be negative")
+        if not isinstance(self.is_suppressed, bool):
+            raise TypeError("is_suppressed must be a bool")
+

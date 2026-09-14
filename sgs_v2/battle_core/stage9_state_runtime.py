@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from .official_state_catalog import OfficialStateId
 from .stage9_state_params import (
+    ComboStateParams,
     DamageShareStateParams,
     DistributionStateParams,
     GuardStateParams,
@@ -258,3 +259,40 @@ class Stage9StateRuntime:
             suppressors=frozenset(suppressors),
         )
         return self._lifecycle.update_runtime_params(context, instance_id, new_params)
+
+    def get_operational_combo(
+        self,
+        context: BattleContext,
+        unit_id: str,
+    ) -> StateInstance | None:
+        """Returns operational Combo StateInstance on unit_id if active and not suppressed, else None."""
+        instances = context.states.find(
+            owner_id=unit_id,
+            state_id=OfficialStateId.COMBO.value,
+        )
+        if not instances:
+            return None
+        instance = instances[0]
+        params = instance.runtime_params
+        if isinstance(params, ComboStateParams) and params.is_suppressed:
+            return None
+        return instance
+
+    def set_combo_suppressed(
+        self,
+        context: BattleContext,
+        instance_id: str,
+        is_suppressed: bool,
+    ) -> StateInstance:
+        """Testing / seam helper to toggle suppression on a physical Combo instance."""
+        instance = context.states.get(instance_id)
+        if not isinstance(instance.runtime_params, ComboStateParams):
+            raise TypeError(
+                f"State instance {instance_id} is not a Combo state with ComboStateParams"
+            )
+        new_params = ComboStateParams(
+            remaining_actions=instance.runtime_params.remaining_actions,
+            is_suppressed=is_suppressed,
+        )
+        return self._lifecycle.update_runtime_params(context, instance_id, new_params)
+

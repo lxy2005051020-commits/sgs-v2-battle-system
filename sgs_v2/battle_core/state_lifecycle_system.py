@@ -8,6 +8,7 @@ from .events import EventType
 from .official_state_catalog import OfficialStateId
 from .skill_runtime import SkillSlot
 from .stage9_state_params import (
+    ComboStateParams,
     DamageShareStateParams,
     DistributionStateParams,
     GuardStateParams,
@@ -90,17 +91,33 @@ class StateLifecycleSystem:
             expires_phase=expires_phase,
         )
 
-        actual_runtime_params = (
-            EmptyStateRuntimeParams()
-            if runtime_params is None
-            else runtime_params
-        )
+        if runtime_params is None:
+            if definition.runtime_params_type is EmptyStateRuntimeParams:
+                actual_runtime_params = EmptyStateRuntimeParams()
+            else:
+                try:
+                    actual_runtime_params = definition.runtime_params_type()
+                except TypeError:
+                    actual_runtime_params = EmptyStateRuntimeParams()
+        else:
+            actual_runtime_params = runtime_params
+
         if not isinstance(actual_runtime_params, definition.runtime_params_type):
             raise TypeError(
                 "runtime_params type mismatch for state "
                 f"{state_id}: expected {definition.runtime_params_type.__name__}, "
                 f"got {type(actual_runtime_params).__name__}"
             )
+
+        if state_id == OfficialStateId.COMBO.value:
+            existing_combo = context.states.find(
+                owner_id=owner_id,
+                state_id=OfficialStateId.COMBO.value,
+            )
+            if existing_combo:
+                raise ValueError(
+                    f"COMBO already exists on unit '{owner_id}', cannot stack (First-In-Wins)"
+                )
 
         if state_id == OfficialStateId.GUARD.value and isinstance(actual_runtime_params, GuardStateParams):
             context.get_unit(actual_runtime_params.protector_id)
@@ -205,9 +222,13 @@ class StateLifecycleSystem:
         """
         instance = context.states.get(instance_id)
 
-        if instance.state_id not in (OfficialStateId.GUARD.value, OfficialStateId.TAUNT.value):
+        if instance.state_id not in (
+            OfficialStateId.GUARD.value,
+            OfficialStateId.TAUNT.value,
+            OfficialStateId.COMBO.value,
+        ):
             raise ValueError(
-                f"Runtime parameter maintenance is not authorized for state '{instance.state_id}' in Phase 9.3"
+                f"Runtime parameter maintenance is not authorized for state '{instance.state_id}' in Phase 9.6"
             )
 
         definition = context.states.get_definition(instance.state_id)
@@ -250,8 +271,43 @@ class StateLifecycleSystem:
                     f"cannot disagree with authoritative source_id '{instance.source_id}'"
                 )
 
+        if instance.state_id == OfficialStateId.COMBO.value:
+            assert isinstance(runtime_params, ComboStateParams)
+
         updated = dataclasses.replace(instance, runtime_params=runtime_params)
         return context.states.replace(updated)
+
+    def process_combo_action_start(
+        self,
+        context: BattleContext,
+        actor_id: str,
+    ) -> StateInstance | None:
+        """Maintains temporary Combo status at holder ACTION_START.
+
+        P0 Lifecycle maintenance:
+        1. If remaining_actions <= 0: physically remove instance (REG-CMB-01).
+        2. If remaining_actions > 0: decrement remaining_actions by 1.
+        3. Returns the surviving StateInstance or None if removed / none exists.
+        """
+        instances = context.states.find(
+            owner_id=actor_id,
+            state_id=OfficialStateId.COMBO.value,
+        )
+        if not instances:
+            return None
+        instance = instances[0]
+        params = instance.runtime_params
+        if isinstance(params, ComboStateParams) and params.remaining_actions is not None:
+            if params.remaining_actions <= 0:
+                self.remove(context, instance.instance_id)
+                return None
+            else:
+                new_params = ComboStateParams(
+                    remaining_actions=params.remaining_actions - 1,
+                    is_suppressed=params.is_suppressed,
+                )
+                return self.update_runtime_params(context, instance.instance_id, new_params)
+        return instance
 
     def remove(
         self,

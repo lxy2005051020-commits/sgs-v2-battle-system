@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, TYPE_CHECKING
+from typing import Any, Callable, TYPE_CHECKING
 
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
 from .context import BattleContext
@@ -410,6 +410,8 @@ class DamageInstanceCoordinator:
         context: BattleContext,
         request: DamageRequest,
         lineage: OperationLineage,
+        *,
+        on_calculated: Callable[[DamageResult], None] | None = None,
     ) -> DamageInstanceExecution:
         """Full Phase 9.5 transaction used by production DamageEffect."""
         if self._partition is None or self._direct_loss is None or self._finalization is None:
@@ -427,6 +429,8 @@ class DamageInstanceCoordinator:
             self._finalization.admit_damage_instance(context, damage_instance_id)
             finalization_admitted = True
             damage_result = self._damage_system.calculate(context, request)
+            if on_calculated is not None:
+                on_calculated(damage_result)
 
             if damage_result.prevented:
                 permit = self.issue_settlement_permit(damage_instance_id, lineage, context)

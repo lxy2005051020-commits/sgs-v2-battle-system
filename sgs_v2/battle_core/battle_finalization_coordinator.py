@@ -10,7 +10,7 @@ from .execution_right_system import (
     LegacyFinalizationBarrier,
     _forbid_ordering,
 )
-from .operation_identity import DamageInstanceId, FinalizationId, OperationIdAllocator
+from .operation_identity import ActionId, DamageInstanceId, FinalizationId, OperationIdAllocator
 from .victory_system import VictorySystem
 
 if TYPE_CHECKING:
@@ -144,6 +144,7 @@ class BattleFinalizationCoordinator:
         self._projection_claimed: bool = False
         self._projection_consumed: bool = False
         self._active_damage_instances: dict[DamageInstanceId, None] = {}
+        self._active_action_scopes: dict[ActionId, None] = {}
         self._latched_winner_team_id: str | None = None
         self._latched_reason: BattleEndReason | None = None
 
@@ -192,6 +193,14 @@ class BattleFinalizationCoordinator:
         return tuple(self._active_damage_instances)
 
     @property
+    def active_action_scope_ids(self) -> tuple[ActionId, ...]:
+        return tuple(self._active_action_scopes)
+
+    @property
+    def has_admitted_work(self) -> bool:
+        return bool(self._active_damage_instances or self._active_action_scopes)
+
+    @property
     def is_latched_or_finalized(self) -> bool:
         return self._termination_state in (
             BattleTerminationState.VICTORY_LATCHED,
@@ -215,6 +224,47 @@ class BattleFinalizationCoordinator:
             raise ValueError(f"DamageInstance '{damage_instance_id}' is already admitted")
         self._bind_or_validate_context(context)
         self._active_damage_instances[damage_instance_id] = None
+
+    def admit_action_scope(
+        self,
+        context: BattleContext,
+        action_id: ActionId,
+    ) -> None:
+        if not isinstance(action_id, ActionId):
+            raise TypeError("action_id must be ActionId")
+        self._validate_context(context)
+        if self._termination_state != BattleTerminationState.RUNNING:
+            raise RuntimeError(
+                f"Cannot admit new ActionScope while termination state is {self._termination_state.value}"
+            )
+        if action_id in self._active_action_scopes:
+            raise ValueError(f"ActionScope '{action_id}' is already admitted")
+        self._bind_or_validate_context(context)
+        self._active_action_scopes[action_id] = None
+
+    def complete_action_scope(
+        self,
+        context: BattleContext,
+        action_id: ActionId,
+    ) -> None:
+        if not isinstance(action_id, ActionId):
+            raise TypeError("action_id must be ActionId")
+        self._validate_context(context)
+        if action_id not in self._active_action_scopes:
+            raise ValueError(
+                f"ActionScope '{action_id}' is not active in finalization barrier"
+            )
+        self._bind_or_validate_context(context)
+        self._active_action_scopes.pop(action_id)
+        if self._termination_state in (
+            BattleTerminationState.VICTORY_LATCHED,
+            BattleTerminationState.DRAINING_ADMITTED_WORK,
+        ):
+            if self.has_admitted_work:
+                self._termination_state = BattleTerminationState.DRAINING_ADMITTED_WORK
+                self._refresh_latched_record()
+            else:
+                self._finalize(context)
 
     def observe_damage_instance_death(
         self,
@@ -240,7 +290,7 @@ class BattleFinalizationCoordinator:
         if eval_result is None:
             return
         self._latch_victory(eval_result)
-        if self._active_damage_instances:
+        if self.has_admitted_work:
             self._termination_state = BattleTerminationState.DRAINING_ADMITTED_WORK
             self._refresh_latched_record()
         else:
@@ -264,7 +314,7 @@ class BattleFinalizationCoordinator:
             BattleTerminationState.VICTORY_LATCHED,
             BattleTerminationState.DRAINING_ADMITTED_WORK,
         ):
-            if self._active_damage_instances:
+            if self.has_admitted_work:
                 self._termination_state = BattleTerminationState.DRAINING_ADMITTED_WORK
                 self._refresh_latched_record()
             else:
@@ -288,7 +338,7 @@ class BattleFinalizationCoordinator:
             BattleTerminationState.VICTORY_LATCHED,
             BattleTerminationState.DRAINING_ADMITTED_WORK,
         ):
-            if not self._active_damage_instances:
+            if not self.has_admitted_work:
                 self._finalize(context)
             return
 
@@ -300,7 +350,7 @@ class BattleFinalizationCoordinator:
             return
 
         self._latch_victory(eval_result)
-        if self._active_damage_instances:
+        if self.has_admitted_work:
             self._termination_state = BattleTerminationState.DRAINING_ADMITTED_WORK
             self._refresh_latched_record()
             return
@@ -328,8 +378,8 @@ class BattleFinalizationCoordinator:
         self._bind_or_validate_context(context)
         if self._termination_state == BattleTerminationState.FINALIZED:
             return
-        if self._active_damage_instances:
-            raise RuntimeError("Cannot finalize while admitted DamageInstance work remains")
+        if self.has_admitted_work:
+            raise RuntimeError("Cannot finalize while admitted work remains")
         if self._latched_reason is None:
             raise RuntimeError("Cannot finalize without a latched victory result")
 

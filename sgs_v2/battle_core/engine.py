@@ -7,7 +7,11 @@ from .battle_systems import BattleSystems
 from .context import BattleContext, BattleResult
 from .enums import BattlePhase
 from .events import EventType
-from .execution_right_system import FutureBranchKind, LegacyFinalizationBarrier
+from .execution_right_system import (
+    FutureBranchKind,
+    LegacyFinalizationBarrier,
+    admit_action_scope,
+)
 from .rule_hooks import RoundStartHook, UnitActionStartHook
 
 
@@ -123,12 +127,31 @@ class BattleEngine:
                     )
                     if permit is not None:
                         self._enter_phase(BattlePhase.UNIT_ACTION)
-                        self.systems.legacy_action_dispatch_adapter.dispatch(
+                        action_scope = admit_action_scope(
                             context=self.context,
-                            actor=actor,
+                            gate=self.systems.future_admission_gate,
                             permit=permit,
+                            actor=actor,
                             parent_scope_identity=parent_scope,
                         )
+                        try:
+                            try:
+                                self.systems.action_system.execute(
+                                    context=self.context,
+                                    actor=actor,
+                                    action_scope=action_scope,
+                                )
+                            except TypeError:
+                                self.systems.action_system.execute(
+                                    self.context,
+                                    actor,
+                                )
+                        finally:
+                            action_scope.mark_terminal()
+                            self.systems.finalization_coordinator.complete_action_scope(
+                                context=self.context,
+                                action_id=action_scope.action_id,
+                            )
                         # Barrier 4: ACTION_SETTLED
                         self.systems.finalization_coordinator.observe_legacy_barrier(
                             self.context,
