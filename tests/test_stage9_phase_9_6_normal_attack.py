@@ -197,7 +197,7 @@ def test_p96_rpr_01_battle_engine_no_destructive_type_error_replay() -> None:
             )
         finally:
             scope.mark_terminal()
-            systems.finalization_coordinator.complete_action_scope(context, scope.action_id)
+            systems.finalization_coordinator.complete_action_scope(context, scope)
 
     assert execute_call_count == 1
     assert side_effect_count == 1
@@ -810,7 +810,7 @@ def test_final_03_combo_battle_end() -> None:
 
     # Complete action scope -> finalizes
     scope.mark_terminal()
-    systems.finalization_coordinator.complete_action_scope(context, scope.action_id)
+    systems.finalization_coordinator.complete_action_scope(context, scope)
     assert systems.finalization_coordinator.termination_state == BattleTerminationState.FINALIZED
 
 
@@ -1415,3 +1415,257 @@ def test_fr96_cmb_02_no_grant_checkpoint_remains_reached() -> None:
     assert scope.combo_grant is None
     assert scope.combo_checkpoint_state == ComboCheckpointState.REACHED
     assert scope.physical_normal_attack_count == 1
+
+
+# ============================================================================
+# Phase 9.6 Capability Closure Regressions: FR96-R2-A01..A13
+# ============================================================================
+
+
+def test_fr96_r2_a01_direct_coordinator_forged_scope_admission_rejected() -> None:
+    """FR96-R2-A01: Direct coordinator forged-scope admission is rejected."""
+    context = _make_context()
+    coordinator = BattleFinalizationCoordinator(VictorySystem())
+    forged = ActionScope(ActionId("act_forged"), actor_id="a1")
+
+    with pytest.raises(RuntimeError, match="Direct coordinator admission of ActionScope is forbidden"):
+        coordinator.admit_action_scope(context, forged)
+
+
+def test_fr96_r2_a02_action_id_only_real_scope_admission_bypass_rejected() -> None:
+    """FR96-R2-A02: ActionId-only admission into coordinator is rejected for Phase 9.6 real scope."""
+    context = _make_context()
+    coordinator = BattleFinalizationCoordinator(VictorySystem())
+
+    with pytest.raises(TypeError, match="ActionId-only admission is forbidden in Phase 9.6"):
+        coordinator.admit_action_scope(context, ActionId("act_naked"))
+
+
+def test_fr96_r2_a03_actor_id_mutation_cannot_change_admission_ownership() -> None:
+    """FR96-R2-A03: Mutating scope.actor_id cannot hijack admission ownership; coordinator enforces admission snapshot."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # Caller mutates scope.actor_id to b1 and attempts to execute for b1
+    scope.actor_id = "b1"
+    with pytest.raises(ValueError, match="admission record actor is 'a1', expected executing actor 'b1'"):
+        systems.action_system.execute(context, context.get_unit("b1"), action_scope=scope)
+
+    assert scope.physical_normal_attack_count == 0
+
+
+def test_fr96_r2_a04_execution_state_mutation_cannot_reset_replay_guard() -> None:
+    """FR96-R2-A04: Mutating scope.execution_state cannot reset replay guard; coordinator record owns replay authority."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    res = systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+    assert res is not None
+
+    # Caller resets scope.execution_state back to ADMITTED
+    scope.execution_state = ActionExecutionState.ADMITTED
+    with pytest.raises(RuntimeError, match="has already been executed or is in state EXECUTING"):
+        systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+
+    assert scope.physical_normal_attack_count == 1
+
+
+def test_fr96_r2_a05_terminal_mutation_cannot_reopen_scope() -> None:
+    """FR96-R2-A05: Mutating scope.terminal / execution_state cannot reopen a terminal/completed scope."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    scope.mark_terminal()
+    systems.finalization_coordinator.complete_action_scope(context, scope)
+
+    # Caller attempts to reopen scope
+    scope.terminal = False
+    scope.execution_state = ActionExecutionState.ADMITTED
+
+    with pytest.raises(RuntimeError, match=r"is already terminal \(COMPLETED\)"):
+        systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+
+
+def test_fr96_r2_a06_direct_normal_attack_system_use_of_merely_admitted_scope_rejected() -> None:
+    """FR96-R2-A06: Calling NormalAttackSystem directly with merely ADMITTED scope is rejected."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # Scope is in ADMITTED state (ActionSystem.execute was not called)
+    with pytest.raises(RuntimeError, match="is merely ADMITTED; must be executed via ActionSystem lifecycle"):
+        systems.normal_attack_system.execute(context, context.get_unit("a1"), action_scope=scope)
+
+    assert scope.physical_normal_attack_count == 0
+
+
+def test_fr96_r2_a07_second_primary_normal_attack_entry_for_same_action_rejected() -> None:
+    """FR96-R2-A07: Second primary NormalAttack entry for the same Action is rejected."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # Legitimate execution of Action
+    systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+    assert scope.physical_normal_attack_count == 1
+
+    # Attempt second direct call to NormalAttackSystem.execute with the same ActionScope
+    with pytest.raises(RuntimeError, match="Primary NormalAttack entry for ActionScope .* has already been consumed"):
+        systems.normal_attack_system.execute(context, context.get_unit("a1"), action_scope=scope)
+
+    assert scope.physical_normal_attack_count == 1
+
+
+def test_fr96_r2_a08_total_physical_na_cannot_exceed_2_under_direct_replay_abuse() -> None:
+    """FR96-R2-A08: Total physical NormalAttacks per Action cannot exceed 2 under replay/direct API abuse."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    systems.state_lifecycle_system.apply(
+        context=context,
+        state_id=OfficialStateId.COMBO.value,
+        owner_id="a1",
+        source_id="a1",
+        source_skill_id="combo_skill",
+        source_skill_slot=SkillSlot.INHERENT,
+        runtime_params=ComboStateParams(remaining_actions=1),
+    )
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # Legitimate execution executes primary NA and Combo NA #2
+    res = systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+    assert res is not None
+    assert res.combo_second_attack is not None
+    assert scope.physical_normal_attack_count == 2
+
+    # Abuse attempts: direct NormalAttackSystem call is rejected
+    with pytest.raises(RuntimeError, match="Primary NormalAttack entry"):
+        systems.normal_attack_system.execute(context, context.get_unit("a1"), action_scope=scope)
+
+    # Abuse attempts: direct ActionSystem replay call is rejected
+    with pytest.raises(RuntimeError, match="has already been executed or is in state EXECUTING"):
+        systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+
+    assert scope.physical_normal_attack_count == 2
+
+
+def test_fr96_r2_a09_completion_requires_exact_admitted_scope() -> None:
+    """FR96-R2-A09: complete_action_scope requires exact ActionScope capability, rejecting naked ActionId."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    with pytest.raises(TypeError, match="complete_action_scope requires exact ActionScope capability, not naked ActionId"):
+        systems.finalization_coordinator.complete_action_scope(context, scope.action_id)
+
+
+def test_fr96_r2_a10_same_value_forged_scope_cannot_complete_barrier() -> None:
+    """FR96-R2-A10: Forged scope with duplicate action_id cannot complete barrier."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    authentic_scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    imposter_scope = ActionScope(
+        action_id=authentic_scope.action_id,
+        actor_id="a1",
+        _coordinator=systems.finalization_coordinator,
+        _owning_context_id=id(context),
+    )
+
+    with pytest.raises(ValueError, match="ActionScope object identity mismatch"):
+        systems.finalization_coordinator.complete_action_scope(context, imposter_scope)
+
+
+def test_fr96_r2_a11_completion_exactly_once() -> None:
+    """FR96-R2-A11: ActionScope can be completed exactly once; second completion is rejected."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # First completion succeeds
+    systems.finalization_coordinator.complete_action_scope(context, scope)
+
+    # Second completion fails
+    with pytest.raises(RuntimeError, match="has already been completed"):
+        systems.finalization_coordinator.complete_action_scope(context, scope)
+
+
+def test_fr96_r2_a12_foreign_battle_context_factory_failure_consumes_no_permit_and_allocates_no_action_id() -> None:
+    """FR96-R2-A12: Foreign BattleContext pre-validation fails before consuming permit or allocating ActionId."""
+    coordinator = BattleFinalizationCoordinator(VictorySystem())
+    gate = FutureAdmissionGate(coordinator)
+
+    ctx_a = _make_context(battle_id="battle_A")
+    ctx_b = _make_context(battle_id="battle_B")
+
+    # Bind coordinator to ctx_a
+    permit_a = gate.request_admission(FutureBranchKind.NEXT_ACTION, "scope_A")
+    admit_action_scope(ctx_a, gate, permit_a, ctx_a.get_unit("a1"), "scope_A")
+    assert coordinator.owning_context is ctx_a
+
+    # Attempt to admit with ctx_b
+    permit_b = gate.request_admission(FutureBranchKind.NEXT_ACTION, "scope_B")
+    initial_seq = ctx_b.id_allocator._action_seq
+
+    with pytest.raises(ValueError, match="already bound to BattleContext"):
+        admit_action_scope(ctx_b, gate, permit_b, ctx_b.get_unit("a1"), "scope_B")
+
+    # Verify permit_b was NOT consumed and no ActionId was allocated in ctx_b
+    assert permit_b.permit_id not in gate._consumed_permits
+    assert ctx_b.id_allocator._action_seq == initial_seq
+
+
+def test_fr96_r2_a13_foreign_context_assault_dispatch_consumes_no_permit() -> None:
+    """FR96-R2-A13: Foreign BattleContext Assault dispatch fails before consuming permit."""
+    coordinator = BattleFinalizationCoordinator(VictorySystem())
+    gate = FutureAdmissionGate(coordinator)
+    port = AssaultDispatchPort(gate)
+
+    ctx_a = _make_context(battle_id="battle_A")
+    ctx_b = _make_context(battle_id="battle_B")
+
+    # Bind coordinator to ctx_a
+    permit_a = gate.request_admission(FutureBranchKind.NEXT_ACTION, "scope_A")
+    admit_action_scope(ctx_a, gate, permit_a, ctx_a.get_unit("a1"), "scope_A")
+
+    # Request ASSAULT permit on gate
+    assault_permit = gate.request_admission(FutureBranchKind.ASSAULT, "assault_scope")
+    assert assault_permit is not None
+
+    # Attempt to dispatch on foreign ctx_b
+    with pytest.raises(ValueError, match="already bound to BattleContext"):
+        port.dispatch(ctx_b, assault_permit, "assault_scope", actor=ctx_b.get_unit("a1"), actual_target_id="b1")
+
+    # Verify permit was NOT consumed
+    assert assault_permit.permit_id not in gate._consumed_permits
+

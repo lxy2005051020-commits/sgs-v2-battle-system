@@ -427,6 +427,8 @@ class ActionScope:
     def mark_terminal(self) -> None:
         self.terminal = True
         self.execution_state = ActionExecutionState.TERMINAL
+        if self._coordinator is not None and hasattr(self._coordinator, "_mark_action_scope_terminal"):
+            self._coordinator._mark_action_scope_terminal(self.action_id)
 
 
 def admit_action_scope(
@@ -439,10 +441,12 @@ def admit_action_scope(
     """Factory admitting real ActionScope.
 
     Enforces strict architectural ordering:
-    1. Validates exact issued capability and consumes NEXT_ACTION permit.
-    2. ONLY AFTER successful consume: allocates ActionId from context.id_allocator.
-    3. Admits action_id into coordinator's active action scopes with exact object identity.
-    4. Returns admitted ActionScope.
+    1. Pre-validates BattleContext against coordinator BEFORE permit consume or ActionId allocation.
+    2. Validates exact issued capability and consumes NEXT_ACTION permit.
+    3. ONLY AFTER successful consume: allocates ActionId from context.id_allocator.
+    4. Constructs ActionScope with capability bindings.
+    5. Registers exact scope object in coordinator barrier via private registration capability.
+    6. Returns admitted ActionScope.
     """
     if not isinstance(gate, FutureAdmissionGate):
         raise TypeError("gate must be FutureAdmissionGate")
@@ -452,6 +456,9 @@ def admit_action_scope(
         raise ValueError(
             f"ActionScope admission requires NEXT_ACTION, got {permit.branch_kind.value}"
         )
+
+    # Pre-validation BEFORE consuming permit or allocating ActionId:
+    gate.coordinator._validate_context(context)
 
     # Step 1: Validate exact capability and consume permit FIRST
     gate.consume_permit(
@@ -473,8 +480,8 @@ def admit_action_scope(
         _owning_context_id=id(context),
     )
 
-    # Step 4: Register exact scope object in coordinator barrier
-    gate.coordinator.admit_action_scope(context, scope)
+    # Step 4: Register exact scope object in coordinator barrier via private registration
+    gate.coordinator._register_admitted_action_scope(context, scope)
 
     return scope
 
@@ -509,6 +516,8 @@ class AssaultDispatchPort:
             raise TypeError("permit must be FutureAdmissionPermit")
         if permit.branch_kind != FutureBranchKind.ASSAULT:
             raise ValueError(f"Expected ASSAULT permit, got {permit.branch_kind.value}")
+        # Pre-validate context BEFORE consuming permit!
+        self._gate.coordinator._validate_context(context)
         self._gate.consume_permit(
             permit=permit,
             expected_branch_kind=FutureBranchKind.ASSAULT,

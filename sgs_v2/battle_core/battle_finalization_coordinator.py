@@ -116,6 +116,18 @@ class BattleTerminationRecord:
         _forbid_ordering("BattleTerminationRecord", ">=")
 
 
+@dataclass(slots=True)
+class ActionScopeAdmissionRecord:
+    """Coordinator-owned authoritative admission record for an ActionScope."""
+
+    action_id: ActionId
+    actor_id: str
+    scope_object: Any
+    owning_context_id: int
+    execution_state: Any  # ActionExecutionState
+    primary_normal_attack_executed: bool = False
+
+
 class BattleFinalizationCoordinator:
     """Unique semantic owner of battle termination and finalization.
 
@@ -144,7 +156,7 @@ class BattleFinalizationCoordinator:
         self._projection_claimed: bool = False
         self._projection_consumed: bool = False
         self._active_damage_instances: dict[DamageInstanceId, None] = {}
-        self._active_action_scopes: dict[ActionId, None] = {}
+        self._action_scope_records: dict[ActionId, ActionScopeAdmissionRecord] = {}
         self._latched_winner_team_id: str | None = None
         self._latched_reason: BattleEndReason | None = None
 
@@ -194,11 +206,15 @@ class BattleFinalizationCoordinator:
 
     @property
     def active_action_scope_ids(self) -> tuple[ActionId, ...]:
-        return tuple(self._active_action_scopes)
+        from .execution_right_system import ActionExecutionState
+        return tuple(
+            aid for aid, rec in self._action_scope_records.items()
+            if rec.execution_state in (ActionExecutionState.ADMITTED, ActionExecutionState.EXECUTING)
+        )
 
     @property
     def has_admitted_work(self) -> bool:
-        return bool(self._active_damage_instances or self._active_action_scopes)
+        return bool(self._active_damage_instances or self.active_action_scope_ids)
 
     @property
     def is_latched_or_finalized(self) -> bool:
@@ -230,42 +246,84 @@ class BattleFinalizationCoordinator:
         context: BattleContext,
         action_scope: Any,
     ) -> None:
-        from .execution_right_system import ActionScope
-        if isinstance(action_scope, ActionScope):
-            action_id = action_scope.action_id
-            scope_obj = action_scope
-        elif isinstance(action_scope, ActionId):
-            action_id = action_scope
-            scope_obj = None
-        else:
-            raise TypeError(f"action_scope must be ActionScope or ActionId, got {type(action_scope)}")
+        """Public direct admission bypass is strictly forbidden in Phase 9.6."""
+        if isinstance(action_scope, ActionId):
+            raise TypeError(
+                "ActionId-only admission is forbidden in Phase 9.6; ActionScope capability is required"
+            )
+        raise RuntimeError(
+            "Direct coordinator admission of ActionScope is forbidden; "
+            "ActionScope must be admitted via admit_action_scope factory with authentic NEXT_ACTION permit"
+        )
+
+    def _register_admitted_action_scope(
+        self,
+        context: BattleContext,
+        scope: Any,
+    ) -> None:
+        """Internal capability-bound registration called exclusively by admit_action_scope factory."""
+        from .execution_right_system import ActionExecutionState, ActionScope
+
+        if not isinstance(scope, ActionScope):
+            raise TypeError(f"scope must be ActionScope, got {type(scope)}")
         self._validate_context(context)
         if self._termination_state != BattleTerminationState.RUNNING:
             raise RuntimeError(
                 f"Cannot admit new ActionScope while termination state is {self._termination_state.value}"
             )
-        if action_id in self._active_action_scopes:
-            raise ValueError(f"ActionScope '{action_id}' is already admitted")
+        if scope.action_id in self._action_scope_records:
+            raise ValueError(f"ActionScope '{scope.action_id}' is already admitted")
         self._bind_or_validate_context(context)
-        self._active_action_scopes[action_id] = scope_obj
+
+        record = ActionScopeAdmissionRecord(
+            action_id=scope.action_id,
+            actor_id=scope.actor_id,
+            scope_object=scope,
+            owning_context_id=id(context),
+            execution_state=ActionExecutionState.ADMITTED,
+            primary_normal_attack_executed=False,
+        )
+        self._action_scope_records[scope.action_id] = record
 
     def complete_action_scope(
         self,
         context: BattleContext,
-        action_id: ActionId,
+        scope: Any,
     ) -> None:
-        if not isinstance(action_id, ActionId):
-            raise TypeError("action_id must be ActionId")
-        self._validate_context(context)
-        if action_id not in self._active_action_scopes:
-            raise ValueError(
-                f"ActionScope '{action_id}' is not active in finalization barrier"
+        from .execution_right_system import ActionExecutionState, ActionScope
+
+        if isinstance(scope, ActionId):
+            raise TypeError(
+                "complete_action_scope requires exact ActionScope capability, not naked ActionId"
             )
+        if not isinstance(scope, ActionScope):
+            raise TypeError(f"scope must be ActionScope, got {type(scope)}")
+
+        self._validate_context(context)
+        if scope.action_id not in self._action_scope_records:
+            raise ValueError(
+                f"ActionScope '{scope.action_id}' is not active in finalization barrier"
+            )
+        record = self._action_scope_records[scope.action_id]
+        if record.scope_object is not scope:
+            raise ValueError(
+                f"ActionScope object identity mismatch for action_id '{scope.action_id}'"
+            )
+        if record.owning_context_id != id(context):
+            raise ValueError(
+                f"ActionScope '{scope.action_id}' belongs to context {record.owning_context_id}, "
+                f"not execution context {id(context)}"
+            )
+        if record.execution_state == ActionExecutionState.COMPLETED:
+            raise RuntimeError(
+                f"ActionScope '{scope.action_id}' has already been completed"
+            )
+
         self._bind_or_validate_context(context)
-        scope_obj = self._active_action_scopes.pop(action_id)
-        if scope_obj is not None:
-            from .execution_right_system import ActionExecutionState
-            scope_obj.execution_state = ActionExecutionState.COMPLETED
+        record.execution_state = ActionExecutionState.COMPLETED
+        scope.execution_state = ActionExecutionState.COMPLETED
+        scope.terminal = True
+
         if self._termination_state in (
             BattleTerminationState.VICTORY_LATCHED,
             BattleTerminationState.DRAINING_ADMITTED_WORK,
@@ -282,43 +340,105 @@ class BattleFinalizationCoordinator:
         scope: Any,
         expected_actor_id: str | None = None,
     ) -> None:
-        """Validate ActionScope authenticity, context binding, actor ownership, and state."""
+        """Validate ActionScope authenticity, context binding, immutable actor ownership, and state."""
         from .execution_right_system import ActionExecutionState, ActionScope
 
         if not isinstance(scope, ActionScope):
             raise TypeError(f"scope must be ActionScope, got {type(scope)}")
         self._validate_context(context)
-        if scope._owning_context_id is not None and scope._owning_context_id != id(context):
-            raise ValueError(
-                f"ActionScope '{scope.action_id}' belongs to context {scope._owning_context_id}, "
-                f"not execution context {id(context)}"
-            )
         if scope._coordinator is not self:
             raise RuntimeError(
                 f"ActionScope '{scope.action_id}' was not admitted by this coordinator"
             )
-        if scope.action_id not in self._active_action_scopes:
+        if scope.action_id not in self._action_scope_records:
             raise ValueError(
                 f"ActionScope '{scope.action_id}' is not active in coordinator"
             )
-        admitted_obj = self._active_action_scopes[scope.action_id]
-        if admitted_obj is not None and admitted_obj is not scope:
+        record = self._action_scope_records[scope.action_id]
+        if record.owning_context_id != id(context):
+            raise ValueError(
+                f"ActionScope '{scope.action_id}' belongs to context {record.owning_context_id}, "
+                f"not execution context {id(context)}"
+            )
+        if record.scope_object is not scope:
             raise ValueError(
                 f"ActionScope object identity mismatch for action_id '{scope.action_id}'"
             )
-        if expected_actor_id is not None and scope.actor_id != expected_actor_id:
+        if expected_actor_id is not None and record.actor_id != expected_actor_id:
             raise ValueError(
-                f"ActionScope actor mismatch: scope actor is '{scope.actor_id}', "
+                f"ActionScope actor mismatch: admission record actor is '{record.actor_id}', "
                 f"expected executing actor '{expected_actor_id}'"
             )
-        if scope.terminal or scope.execution_state == ActionExecutionState.TERMINAL:
+        if record.execution_state in (ActionExecutionState.COMPLETED, ActionExecutionState.TERMINAL):
             raise RuntimeError(
-                f"ActionScope '{scope.action_id}' is already terminal"
+                f"ActionScope '{scope.action_id}' is already terminal ({record.execution_state.value})"
             )
-        if scope.execution_state != ActionExecutionState.ADMITTED:
+        if record.execution_state != ActionExecutionState.ADMITTED:
             raise RuntimeError(
-                f"ActionScope '{scope.action_id}' has already been executed or is in state {scope.execution_state.value}"
+                f"ActionScope '{scope.action_id}' has already been executed or is in state {record.execution_state.value}"
             )
+        # Atomically transition coordinator authoritative record to EXECUTING
+        record.execution_state = ActionExecutionState.EXECUTING
+        scope.execution_state = ActionExecutionState.EXECUTING
+
+    def validate_and_consume_primary_normal_attack(
+        self,
+        context: BattleContext,
+        scope: Any,
+        expected_actor_id: str | None = None,
+    ) -> None:
+        """Validate ActionScope lifecycle state is EXECUTING and enforce single primary NormalAttack entry."""
+        from .execution_right_system import ActionExecutionState, ActionScope
+
+        if not isinstance(scope, ActionScope):
+            raise TypeError(f"scope must be ActionScope, got {type(scope)}")
+        self._validate_context(context)
+        if scope._coordinator is not self:
+            raise RuntimeError(
+                f"ActionScope '{scope.action_id}' was not admitted by this coordinator"
+            )
+        if scope.action_id not in self._action_scope_records:
+            raise ValueError(
+                f"ActionScope '{scope.action_id}' is not active in coordinator"
+            )
+        record = self._action_scope_records[scope.action_id]
+        if record.owning_context_id != id(context):
+            raise ValueError(
+                f"ActionScope '{scope.action_id}' belongs to context {record.owning_context_id}, "
+                f"not execution context {id(context)}"
+            )
+        if record.scope_object is not scope:
+            raise ValueError(
+                f"ActionScope object identity mismatch for action_id '{scope.action_id}'"
+            )
+        if expected_actor_id is not None and record.actor_id != expected_actor_id:
+            raise ValueError(
+                f"ActionScope actor mismatch: admission record actor is '{record.actor_id}', "
+                f"expected executing actor '{expected_actor_id}'"
+            )
+        if record.execution_state == ActionExecutionState.ADMITTED:
+            raise RuntimeError(
+                f"ActionScope '{scope.action_id}' is merely ADMITTED; must be executed via ActionSystem lifecycle before calling NormalAttackSystem"
+            )
+        if record.execution_state in (ActionExecutionState.COMPLETED, ActionExecutionState.TERMINAL):
+            raise RuntimeError(
+                f"ActionScope '{scope.action_id}' is already {record.execution_state.value}"
+            )
+        if record.execution_state != ActionExecutionState.EXECUTING:
+            raise RuntimeError(
+                f"ActionScope '{scope.action_id}' is not in EXECUTING state (state: {record.execution_state.value})"
+            )
+        if record.primary_normal_attack_executed:
+            raise RuntimeError(
+                f"Primary NormalAttack entry for ActionScope '{scope.action_id}' has already been consumed"
+            )
+        record.primary_normal_attack_executed = True
+
+    def _mark_action_scope_terminal(self, action_id: ActionId) -> None:
+        from .execution_right_system import ActionExecutionState
+        rec = self._action_scope_records.get(action_id)
+        if rec is not None and rec.execution_state != ActionExecutionState.COMPLETED:
+            rec.execution_state = ActionExecutionState.TERMINAL
 
     def observe_damage_instance_death(
         self,

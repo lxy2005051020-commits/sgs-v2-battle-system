@@ -158,6 +158,18 @@ class NormalAttackSystem:
         action_scope: ActionScope | None = None,
     ) -> NormalAttackResult:
         """Executes NormalAttack #1 and orchestrates the pre-checkpoint lifecycle and Combo #2."""
+        if action_scope is not None:
+            coordinator = getattr(action_scope, "_coordinator", None)
+            if coordinator is None:
+                raise RuntimeError(
+                    f"ActionScope '{action_scope.action_id}' has no coordinator capability binding"
+                )
+            coordinator.validate_and_consume_primary_normal_attack(
+                context=context,
+                scope=action_scope,
+                expected_actor_id=actor.unit_id,
+            )
+
         if not actor.is_alive or actor.troops <= 0:
             return NormalAttackResult(actor.unit_id, None, None, None, normal_attack_id=None)
 

@@ -74,3 +74,15 @@
 ## Final Re-Audit Verdict
 
 **ALL AUDIT FINDINGS RESOLVED (PASS). STAGE9 PHASE 9.6 IS COMPLETE.**
+
+---
+
+## Final Re-Audit Round 2 = FAIL
+
+An independent re-audit identified 4 capability closure gaps:
+1. **FR96-R2-B01**: BattleFinalizationCoordinator public ActionScope admission bypass (caller could directly register arbitrary ActionScope or naked ActionId, bypassing NEXT_ACTION FutureAdmissionPermit).
+2. **FR96-R2-B02**: Mutable ActionScope fields are incorrectly used as admission/replay authority (mutating scope.actor_id, execution_state, terminal could bypass ownership and replay guards).
+3. **FR96-R2-B03**: NormalAttackSystem can use/replay Stage9 ActionScope outside ActionSystem lifecycle (merely ADMITTED scope could execute physical NA, and second primary NA could execute for the same Action).
+4. **FR96-R2-M01**: ActionScope completion is ActionId-only and terminal/completed lifecycle authority is split (barrier removal did not require exact ActionScope capability).
+
+**Phase 9.6 Capability Closure Repair**: REQUIRED.

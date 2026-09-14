@@ -144,7 +144,7 @@ class BattleEngine:
                             action_scope.mark_terminal()
                             self.systems.finalization_coordinator.complete_action_scope(
                                 context=self.context,
-                                action_id=action_scope.action_id,
+                                scope=action_scope,
                             )
                         # Barrier 4: ACTION_SETTLED
                         self.systems.finalization_coordinator.observe_legacy_barrier(
