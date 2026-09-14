@@ -72,12 +72,21 @@ class CleaveSystem:
         finally:
             self._finalization.complete_reaction(context, effect.effect_id, effect)
 
-    def resolve(self, context, main):
+    def resolve(self, context, main, *, pre_admitted_effect=None):
         self._finalization._validate_context(context)
         if not ReactionPermissionPolicy.can_trigger_cleave(main.lineage.source_type):
             return ()
         results = []
-        for state in self._states.get_cleave_effects(context, main.lineage.physical_attacker):
+        cleave_states = self._states.get_cleave_effects(context, main.lineage.physical_attacker)
+        if not cleave_states:
+            return ()
+
+        remaining_states = list(cleave_states)
+        if pre_admitted_effect is not None:
+            results.extend(self.execute(context, pre_admitted_effect))
+            remaining_states = remaining_states[1:]
+
+        for state in remaining_states:
             attacker = context.units.get(main.lineage.physical_attacker)
             if attacker is None or not attacker.is_alive:
                 break

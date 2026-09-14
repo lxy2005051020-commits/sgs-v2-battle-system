@@ -10,6 +10,7 @@ from .chain_system import DamageCallbackTiming, ResolvedDamageFact
 from .damage_instance_coordinator import DamageInstanceCoordinator
 from .damage_resolution_system import DamageResolutionResult, DamageResolutionSystem
 from .damage_system import DamageRequest, DamageResult
+from .hit_resolution_system import HitPreventedResult, HitPreventionReason
 from .enums import DamageSourceType, DamageType
 from .events import EventType
 from .execution_right_system import (
@@ -152,6 +153,18 @@ class NormalAttackSystem:
         if context.states.has(owner_id=actor.unit_id, state_id=stun_state_id):
             return False
         return True
+
+    @staticmethod
+    def _is_cleave_reaction_eligible(damage: DamageResult | None) -> bool:
+        if damage is None:
+            return False
+        if not damage.prevented:
+            return True
+        trace = damage.pipeline_trace
+        if trace is not None and isinstance(trace.hit_result, HitPreventedResult):
+            if trace.hit_result.reason is HitPreventionReason.IMMUNITY_LIKE:
+                return True
+        return False
 
     def _is_latched_or_finalized(self) -> bool:
         if self._finalization_coordinator is not None:
@@ -313,6 +326,39 @@ class NormalAttackSystem:
         # Step 6: Dispatch via Stage9 DamageInstanceCoordinator
         resolved_facts = []
         deferred_chain = []
+        pre_admitted_cleave = None
+
+        def on_target_settled(ctx, resolution, damage):
+            nonlocal pre_admitted_cleave
+            if self._cleave is None or not self._is_cleave_reaction_eligible(damage):
+                return
+            if not actor.is_alive or actor.troops <= 0:
+                return
+            if self._future_admission_gate is None:
+                return
+            if self._state_runtime is None:
+                return
+            cleave_effects = self._state_runtime.get_cleave_effects(ctx, actor.unit_id)
+            if not cleave_effects:
+                return
+            if resolution.damage_instance_id is None:
+                return
+            fact = ResolvedDamageFact(
+                resolution.damage_instance_id,
+                actual_target_id,
+                lineage,
+                damage.damage_type,
+                resolution.assigned_target_damage,
+                resolution.actual_target_troop_loss,
+            )
+            permit = self._future_admission_gate.request_admission(
+                FutureBranchKind.CLEAVE_EFFECT,
+                str(normal_attack_id),
+            )
+            if permit is not None:
+                pre_admitted_cleave = self._cleave.create_effect(
+                    ctx, fact, cleave_effects[0], permit=permit
+                )
 
         def on_resolved(ctx, fact):
             resolved_facts.append(fact)
@@ -331,6 +377,7 @@ class NormalAttackSystem:
                 lineage=lineage,
                 on_calculated=on_calculated,
                 resolved_fact_consumer=on_resolved,
+                on_target_settled=on_target_settled,
             )
             damage_result = execution.damage_result
             resolution_result = execution.resolution
@@ -340,6 +387,7 @@ class NormalAttackSystem:
             on_calculated(damage_result)
             resolution_result = self._damage_resolution.apply_result(context, damage_result)
             troop_change = resolution_result.troop_change
+            on_target_settled(context, resolution_result, damage_result)
         else:
             raise RuntimeError("NormalAttackSystem requires damage execution capability")
 
@@ -357,8 +405,17 @@ class NormalAttackSystem:
         # Frozen P0: Cleave (with inline secondary Chain), deferred main Chain,
         # Counter, then the existing Assault / Combo seams.
         try:
-            if resolved_facts and self._cleave is not None:
-                self._cleave.resolve(context, resolved_facts[0])
+            if self._cleave is not None and self._is_cleave_reaction_eligible(damage_result):
+                fact = ResolvedDamageFact(
+                    resolution_result.damage_instance_id,
+                    actual_target_id,
+                    lineage,
+                    damage_result.damage_type,
+                    resolution_result.assigned_target_damage,
+                    resolution_result.actual_target_troop_loss,
+                )
+                self._cleave.resolve(context, fact, pre_admitted_effect=pre_admitted_cleave)
+                pre_admitted_cleave = None
             while deferred_chain:
                 self._chain.execute(context, deferred_chain.pop(0))
             if self._counter is not None and resolution_result.damage_instance_id is not None:
@@ -374,6 +431,13 @@ class NormalAttackSystem:
                         batch = self._counter.create_batch(context, fact, permit=permit)
                         self._counter.execute(context, batch)
         finally:
+            if pre_admitted_cleave is not None and self._finalization_coordinator is not None:
+                try:
+                    self._finalization_coordinator.complete_reaction(
+                        context, pre_admitted_cleave.effect_id, pre_admitted_cleave
+                    )
+                except Exception:
+                    pass
             for pending in deferred_chain:
                 self._chain.cancel(context, pending)
 

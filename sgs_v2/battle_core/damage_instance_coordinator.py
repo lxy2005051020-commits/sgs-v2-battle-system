@@ -418,6 +418,7 @@ class DamageInstanceCoordinator:
         on_calculated: Callable[[DamageResult], None] | None = None,
         resolved_fact_consumer=None,
         admitted_reaction=None,
+        on_target_settled=None,
     ) -> DamageInstanceExecution:
         """Full Phase 9.5 transaction used by production DamageEffect."""
         if self._partition is None or self._direct_loss is None or self._finalization is None:
@@ -468,6 +469,8 @@ class DamageInstanceCoordinator:
                     assigned_target_damage=0,
                     permit=permit,
                 )
+                if on_target_settled is not None:
+                    on_target_settled(context, resolution, damage_result)
                 return finish(DamageInstanceExecution(
                     damage_instance_id=damage_instance_id,
                     damage_result=damage_result,
@@ -490,6 +493,8 @@ class DamageInstanceCoordinator:
                     assigned_target_damage=plan.dtarget,
                     permit=permit,
                 )
+                if on_target_settled is not None:
+                    on_target_settled(context, resolution, damage_result)
                 self._observe_target_death(context, damage_instance_id, resolution)
                 if resolution.target_defeated:
                     return finish(DamageInstanceExecution(
@@ -553,6 +558,8 @@ class DamageInstanceCoordinator:
                     assigned_target_damage=plan.dtarget,
                     permit=permit,
                 )
+                if on_target_settled is not None:
+                    on_target_settled(context, resolution, damage_result)
                 self._observe_target_death(context, damage_instance_id, resolution)
                 return finish(DamageInstanceExecution(
                     damage_instance_id=damage_instance_id,
@@ -572,6 +579,8 @@ class DamageInstanceCoordinator:
                 assigned_target_damage=plan.dtotal,
                 permit=permit,
             )
+            if on_target_settled is not None:
+                on_target_settled(context, resolution, damage_result)
             self._observe_target_death(context, damage_instance_id, resolution)
             return finish(DamageInstanceExecution(
                 damage_instance_id=damage_instance_id,

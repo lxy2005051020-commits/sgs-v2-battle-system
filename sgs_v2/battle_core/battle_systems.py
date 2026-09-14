@@ -62,6 +62,7 @@ class BattleSystems:
     cleave_first_aid: object | None = None
     cleave_attacker_recovery: object | None = None
     counter_operationality: object | None = None
+    damage_rule_provider: object | None = None
 
     action_order_system: ActionOrderSystem = field(init=False)
     damage_system: DamageSystem = field(init=False)
@@ -98,6 +99,7 @@ class BattleSystems:
             strategy_troop_function_table=self.strategy_troop_function_table,
             strategy_random_percent_range=self.strategy_random_percent_range,
             strategy_low_damage_floor_range=self.strategy_low_damage_floor_range,
+            rule_provider=self.damage_rule_provider,
         )
         self.damage_resolution_system = DamageResolutionSystem(
             self.damage_system,

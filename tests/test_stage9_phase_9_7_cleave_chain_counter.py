@@ -11,7 +11,7 @@ import pytest
 from sgs_v2.battle_core import (
     BattleContext, BattleSystems, EventBus, EventType, RandomSystem, UnitRuntime,
     LineupPosition, register_official_state_definitions, DamageResult, DamageRequest,
-    DamageSourceType, DamageType, SkillSlot,
+    DamageSourceType, DamageType, SkillSlot, OfficialStateId,
 )
 from sgs_v2.battle_core.operation_identity import OperationLineage, SourceType
 from sgs_v2.battle_core.stage9_integerization import ExactRatio
@@ -692,3 +692,161 @@ def test_non_counter_scope_cannot_open_standard_formula_route(kind):
             fact.lineage, admitted_reaction=(identity(cap), cap))
     assert ctx.id_allocator._damage_instance_seq == before
     systems.finalization_coordinator.complete_reaction(ctx, identity(cap), cap)
+
+
+def test_p97_rpr_01_main_target_commander_lethal_cleave(monkeypatch):
+    """P97-RPR-01: Main NormalAttack target commander death admits current Cleave and drains secondaries before battle finalization."""
+    ctx, systems = context(), BattleSystems()
+    ctx.units['b0'].troops = 50
+    cleave(ctx, systems)
+    state(ctx, systems, 'taunt', 'a0', TauntStateParams('b0'), source='b0')
+    requests = fixed_damage(monkeypatch, systems, 100)
+
+    drain_observations = []
+    orig_resolve = systems.cleave_derived_damage_resolver.resolve
+
+    def resolve_spy(c, cap, req):
+        drain_observations.append({
+            'has_admitted_work': systems.finalization_coordinator.has_admitted_work,
+            'termination_state': systems.finalization_coordinator.termination_state,
+            'commander_troops': c.units['b0'].troops,
+            'target_id': req.target_id,
+            'cleave_effect_id': cap.effect_id.value,
+        })
+        return orig_resolve(c, cap, req)
+
+    monkeypatch.setattr(systems.cleave_derived_damage_resolver, 'resolve', resolve_spy)
+
+    result = attack(ctx, systems)
+
+    # 1. Main commander died
+    assert ctx.units['b0'].troops == 0
+    assert result.resolution.actual_target_troop_loss == 50
+
+    # 2. Current/first CleaveEffect was admitted and drained
+    assert len(drain_observations) == 2
+    for obs in drain_observations:
+        assert obs['has_admitted_work'] is True
+        assert obs['termination_state'] is BattleTerminationState.DRAINING_ADMITTED_WORK
+        assert obs['commander_troops'] == 0
+        assert obs['cleave_effect_id'] == 'clv_1'
+
+    # 3. Secondary plan executed and secondaries received Cleave damage (50 * 27 / 50 = 27)
+    assert ctx.units['b1'].troops == 4973
+    assert ctx.units['b2'].troops == 4973
+
+    # 4. Battle did not finalize before Cleave reached terminal state; finalized only after action scope complete
+    assert systems.finalization_coordinator.has_admitted_work is False
+    assert systems.finalization_coordinator.termination_state is BattleTerminationState.FINALIZED
+
+
+def test_p97_rpr_02_main_commander_death_blocks_later_independent_cleave(monkeypatch):
+    """P97-RPR-02: Main commander death permits current Cleave to drain but blocks subsequent independent Cleave admission."""
+    ctx, systems = context(), BattleSystems()
+    ctx.units['b0'].troops = 50
+    cleave(ctx, systems, slot=SkillSlot.INHERENT)
+    cleave(ctx, systems, slot=SkillSlot.LEARNED_2)
+    state(ctx, systems, 'taunt', 'a0', TauntStateParams('b0'), source='b0')
+    requests = fixed_damage(monkeypatch, systems, 100)
+
+    executed_cleaves = []
+    orig_resolve = systems.cleave_derived_damage_resolver.resolve
+
+    def resolve_spy(c, cap, req):
+        executed_cleaves.append((cap.effect_id.value, cap.lineage.physical_skill, req.target_id))
+        return orig_resolve(c, cap, req)
+
+    monkeypatch.setattr(systems.cleave_derived_damage_resolver, 'resolve', resolve_spy)
+
+    result = attack(ctx, systems)
+
+    # Commander died
+    assert ctx.units['b0'].troops == 0
+
+    # Exactly 1 CleaveEffect was allocated (Slot 0 admitted, Slot 2 blocked)
+    assert ctx.id_allocator._cleave_effect_seq == 1
+    assert len(executed_cleaves) == 2
+    assert all(cid == 'clv_1' for cid, _, _ in executed_cleaves)
+    assert all(skill == 'cleave_0' for _, skill, _ in executed_cleaves)
+    assert {target for _, _, target in executed_cleaves} == {'b1', 'b2'}
+
+
+def test_p97_rpr_03_normal_attack_resisted_still_cleaves():
+    """P97-RPR-03: Resisted NormalAttack (IMMUNITY_LIKE) yields 0 loss but still admits Cleave (base 0) and CounterBatch."""
+    src = RuleContributionSource(None, None, None, None, None, 'fixture')
+    rules = DamageRuleCollection(hit_contributions=(
+        HitRuleContribution(HitRuleKind.DETERMINISTIC_PREVENTION, src, '0-resistance', HitPreventionCategory.IMMUNITY_LIKE),
+    ))
+
+    class ResistedRuleProvider:
+        def collect(self, ctx, request):
+            if request.target_id == 'b1' and request.source_type == SourceType.NORMAL_ATTACK:
+                return rules
+            return DamageRuleCollection()
+
+    systems = BattleSystems(damage_rule_provider=ResistedRuleProvider())
+    ctx = context()
+    cleave(ctx, systems)
+    counter(ctx, systems)
+    state(ctx, systems, 'taunt', 'a0', TauntStateParams('b1'), source='b1')
+
+    result = attack(ctx, systems)
+
+    # NormalAttack identity and resolution exist
+    assert result.normal_attack_id is not None
+    assert result.resolution is not None
+    assert result.damage.prevented is True
+    assert result.damage.pipeline_trace.hit_result.reason.value == 'IMMUNITY_LIKE'
+    assert result.resolution.actual_target_troop_loss == 0
+
+    # CleaveEffect is admitted with base 0
+    assert ctx.id_allocator._cleave_effect_seq == 1
+
+    # Secondary Cleave damage events executed with calculated_damage = 0
+    events = ctx.event_bus.history
+    cleave_events = [e for e in events if e.event_type is EventType.DAMAGE_DEALT and e.payload.get('source_type') == 'CLEAVE']
+    assert len(cleave_events) == 2
+    for ce in cleave_events:
+        assert ce.payload['calculated_damage'] == 0
+        assert ce.payload['damage'] == 0
+        assert ce.payload['target_remaining_troops'] == 5000
+
+    # CounterBatch was also admitted and executed
+    counter_events = [e for e in events if e.event_type is EventType.COUNTER_EXECUTE]
+    assert len(counter_events) == 1
+
+
+@pytest.mark.parametrize('state_id', [OfficialStateId.DISARM.value, OfficialStateId.STUN.value])
+def test_p97_rpr_04_blocked_normal_attack_has_no_cleave(state_id):
+    """P97-RPR-04: Blocked action (DISARM / STUN) does not allocate NormalAttack, Cleave, or CounterBatch."""
+    ctx, systems = context(), BattleSystems()
+    cleave(ctx, systems)
+    counter(ctx, systems)
+    systems.state_lifecycle_system.apply(
+        context=ctx,
+        state_id=state_id,
+        owner_id='a0',
+        source_id='b1',
+        source_skill_id='test_skill',
+        source_skill_slot=SkillSlot.INHERENT,
+    )
+
+    result = attack(ctx, systems)
+
+    # Action blocked: no normal attack instance allocated
+    assert result is None or result.normal_attack_id is None
+    assert ctx.id_allocator._normal_attack_seq == 0
+
+    # No CleaveEffect allocated
+    assert ctx.id_allocator._cleave_effect_seq == 0
+
+    # No CounterBatch allocated
+    assert getattr(ctx.id_allocator, '_counter_batch_seq', 0) == 0
+
+    # No Cleave or Counter events
+    events = ctx.event_bus.history
+    cleave_events = [e for e in events if e.payload.get('source_type') == 'CLEAVE']
+    counter_events = [e for e in events if e.event_type is EventType.COUNTER_EXECUTE]
+    assert len(cleave_events) == 0
+    assert len(counter_events) == 0
+

@@ -166,3 +166,13 @@ downloaded authority copies and logs are not uploaded.
 
 No freeze certification is asserted by this report. Stop for the independent
 Phase 9.7 implementation audit; do not start Phase 9.8.
+
+## Independent Implementation Audit & Repair Trigger
+
+* Initial implementation: 668 passed, Demo PASS.
+* Independent Implementation Audit: **FAIL**.
+* Findings:
+  * **P97-B01**: Main NormalAttack target death / victory latch incorrectly blocks the first `CleaveEffect` admission (Case A).
+  * **P97-B02**: NormalAttack Resistance / legitimate zero-result reaction path incorrectly suppresses Cleave because Cleave trigger depended on `DamageResult.prevented`-filtered `ResolvedDamageFact`.
+* Phase 9.7 Audit Repair: **REQUIRED** (documented in `stages/stage9/implementation/STAGE9_PHASE_9_7_AUDIT_REPAIR_REPORT.md`).
+
