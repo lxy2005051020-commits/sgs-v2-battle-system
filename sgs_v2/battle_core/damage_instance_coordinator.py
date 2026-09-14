@@ -250,26 +250,29 @@ class DamageInstanceCoordinator:
                 f"request must be DamageSettlementRequest, got {type(request)}"
             )
 
+        # 1. Pre-check: Check if this exact capability object was issued for a different context
+        for (c_id, p_id), r in self._permits.items():
+            if r.permit is permit and r.owning_context is not context:
+                raise ValueError(
+                    f"Permit '{permit.permit_id}' was issued for a different BattleContext "
+                    f"({r.owning_context.battle_id} != {context.battle_id})"
+                )
+
+        # 2. Check if a permit record exists for this context
         permit_key = (id(context), permit.permit_id)
         record = self._permits.get(permit_key)
 
         if record is None:
-            # Check if this permit was issued for another context
-            for (c_id, p_id), r in self._permits.items():
-                if p_id == permit.permit_id and r.permit == permit:
-                    # Permit was issued for a different context!
-                    # Reject before consuming so valid capability is not destroyed!
-                    raise ValueError(
-                        f"Permit '{permit.permit_id}' was issued for a different BattleContext "
-                        f"({r.owning_context.battle_id} != {context.battle_id})"
-                    )
-
             raise ValueError(
                 f"Permit '{permit.permit_id}' was not issued by this coordinator, closed, or not active"
             )
 
-        if record.permit != permit:
-            raise ValueError("Permit record mismatch")
+        # 3. Exact capability object authenticity check (reject forged clones having identical fields)
+        if record.permit is not permit:
+            raise ValueError(
+                f"Permit capability authenticity failure: permit '{permit.permit_id}' is not the exact "
+                "issued capability object for this record (forged clone rejected)"
+            )
 
         if record.owning_context is not context:
             raise ValueError(
@@ -383,31 +386,32 @@ class DamageInstanceCoordinator:
     def close_damage_instance(
         self,
         damage_instance_id: DamageInstanceId,
-        context: BattleContext | None = None,
+        context: BattleContext,
     ) -> None:
         """Close active DamageInstance scope and release operation-local state."""
-        if context is not None:
-            record = self._active_instances.pop((id(context), damage_instance_id), None)
-            if record is not None:
-                record.closed = True
-                if record.permit_id is not None:
-                    self._permits.pop((id(context), record.permit_id), None)
-        else:
-            to_remove = [
-                key for key, r in self._active_instances.items()
-                if r.damage_instance_id == damage_instance_id
-            ]
-            for key in to_remove:
-                record = self._active_instances.pop(key, None)
-                if record is not None:
-                    record.closed = True
-                    if record.permit_id is not None:
-                        self._permits.pop((id(record.owning_context), record.permit_id), None)
+        if context is None or not isinstance(context, BattleContext):
+            raise TypeError(f"context must be BattleContext, got {type(context)}")
+        if not isinstance(damage_instance_id, DamageInstanceId):
+            raise TypeError(
+                f"damage_instance_id must be DamageInstanceId, got {type(damage_instance_id)}"
+            )
+
+        record = self._active_instances.pop((id(context), damage_instance_id), None)
+        if record is not None:
+            record.closed = True
+            if record.permit_id is not None:
+                self._permits.pop((id(context), record.permit_id), None)
 
     def release_damage_instance(
         self,
         damage_instance_id: DamageInstanceId,
-        context: BattleContext | None = None,
+        context: BattleContext,
     ) -> None:
         """Release operation-local permit state for a completed instance."""
+        if context is None or not isinstance(context, BattleContext):
+            raise TypeError(f"context must be BattleContext, got {type(context)}")
+        if not isinstance(damage_instance_id, DamageInstanceId):
+            raise TypeError(
+                f"damage_instance_id must be DamageInstanceId, got {type(damage_instance_id)}"
+            )
         self.close_damage_instance(damage_instance_id, context)

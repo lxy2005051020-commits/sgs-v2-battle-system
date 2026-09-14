@@ -422,7 +422,7 @@ class TestCoordinatorPermitLifecycleRepair:
         initial_events_count = len(ctx.event_bus.history)
 
         # Release coordinator state for this instance
-        coordinator.close_damage_instance(dmg_id)
+        coordinator.close_damage_instance(dmg_id, ctx)
         assert len(coordinator._permits) == 0
         assert len(coordinator._active_instances) == 0
 
@@ -529,7 +529,7 @@ class TestCoordinatorPermitLifecycleRepair:
         with pytest.raises(ValueError, match="already been issued.*At most one permit"):
             coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
 
-        coordinator.close_damage_instance(dmg_id)
+        coordinator.close_damage_instance(dmg_id, ctx)
 
     def test_p94_r2_04_closed_instance_permit_reissuance_rejected(self) -> None:
         """P94-R2-04: Closed DamageInstance cannot be issued another permit."""
@@ -541,7 +541,7 @@ class TestCoordinatorPermitLifecycleRepair:
 
         lineage = _make_lineage()
         dmg_id = coordinator.begin_damage_instance(ctx, lineage)
-        coordinator.close_damage_instance(dmg_id)
+        coordinator.close_damage_instance(dmg_id, ctx)
 
         # Attempt to issue permit on closed ID
         with pytest.raises(ValueError, match="not an active instance|closed"):
@@ -597,7 +597,7 @@ class TestCoordinatorPermitLifecycleRepair:
         with pytest.raises(ValueError, match="was not issued by this coordinator|closed, or not active"):
             res_sys.settle(ctx, req, permit2)
 
-        coordinator2.close_damage_instance(dmg_id2)
+        coordinator2.close_damage_instance(dmg_id2, ctx)
 
     def test_p94_r2_07_replay_attack_with_minted_permit_blocked(self) -> None:
         """P94-R2-07: Prove that after standard execution, replaying request with minted permit is blocked with 0 side-effects."""
@@ -642,7 +642,7 @@ class TestCoordinatorPermitLifecycleRepair:
         with pytest.raises(ValueError, match="does not match request damage_instance_id"):
             res_sys.settle(ctx, replay_req, fresh_permit)
 
-        coordinator.close_damage_instance(fresh_id)
+        coordinator.close_damage_instance(fresh_id, ctx)
 
         # Confirm ZERO additional troop mutation and ZERO additional events
         assert ctx.get_unit("B1").troops == troops_after_first
@@ -900,4 +900,264 @@ class TestContextOwnershipBoundaryFinalRepair:
         coordinator.close_damage_instance(dmg_id_b, ctx_b)
         assert len(coordinator._active_instances) == 0
         assert len(coordinator._permits) == 0
+
+
+class TestPermitAuthenticityAndContextIsolationFinalRepairRound2:
+    """
+    Tests P94-FR2-01 through P94-FR2-06:
+    FR2-B01 Same-value cross-context permit alias & same-context forged clone authenticity
+    FR2-B02 Context-bound DamageInstance close and release
+    """
+
+    def test_p94_fr2_01_same_context_forged_equal_value_permit_rejected(self) -> None:
+        """
+        P94-FR2-01: Same-context forged equal-value permit clone is rejected,
+        and legitimate permit capability remains unconsumed and usable.
+        """
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
+        legitimate_permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
+
+        # Construct forged clone with identical fields
+        forged_clone = DamageSettlementPermit(
+            permit_id=legitimate_permit.permit_id,
+            damage_instance_id=legitimate_permit.damage_instance_id,
+        )
+        assert forged_clone == legitimate_permit, "Must satisfy dataclass structural equality"
+        assert forged_clone is not legitimate_permit, "Must be distinct Python object"
+
+        dmg_result = DamageResult(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+            base_damage=100.0,
+            scaled_damage=100.0,
+            final_damage=100,
+        )
+        req = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=dmg_id,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+
+        troops_before = ctx.get_unit("B1").troops
+
+        # Forged clone must be rejected by capability authenticity check
+        with pytest.raises(ValueError, match="Permit capability authenticity failure|forged clone rejected"):
+            res_sys.settle(ctx, req, forged_clone)
+
+        # Verify zero mutation and legitimate permit unconsumed
+        assert ctx.get_unit("B1").troops == troops_before
+        assert len(ctx.event_bus.history) == 0
+        permit_rec = coordinator._permits.get((id(ctx), legitimate_permit.permit_id))
+        assert permit_rec is not None
+        assert not permit_rec.consumed
+        active_rec = coordinator._active_instances.get((id(ctx), dmg_id))
+        assert active_rec is not None
+        assert not active_rec.permit_consumed
+
+        # Legitimate permit succeeds exactly once
+        res = res_sys.settle(ctx, req, legitimate_permit)
+        assert res.actual_target_troop_loss == 100
+        assert ctx.get_unit("B1").troops == 900
+        assert len(ctx.event_bus.history) > 0
+        assert permit_rec.consumed
+        assert active_rec.permit_consumed
+
+        # Second attempt with legitimate permit rejected (consumed)
+        with pytest.raises(ValueError, match="already been consumed"):
+            res_sys.settle(ctx, req, legitimate_permit)
+
+        coordinator.close_damage_instance(dmg_id, ctx)
+
+    def test_p94_fr2_02_and_03_and_04_cross_context_alias_collision_rejected_and_isolated(self) -> None:
+        """
+        P94-FR2-02: ctx_A and ctx_B each own dmg_1 / dsp_1; permit_A passed to ctx_B is rejected.
+        P94-FR2-03: After collision rejection, permit_A succeeds on ctx_A and permit_B succeeds on ctx_B.
+        P94-FR2-04: Cross-context attempt consumes neither legitimate record.
+        """
+        ctx_a = _make_context(troops_b=1000)
+        ctx_b = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+
+        # Both fresh contexts allocate dmg_1
+        id_a = coordinator.begin_damage_instance(ctx_a, lineage)
+        id_b = coordinator.begin_damage_instance(ctx_b, lineage)
+        assert id_a == DamageInstanceId("dmg_1")
+        assert id_b == DamageInstanceId("dmg_1")
+
+        # Both fresh contexts allocate dsp_1
+        permit_a = coordinator.issue_settlement_permit(id_a, lineage, ctx_a)
+        permit_b = coordinator.issue_settlement_permit(id_b, lineage, ctx_b)
+        assert permit_a.permit_id == "dsp_1"
+        assert permit_b.permit_id == "dsp_1"
+        assert permit_a.damage_instance_id == DamageInstanceId("dmg_1")
+        assert permit_b.damage_instance_id == DamageInstanceId("dmg_1")
+
+        # Structural equality holds, but object identities differ
+        assert permit_a == permit_b
+        assert permit_a is not permit_b
+
+        dmg_result = DamageResult(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+            base_damage=100.0,
+            scaled_damage=100.0,
+            final_damage=100,
+        )
+        req_b = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=id_b,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+        req_a = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=id_a,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+
+        # Attempt to settle permit_A on ctx_B (P94-FR2-02)
+        with pytest.raises(ValueError, match="was issued for a different BattleContext"):
+            res_sys.settle(ctx_b, req_b, permit_a)
+
+        # Verify P94-FR2-04: Cross-context attempt consumes neither legitimate record
+        rec_a = coordinator._permits.get((id(ctx_a), permit_a.permit_id))
+        rec_b = coordinator._permits.get((id(ctx_b), permit_b.permit_id))
+        assert rec_a is not None and not rec_a.consumed
+        assert rec_b is not None and not rec_b.consumed
+        assert not coordinator._active_instances[(id(ctx_a), id_a)].permit_consumed
+        assert not coordinator._active_instances[(id(ctx_b), id_b)].permit_consumed
+        assert ctx_a.get_unit("B1").troops == 1000
+        assert ctx_b.get_unit("B1").troops == 1000
+        assert len(ctx_a.event_bus.history) == 0
+        assert len(ctx_b.event_bus.history) == 0
+
+        # Verify P94-FR2-03: After collision rejection, both legitimate permits succeed on their respective contexts
+        res_a = res_sys.settle(ctx_a, req_a, permit_a)
+        assert res_a.actual_target_troop_loss == 100
+        assert ctx_a.get_unit("B1").troops == 900
+        assert rec_a.consumed
+        assert not rec_b.consumed
+
+        res_b = res_sys.settle(ctx_b, req_b, permit_b)
+        assert res_b.actual_target_troop_loss == 100
+        assert ctx_b.get_unit("B1").troops == 900
+        assert rec_b.consumed
+
+        coordinator.close_damage_instance(id_a, ctx_a)
+        coordinator.close_damage_instance(id_b, ctx_b)
+        assert len(coordinator._active_instances) == 0
+        assert len(coordinator._permits) == 0
+
+    def test_p94_fr2_05_close_damage_instance_is_strictly_context_bound(self) -> None:
+        """
+        P94-FR2-05: Closing dmg_1 on ctx_A does not close ctx_B dmg_1,
+        and ctx_B permit remains valid and settleable.
+        """
+        ctx_a = _make_context(troops_b=1000)
+        ctx_b = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+
+        id_a = coordinator.begin_damage_instance(ctx_a, lineage)
+        id_b = coordinator.begin_damage_instance(ctx_b, lineage)
+        assert id_a == id_b == DamageInstanceId("dmg_1")
+
+        permit_b = coordinator.issue_settlement_permit(id_b, lineage, ctx_b)
+
+        # Close id_a on ctx_a
+        coordinator.close_damage_instance(id_a, ctx_a)
+
+        # ctx_a is closed, ctx_b remains active
+        assert not coordinator.is_instance_active(id_a, ctx_a)
+        assert coordinator.is_instance_active(id_b, ctx_b)
+
+        # ctx_b permit remains valid and can settle
+        dmg_result = DamageResult(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+            base_damage=100.0,
+            scaled_damage=100.0,
+            final_damage=100,
+        )
+        req_b = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=id_b,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+
+        res_b = res_sys.settle(ctx_b, req_b, permit_b)
+        assert res_b.actual_target_troop_loss == 100
+        assert ctx_b.get_unit("B1").troops == 900
+
+        coordinator.close_damage_instance(id_b, ctx_b)
+        assert len(coordinator._active_instances) == 0
+        assert len(coordinator._permits) == 0
+
+    def test_p94_fr2_06_context_none_close_and_release_rejected_without_mutation(self) -> None:
+        """
+        P94-FR2-06: close/release with context=None raises TypeError without mutating state.
+        """
+        ctx_a = _make_context(troops_b=1000)
+        ctx_b = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+        id_a = coordinator.begin_damage_instance(ctx_a, lineage)
+        id_b = coordinator.begin_damage_instance(ctx_b, lineage)
+        permit_a = coordinator.issue_settlement_permit(id_a, lineage, ctx_a)
+        permit_b = coordinator.issue_settlement_permit(id_b, lineage, ctx_b)
+
+        # Calling close or release with context=None must raise TypeError
+        with pytest.raises(TypeError, match="context must be BattleContext"):
+            coordinator.close_damage_instance(id_a, None)  # type: ignore[arg-type]
+
+        with pytest.raises(TypeError, match="context must be BattleContext"):
+            coordinator.release_damage_instance(id_a, None)  # type: ignore[arg-type]
+
+        # Verify 0 state mutation on both contexts
+        assert coordinator.is_instance_active(id_a, ctx_a)
+        assert coordinator.is_instance_active(id_b, ctx_b)
+        assert (id(ctx_a), permit_a.permit_id) in coordinator._permits
+        assert (id(ctx_b), permit_b.permit_id) in coordinator._permits
+
+        coordinator.close_damage_instance(id_a, ctx_a)
+        coordinator.close_damage_instance(id_b, ctx_b)
+        assert len(coordinator._active_instances) == 0
+        assert len(coordinator._permits) == 0
+
 

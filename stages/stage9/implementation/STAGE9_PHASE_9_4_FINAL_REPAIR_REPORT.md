@@ -79,3 +79,15 @@ Phase 9.5 = NOT AUTHORIZED
    - Production routing remains legacy; 0 premature cutovers.
 5. **Phase 9.5 Invariant**:
    - 0 Phase 9.5 files created; zero execution of damage share/distribution or direct troop loss systems.
+
+---
+
+## 4. Final Re-Audit
+
+Final Re-Audit:
+FAIL
+
+Remaining findings:
+FR2-B01 same-value cross-context permit alias
+FR2-B02 contextless close/release ambiguity
+
