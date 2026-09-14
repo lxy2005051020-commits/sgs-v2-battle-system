@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+import dataclasses
 from typing import TYPE_CHECKING
 
 from .enums import BattlePhase
 from .events import EventType
+from .official_state_catalog import OfficialStateId
 from .skill_runtime import SkillSlot
+from .stage9_state_params import GuardStateParams, TauntStateParams
 from .state_instance import StateInstance
 from .state_runtime_params import (
     EmptyStateRuntimeParams,
@@ -94,6 +97,23 @@ class StateLifecycleSystem:
                 f"got {type(actual_runtime_params).__name__}"
             )
 
+        if state_id == OfficialStateId.GUARD.value and isinstance(actual_runtime_params, GuardStateParams):
+            context.get_unit(actual_runtime_params.protector_id)
+            if actual_runtime_params.protector_id == owner_id:
+                raise ValueError(
+                    f"Self-guard is forbidden: protector_id '{actual_runtime_params.protector_id}' "
+                    f"cannot equal owner_id '{owner_id}'"
+                )
+        if state_id == OfficialStateId.TAUNT.value and isinstance(actual_runtime_params, TauntStateParams):
+            if (
+                actual_runtime_params.taunt_target_id is not None
+                and actual_runtime_params.taunt_target_id != source_id
+            ):
+                raise ValueError(
+                    f"taunt_target_id '{actual_runtime_params.taunt_target_id}' "
+                    f"cannot disagree with authoritative source_id '{source_id}'"
+                )
+
         instance = StateInstance(
             instance_id=context.states.next_instance_id(),
             state_id=state_id,
@@ -118,6 +138,46 @@ class StateLifecycleSystem:
             payload=self._event_payload(instance),
         )
         return instance
+
+    def update_runtime_params(
+        self,
+        context: BattleContext,
+        instance_id: str,
+        runtime_params: StateRuntimeParams,
+    ) -> StateInstance:
+        """Update runtime parameters of an existing state instance in StateRegistry.
+
+        StateRegistry remains the sole physical storage, and StateLifecycleSystem
+        remains the sole physical mutation owner.
+        """
+        instance = context.states.get(instance_id)
+        definition = context.states.get_definition(instance.state_id)
+        if not isinstance(runtime_params, definition.runtime_params_type):
+            raise TypeError(
+                f"runtime_params type mismatch for state {instance.state_id}: "
+                f"expected {definition.runtime_params_type.__name__}, "
+                f"got {type(runtime_params).__name__}"
+            )
+        if instance.state_id == OfficialStateId.GUARD.value and isinstance(runtime_params, GuardStateParams):
+            context.get_unit(runtime_params.protector_id)
+            if runtime_params.protector_id == instance.owner_id:
+                raise ValueError(
+                    f"Self-guard is forbidden: protector_id '{runtime_params.protector_id}' "
+                    f"cannot equal owner_id '{instance.owner_id}'"
+                )
+        if instance.state_id == OfficialStateId.TAUNT.value and isinstance(runtime_params, TauntStateParams):
+            if (
+                runtime_params.taunt_target_id is not None
+                and runtime_params.taunt_target_id != instance.source_id
+            ):
+                raise ValueError(
+                    f"taunt_target_id '{runtime_params.taunt_target_id}' "
+                    f"cannot disagree with authoritative source_id '{instance.source_id}'"
+                )
+
+        updated = dataclasses.replace(instance, runtime_params=runtime_params)
+        context.states._instances[instance_id] = updated
+        return updated
 
     def remove(
         self,

@@ -110,7 +110,11 @@ from .hit_resolution_system import (
     HitResolutionSystem,
 )
 from .normal_attack_system import NormalAttackResult, NormalAttackSystem
-from .stage9_state_runtime import Stage9StateRuntime
+from .stage9_state_runtime import (
+    Stage9StateRuntime,
+    SuppressionReason,
+    TauntLifecycleState,
+)
 from .target_resolution_system import (
     RedirectReason,
     TargetResolutionResult,
@@ -391,4 +395,6 @@ __all__ = [
     "TargetResolutionSystem",
     "TargetResolutionResult",
     "RedirectReason",
+    "TauntLifecycleState",
+    "SuppressionReason",
 ]

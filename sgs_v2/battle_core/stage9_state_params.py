@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from .stage9_integerization import ExactRatio
 from .state_runtime_params import StateRuntimeParams
@@ -63,14 +63,22 @@ class DistributionStateParams(StateRuntimeParams):
 
 @dataclass(frozen=True, slots=True)
 class TauntStateParams(StateRuntimeParams):
-    """Runtime parameters for Taunt state (e.g. state 690021)."""
+    """Runtime parameters for Taunt state (state 690106)."""
 
     taunt_target_id: str | None = None
+    suppressors: frozenset[str] = field(default_factory=frozenset)
 
     def __post_init__(self) -> None:
         if self.taunt_target_id is not None:
             if not isinstance(self.taunt_target_id, str) or not self.taunt_target_id.strip():
                 raise ValueError("taunt_target_id cannot be empty or whitespace when provided")
+        if not isinstance(self.suppressors, (frozenset, set)):
+            raise TypeError("suppressors must be a frozenset or set")
+        if not isinstance(self.suppressors, frozenset):
+            object.__setattr__(self, "suppressors", frozenset(self.suppressors))
+        for item in self.suppressors:
+            if not isinstance(item, str) or not item.strip():
+                raise ValueError("suppressor items must be non-empty strings")
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,12 +89,14 @@ class GuardStateParams(StateRuntimeParams):
     Linked_Entity: PROTECTOR
     """
 
-    protector_id: str | None = None
+    protector_id: str
+    is_disabled: bool = False
 
     def __post_init__(self) -> None:
-        if self.protector_id is not None:
-            if not isinstance(self.protector_id, str) or not self.protector_id.strip():
-                raise ValueError("protector_id cannot be empty or whitespace when provided")
+        if not isinstance(self.protector_id, str) or not self.protector_id.strip():
+            raise ValueError("protector_id must be a non-empty string")
+        if not isinstance(self.is_disabled, bool):
+            raise TypeError("is_disabled must be a bool")
 
 
 @dataclass(frozen=True, slots=True)
