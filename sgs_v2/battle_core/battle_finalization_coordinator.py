@@ -135,6 +135,7 @@ class BattleFinalizationCoordinator:
             )
         self._victory_system = victory_system
         self._id_allocator = id_allocator
+        self._owning_context: BattleContext | None = None
         self._termination_state: BattleTerminationState = BattleTerminationState.RUNNING
         self._termination_generation: int = 0
         self._termination_record: BattleTerminationRecord | None = None
@@ -145,6 +146,26 @@ class BattleFinalizationCoordinator:
         self._active_damage_instances: dict[DamageInstanceId, None] = {}
         self._latched_winner_team_id: str | None = None
         self._latched_reason: BattleEndReason | None = None
+
+    @property
+    def owning_context(self) -> BattleContext | None:
+        return self._owning_context
+
+    def _validate_context(self, context: BattleContext) -> None:
+        from .context import BattleContext
+
+        if not isinstance(context, BattleContext):
+            raise TypeError(f"context must be BattleContext, got {type(context)}")
+        if self._owning_context is not None and self._owning_context is not context:
+            raise ValueError(
+                f"BattleFinalizationCoordinator is already bound to BattleContext {id(self._owning_context)}, "
+                f"cannot use with different BattleContext {id(context)}"
+            )
+
+    def _bind_or_validate_context(self, context: BattleContext) -> None:
+        self._validate_context(context)
+        if self._owning_context is None:
+            self._owning_context = context
 
     @property
     def victory_system(self) -> VictorySystem:
@@ -185,12 +206,14 @@ class BattleFinalizationCoordinator:
     ) -> None:
         if not isinstance(damage_instance_id, DamageInstanceId):
             raise TypeError("damage_instance_id must be DamageInstanceId")
+        self._validate_context(context)
         if self._termination_state != BattleTerminationState.RUNNING:
             raise RuntimeError(
                 f"Cannot admit new DamageInstance while termination state is {self._termination_state.value}"
             )
         if damage_instance_id in self._active_damage_instances:
             raise ValueError(f"DamageInstance '{damage_instance_id}' is already admitted")
+        self._bind_or_validate_context(context)
         self._active_damage_instances[damage_instance_id] = None
 
     def observe_damage_instance_death(
@@ -198,10 +221,14 @@ class BattleFinalizationCoordinator:
         context: BattleContext,
         damage_instance_id: DamageInstanceId,
     ) -> None:
+        if not isinstance(damage_instance_id, DamageInstanceId):
+            raise TypeError("damage_instance_id must be DamageInstanceId")
+        self._validate_context(context)
         if damage_instance_id not in self._active_damage_instances:
             raise ValueError(
                 f"DamageInstance '{damage_instance_id}' is not active in finalization barrier"
             )
+        self._bind_or_validate_context(context)
         if self._termination_state == BattleTerminationState.FINALIZED:
             return
         if self._termination_state in (
@@ -224,10 +251,14 @@ class BattleFinalizationCoordinator:
         context: BattleContext,
         damage_instance_id: DamageInstanceId,
     ) -> None:
+        if not isinstance(damage_instance_id, DamageInstanceId):
+            raise TypeError("damage_instance_id must be DamageInstanceId")
+        self._validate_context(context)
         if damage_instance_id not in self._active_damage_instances:
             raise ValueError(
                 f"DamageInstance '{damage_instance_id}' is not active in finalization barrier"
             )
+        self._bind_or_validate_context(context)
         self._active_damage_instances.pop(damage_instance_id)
         if self._termination_state in (
             BattleTerminationState.VICTORY_LATCHED,
@@ -248,6 +279,8 @@ class BattleFinalizationCoordinator:
             raise TypeError(
                 f"barrier must be LegacyFinalizationBarrier, got {type(barrier)}"
             )
+        self._validate_context(context)
+        self._bind_or_validate_context(context)
         if self._termination_state == BattleTerminationState.FINALIZED:
             return
 
@@ -292,6 +325,7 @@ class BattleFinalizationCoordinator:
         )
 
     def _finalize(self, context: BattleContext) -> None:
+        self._bind_or_validate_context(context)
         if self._termination_state == BattleTerminationState.FINALIZED:
             return
         if self._active_damage_instances:
@@ -361,6 +395,11 @@ class BattleFinalizationCoordinator:
             raise ValueError(
                 f"FinalizationId mismatch: permit finalization_id {permit.finalization_id} "
                 f"does not match {self._finalization_result.finalization_id}"
+            )
+        if permit is not self._projection_permit:
+            raise ValueError(
+                f"Permit capability authenticity failure: permit '{permit.permit_id}' "
+                "is not the exact capability object issued by this coordinator"
             )
         if self._projection_consumed:
             raise RuntimeError(

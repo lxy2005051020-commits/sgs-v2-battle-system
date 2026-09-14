@@ -233,8 +233,14 @@ class FutureAdmissionGate:
         ):
             raise ValueError("expected_parent_scope_identity cannot be empty or whitespace")
 
-        if permit.permit_id not in self._issued_permits:
+        issued = self._issued_permits.get(permit.permit_id)
+        if issued is None:
             raise ValueError(f"Permit {permit.permit_id} was not issued by this gate")
+        if issued is not permit:
+            raise ValueError(
+                f"Permit capability authenticity failure: permit '{permit.permit_id}' "
+                "is not the exact capability object issued by this gate"
+            )
         if permit.permit_id in self._consumed_permits:
             raise RuntimeError(
                 f"FutureAdmissionPermit {permit.permit_id} has already been consumed"
