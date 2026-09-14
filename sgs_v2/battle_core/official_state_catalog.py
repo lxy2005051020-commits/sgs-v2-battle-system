@@ -3,8 +3,10 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
+from .stage9_state_params import GuardStateParams, TauntStateParams
 from .state_definition import StateDefinition
 from .state_registry import StateRegistry
+from .state_runtime_params import EmptyStateRuntimeParams, StateRuntimeParams
 
 
 class OfficialStateCategory(str, Enum):
@@ -116,13 +118,23 @@ OFFICIAL_STATE_CATALOG: tuple[OfficialStateEntry, ...] = (
 )
 
 
+_OFFICIAL_STATE_RUNTIME_PARAMS_TYPES: dict[OfficialStateId, type[StateRuntimeParams]] = {
+    OfficialStateId.TAUNT: TauntStateParams,
+    OfficialStateId.GUARD: GuardStateParams,
+}
+
+
 def register_official_state_definitions(registry: StateRegistry) -> None:
-    """将官方静态目录显式转换并注册为 Stage 3 的最小 StateDefinition。"""
+    """将官方静态目录显式转换并注册为 Stage 3 / Stage 9 的 StateDefinition。"""
     for entry in OFFICIAL_STATE_CATALOG:
+        params_type = _OFFICIAL_STATE_RUNTIME_PARAMS_TYPES.get(
+            entry.state_id, EmptyStateRuntimeParams
+        )
         registry.register_definition(
             StateDefinition(
                 state_id=entry.state_id.value,
                 name=entry.name,
                 tags=frozenset({entry.category.value}),
+                runtime_params_type=params_type,
             )
         )

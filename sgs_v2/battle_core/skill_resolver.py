@@ -4,8 +4,9 @@ from dataclasses import dataclass
 from enum import Enum
 
 from .context import BattleContext
-from .effects import ApplyStateEffect, DamageEffect, Effect
+from .effects import ApplyStateEffect, DamageEffect, Effect, EffectSourceRef
 from .enums import DamageSourceType
+from .operation_identity import SourceType
 from .skill_definition import (
     ApplyStateSkillEffectSpec,
     DamageSkillEffectSpec,
@@ -160,6 +161,12 @@ class SkillResolver:
         spec: SkillEffectSpec,
     ) -> Effect:
         definition = runtime.definition
+        source_ref = EffectSourceRef(
+            stage9_source_type=SourceType.ACTIVE_SKILL,
+            source_unit_id=runtime.owner_id,
+            source_skill_id=definition.skill_id,
+            source_skill_slot=runtime.skill_slot,
+        )
         if isinstance(spec, DamageSkillEffectSpec):
             return DamageEffect(
                 source_id=runtime.owner_id,
@@ -168,6 +175,7 @@ class SkillResolver:
                 source_type=DamageSourceType.SKILL,
                 coefficient=spec.coefficient,
                 source_skill_id=definition.skill_id,
+                source_ref=source_ref,
             )
         if isinstance(spec, ApplyStateSkillEffectSpec):
             return ApplyStateEffect(
@@ -175,6 +183,7 @@ class SkillResolver:
                 owner_id=target.unit_id,
                 source_id=runtime.owner_id,
                 source_skill_id=definition.skill_id,
+                source_ref=source_ref,
             )
         raise TypeError(f"unsupported skill effect spec: {type(spec).__name__}")
 

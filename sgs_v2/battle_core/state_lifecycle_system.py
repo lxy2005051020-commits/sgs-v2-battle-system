@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from .enums import BattlePhase
 from .events import EventType
+from .skill_runtime import SkillSlot
 from .state_instance import StateInstance
 from .state_runtime_params import (
     EmptyStateRuntimeParams,
@@ -46,6 +47,7 @@ class StateLifecycleSystem:
         owner_id: str,
         source_id: str | None = None,
         source_skill_id: str | None = None,
+        source_skill_slot: SkillSlot | None = None,
         expires_round: int | None = None,
         expires_phase: str | None = None,
         runtime_params: StateRuntimeParams | None = None,
@@ -54,6 +56,24 @@ class StateLifecycleSystem:
         context.get_unit(owner_id)
         if source_id is not None:
             context.get_unit(source_id)
+
+        if source_skill_slot is not None and not isinstance(source_skill_slot, SkillSlot):
+            raise TypeError(
+                f"source_skill_slot must be a SkillSlot or None, got {type(source_skill_slot)}"
+            )
+
+        if source_id is not None and source_skill_id is not None:
+            for existing in context.states.find(
+                owner_id=owner_id,
+                state_id=state_id,
+                source_id=source_id,
+            ):
+                if existing.source_skill_id == source_skill_id:
+                    if existing.source_skill_slot != source_skill_slot:
+                        raise ValueError(
+                            f"same-source reapply slot mismatch for state '{state_id}' on unit '{owner_id}': "
+                            f"existing slot is {existing.source_skill_slot}, incoming slot is {source_skill_slot}"
+                        )
 
         self._validate_expiration(
             applied_round=context.current_round,
@@ -80,6 +100,7 @@ class StateLifecycleSystem:
             owner_id=owner_id,
             source_id=source_id,
             source_skill_id=source_skill_id,
+            source_skill_slot=source_skill_slot,
             applied_round=context.current_round,
             applied_phase=context.current_phase,
             expires_round=expires_round,
@@ -190,7 +211,7 @@ class StateLifecycleSystem:
         params_type, params_payload = state_runtime_params_event_payload(
             instance.runtime_params
         )
-        return {
+        payload: dict[str, object] = {
             "instance_id": instance.instance_id,
             "state_id": instance.state_id,
             "owner_id": instance.owner_id,
@@ -203,3 +224,6 @@ class StateLifecycleSystem:
             "runtime_params_type": params_type,
             "runtime_params": params_payload,
         }
+        if instance.source_skill_slot is not None:
+            payload["source_skill_slot"] = instance.source_skill_slot
+        return payload

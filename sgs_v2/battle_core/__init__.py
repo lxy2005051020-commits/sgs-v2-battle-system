@@ -110,6 +110,12 @@ from .hit_resolution_system import (
     HitResolutionSystem,
 )
 from .normal_attack_system import NormalAttackResult, NormalAttackSystem
+from .stage9_state_runtime import Stage9StateRuntime
+from .target_resolution_system import (
+    RedirectReason,
+    TargetResolutionResult,
+    TargetResolutionSystem,
+)
 from .official_state_catalog import (
     OFFICIAL_STATE_CATALOG,
     OfficialStateCategory,
@@ -380,4 +386,9 @@ __all__ = [
     "FinalizationResult",
     "FutureAdmissionGate",
     "LegacyActionDispatchAdapter",
+    # Stage9 Phase 9.3 Target Resolution & State Runtime
+    "Stage9StateRuntime",
+    "TargetResolutionSystem",
+    "TargetResolutionResult",
+    "RedirectReason",
 ]

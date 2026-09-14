@@ -20,6 +20,8 @@ from .troop_system import TroopSystem
 from .victory_system import VictorySystem
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
 from .execution_right_system import FutureAdmissionGate, LegacyActionDispatchAdapter
+from .stage9_state_runtime import Stage9StateRuntime
+from .target_resolution_system import TargetResolutionSystem
 
 
 @dataclass(slots=True)
@@ -56,6 +58,8 @@ class BattleSystems:
     finalization_coordinator: BattleFinalizationCoordinator = field(init=False)
     future_admission_gate: FutureAdmissionGate = field(init=False)
     legacy_action_dispatch_adapter: LegacyActionDispatchAdapter = field(init=False)
+    stage9_state_runtime: Stage9StateRuntime = field(init=False)
+    target_resolution_system: TargetResolutionSystem = field(init=False)
 
     def __post_init__(self) -> None:
         self.action_order_system = ActionOrderSystem(self.attribute_system)
@@ -98,4 +102,11 @@ class BattleSystems:
         self.legacy_action_dispatch_adapter = LegacyActionDispatchAdapter(
             action_system=lambda: self.action_system,
             gate=self.future_admission_gate,
+        )
+        self.stage9_state_runtime = Stage9StateRuntime(
+            state_lifecycle_system=self.state_lifecycle_system,
+        )
+        self.target_resolution_system = TargetResolutionSystem(
+            self.target_system,
+            self.stage9_state_runtime,
         )

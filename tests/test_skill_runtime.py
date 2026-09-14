@@ -47,7 +47,7 @@ def test_skill_runtime_instances_share_definition_but_keep_independent_state() -
 
 def test_skill_runtime_has_only_minimal_stage6_fields() -> None:
     field_names = {item.name for item in fields(SkillRuntime)}
-    assert field_names == {"definition", "owner_id", "enabled"}
+    assert field_names == {"definition", "owner_id", "enabled", "skill_slot"}
     for forbidden in (
         "runtime_data",
         "metadata",

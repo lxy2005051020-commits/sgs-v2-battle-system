@@ -64,6 +64,7 @@ class SkillRuntime:
 
     definition: SkillDefinition
     owner_id: str
+    skill_slot: SkillSlot | None = None
     enabled: bool = True
 
     def __post_init__(self) -> None:
@@ -71,7 +72,25 @@ class SkillRuntime:
             raise TypeError("definition must be a SkillDefinition")
         if not isinstance(self.owner_id, str) or not self.owner_id.strip():
             raise ValueError("owner_id cannot be empty")
+        if self.skill_slot is not None and not isinstance(self.skill_slot, SkillSlot):
+            raise TypeError(f"skill_slot must be a SkillSlot or None, got {type(self.skill_slot)}")
         if not isinstance(self.enabled, bool):
             raise TypeError("enabled must be a bool")
+
+    @classmethod
+    def from_loaded(
+        cls,
+        ref: LoadedSkillRef,
+        *,
+        enabled: bool = True,
+    ) -> SkillRuntime:
+        if not isinstance(ref, LoadedSkillRef):
+            raise TypeError(f"ref must be a LoadedSkillRef, got {type(ref)}")
+        return cls(
+            definition=ref.definition,
+            owner_id=ref.owner_id,
+            skill_slot=ref.skill_slot,
+            enabled=enabled,
+        )
 
 

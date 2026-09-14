@@ -43,12 +43,18 @@ class EffectExecutor:
             return DamageEffectResult(effect=effect, resolution=resolution)
 
         if isinstance(effect, ApplyStateEffect):
+            source_skill_slot = (
+                effect.source_ref.source_skill_slot
+                if effect.source_ref is not None
+                else None
+            )
             instance = self._state_lifecycle.apply(
                 context,
                 state_id=effect.state_id,
                 owner_id=effect.owner_id,
                 source_id=effect.source_id,
                 source_skill_id=effect.source_skill_id,
+                source_skill_slot=source_skill_slot,
                 expires_round=effect.expires_round,
                 expires_phase=effect.expires_phase,
                 runtime_params=effect.runtime_params,

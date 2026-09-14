@@ -93,3 +93,40 @@ class TestStage9RegressionContractsIntegerization:
 
         derived_calculated = floor_product_int_ratio(actual_loss, cleave_ratio)
         assert derived_calculated == 29
+
+
+class TestStage9RegressionContractsTargetArbitration:
+    """Executable regression vectors from STAGE9_REGRESSION_CONTRACTS.md (Section A: Target Arbitration).
+
+    REG-TGT-01..04 are active Phase 9.3 contracts.
+    REG-TGT-05..07 are reserved for Phase 9.6 / 9.7.
+    """
+
+    def test_reg_tgt_01_confusion_shadows_taunt_selector(self) -> None:
+        """REG-TGT-01 — Confusion shadows Taunt selector."""
+        from test_stage9_phase_9_3_target_resolution import (
+            TestTargetResolutionArbitration,
+        )
+        TestTargetResolutionArbitration().test_reg_tgt_01_confusion_shadows_taunt_selector()
+
+    def test_reg_tgt_02_taunt_lifecycle_continues_while_selector_is_shadowed(self) -> None:
+        """REG-TGT-02 — Taunt lifecycle continues while selector is shadowed."""
+        from test_stage9_phase_9_3_target_resolution import (
+            TestTargetResolutionArbitration,
+        )
+        TestTargetResolutionArbitration().test_reg_tgt_02_taunt_lifecycle_continues_while_selector_is_shadowed()
+
+    def test_reg_tgt_03_guard_occurs_after_selector(self) -> None:
+        """REG-TGT-03 — Guard occurs after selector."""
+        from test_stage9_phase_9_3_target_resolution import (
+            TestTargetResolutionArbitration,
+        )
+        TestTargetResolutionArbitration().test_reg_tgt_03_guard_occurs_after_selector()
+
+    def test_reg_tgt_04_guard_is_single_pass(self) -> None:
+        """REG-TGT-04 — Guard is single-pass."""
+        from test_stage9_phase_9_3_target_resolution import (
+            TestTargetResolutionArbitration,
+        )
+        TestTargetResolutionArbitration().test_reg_tgt_04_guard_is_single_pass()
+

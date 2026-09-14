@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from .enums import BattlePhase
+from .skill_runtime import SkillSlot
 from .state_runtime_params import (
     EmptyStateRuntimeParams,
     StateRuntimeParams,
@@ -44,6 +45,7 @@ class StateInstance:
     applied_round: int
     applied_phase: str
 
+    source_skill_slot: SkillSlot | None = None
     expires_round: int | None = None
     expires_phase: str | None = None
     runtime_params: StateRuntimeParams = field(
@@ -61,6 +63,10 @@ class StateInstance:
             raise ValueError("source_id cannot be empty when provided")
         if self.source_skill_id == "":
             raise ValueError("source_skill_id cannot be empty when provided")
+        if self.source_skill_slot is not None and not isinstance(self.source_skill_slot, SkillSlot):
+            raise TypeError(
+                f"source_skill_slot must be a SkillSlot or None, got {type(self.source_skill_slot)}"
+            )
         if self.applied_round < 0:
             raise ValueError("applied_round must be >= 0")
         if not self.applied_phase:
