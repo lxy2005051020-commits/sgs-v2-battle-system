@@ -119,8 +119,8 @@ class DirectTroopLossResolution:
 class DirectTroopLossResolver:
     """Unique destructive owner for Share/Distribution direct troop loss.
 
-    This resolver deliberately has no DamageSystem or DamageResolutionSystem dependency.
-    Direct loss is troop mutation + explicit attribution, never a second hit.
+    The only destructive dependency is TroopSystem. Direct loss is troop mutation
+    plus explicit attribution, never a second hit.
     """
 
     def __init__(self, troop_system: TroopSystem) -> None:
