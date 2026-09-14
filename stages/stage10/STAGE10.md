@@ -4,19 +4,17 @@
 >
 > Production implementation: `NOT AUTHORIZED`
 >
-> Battle design baseline: `stage10-persistent-state-research` from battle `main` `6824fbd36e8188274b80da5815cdca2abf7e4b5b`
+> Battle design baseline: battle `main` `6824fbd36e8188274b80da5815cdca2abf7e4b5b`
 >
-> Research branch baseline before this document: `4057ec88e1fdfb2fec5db4cc1977cc0942aa51d3`
+> Research branch baseline before Stage10 design: `4057ec88e1fdfb2fec5db4cc1977cc0942aa51d3`
 >
-> Gameplay authority repository: `lxy2005051020-commits/sgs-state-mechanics-research`
->
-> Gameplay authority main at authoring: `61f2be7e87e6bfab1433657ee7f766ae0c53da9d`
+> Gameplay authority: `lxy2005051020-commits/sgs-state-mechanics-research@61f2be7e87e6bfab1433657ee7f766ae0c53da9d`
 
 ---
 
-# 0. Authority and admission state
+# 0. Authority and admission
 
-Stage10 consumes already frozen mechanism contracts. It does not reopen gameplay research merely because the current runtime cannot yet represent those contracts.
+Stage10 consumes already frozen mechanism contracts. Runtime incompatibility is an architecture problem, not permission to rewrite gameplay research.
 
 Authority priority:
 
@@ -26,13 +24,11 @@ Authority priority:
 3. STAGE10_RESEARCH_MATRIX.md
 4. STAGE10_RUNTIME_MAPPING.md
 5. STAGE10_OPEN_QUESTIONS.md
-6. this STAGE10.md architecture design
+6. this STAGE10.md
 7. implementation convenience
 ```
 
-If this design contradicts current gameplay authority, gameplay authority wins and Stage10 design must be repaired before implementation.
-
-Current admission state:
+Current state:
 
 ```text
 Mechanism research extraction = COMPLETE
@@ -58,71 +54,70 @@ Target states:
 
 ---
 
-# 1. Stage10 goals
+# 1. Goals
 
-Stage10 must convert the eight frozen state contracts into one coherent production runtime binding while preserving the frozen ownership model established by Stage7, Stage8 and Stage9.
+Stage10 must provide one auditable runtime binding for the eight persistent states while preserving Stage7/8/9 ownership boundaries.
 
-The target architecture must provide:
+Required outcome:
 
 ```text
 one persistent-state storage truth
 one state mutation owner
 one action-start trigger family
-one continuous-damage runtime family
+one continuous-damage family
 one action-start recovery family
 one after-damage recovery trigger path
 application-time frozen potency/context
 source-death-safe persistent attribution
 same-name refresh-and-overwrite
-owner-relative duration semantics
-Stage9 operation identity for periodic damage
-central RecoverySystem / TroopSystem mutation
+owner-relative finite duration
 central runtime RNG
-explicit external-dependency seams
+central RecoverySystem / TroopSystem mutation
+Stage9 operation identity / partition / finalization preserved
 ```
 
-Completion means the eight official state definitions have an auditable runtime contract. It does not mean every source skill has already obtained exact microscopic numeric formula research.
+Stage10 freezes state topology and runtime contracts. It does not pretend every source skill's microscopic numeric formula is already known.
 
 ---
 
 # 2. Non-goals
 
-Stage10 does **not**:
+Stage10 does not:
 
 ```text
 invent exact DOT nonlinear constants
 invent exact treatment nonlinear constants
-reverse-engineer the PRNG algorithm
-implement EVASION / BARRIER full official state mechanics
-implement CRITICAL / STRATEGY_CRITICAL full official state mechanics
-implement universal positive dispel
-implement FALSE_REPORT / morale-shake source systems
-implement command-aura lifecycle as a persistent-state-owned system
+reverse-engineer PRNG internals
+implement full EVASION / BARRIER official mechanics
+implement full CRITICAL / STRATEGY_CRITICAL official mechanics
+invent universal positive dispel
+implement FALSE_REPORT or morale-shake gameplay
+own command-aura lifecycle
 implement Elephant Soldiers FLOOD delay
-implement skills that merely observe BURN/FLOOD/POISON/etc.
+implement external observer skills
 create a second damage engine
 create a second state registry
 replace Stage9 finalization / FutureAdmission
 turn EventBus into a rule engine
 ```
 
-Numeric formula research may later supply authoritative application-time potency inputs without reopening the Stage10 lifecycle topology.
+External systems may later feed typed facts into Stage10 seams without reopening the persistent-state topology.
 
 ---
 
-# 3. Frozen ownership map
+# 3. Runtime ownership map
 
 | Concern | Authoritative owner after Stage10 |
 |---|---|
 | Physical state storage | `BattleContext.states / StateRegistry` |
 | State apply / refresh / remove / expire | `StateLifecycleSystem` |
-| Action progress fact | new `ActionProgressTracker` |
+| Per-battle action-start fact | `BattleContext.action_progress / ActionProgressTracker` |
 | Action-start trigger collection | Stage7 `TriggerSystem` |
-| Action-start effect execution | Stage7 `RuleHookSystem` + `EffectExecutor` |
-| After-damage trigger collection | Stage7 `TriggerSystem` |
-| After-damage recovery execution | new `AfterDamageHookSystem` + `RecoverySystem` |
+| Action-start execution | Stage7 `RuleHookSystem` + `EffectExecutor` |
+| Recovery opportunity RNG / amount resolution | new `RecoveryOpportunitySystem` |
+| After-damage trigger coordination | new `AfterDamageHookSystem` |
 | Runtime RNG | `BattleContext.random` |
-| Recovery policy | `RecoverySystem` |
+| Recovery prevention / final recovery policy | `RecoverySystem` |
 | Troop mutation | `TroopSystem` |
 | Standard theoretical damage | `DamageSystem.calculate()` |
 | Periodic damage operation identity | Stage9 `DamageInstanceCoordinator` |
@@ -130,26 +125,24 @@ Numeric formula research may later supply authoritative application-time potency
 | Chain / admitted secondary work | Stage9 callback/admission owners |
 | Battle termination / drain | `BattleFinalizationCoordinator` |
 
-No other module may become a second physical owner of these facts.
+No additional physical owner is authorized.
 
 ---
 
-# 4. Stage10 blocker closure summary
+# 4. P0 blocker closure
 
-This design closes the four P0 blockers as follows.
-
-## S10-B01 · Snapshot-backed continuous-damage ingress
+## S10-B01 · Snapshot-backed continuous damage
 
 Decision:
 
 ```text
-Introduce a typed FROZEN_APPLICATION calculation basis
+Add an explicit FROZEN_APPLICATION calculation basis
 inside the existing DamageSystem.calculate() entry.
 ```
 
-The persistent state carries an immutable `FrozenContinuousDamageBasis` created at application/refresh. Tick-time damage does not reconstruct potency from current source runtime.
+An effective continuous state carries immutable `FrozenContinuousDamageBasis` created at application/refresh. Tick-time damage never reconstructs potency from current source runtime.
 
-A narrowly scoped Stage8 compatibility reopen is therefore REQUIRED and explicitly authorized by this design. See section 5.
+This requires the limited Stage8 compatibility reopen in section 5.
 
 ## S10-B02 · Source-dead persistent damage
 
@@ -160,67 +153,58 @@ FROZEN_APPLICATION periodic damage validates historical source identity,
 not current source combat eligibility.
 ```
 
-The target must still exist and be alive. The original source unit must still be identifiable for provenance, but `source.troops <= 0` does not invalidate an already-existing persistent state tick.
+Target must be alive. The original source must remain identifiable for credit, but source troops may already be zero.
 
-This exception is legal only when all of the following are true:
+This exception is authorized only when all are true:
 
 ```text
 DamageSourceType.CONTINUOUS
-+
 SourceType.PERIODIC_DAMAGE
-+
-valid source_state_id
-+
-valid source_state_instance_id
-+
-valid FrozenContinuousDamageBasis
+source_state_id present
+source_state_instance_id present
+valid FrozenContinuousDamageBasis present
 ```
 
-Standard/live damage retains the existing alive-source requirement.
+Ordinary live damage keeps the existing alive-source requirement.
 
-## S10-B03 · FIRST_AID exact AFTER_DAMAGE checkpoint
+## S10-B03 · FIRST_AID exact checkpoint
 
 Decision:
 
 ```text
-AFTER_DAMAGE is a synchronous DamageInstance-local aftermath microstep.
+AFTER_DAMAGE is synchronous DamageInstance-local aftermath work.
 ```
 
-It occurs after authoritative target settlement is known, before normal resolved-damage callback fanout and before the DamageInstance is completed.
+It runs after authoritative target settlement exists and before normal resolved-damage callback fanout / DamageInstance completion.
 
-It does not create a new global future branch and therefore does not add a `FutureBranchKind`.
+It is not a new global future branch.
 
-## S10-B04 · Owner-relative action-start expiration
+## S10-B04 · Owner-relative expiration
 
 Decision:
 
 ```text
-finite persistent lifecycle = typed PersistentLifecycleWindow
-anchored by owner action progress, not ROUND_END conversion.
+finite persistent lifecycle = PersistentLifecycleWindow
+anchored by BattleContext.action_progress.
 ```
 
-The runtime tracks whether the owner already reached action start in the current combat round and derives first/last eligible rounds accordingly.
+No universal ROUND_END conversion is allowed.
 
 ---
 
 # 5. Explicit Stage8 limited compatibility reopen
 
-## 5.1 Why reopen is required
+## 5.1 Why the reopen is necessary
 
-Current Stage8 freezes:
+Current Stage8 standard path assumes:
 
 ```text
-DamageSystem.calculate()
-= unique theoretical damage entry
-
-standard source participant
-= existing + alive
-
-formula inputs
-= current UnitRuntime
+DamageSystem.calculate() = unique theoretical-damage entry
+source = current UnitRuntime
+source must be alive
 ```
 
-The frozen Stage10 mechanism authority requires:
+Stage10 authority requires:
 
 ```text
 application/refresh potency context is locked
@@ -228,67 +212,59 @@ runtime source changes do not recalculate old instance
 source death does not cancel old instance
 ```
 
-These contracts cannot both be satisfied by the current live-source-only path.
+The current live-only input contract cannot represent those facts. A narrow explicit reopen is therefore required.
 
-Therefore Stage10 explicitly authorizes a **limited Stage8 compatibility reopen**.
-
-This is not a formula reopen.
-
-## 5.2 Reopen scope
-
-Allowed Stage8 changes:
+## 5.2 Allowed changes
 
 ```text
-1. add typed calculation-basis discrimination to DamageRequest
-2. add typed FrozenContinuousDamageBasis input
-3. make participant validation basis-aware
-4. make DamagePipelineTrace identify LIVE_RUNTIME vs FROZEN_APPLICATION
-5. allow FROZEN_APPLICATION to reuse frozen application potency after dynamic prevention/hit gates
-6. preserve existing DamageResult / Stage9 settlement contracts
+1. typed DamageCalculationBasis on DamageRequest
+2. typed FrozenContinuousDamageBasis input
+3. basis-aware participant validation
+4. basis-aware DamagePipelineTrace
+5. FROZEN_APPLICATION reuse after tick-dynamic prevention/hit gates
+6. strict preservation of DamageResult and Stage9 settlement meanings
 ```
 
-Forbidden Stage8 changes:
+## 5.3 Forbidden changes
 
 ```text
 base formula mathematical rewrite
 F(N) rewrite
 morale formula rewrite
-weapon/strategy random range rewrite
+weapon/strategy RNG-range rewrite
 low-damage-floor rewrite
-modifier arithmetic reinterpretation
+ordinary modifier arithmetic reinterpretation
 prevention order change
 hit order change
-Dtotal/Dtarget/ActualTargetTroopLoss meaning change
-DamageResolutionSystem settlement ownership change
+Dtotal / Dtarget / ActualTargetTroopLoss meaning change
+DamageResolutionSystem ownership change
 TroopSystem ownership change
 ```
 
-## 5.3 Backward compatibility hard gate
+## 5.4 Backward-compatibility hard gate
 
-For every existing request that does not explicitly provide a frozen application basis:
+Every existing request without an explicit frozen basis remains:
 
 ```text
 calculation_basis = LIVE_RUNTIME
 ```
 
-The following must remain byte-for-byte / value-for-value equivalent for deterministic seeded tests:
+For all such requests, seeded behavior must remain equivalent in:
 
 ```text
 DamageResult
 DamagePipelineTrace
 RNG consumption
 exceptions
-EventBus facts after settlement
+settlement events
 Stage9 operation identity
 ```
 
-A Stage10 implementation that changes ordinary live damage in order to support DOT fails the design.
-
 ---
 
-# 6. Damage calculation basis contract
+# 6. DamageCalculationBasis
 
-Stage10 freezes two explicit calculation basis modes.
+Stage10 freezes:
 
 ```text
 DamageCalculationBasis
@@ -296,7 +272,7 @@ DamageCalculationBasis
 - FROZEN_APPLICATION
 ```
 
-Conceptual request shape:
+Conceptual `DamageRequest` extension:
 
 ```python
 DamageRequest(
@@ -318,33 +294,24 @@ Validation:
 ```text
 LIVE_RUNTIME
 → frozen_application_basis is None
-→ existing participant validation unchanged
+→ existing source/target validation unchanged
 
 FROZEN_APPLICATION
 → source_type == CONTINUOUS
-→ source_state_id != None
-→ source_state_instance_id != None
-→ frozen_application_basis != None
-→ frozen basis damage_type matches request.damage_type
+→ state provenance pair present
+→ frozen_application_basis present
+→ basis damage_type matches request damage_type
 ```
 
-No caller may use `FROZEN_APPLICATION` as a general way to make dead units attack.
+`FROZEN_APPLICATION` is not a generic dead-unit execution permission.
 
 ---
 
 # 7. FrozenContinuousDamageBasis
 
-## 7.1 Purpose
+`FrozenContinuousDamageBasis` is the immutable application/refresh potency contract for one effective continuous-damage instance.
 
-`FrozenContinuousDamageBasis` represents the already-resolved application/refresh potency of one effective continuous-damage state instance.
-
-It is a typed **input contract**, not an executable mini-engine.
-
-The Stage10 state runtime does not infer the exact microscopic source-skill formula from live UnitRuntime at tick time.
-
-## 7.2 Minimum semantic fields
-
-Conceptual contract:
+Conceptual shape:
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -357,76 +324,62 @@ class FrozenContinuousDamageBasis:
     potency_origin: PersistentPotencyOrigin
 ```
 
-Required invariants:
+Mandatory invariants:
 
 ```text
-nominal_damage is int
-bool rejected
-nominal_damage >= 0
-all values immutable
+nominal_damage is int, bool rejected, >= 0
 no UnitRuntime object stored
 no mutable StateInstance stored
 no callable stored
-no untyped dict snapshot
+no dict[str, Any] snapshot
+all fields immutable / typed
 ```
 
 `nominal_damage` means:
 
 ```text
 application/refresh-time nominal theoretical damage
-with the contractually locked potency context already resolved,
+with application-locked potency context already resolved,
 before tick-time dynamic weakness/evasion/barrier gates.
 ```
 
-It is not:
+It is not Dtarget and not ActualTargetTroopLoss.
+
+## 7.1 Formula-research boundary
+
+The exact producer of `nominal_damage` belongs to source-skill/effect formula authority.
+
+Stage10 only requires:
 
 ```text
-Dtarget
-after-partition damage
-actual troop loss
-direct troop loss
+successful application/refresh of official continuous state
+→ valid FrozenContinuousDamageBasis supplied
+→ same basis remains authoritative until refresh/removal
 ```
 
-## 7.3 Formula research boundary
+Synthetic potency producers may test Stage10 topology. A concrete source skill becomes numerically official only when its potency producer is evidence-backed.
 
-The exact producer of `nominal_damage` belongs to the source skill/effect formula layer.
+## 7.2 REBELLION
 
-Stage10 freezes only:
-
-```text
-once the source effect successfully applies/refreshes a persistent damage state,
-it must provide a valid FrozenContinuousDamageBasis;
-that basis is authoritative for later ticks until refresh/removal.
-```
-
-Synthetic and fixture producers may be used to validate Stage10 topology. Individual production source skills are admitted only when they can provide evidence-backed potency input.
-
-This preserves the existing project decision that microscopic constants are formula research rather than state-lifecycle research.
-
-## 7.4 REBELLION
-
-REBELLION basis additionally requires:
+REBELLION basis additionally freezes:
 
 ```text
-route fixed at application/refresh
-DamageType = WEAPON or STRATEGY
+route = WEAPON or STRATEGY at application/refresh
 DefensePolicy = IGNORE_RELEVANT_TARGET_DEFENSE
 ```
 
-Runtime ATK/INT changes never reroute an existing basis.
-
-A refresh creates a new basis and may choose a different route.
+Runtime ATK/INT changes never reroute the old instance. Refresh may create a different route/basis.
 
 ---
 
 # 8. FROZEN_APPLICATION DamageSystem semantics
 
-For `FROZEN_APPLICATION`:
+Prepared periodic lane:
 
 ```text
 validate historical provenance + live target
 ↓
-collect only tick-dynamic prevention/hit rules
+collect tick-dynamic prevention/hit rules only
 ↓
 DamagePreventionSystem
 ↓
@@ -434,60 +387,59 @@ HitResolutionSystem
 ↓
 validate/reuse FrozenContinuousDamageBasis
 ↓
-final theoretical damage = frozen basis nominal_damage
+final theoretical damage = basis.nominal_damage
 ↓
 DamageResult
 ```
 
-The live formula and current ordinary modifier calculation are not rerun.
+Current ordinary source/target damage modifiers must not be collected and applied a second time.
 
-This is intentional because those semantics are already represented by the application basis.
-
-The implementation must not accidentally collect current ordinary source/target modifier contributions and apply them a second time.
-
-## 8.1 Dynamic tick gates
-
-The prepared lane remains dynamic for:
+Dynamic at tick:
 
 ```text
 source weakness
 future official evasion
 future official barrier
 owner alive
-battle/finalization admission
+battle/finalization eligibility
 ```
 
-These are not part of the application basis.
-
-## 8.2 Pipeline trace
-
-Stage10 must not lie in traces.
-
-`DamagePipelineTrace` gains a basis field conceptually:
+Locked in basis:
 
 ```text
-calculation_basis = LIVE_RUNTIME | FROZEN_APPLICATION
+potency
+applicable ordinary modifier context
+applicable crit context
+REBELLION route / defense policy
 ```
 
-For FROZEN_APPLICATION the trace must clearly show that live formula/modifier computation was not rerun.
+## 8.1 Trace truthfulness
 
-The design audit may choose either:
+`DamagePipelineTrace` must identify:
 
 ```text
-A. extend StageEvaluationStatus with a typed REUSED_FROZEN_INPUT value
+LIVE_RUNTIME
+vs
+FROZEN_APPLICATION
+```
+
+It may not pretend frozen application data was freshly recalculated from live runtime.
+
+One representation detail is intentionally left for independent design audit:
+
+```text
+A. add REUSED_FROZEN_INPUT to StageEvaluationStatus
 or
-B. add separate prepared-basis trace fields while preserving the current two-value status enum
+B. preserve the current status enum and add explicit frozen-stage trace fields
 ```
 
-but it may not label a skipped live computation as an ordinary fresh live execution without provenance.
-
-This is the only intentionally unresolved representation choice allowed in this document; the design audit must select one before `STAGE10_DESIGN_FREEZE.md`.
+This choice is trace-only and may not affect gameplay.
 
 ---
 
-# 9. Historical source provenance and source death
+# 9. Historical source provenance
 
-For a valid persistent damage instance:
+Existing persistent damage retains:
 
 ```text
 source_id
@@ -497,9 +449,7 @@ source_state_id
 source_state_instance_id
 ```
 
-remain authoritative credit facts even after the source unit dies.
-
-`FROZEN_APPLICATION` validation therefore distinguishes:
+Persistent tick validation distinguishes:
 
 ```text
 historical source identity exists
@@ -507,22 +457,22 @@ from
 source currently has execution right
 ```
 
-Persistent tick rule:
+For valid `FROZEN_APPLICATION` periodic damage:
 
 ```text
-source exists in battle identity graph     REQUIRED
-source alive                               NOT REQUIRED
-source currently able to take an action    NOT REQUIRED
-source weakness at tick                    DYNAMIC gate
+source identity exists       REQUIRED
+source alive                 NOT REQUIRED
+source can act               NOT REQUIRED
+source weakness at tick      DYNAMIC gate
 ```
 
-No generic standard attack/skill request inherits this exception.
+No standard attack/skill inherits this exception.
 
 ---
 
-# 10. Persistent StateRuntimeParams model
+# 10. Stage10 StateRuntimeParams
 
-Stage10 replaces synthetic Stage7 official-state DEFER usage with typed official params.
+Official Stage10 params replace the previous synthetic/minimal DEFER representation.
 
 Conceptual types:
 
@@ -532,36 +482,25 @@ FirstAidStateParams
 RecuperationStateParams
 ```
 
-The exact module name may be `stage10_state_params.py`.
-
-## 10.1 Shared lifecycle type
+## 10.1 PersistentLifecycleWindow
 
 ```python
 @dataclass(frozen=True, slots=True)
 class PersistentLifecycleWindow:
     first_eligible_round: int
     last_eligible_round: int | None
-    last_processed_round: int | None
     duration_kind: FINITE_ROUNDS | UNTIL_BATTLE_END | EXTERNAL_SOURCE_LIFECYCLE
 ```
 
-For finite N-round instances:
+For finite N:
 
 ```text
 last_eligible_round = first_eligible_round + N - 1
 ```
 
-For battle-long or externally owned lifecycle:
-
-```text
-last_eligible_round = None
-```
-
-`last_processed_round` prevents a second same-state opportunity for the same owner in one combat round.
+There is no per-state `last_processed_round`. Same-round duplicate suppression is an action-progress fact owned by `ActionProgressTracker`, not a TriggerSystem mutation.
 
 ## 10.2 ContinuousDamageStateParams
-
-Minimum semantics:
 
 ```text
 frozen_basis: FrozenContinuousDamageBasis
@@ -569,86 +508,70 @@ lifecycle: PersistentLifecycleWindow
 active_gate: PersistentSourceSkillGate
 ```
 
-`active_gate` is normally ALWAYS_ACTIVE for active-skill-applied continuous damage unless a specific contract says otherwise.
-
 ## 10.3 FirstAidStateParams
 
-Minimum semantics:
-
 ```text
-probability: float [0,1]
+probability: float in [0,1]
 recovery_model: TREATMENT_AMOUNT | TRIGGER_DAMAGE_RATIO
 frozen_recovery_context: FrozenRecoveryApplicationContext
 lifecycle: PersistentLifecycleWindow
 active_gate: PersistentSourceSkillGate
 ```
 
-For damage-ratio model:
-
-```text
-triggering ActualTargetTroopLoss
-```
-
-is read dynamically from `AfterDamageHook`.
-
 ## 10.4 RecuperationStateParams
 
-Minimum semantics:
-
 ```text
-recovery_model
-frozen_recovery_context
-lifecycle
-active_gate
+probability: float in [0,1]
+recovery_model: TREATMENT_AMOUNT
+frozen_recovery_context: FrozenRecoveryApplicationContext
+lifecycle: PersistentLifecycleWindow
+active_gate: PersistentSourceSkillGate
 ```
 
-No generic flat `amount` field is sufficient as the official model.
+Probability `1.0` represents guaranteed RECUPERATION sources. The official model may not collapse all sources into guaranteed recovery.
 
 ---
 
 # 11. ActionProgressTracker
 
-## 11.1 Purpose
+## 11.1 Ownership
 
-State application must know whether the target already reached action start in the current combat round.
-
-`context.current_phase` alone cannot answer this because multiple units pass through the same global phase value.
-
-EventBus history is not an allowed control-flow database.
-
-Therefore Stage10 introduces one typed battle-local fact owner:
+Stage10 introduces one battle-local typed fact:
 
 ```text
-ActionProgressTracker
+BattleContext.action_progress: ActionProgressTracker
 ```
 
-## 11.2 Contract
+This is execution progress, not state storage.
+
+## 11.2 API
 
 Conceptual API:
 
 ```text
 mark_action_start(round_no, actor_id)
+action_start_count(round_no, actor_id) -> int
 has_started_this_round(round_no, actor_id) -> bool
 last_started_round(actor_id) -> int | None
 ```
 
-Rules:
+BattleEngine calls `mark_action_start` immediately before `UNIT_ACTION_STARTED` publication / `UnitActionStartHook` processing.
+
+StateLifecycleSystem reads the tracker while applying/refreshing persistent states.
+
+TriggerSystem reads `action_start_count` to enforce the family rule:
 
 ```text
-BattleEngine marks action start exactly once before processing UnitActionStartHook.
-TriggerSystem may read the tracker.
-StateLifecycleSystem may read the tracker while applying/refreshing a persistent state.
-No state-specific behavior lives inside the tracker.
-No EventBus inspection is used.
+max one persistent action-start opportunity per owner per combat round
 ```
 
-The tracker is an execution fact, not a second StateRegistry.
+No EventBus history is used.
 
 ---
 
-# 12. Persistent lifecycle window derivation
+# 12. Lifecycle derivation
 
-For an incoming finite state with duration N at combat round R:
+For an incoming finite N-round state at combat round R:
 
 ```text
 if owner has NOT reached action start in R:
@@ -657,123 +580,102 @@ else:
     first_eligible_round = R + 1
 
 last_eligible_round = first_eligible_round + N - 1
-last_processed_round = None
 ```
 
-This rule applies on both first application and refresh.
+This derivation is rerun on refresh.
 
 Examples:
 
 ```text
-2-round DOT applied before owner acts in round 3
+2-round state applied before owner acts in round 3
 → eligible rounds 3,4
-→ expires at owner action start round 5 before a tick
+→ no opportunity round 5
 
-2-round DOT applied after owner acts in round 3
+2-round state applied after owner acts in round 3
 → eligible rounds 4,5
-→ expires at owner action start round 6 before a tick
+→ no opportunity round 6
 ```
 
-There is no round-end catch-up.
+No catch-up exists at round end.
 
 ---
 
-# 13. UnitActionStart persistent-state lifecycle algorithm
+# 13. UnitActionStart lifecycle algorithm
 
-At `UnitActionStartHook(round_no=R, actor_id=A)` the persistent-state trigger path processes A's matching persistent states deterministically.
-
-For each state instance:
+Production order for actor A at round R:
 
 ```text
-1. owner alive check
-2. lifecycle expiration check
-3. same-round duplicate opportunity check
-4. mark this round as processed when an opportunity belongs to this round
-5. source-skill active gate
-6. state-specific trigger eligibility
-7. produce DamageEffect or RecoverEffect
+1. BattleEngine marks A action start in context.action_progress
+2. StateLifecycleSystem expires A's finite persistent states where R > last_eligible_round
+3. BattleEngine publishes observation facts
+4. RuleHookSystem processes UnitActionStartHook
+5. TriggerSystem considers persistent state only if action_start_count(R,A) == 1
+6. TriggerSystem collects immutable Effects / RecoveryOpportunityEffects
+7. EffectExecutor executes them in stable order
 ```
 
-## 13.1 Expiration rule
+TriggerSystem remains mutation-free.
 
-For finite state:
+## 13.1 Finite expiry
 
 ```text
-if R > last_eligible_round:
-    remove/expire before producing an effect
+R > last_eligible_round
+→ expire before effect collection
 ```
 
-For `R == last_eligible_round`:
+At `R == last_eligible_round`, the final opportunity may occur.
+
+The state may remain physically present until the next owner action-start expiry check; the contract requires no N+1 opportunity, not a guessed universal round-end removal.
+
+## 13.2 Additional action starts in same round
+
+If a future official mechanism reaches a second `UnitActionStartHook` for the same owner in the same combat round:
 
 ```text
-one final opportunity may occur
-state is not required to disappear until the next owner action-start expiration check
+action_start_count > 1
+→ Stage10 persistent states produce no second opportunity
 ```
 
-This matches the frozen observable rule that no N+1 opportunity occurs.
-
-## 13.2 Temporary inactive opportunity
-
-If the state belongs to an inactive command/passive/troop source at an otherwise eligible action start:
-
-```text
-mark R processed
-produce no trigger effect
-no RNG where the contract says execution itself is suppressed
-do not extend last_eligible_round
-no catch-up later
-```
+This closes the family max-one-per-round contract without hardcoding “the engine can never have a second action start.”
 
 ---
 
-# 14. Same-name refresh-and-overwrite transaction
+# 14. Same-name refresh-and-overwrite
 
-All eight Stage10 states freeze one effective same-name instance per owner.
+All eight target states allow one effective same-name instance per owner.
 
-Stage10 chooses an explicit **atomic refresh** operation owned by `StateLifecycleSystem`.
+Stage10 adds an atomic `StateLifecycleSystem` persistent refresh operation.
 
-Conceptual API:
+Conceptually:
 
 ```text
 apply_or_refresh_persistent(...)
 ```
 
-If no existing same-name instance exists:
+No existing same-name instance:
 
 ```text
-create new StateInstance
+create StateInstance
 publish STATE_APPLIED
 ```
 
-If one exists:
+Existing same-name instance:
 
 ```text
-atomically replace source/source skill/source slot/runtime params/application context/lifecycle
-preserve one physical registry record
+replace source/source skill/source slot/runtime params/application context/lifecycle atomically
+retain physical instance_id
 publish STATE_REFRESHED
 ```
 
-## 14.1 Instance identity decision
+## 14.1 Identity decision
 
-Stage10 freezes:
+Refresh retains `StateInstance.instance_id`.
 
-```text
-refresh RETAINS the physical StateInstance.instance_id
-```
+This is an engineering identity choice because the gameplay contract freezes one continuing effective same-name slot and does not require a remove gap.
 
-Reason:
+Retained instance ID does **not** preserve old potency/provenance. All effective fields are replaced.
 
-```text
-refresh is one continuing same-name effective state slot on the owner,
-not a remove event followed by an observable gap;
-keeping identity avoids fake STATE_REMOVED + STATE_APPLIED semantics.
-```
-
-All gameplay-relevant content of the effective instance is replaced.
-
-The retained physical instance ID does **not** mean old potency/provenance survives.
-
-## 14.2 New event
+## 14.2 Event contract
 
 Add:
 
@@ -781,7 +683,7 @@ Add:
 EventType.STATE_REFRESHED
 ```
 
-Payload includes at minimum:
+Payload includes at least:
 
 ```text
 instance_id
@@ -795,69 +697,186 @@ new runtime params type
 
 EventBus remains observation-only.
 
-## 14.3 Generic scope boundary
-
-This refresh law applies only to the eight Stage10 states admitted by explicit state IDs / typed definitions.
-
-It is not a global stacking law for all official states.
+This refresh policy is Stage10-state-specific and is not a universal stacking law.
 
 ---
 
-# 15. Trigger ordering at the same action-start node
+# 15. Same-node deterministic order
 
-Research does not freeze a universal “DOT before RECUPERATION” family priority.
+Research does not freeze universal DOT-vs-RECUPERATION family priority.
 
-Stage10 therefore freezes an engineering determinism rule:
+Stage10 therefore freezes an engineering runtime default:
 
 ```text
-matching StateInstances are processed by stable physical instance_id order
+matching physical StateInstances are processed by stable instance_id order
 ```
 
-This is labeled:
+Label:
 
 ```text
 RUNTIME DETERMINISM DEFAULT
 NOT OFFICIAL FAMILY PRIORITY
 ```
 
-Refresh retaining physical instance ID also means refresh does not accidentally move the state to another same-node ordering position.
-
-If later evidence proves an official cross-state priority, this ordering rule may be reopened without changing the basic trigger topology.
+Refresh retaining instance ID prevents refresh from accidentally changing this engineering order.
 
 ---
 
-# 16. Periodic damage effect production
+# 16. Periodic damage production
 
-A continuous state tick produces a standard `DamageEffect` with:
+Eligible continuous state produces `DamageEffect` with:
 
 ```text
-source_id                = state source
-source_skill_id          = state source skill
+source_id                = effective state source
+source_skill_id          = effective source skill
 source_state_id          = state id
-source_state_instance_id = physical state instance id
-damage_type               = frozen basis damage type
-source_type               = DamageSourceType.CONTINUOUS
+source_state_instance_id = physical instance id
+damage_type              = frozen basis route
+source_type              = DamageSourceType.CONTINUOUS
 source_ref.stage9_source_type = SourceType.PERIODIC_DAMAGE
-frozen_application_basis  = params.frozen_basis
+calculation_basis        = FROZEN_APPLICATION
+frozen_application_basis = params.frozen_basis
 ```
 
-It then enters:
+Then:
 
 ```text
 EffectExecutor
 → DamageInstanceCoordinator
 → DamageSystem.calculate(FROZEN_APPLICATION)
 → Stage9 partition / settlement
-→ finalization barrier
+→ Stage9 aftermath/finalization
 ```
 
-No direct troop loss route is authorized.
+DirectTroopLoss is forbidden for these six DOT states.
 
 ---
 
-# 17. FIRST_AID typed AfterDamageHook
+# 17. RecoveryOpportunityEffect
 
-Stage10 adds:
+Stage10 official FIRST_AID and RECUPERATION use a pure-data recovery opportunity instead of consuming RNG in TriggerSystem.
+
+Conceptual type:
+
+```python
+@dataclass(frozen=True, slots=True)
+class RecoveryOpportunityEffect:
+    source_id: str | None
+    target_id: str
+    probability: float
+    frozen_recovery_context: FrozenRecoveryApplicationContext
+    active_gate: PersistentSourceSkillGate
+    triggering_actual_damage: int | None
+    source_skill_id: str | None
+    source_skill_slot: SkillSlot | None
+    source_state_id: str
+    source_state_instance_id: str
+    trigger_damage_instance_id: DamageInstanceId | None
+    trigger_lineage: OperationLineage | None
+```
+
+This is an intent. It has no side effects and consumes no RNG by construction.
+
+For RECUPERATION:
+
+```text
+triggering_actual_damage = None
+trigger_damage_instance_id = None
+trigger_lineage = None
+```
+
+For FIRST_AID damage-ratio model:
+
+```text
+triggering_actual_damage = AfterDamageHook.actual_target_troop_loss
+```
+
+---
+
+# 18. RecoveryOpportunitySystem
+
+`RecoveryOpportunitySystem` is the unique owner of Stage10 persistent recovery probability consumption and nominal recovery resolution.
+
+It depends on:
+
+```text
+RecoverySystem
+skill effectiveness query seam
+```
+
+It does not depend on DamageInstanceCoordinator.
+
+Execution order:
+
+```text
+1. validate RecoveryOpportunityEffect
+2. verify target currently alive
+3. evaluate PersistentSourceSkillGate
+4. inactive -> NO_TRIGGER, consume no RNG
+5. context.random.chance(probability) exactly once
+6. chance failure -> NO_TRIGGER
+7. resolve nominal amount from FrozenRecoveryApplicationContext
+8. create RecoveryRequest with full provenance
+9. RecoverySystem applies target-death/healing-ban policy
+10. TroopSystem.restore applies missing-troop cap
+```
+
+Healing ban is intentionally after successful trigger chance because the frozen recovery contracts place it at recovery resolution rather than probability eligibility.
+
+`RecoveryOpportunitySystem` returns a typed result distinguishing at least:
+
+```text
+INACTIVE
+CHANCE_FAILED
+RECOVERY_RESOLVED
+RECOVERY_PREVENTED
+```
+
+No state mutation occurs here.
+
+---
+
+# 19. RECUPERATION flow
+
+At the owner's first eligible action start in a combat round:
+
+```text
+lifecycle eligibility
+↓
+TriggerSystem creates RecoveryOpportunityEffect
+↓
+EffectExecutor routes it to RecoveryOpportunitySystem
+↓
+active gate
+↓
+probability roll, including probability=1.0 sources
+↓
+nominal recovery
+↓
+RecoverySystem
+↓
+healing ban / target alive
+↓
+TroopSystem.restore cap
+```
+
+Temporary inactive source-skill window:
+
+```text
+no RNG
+no recovery
+finite lifecycle window unchanged
+opportunity is lost
+no catch-up
+```
+
+Stun/disarm/silence/weakness/confusion do not inherently suppress an already reached RECUPERATION action-start opportunity.
+
+---
+
+# 20. AfterDamageHook
+
+Stage10 adds immutable typed damage aftermath facts:
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -877,13 +896,44 @@ class AfterDamageHook:
     source_state_instance_id: str | None
 ```
 
-The exact field names may be refined during implementation, but the semantic facts above are mandatory.
+The implementation may refine field names, but not omit these semantic facts.
 
-The hook is immutable and may not query EventBus history to reconstruct missing facts.
+No EventBus history reconstruction is allowed.
 
 ---
 
-# 18. AFTER_DAMAGE exact checkpoint
+# 21. FIRST_AID eligibility before opportunity creation
+
+For one `AfterDamageHook`:
+
+```text
+1. locate effective FIRST_AID on target
+2. none -> stop
+3. prevented -> stop
+4. actual_target_troop_loss <= 0 -> stop
+5. target_defeated -> stop
+6. target currently dead -> stop
+7. create exactly one RecoveryOpportunityEffect for that FIRST_AID instance
+```
+
+No RNG occurs during this collection.
+
+Consequences:
+
+```text
+prevented damage -> no RNG
+zero actual loss -> no RNG
+fatal damage -> no RNG and no resurrection
+one eligible DamageInstance -> at most one FIRST_AID opportunity
+multiple hits represented by multiple DamageInstances -> independent opportunities
+no combat-round cap
+```
+
+Source-skill active gating and RNG happen later in `RecoveryOpportunitySystem`.
+
+---
+
+# 22. FIRST_AID exact checkpoint
 
 For standard Stage9 damage:
 
@@ -896,73 +946,51 @@ standard target settlement
 ↓
 DamageResolutionResult exists
 ↓
-construct AfterDamageHook
+AfterDamageHookSystem
 ↓
-FIRST_AID synchronous aftermath processing
+FIRST_AID RecoveryOpportunityEffect(s)
 ↓
-resolved-damage callback fanout (Chain etc.)
+RecoveryOpportunitySystem
 ↓
-finish current DamageInstance
+existing resolved-damage callback fanout (Chain etc.)
+↓
+complete current DamageInstance
 ```
 
-For Share:
+Share:
 
 ```text
 target settlement
-→ FIRST_AID on target if eligible
+→ FIRST_AID target aftermath
 → share direct troop loss
 ```
 
-For Distribution:
+Distribution:
 
 ```text
 distribution direct losses
 → target settlement
-→ FIRST_AID on target if eligible
+→ FIRST_AID target aftermath
 ```
 
-Partition direct losses are not reclassified as standard damage events and do not automatically create FIRST_AID opportunities.
+Partition direct troop losses are not silently reclassified as standard damage events and do not automatically trigger FIRST_AID.
 
-For Cleave derived damage:
+Cleave derived damage:
 
 ```text
-derived target troop settlement
-→ typed AfterDamageHook using the derived DamageInstance fact
-→ FIRST_AID
+derived target settlement
+→ same AfterDamageHookSystem
+→ same RecoveryOpportunitySystem
 → existing damage callback fanout
 ```
 
-The existing Stage9 evidence-gated `cleave_first_aid` seam is replaced/bound by the same Stage10 aftermath service rather than becoming a second FIRST_AID implementation.
+The existing evidence-gated `cleave_first_aid` seam must bind to the same Stage10 service rather than becoming a parallel FIRST_AID engine.
 
 ---
 
-# 19. Why AFTER_DAMAGE is synchronous local work
+# 23. AfterDamageHookSystem and acyclic dependency
 
-FIRST_AID recovery:
-
-```text
-does not create damage
-does not choose a new combat target
-does not schedule another action
-does not create a global branch
-does not require work after the owning DamageInstance closes
-```
-
-Therefore Stage10 classifies it as:
-
-```text
-DamageInstance-local synchronous aftermath microstep
-```
-
-It is **not** a new `FutureBranchKind`.
-
-If a future mechanism requires delayed/replayable work outside this scope, that future mechanism must go through FutureAdmission separately.
-
----
-
-# 20. Acyclic AfterDamage architecture
-
-Stage7 originally deferred AFTER_DAMAGE because naive wiring would create:
+Naive wiring is forbidden:
 
 ```text
 DamageInstanceCoordinator
@@ -971,79 +999,33 @@ DamageInstanceCoordinator
 → DamageInstanceCoordinator
 ```
 
-Stage10 explicitly forbids this cycle.
-
-Instead:
+Stage10 instead freezes:
 
 ```text
 Damage aftermath callback point
         ↓
 AfterDamageHookSystem
         ↓
-TriggerSystem.collect(context, AfterDamageHook)
+TriggerSystem AFTER_DAMAGE collection
         ↓
-RecoverEffect(s) ONLY
+RecoveryOpportunityEffect(s) ONLY
+        ↓
+RecoveryOpportunitySystem
         ↓
 RecoverySystem
-        ↓
-TroopSystem.restore
 ```
 
-`AfterDamageHookSystem` does **not** depend on `EffectExecutor`.
+`AfterDamageHookSystem` does not depend on `EffectExecutor`.
 
-It validates that every effect returned for `AfterDamageHook` is a `RecoverEffect`. A `DamageEffect`, `ApplyStateEffect`, `RemoveStateEffect`, or unknown Effect at this hook is a programmer/design error in Stage10.
+`TriggerSystem` remains side-effect-free and consumes no RNG.
 
-This preserves:
-
-```text
-TriggerSystem = pure trigger rule collector
-RecoverySystem = recovery policy owner
-DamageInstanceCoordinator = damage owner
-runtime dependency graph = acyclic
-```
+For AFTER_DAMAGE collection, any produced `DamageEffect`, state mutation effect, or unsupported effect is a programmer/design error.
 
 ---
 
-# 21. FIRST_AID eligibility and RNG order
+# 24. FIRST_AID recovery models
 
-For one `AfterDamageHook`, FIRST_AID processing order is frozen:
-
-```text
-1. locate effective FIRST_AID state on target
-2. if none -> stop
-3. if hook.prevented -> stop
-4. if actual_target_troop_loss <= 0 -> stop
-5. if target_defeated -> stop
-6. verify target is currently alive -> otherwise stop
-7. evaluate source-skill active gate
-8. if inactive -> stop
-9. consume exactly one context.random.chance(probability)
-10. failure -> stop
-11. compute nominal recovery from frozen recovery context
-12. construct RecoverEffect with state + damage provenance
-13. RecoverySystem applies dynamic healing-ban / target-alive policy
-14. TroopSystem.restore applies current missing-troop cap
-```
-
-Important consequences:
-
-```text
-fatal damage consumes NO FIRST_AID RNG
-prevented damage consumes NO FIRST_AID RNG
-zero actual troop loss consumes NO FIRST_AID RNG
-inactive source-skill window consumes NO FIRST_AID RNG
-healing ban is checked by RecoverySystem AFTER successful trigger chance
-```
-
-The last point preserves the frozen separation between trigger probability and recovery prevention.
-
-No combat-round cap exists.
-
----
-
-# 22. FIRST_AID recovery amount models
-
-Stage10 freezes two model kinds:
+Stage10 freezes:
 
 ```text
 TREATMENT_AMOUNT
@@ -1053,7 +1035,7 @@ TRIGGER_DAMAGE_RATIO
 For `TREATMENT_AMOUNT`:
 
 ```text
-nominal amount is determined from FrozenRecoveryApplicationContext
+nominal amount comes from FrozenRecoveryApplicationContext
 ```
 
 For `TRIGGER_DAMAGE_RATIO`:
@@ -1064,45 +1046,15 @@ ratio = application-time frozen ratio
 nominal recovery = evidence-backed integerization of basis × ratio
 ```
 
-The exact source-skill ratio formula/rounding is supplied by the source skill formula authority.
+Stage10 explicitly rejects Dtotal or assigned target damage as a substitute for the frozen “当次受击扣减伤害量” input.
 
-Stage10 does not substitute `assigned_target_damage` or `Dtotal` for the frozen “当次受击扣减伤害量” contract.
-
----
-
-# 23. RECUPERATION action-start flow
-
-At an eligible owner action start:
-
-```text
-lifecycle opportunity check
-↓
-mark current round processed
-↓
-source-skill active gate
-↓
-if inactive: lose opportunity, no catch-up
-↓
-resolve nominal recovery from FrozenRecoveryApplicationContext
-↓
-RecoverEffect
-↓
-RecoverySystem
-↓
-healing-ban / target-alive gate
-↓
-TroopSystem.restore missing-troop cap
-```
-
-Stun/disarm/silence/weakness/confusion do not inherently suppress the RECUPERATION trigger once the owner reached its action-start node.
+Exact source-skill ratio mapping / rounding remains source formula authority.
 
 ---
 
-# 24. FrozenRecoveryApplicationContext
+# 25. FrozenRecoveryApplicationContext
 
-Stage10 requires a typed recovery application snapshot.
-
-Conceptual contract:
+Conceptual typed snapshot:
 
 ```python
 @dataclass(frozen=True, slots=True)
@@ -1114,7 +1066,7 @@ class FrozenRecoveryApplicationContext:
     potency_origin: PersistentPotencyOrigin
 ```
 
-Validation enforces legal combinations:
+Legal combinations:
 
 ```text
 TREATMENT_AMOUNT
@@ -1123,59 +1075,44 @@ TREATMENT_AMOUNT
 
 TRIGGER_DAMAGE_RATIO
 → trigger_damage_ratio present
-→ nominal_amount absent or only used as source-specific typed parameter when explicitly authorized
+→ dynamic trigger amount supplied by AfterDamageHook
 ```
 
-No mutable UnitRuntime or untyped dict snapshot is stored.
+No mutable UnitRuntime and no untyped snapshot dict is stored.
 
 ---
 
-# 25. Recovery provenance extension
+# 26. Recovery provenance extension
 
-`RecoverEffect` and `RecoveryRequest` receive backward-compatible optional provenance extensions after existing constructor fields.
+`RecoveryRequest` and relevant effect/result surfaces receive backward-compatible optional provenance extensions after existing constructor fields.
 
 Required facts:
 
 ```text
 source_skill_slot
 trigger_damage_instance_id
-trigger_lineage / equivalent immutable operation reference
+trigger_lineage or equivalent immutable operation reference
 ```
 
-For RECUPERATION:
+RECUPERATION leaves trigger-damage fields None.
 
-```text
-trigger_damage_instance_id = None
-trigger_lineage = None
-```
+FIRST_AID binds them from `AfterDamageHook`.
 
-For FIRST_AID:
-
-```text
-trigger_damage_instance_id = AfterDamageHook.damage_instance_id
-trigger lineage = AfterDamageHook.lineage
-```
-
-RecoverySystem does not use these facts to decide arithmetic except where a future explicit contract says so. It preserves/publishes them for audit and report provenance.
-
-Existing Stage7 callers that omit the new optional fields retain old behavior.
+RecoverySystem preserves/publishes provenance but does not reinterpret Stage9 operation identity.
 
 ---
 
-# 26. PersistentSourceSkillGate
+# 27. PersistentSourceSkillGate
 
-FIRST_AID and RECUPERATION sometimes remain physically present while the source skill is temporarily ineffective.
-
-Stage10 freezes a typed gate abstraction:
+Typed values:
 
 ```text
-PersistentSourceSkillGate
-- ALWAYS_ACTIVE
-- QUERY_SKILL_RUNTIME
-- EXTERNAL_LIFECYCLE
+ALWAYS_ACTIVE
+QUERY_SKILL_RUNTIME
+EXTERNAL_LIFECYCLE
 ```
 
-For `QUERY_SKILL_RUNTIME`, the state retains:
+For `QUERY_SKILL_RUNTIME`, the state keeps:
 
 ```text
 source_id
@@ -1183,74 +1120,52 @@ source_skill_id
 source_skill_slot
 ```
 
-and queries one authoritative skill-runtime effectiveness service.
+and queries one authoritative runtime effectiveness owner.
 
-## 26.1 Existing SkillRuntime fact
+Current `SkillRuntime.enabled` is the natural existing fact to reuse if a battle-authoritative lookup exists.
 
-Current `SkillRuntime` already has:
+Persistent-state params must not copy FALSE_REPORT / morale-shake truth into a second store.
 
-```text
-enabled: bool
-```
-
-Stage10 may reuse/extend the authoritative runtime that owns this flag.
-
-It must not duplicate FALSE_REPORT / morale-shake truth inside persistent-state params.
-
-## 26.2 Missing authoritative runtime case
-
-If implementation discovery proves there is no battle-authoritative lookup from `(source_id, skill_slot)` to current SkillRuntime effectiveness, construction stops and records an implementation blocker.
-
-The implementation may add a typed skill-runtime registry/lookup owner, but may not invent the external disable gameplay itself.
+If implementation discovery finds no authoritative `(owner, slot) -> SkillRuntime` lookup, Stage10 records an implementation blocker and may add a typed registry/lookup owner. It may not invent the external disable mechanics.
 
 ---
 
-# 27. Official state definition bindings
-
-Stage10 promotes the eight target state definitions from `EmptyStateRuntimeParams` to explicit typed params.
-
-Binding:
+# 28. Official state definition binding
 
 ```text
-BURN        -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
-FLOOD       -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
-POISON      -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
-ROUT        -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
-SANDSTORM   -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
-REBELLION   -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
-RECUPERATION-> RecuperationStateParams     + RULE_HOOK:UNIT_ACTION_START
-FIRST_AID   -> FirstAidStateParams         + RULE_HOOK:AFTER_DAMAGE
+BURN         -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
+FLOOD        -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
+POISON       -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
+ROUT         -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
+SANDSTORM    -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
+REBELLION    -> ContinuousDamageStateParams + RULE_HOOK:UNIT_ACTION_START
+RECUPERATION -> RecuperationStateParams     + RULE_HOOK:UNIT_ACTION_START
+FIRST_AID    -> FirstAidStateParams         + RULE_HOOK:AFTER_DAMAGE
 ```
 
-The tag names are runtime selectors, not gameplay authority.
-
-State IDs remain the canonical existing identifiers from `OfficialStateId`.
+Tags are runtime selectors, not gameplay evidence.
 
 ---
 
-# 28. Evidence Gate promotion
+# 29. Evidence Gate promotion
 
-Stage10 must update evidence matrices explicitly.
+Stage10 must explicitly update evidence matrices.
 
-At minimum:
+Minimum promotions:
 
 ```text
-Stage7
-burn / flood / poison / rout / sandstorm / rebellion / recuperation
-→ promoted for official action-start trigger binding
+Stage7 action-start official binding:
+BURN / FLOOD / POISON / ROUT / SANDSTORM / REBELLION / RECUPERATION
 
-first_aid
-→ promoted only for Stage10 typed AFTER_DAMAGE + Recovery path
+Stage10 reactive binding:
+FIRST_AID via typed AFTER_DAMAGE + RecoveryOpportunitySystem
 
-Stage8
-rebellion defense-ignore
-→ promoted from DEFER for the specific frozen formula-policy meaning
-
-continuous damage prepared-basis mode
-→ Stage10 evidence-backed architecture extension
+Stage8:
+REBELLION defense-ignore specific policy
+FROZEN_APPLICATION continuous-damage compatibility lane
 ```
 
-The following remain DEFER unless separately frozen:
+Still DEFER unless independently frozen:
 
 ```text
 EVASION official binding
@@ -1261,15 +1176,15 @@ DAMAGE_REDUCTION_PIERCE official binding
 universal positive dispel
 ```
 
-Synthetic capability tests do not change those verdicts.
+Synthetic capability tests do not promote official evidence rows.
 
 ---
 
-# 29. Death contracts
+# 30. Death contracts
 
-## 29.1 State owner death
+## Owner death
 
-Global hard termination remains:
+Global behavior remains:
 
 ```text
 owner death
@@ -1278,73 +1193,64 @@ owner death
 → reject future state application to dead owner
 ```
 
-Stage10 must identify one authoritative death-cleanup integration point.
+Stage10 must use one authoritative death-cleanup integration point, not eight EventBus subscribers.
 
-It must not add eight independent UNIT_DEFEATED EventBus subscribers.
+## Source death
 
-## 29.2 Source death
-
-No generic sourced-state deletion is allowed.
+No generic sourced-state deletion:
 
 ```text
 continuous damage existing instance -> persists
 FIRST_AID existing instance          -> persists
 active-sourced RECUPERATION          -> persists
-command-aura RECUPERATION            -> external lifecycle may remove it
+command-aura RECUPERATION            -> external owner may remove it
 ```
 
 ---
 
-# 30. Finalization and victory boundary
+# 31. Finalization boundary
 
-## 30.1 Periodic damage admission
+## Periodic damage
 
-A new periodic tick is produced from an already-admitted `UnitActionStartHook` while the battle is RUNNING.
+A new periodic DamageInstance may only be created while the surrounding action-start work is legally executing under the existing battle lifecycle.
 
-The resulting DamageInstance uses existing Stage9 admission and finalization rules.
+No Stage10 subsystem admits damage after Stage9 finalization denies new work.
 
-If the battle has already latched/finalized before a new action-start hook can legally run, no new persistent damage is created.
+## FIRST_AID local drain
 
-## 30.2 FIRST_AID during DamageInstance drain
+FIRST_AID is local aftermath of an already-admitted damage operation.
 
-FIRST_AID is part of the already-admitted DamageInstance's local aftermath.
+It does not create a new target, damage operation, action, or future branch.
 
-Therefore it may finish while the coordinator is draining that same already-admitted DamageInstance.
+Fatal target damage is filtered before recovery opportunity creation, so FIRST_AID cannot resurrect a defeated target or undo that target's victory edge.
 
-Fatal target damage suppresses FIRST_AID before RNG, so FIRST_AID cannot resurrect a defeated target and cannot invalidate a victory caused by that target death.
-
-If a different partition participant death already latched victory earlier in the same admitted DamageInstance, a nonfatal target's local FIRST_AID may still complete before the DamageInstance closes. This is classified as drain of already-admitted local work, not admission of new future work.
+If another partition participant death has already latched victory while the current DamageInstance is still draining, a nonfatal target's already-local FIRST_AID aftermath may complete before that DamageInstance closes. This is completion of admitted work, not new future admission.
 
 ---
 
-# 31. Dynamic external interactions
-
-Stage10 preserves explicit seams for:
+# 32. External dependencies preserved as external
 
 ```text
 Evasion / Barrier
 Critical / Strategy Critical
 positive dispel
-command aura source death
-FALSE_REPORT / morale-shake source skill deactivation
+command-aura source death
+FALSE_REPORT / morale-shake skill deactivation
 Elephant Soldiers FLOOD delay
-external observers of persistent state identity
+external state observers
 cleanse target-selection policy
 ```
 
-Persistent state runtime may query or receive typed facts from these owners when they exist.
-
-It must not silently absorb their full gameplay semantics.
+Stage10 exposes typed seams only.
 
 ---
 
-# 32. Required dependency graph
-
-Target dependency direction:
+# 33. Required dependency graph
 
 ```text
 BattleEngine
-  -> ActionProgressTracker
+  -> BattleContext.action_progress
+  -> StateLifecycleSystem action-start expiry
   -> RuleHookSystem
 
 RuleHookSystem
@@ -1354,12 +1260,13 @@ RuleHookSystem
 EffectExecutor
   -> DamageInstanceCoordinator
   -> StateLifecycleSystem
+  -> RecoveryOpportunitySystem
   -> RecoverySystem
 
 DamageInstanceCoordinator
   -> DamageSystem
   -> Stage9 partition/finalization
-  -> Damage aftermath callback point
+  -> damage aftermath callback point
 
 Damage aftermath callback point
   -> AfterDamageHookSystem
@@ -1367,113 +1274,117 @@ Damage aftermath callback point
 
 AfterDamageHookSystem
   -> TriggerSystem
+  -> RecoveryOpportunitySystem
+
+RecoveryOpportunitySystem
   -> RecoverySystem
+  -> authoritative skill-effectiveness query
 
 RecoverySystem
   -> TroopSystem
 ```
 
-Forbidden dependency:
+Forbidden:
 
 ```text
 AfterDamageHookSystem -> EffectExecutor
+RecoveryOpportunitySystem -> DamageInstanceCoordinator
+EventBus -> gameplay trigger execution
 ```
 
-because that closes a cycle back into `DamageInstanceCoordinator`.
-
-Runtime dependency-cycle count must remain zero.
+Runtime dependency-cycle count remains zero.
 
 ---
 
-# 33. Required invariants
-
-Stage10 implementation must prove at least the following invariants.
+# 34. Required invariants
 
 ```text
 S10-I01 one physical StateRegistry
 S10-I02 one StateLifecycleSystem mutation owner
 S10-I03 one effective same-name Stage10 state per owner
 S10-I04 refresh replaces all effective provenance/potency/lifecycle fields
-S10-I05 refresh retains physical instance_id and emits STATE_REFRESHED only
+S10-I05 refresh retains physical instance_id and emits STATE_REFRESHED
 S10-I06 no fake remove/apply gap on refresh
 S10-I07 application-before-owner-action may trigger same round
 S10-I08 application-after-owner-action cannot catch up same round
 S10-I09 finite N-round state cannot produce N+1 opportunity
-S10-I10 same state cannot produce second action-start opportunity in same combat round
-S10-I11 inactive opportunity is lost without duration extension
-S10-I12 DOT tick never recalculates potency from live source UnitRuntime
-S10-I13 source death does not invalidate existing DOT
-S10-I14 live standard damage still requires alive source
-S10-I15 periodic damage retains Stage9 PERIODIC_DAMAGE identity
-S10-I16 periodic damage never uses DirectTroopLoss as a shortcut
-S10-I17 REBELLION route remains fixed until refresh
-S10-I18 REBELLION frozen basis carries IGNORE_RELEVANT_TARGET_DEFENSE
-S10-I19 FIRST_AID one eligible damage settlement = one chance opportunity
-S10-I20 FIRST_AID has no combat-round cap
-S10-I21 prevented/zero/fatal damage consumes no FIRST_AID RNG
-S10-I22 FIRST_AID uses ActualTargetTroopLoss for damage-ratio model
-S10-I23 healing ban remains RecoverySystem-owned
-S10-I24 missing-troop clamp remains TroopSystem-owned
-S10-I25 EventBus never drives FIRST_AID rule execution
-S10-I26 AfterDamageHookSystem cannot emit/execute damage
-S10-I27 runtime dependency graph remains acyclic
-S10-I28 source-skill disable truth is not copied into a second store
-S10-I29 owner death hard-terminates attached persistent state execution
-S10-I30 standard Stage1-9 regression semantics remain unchanged outside explicit Stage8 reopen scope
+S10-I10 second owner action-start in same round cannot duplicate persistent opportunity
+S10-I11 inactive finite recovery opportunity is lost without duration extension
+S10-I12 TriggerSystem performs no state mutation and consumes no RNG
+S10-I13 DOT tick never recalculates potency from live source UnitRuntime
+S10-I14 source death does not invalidate existing DOT
+S10-I15 live standard damage still requires alive source
+S10-I16 periodic damage retains Stage9 PERIODIC_DAMAGE identity
+S10-I17 periodic damage never uses DirectTroopLoss shortcut
+S10-I18 REBELLION route fixed until refresh
+S10-I19 REBELLION basis carries IGNORE_RELEVANT_TARGET_DEFENSE
+S10-I20 FIRST_AID one eligible damage settlement = one recovery opportunity
+S10-I21 FIRST_AID has no combat-round cap
+S10-I22 prevented/zero/fatal damage produces no FIRST_AID opportunity/RNG
+S10-I23 FIRST_AID damage-ratio basis = ActualTargetTroopLoss
+S10-I24 RECUPERATION probability is source-defined, including guaranteed 1.0
+S10-I25 inactive FIRST_AID/RECUPERATION opportunity consumes no RNG
+S10-I26 healing ban remains RecoverySystem-owned after successful chance
+S10-I27 missing-troop cap remains TroopSystem-owned
+S10-I28 EventBus never drives persistent gameplay
+S10-I29 AfterDamageHookSystem cannot execute damage/state mutation
+S10-I30 runtime dependency graph remains acyclic
+S10-I31 source-skill disable truth not copied into state params
+S10-I32 owner death hard-terminates attached persistent state execution
+S10-I33 standard Stage1-9 behavior unchanged outside explicit Stage8 reopen
 ```
 
 ---
 
-# 34. Mandatory regression scenarios
-
-Design audit and later build prompt must require tests for at least:
+# 35. Mandatory regression scenarios
 
 ```text
-1. 1-round DOT applied before target acts -> same-round one tick, no next-round tick
-2. 1-round DOT applied after target acts -> next-round one tick only
+1. 1-round DOT applied before owner acts -> same-round tick only
+2. 1-round DOT applied after owner acts -> next-round tick only
 3. 2-round DOT exact two opportunities
-4. same-source refresh before owner action
-5. cross-source refresh after owner action
-6. refresh replaces source provenance
-7. refresh replaces frozen potency
-8. refresh may reroute REBELLION
-9. source dies after applying DOT -> later tick still resolves
-10. source attribute changes after apply -> old DOT unchanged
-11. source modifier changes after apply -> old DOT unchanged
-12. dynamic weakness blocks one tick without deleting state
-13. stun/disarm/silence do not suppress eligible action-start tick
-14. owner death clears state and prevents later tick
-15. purify removal prevents future tick
-16. RECUPERATION same-round first opportunity
-17. RECUPERATION after-action deferred first opportunity
-18. RECUPERATION inactive window loses opportunity, duration not extended
-19. FIRST_AID normal attack damage opportunity
-20. FIRST_AID skill damage opportunity
-21. FIRST_AID periodic damage opportunity
-22. FIRST_AID two multi-hit DamageInstances -> two chance opportunities
-23. FIRST_AID prevented hit -> no RNG
-24. FIRST_AID fatal hit -> no RNG / no resurrection
-25. FIRST_AID damage-ratio reads actual troop loss, not Dtotal
-26. FIRST_AID under healing ban -> chance may succeed, RecoverySystem prevents recovery
-27. share target settlement FIRST_AID occurs before sharer direct loss
-28. distribution direct losses do not automatically trigger FIRST_AID
-29. Cleave uses same Stage10 FIRST_AID aftermath service
-30. battle-latched admitted DamageInstance may drain local nonfatal FIRST_AID
-31. ordinary live DamageRequest result unchanged from Stage9 baseline
-32. ordinary dead source standard attack/skill remains rejected
-33. no EventBus subscription controls persistent gameplay
-34. no runtime dependency cycle
+4. second action-start same owner/same round -> no second DOT/RECUPERATION opportunity
+5. same-source refresh before owner action
+6. cross-source refresh after owner action
+7. refresh replaces provenance
+8. refresh replaces frozen potency
+9. refresh may reroute REBELLION
+10. source dies after applying DOT -> later tick still resolves
+11. source attributes change after apply -> old DOT unchanged
+12. source ordinary modifiers change -> old DOT unchanged
+13. weakness dynamically blocks tick without deleting state
+14. stun/disarm/silence do not suppress eligible action-start persistent trigger
+15. owner death clears state and prevents later trigger
+16. purify removal prevents later negative-state tick
+17. RECUPERATION same-round first opportunity
+18. RECUPERATION after-action deferred first opportunity
+19. RECUPERATION probability failure
+20. RECUPERATION guaranteed probability=1.0
+21. RECUPERATION inactive window -> no RNG / no recovery / no extension
+22. FIRST_AID normal attack damage
+23. FIRST_AID skill damage
+24. FIRST_AID periodic damage
+25. two multi-hit DamageInstances -> two independent FIRST_AID opportunities
+26. FIRST_AID prevented hit -> no opportunity/RNG
+27. FIRST_AID fatal hit -> no opportunity/RNG/resurrection
+28. FIRST_AID damage-ratio reads actual troop loss, not Dtotal/Dtarget
+29. FIRST_AID under healing ban -> chance can succeed, RecoverySystem prevents recovery
+30. share target FIRST_AID before sharer direct loss
+31. distribution direct losses do not automatically trigger FIRST_AID
+32. Cleave uses same Stage10 FIRST_AID aftermath service
+33. battle-latched admitted DamageInstance may drain local nonfatal FIRST_AID
+34. ordinary live DamageRequest remains Stage9-baseline equivalent
+35. ordinary dead-source standard attack/skill remains rejected
+36. no EventBus control-flow subscription
+37. no runtime dependency cycle
 ```
 
-External DEFER mechanics use synthetic rule providers where needed; tests must not relabel them as officially integrated.
+DEFER interactions use synthetic providers without claiming official integration.
 
 ---
 
-# 35. Implementation phases
+# 36. Implementation phases
 
-Stage10 production work, once design audit passes, should be split so each phase can be independently audited.
-
-## Phase 10.1 · Typed contracts only
+## Phase 10.1 · Typed contracts
 
 ```text
 DamageCalculationBasis
@@ -1482,34 +1393,33 @@ FrozenRecoveryApplicationContext
 PersistentLifecycleWindow
 PersistentSourceSkillGate
 Stage10 StateRuntimeParams
+RecoveryOpportunityEffect
+RecoveryOpportunityResult
 AfterDamageHook
-recovery provenance fields
-STATE_REFRESHED event type
+recovery provenance extension
+STATE_REFRESHED
 ```
 
-No production official binding yet.
-
-## Phase 10.2 · Action progress + lifecycle
+## Phase 10.2 · Action progress and lifecycle
 
 ```text
+BattleContext.action_progress
 ActionProgressTracker
 BattleEngine explicit mark_action_start
 StateLifecycleSystem persistent apply/refresh
-owner-relative finite lifecycle maintenance
-same-round duplicate prevention
+owner-relative action-start expiry
+same-round duplicate suppression
 ```
 
 ## Phase 10.3 · Stage8 limited reopen
 
 ```text
-FROZEN_APPLICATION request validation
+FROZEN_APPLICATION validation
 basis-aware participant validation
-prepared periodic damage lane
-trace representation
-strict live-path regression gate
+prepared periodic lane
+truthful trace representation
+full LIVE_RUNTIME regression gate
 ```
-
-No Stage9 or state official activation until this phase passes its own audit.
 
 ## Phase 10.4 · Continuous damage family
 
@@ -1522,13 +1432,12 @@ SANDSTORM
 REBELLION
 ```
 
-Bind official definitions and periodic damage Stage9 ingress.
-
-## Phase 10.5 · RECUPERATION
+## Phase 10.5 · Recovery opportunity runtime + RECUPERATION
 
 ```text
-action-start recovery
-source-skill active gate
+RecoveryOpportunitySystem
+skill-effectiveness query seam
+RECUPERATION action-start probability/recovery
 finite and battle-long lifecycle
 ```
 
@@ -1536,26 +1445,26 @@ finite and battle-long lifecycle
 
 ```text
 AfterDamageHookSystem
-standard damage callback integration
-Cleave derived damage integration
-RNG order
-recovery provenance
+standard damage aftermath integration
+Cleave derived integration
+FIRST_AID eligibility
+full recovery provenance
 ```
 
-## Phase 10.7 · death / cleanse / external seams hardening
+## Phase 10.7 · death / cleanse / external seam hardening
 
 ```text
 owner-death cleanup integration
 purify/remove compatibility
 external source-lifecycle seam
-DEFER interaction guards
+DEFER guards
 ```
 
-## Phase 10.8 · independent implementation audit + final freeze
+## Phase 10.8 · independent implementation audit / final freeze
 
 ```text
 full pytest twice
-full demo
+demo
 exact-head CI
 artifact provenance
 architecture invariant audit
@@ -1566,18 +1475,17 @@ Stage10 Final Audit
 
 ---
 
-# 36. Files expected to change during implementation
-
-Likely production surfaces:
+# 37. Likely implementation surfaces
 
 ```text
+sgs_v2/battle_core/context.py
 sgs_v2/battle_core/rule_hooks.py
 sgs_v2/battle_core/trigger_system.py
 sgs_v2/battle_core/recovery_system.py
 sgs_v2/battle_core/effects.py
 sgs_v2/battle_core/effect_result.py
+sgs_v2/battle_core/effect_executor.py
 sgs_v2/battle_core/state_lifecycle_system.py
-sgs_v2/battle_core/state_instance.py (only if typed lifecycle placement requires it)
 sgs_v2/battle_core/official_state_catalog.py
 sgs_v2/battle_core/damage_system.py
 sgs_v2/battle_core/damage_pipeline_trace.py
@@ -1586,69 +1494,73 @@ sgs_v2/battle_core/cleave_derived_damage_system.py
 sgs_v2/battle_core/battle_systems.py
 sgs_v2/battle_core/engine.py
 new stage10_state_params.py
-new persistent_damage_basis.py or equivalent typed module
+new persistent_damage_basis.py or equivalent
 new action_progress_tracker.py
+new recovery_opportunity_system.py
 new after_damage_hook_system.py
 ```
 
-This list is not permission for gratuitous rewrites. Any additional production file touched must be justified by a concrete frozen contract or required dependency seam.
+Extra production files require explicit justification. This list is not permission for broad refactoring.
 
 ---
 
-# 37. Forbidden shortcuts
-
-The Build Prompt must explicitly reject all of the following:
+# 38. Forbidden shortcuts
 
 ```text
-“PeriodicDamageStateParams already works, so official DOT is complete”
-recalculate DOT from current source stats every tick
-delete sourced DOT when source dies
-temporarily revive dead source to satisfy DamageSystem
+claim synthetic PeriodicDamageStateParams already equals official DOT
+recalculate DOT from live source every tick
+delete existing DOT when source dies
+temporarily revive source
 copy DamageSystem into PersistentDamageSystem
 write troops directly for DOT
-route DOT through DirectTroopLossSystem
-read EventBus history to trigger FIRST_AID
-subscribe to DAMAGE_DEALT to execute FIRST_AID
+route DOT through DirectTroopLoss
+read EventBus history for FIRST_AID
+subscribe DAMAGE_DEALT to execute gameplay
+consume probability in TriggerSystem
 make FIRST_AID one-per-round
-use Dtotal for damage-ratio FIRST_AID
+make all RECUPERATION guaranteed
+use Dtotal/Dtarget for FIRST_AID damage-ratio basis
 heal after fatal damage
-pause finite duration while source skill is inactive
-convert owner-relative duration to a universal ROUND_END timer
+pause finite duration while source skill inactive
+convert owner-relative duration to universal ROUND_END
 allow multiple effective same-name Stage10 instances
-use remove+apply event pair to fake refresh
-store application snapshot as dict[str, Any]
-store mutable UnitRuntime inside state params
-import Python random in state logic
-add a FutureBranchKind merely for synchronous FIRST_AID
-wire AfterDamageHookSystem through EffectExecutor and recreate a runtime cycle
+fake refresh as STATE_REMOVED + STATE_APPLIED
+store application context as dict[str, Any]
+store mutable UnitRuntime in state params
+import Python random in persistent state logic
+add FutureBranchKind for synchronous FIRST_AID
+wire AfterDamageHookSystem through EffectExecutor
+copy external disable truth into persistent state params
 silently activate EVASION/BARRIER/CRITICAL official bindings
-claim engineering instance_id ordering is official state priority
+claim instance_id deterministic order is official priority
 ```
 
 ---
 
-# 38. Design audit hard gates
+# 39. Design audit hard gates
 
-`STAGE10_DESIGN_AUDIT.md` must reject this design if any of the following is not proven:
+`STAGE10_DESIGN_AUDIT.md` must reject the design unless it proves:
 
 ```text
-A. all S10-B01..B04 have one unambiguous architecture answer
-B. all S10-M01..M06 have one unambiguous architecture answer
-C. Stage8 limited reopen scope is explicit and regression-testable
-D. standard LIVE_RUNTIME damage behavior remains frozen
-E. FROZEN_APPLICATION cannot be abused by arbitrary dead-source standard damage
-F. owner-relative lifecycle handles before/after-action application and refresh
-G. FIRST_AID checkpoint uses authoritative settlement facts
-H. FIRST_AID has no EventBus control-flow dependency
-I. AfterDamage architecture is acyclic
-J. recovery provenance remains backward compatible
-K. external dependency items remain external
-L. formula research debt is not silently converted into guessed constants
-M. no duplicated state storage or troop mutation owner
-N. Stage9 operation identity/finalization semantics remain intact
+A. S10-B01..B04 each have one implementable answer
+B. S10-M01..M06 each have one implementable answer
+C. Stage8 limited reopen is explicit and regression-testable
+D. LIVE_RUNTIME damage remains frozen
+E. FROZEN_APPLICATION cannot authorize arbitrary dead-source standard damage
+F. owner-relative lifecycle handles application/refresh before and after owner action
+G. same-round duplicate prevention does not require TriggerSystem mutation
+H. RECUPERATION probability is represented
+I. FIRST_AID checkpoint uses authoritative settlement facts
+J. TriggerSystem remains RNG-free
+K. AFTER_DAMAGE architecture is acyclic
+L. recovery provenance remains backward compatible
+M. external dependencies remain external
+N. formula research debt is not converted into guessed constants
+O. no duplicate state/troop owner exists
+P. Stage9 operation/finalization semantics remain intact
 ```
 
-If any gate fails:
+Failure of any gate means:
 
 ```text
 DESIGN AUDIT = FAIL
@@ -1657,67 +1569,65 @@ BUILD PROMPT = BLOCKED
 
 ---
 
-# 39. Open representation item intentionally deferred to design audit
-
-Exactly one internal representation choice remains open for independent review:
-
-```text
-How DamagePipelineTrace represents a FROZEN_APPLICATION formula/modifier reuse
-without falsely claiming a fresh live computation.
-```
-
-Allowed resolution families:
-
-```text
-A. extend StageEvaluationStatus with REUSED_FROZEN_INPUT
-B. preserve status enum and add typed calculation-basis / frozen-stage trace fields
-```
-
-The choice must not change gameplay semantics.
-
-No other P0/P1 item remains intentionally open in this specification.
-
----
-
 # 40. Architecture decision record
-
-Final Stage10 design decisions:
 
 ```text
 S10-B01 snapshot-backed ingress
-= FROZEN_APPLICATION basis in existing DamageSystem.calculate
+= FROZEN_APPLICATION basis inside existing DamageSystem.calculate
 
 S10-B02 source-dead execution
-= historical source provenance accepted only for valid periodic frozen-basis request
+= historical source identity accepted only for valid periodic frozen-basis request
 
 S10-B03 FIRST_AID checkpoint
 = synchronous target-settlement aftermath inside owning DamageInstance
 
 S10-B04 owner-relative expiry
-= ActionProgressTracker + PersistentLifecycleWindow
+= BattleContext.action_progress + PersistentLifecycleWindow
 
 S10-M01 same-name replacement
 = StateLifecycleSystem atomic refresh, physical instance_id retained
 
 S10-M02 RNG
-= eligibility/death/inactive gates first, then exactly one context.random chance
+= RecoveryOpportunitySystem owns chance after eligibility/active gates
 
 S10-M03 recovery provenance
-= backward-compatible RecoverEffect/RecoveryRequest extension
+= backward-compatible request/effect/result provenance extension
 
-S10-M04 source skill inactive gate
-= typed authoritative skill-runtime query seam, no copied truth
+S10-M04 source-skill inactive gate
+= typed authoritative skill-runtime query seam
 
 S10-M05 snapshot schema
-= immutable typed damage/recovery application contexts, no dict/UnitRuntime capture
+= immutable typed damage/recovery application contexts
 
 S10-M06 state binding / evidence
-= explicit official params + hook tags + evidence-matrix promotion
+= explicit params + hook tags + evidence-matrix promotion
 ```
 
 ---
 
-# 41. Stage10 design verdict
+# 41. Remaining representation-only review item
+
+One non-gameplay representation choice is deliberately left to independent design audit:
+
+```text
+How DamagePipelineTrace represents FROZEN_APPLICATION stage reuse
+without falsely claiming a fresh live formula/modifier calculation.
+```
+
+Allowed families:
+
+```text
+A. typed REUSED_FROZEN_INPUT status
+B. separate typed frozen-basis trace fields while preserving current status enum
+```
+
+The design audit must select one before design freeze.
+
+No P0 or P1 gameplay/runtime ownership decision remains intentionally open.
+
+---
+
+# 42. Design verdict
 
 ```text
 Mechanism research              = COMPLETE
@@ -1725,7 +1635,9 @@ Runtime mapping                 = COMPLETE
 P0 architecture decisions       = CLOSED IN DESIGN
 P1 architecture decisions       = CLOSED IN DESIGN
 Stage8 conflict                 = EXPLICIT LIMITED REOPEN REQUIRED
-Stage9 conflict                 = NO REOPEN; additive local aftermath seam only
+Stage9 conflict                 = NO REOPEN; local aftermath extension only
+TriggerSystem purity            = PRESERVED
+Recovery probability ownership  = RecoveryOpportunitySystem
 Formula constants               = OUT OF STAGE10 CORE SCOPE
 External dependency semantics   = PRESERVED AS EXTERNAL
 Production implementation       = NOT AUTHORIZED
@@ -1734,4 +1646,4 @@ NEXT REQUIRED STEP:
 STAGE10_DESIGN_AUDIT.md
 ```
 
-Only an independent design audit may promote this document to `DESIGN FROZEN` and authorize creation of `STAGE10_BUILD_PROMPT.md`.
+Only an independent design audit may promote this specification to `DESIGN FROZEN` and authorize `STAGE10_BUILD_PROMPT.md`.
