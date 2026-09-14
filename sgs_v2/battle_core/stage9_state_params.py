@@ -75,14 +75,18 @@ class TauntStateParams(StateRuntimeParams):
 
 @dataclass(frozen=True, slots=True)
 class GuardStateParams(StateRuntimeParams):
-    """Runtime parameters for Guard state (e.g. state 690031)."""
+    """Runtime parameters for Guard state (e.g. state 690098).
 
-    guarded_unit_id: str | None = None
+    State_Owner: PROTECTED_TARGET / HOLDER
+    Linked_Entity: PROTECTOR
+    """
+
+    protector_id: str | None = None
 
     def __post_init__(self) -> None:
-        if self.guarded_unit_id is not None:
-            if not isinstance(self.guarded_unit_id, str) or not self.guarded_unit_id.strip():
-                raise ValueError("guarded_unit_id cannot be empty or whitespace when provided")
+        if self.protector_id is not None:
+            if not isinstance(self.protector_id, str) or not self.protector_id.strip():
+                raise ValueError("protector_id cannot be empty or whitespace when provided")
 
 
 @dataclass(frozen=True, slots=True)

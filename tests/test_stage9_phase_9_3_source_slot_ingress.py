@@ -300,8 +300,8 @@ class TestSourceSlotIngress:
             context,
             state_id=OfficialStateId.GUARD.value,
             owner_id="b1",
-            source_id="b1",
-            runtime_params=GuardStateParams(guarded_unit_id="b1"),
+            source_id="a1",
+            runtime_params=GuardStateParams(protector_id="a1"),
         )
         assert isinstance(g_inst.runtime_params, GuardStateParams)
 

@@ -103,9 +103,16 @@ class TargetResolutionSystem:
         context: BattleContext,
         attacker: UnitRuntime | str,
         *,
-        normal_attack_id: NormalAttackInstanceId | None = None,
+        normal_attack_id: NormalAttackInstanceId,
         resolution_id: TargetResolutionId | None = None,
     ) -> TargetResolutionResult | None:
+        if normal_attack_id is None:
+            raise TypeError("normal_attack_id is required and cannot be None")
+        if not isinstance(normal_attack_id, NormalAttackInstanceId):
+            raise TypeError(
+                f"normal_attack_id must be a NormalAttackInstanceId, got {type(normal_attack_id)}"
+            )
+
         attacker_unit = (
             attacker
             if isinstance(attacker, UnitRuntime)
@@ -113,8 +120,6 @@ class TargetResolutionSystem:
         )
         attacker_id = attacker_unit.unit_id
 
-        if normal_attack_id is None:
-            normal_attack_id = context.id_allocator.allocate_normal_attack_id()
         if resolution_id is None:
             resolution_id = context.id_allocator.allocate_target_resolution_id()
 
@@ -126,12 +131,14 @@ class TargetResolutionSystem:
 
         if confusion is not None:
             # Step 3: Confusion selector arbitration
-            # Candidates: all alive units in context excluding attacker
-            candidates = [
-                u
-                for u in context.units.values()
-                if u.is_alive and u.unit_id != attacker_id
-            ]
+            # Candidates built using TargetSystem primitives: allies (excluding self) + enemies
+            allies = self._target_system.allies(
+                context, attacker_unit, alive_only=True, include_self=False
+            )
+            enemies = self._target_system.enemies(
+                context, attacker_unit, alive_only=True
+            )
+            candidates = allies + enemies
             if not candidates:
                 return None
             chosen = self._target_system.random_units(context, candidates, count=1)

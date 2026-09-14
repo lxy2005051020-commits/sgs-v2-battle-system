@@ -13,10 +13,14 @@ class TargetSystem:
         unit: UnitRuntime,
         *,
         alive_only: bool = True,
+        include_self: bool = True,
     ) -> list[UnitRuntime]:
-        return self._filter_by_team(
+        allies = self._filter_by_team(
             context, unit.team_id, alive_only=alive_only
         )
+        if not include_self:
+            return [candidate for candidate in allies if candidate.unit_id != unit.unit_id]
+        return allies
 
     def enemies(
         self,
@@ -49,9 +53,7 @@ class TargetSystem:
         count: int = 1,
         include_self: bool = True,
     ) -> list[UnitRuntime]:
-        allies = self.allies(context, unit, alive_only=True)
-        if not include_self:
-            allies = [candidate for candidate in allies if candidate.unit_id != unit.unit_id]
+        allies = self.allies(context, unit, alive_only=True, include_self=include_self)
         return self.random_units(context, allies, count=count)
 
     def random_units(

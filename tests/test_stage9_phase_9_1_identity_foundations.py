@@ -581,8 +581,8 @@ class TestStage9StateParams:
         taunt_p = TauntStateParams(taunt_target_id="u3")
         assert taunt_p.taunt_target_id == "u3"
 
-        guard_p = GuardStateParams(guarded_unit_id="u4")
-        assert guard_p.guarded_unit_id == "u4"
+        guard_p = GuardStateParams(protector_id="u4")
+        assert guard_p.protector_id == "u4"
 
         ctr_p = CounterStateParams(damage_rate=ExactRatio(1, 1))
         assert ctr_p.damage_rate == ExactRatio(1, 1)
