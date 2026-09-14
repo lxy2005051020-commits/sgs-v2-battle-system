@@ -105,12 +105,8 @@ class BattleSystems:
         )
         self.action_system = ActionSystem(self.normal_attack_system)
         self.recovery_system = RecoverySystem(self.troop_system)
-
-        # Phase 9.5 Cutover Gate: this branch intentionally remains on the legacy
-        # DamageEffect router until partition/direct-loss/finalization infrastructure
-        # and producer coverage tests are green. EffectExecutor is switched LAST.
         self.effect_executor = EffectExecutor(
-            self.damage_resolution_system,
+            self.damage_instance_coordinator,
             self.state_lifecycle_system,
             self.recovery_system,
         )

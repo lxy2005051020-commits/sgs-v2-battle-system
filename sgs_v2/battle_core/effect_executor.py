@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from .context import BattleContext
-from .damage_resolution_system import DamageResolutionSystem
+from .damage_instance_coordinator import DamageInstanceCoordinator
 from .effect_result import (
     ApplyStateEffectResult,
     DamageEffectResult,
@@ -22,11 +22,15 @@ class EffectExecutor:
 
     def __init__(
         self,
-        damage_resolution_system: DamageResolutionSystem,
+        damage_instance_coordinator: DamageInstanceCoordinator,
         state_lifecycle_system: StateLifecycleSystem,
         recovery_system: RecoverySystem | None = None,
     ) -> None:
-        self._damage_resolution = damage_resolution_system
+        if not isinstance(damage_instance_coordinator, DamageInstanceCoordinator):
+            raise TypeError(
+                "damage_instance_coordinator must be DamageInstanceCoordinator"
+            )
+        self._damage_instances = damage_instance_coordinator
         self._state_lifecycle = state_lifecycle_system
         self._recovery = recovery_system
 
@@ -36,11 +40,14 @@ class EffectExecutor:
         effect: Effect,
     ) -> EffectExecutionResult:
         if isinstance(effect, DamageEffect):
-            resolution = self._damage_resolution.resolve(
-                context,
-                effect.to_request(),
+            execution = self._damage_instances.execute_damage_effect(context, effect)
+            return DamageEffectResult(
+                effect=effect,
+                resolution=execution.resolution,
+                damage_instance_id=execution.damage_instance_id,
+                partition_plan=execution.partition_plan,
+                direct_losses=execution.direct_losses,
             )
-            return DamageEffectResult(effect=effect, resolution=resolution)
 
         if isinstance(effect, ApplyStateEffect):
             source_skill_slot = (
