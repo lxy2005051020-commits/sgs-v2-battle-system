@@ -3,7 +3,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
-from .stage9_state_params import GuardStateParams, TauntStateParams
+from .stage9_state_params import (
+    DamageShareStateParams,
+    DistributionStateParams,
+    GuardStateParams,
+    TauntStateParams,
+)
 from .state_definition import StateDefinition
 from .state_registry import StateRegistry
 from .state_runtime_params import EmptyStateRuntimeParams, StateRuntimeParams
@@ -121,6 +126,8 @@ OFFICIAL_STATE_CATALOG: tuple[OfficialStateEntry, ...] = (
 _OFFICIAL_STATE_RUNTIME_PARAMS_TYPES: dict[OfficialStateId, type[StateRuntimeParams]] = {
     OfficialStateId.TAUNT: TauntStateParams,
     OfficialStateId.GUARD: GuardStateParams,
+    OfficialStateId.DAMAGE_SHARE: DamageShareStateParams,
+    OfficialStateId.DAMAGE_SPLIT: DistributionStateParams,
 }
 
 

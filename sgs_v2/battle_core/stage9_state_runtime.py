@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING
 
 from .official_state_catalog import OfficialStateId
 from .stage9_state_params import (
+    DamageShareStateParams,
+    DistributionStateParams,
     GuardStateParams,
     SuppressionReason,
     TauntLifecycleState,
@@ -44,6 +46,68 @@ class Stage9StateRuntime:
     def lifecycle(self) -> StateLifecycleSystem:
         return self._lifecycle
 
+    @staticmethod
+    def _unique_instance(
+        instances: tuple[StateInstance, ...],
+        *,
+        state_name: str,
+        owner_id: str,
+    ) -> StateInstance | None:
+        if not instances:
+            return None
+        if len(instances) != 1:
+            raise ValueError(
+                f"{state_name} requires exactly one physical instance per owner; "
+                f"found {len(instances)} on '{owner_id}'"
+            )
+        return instances[0]
+
+    def get_operational_damage_share(
+        self,
+        context: BattleContext,
+        target_id: str,
+    ) -> StateInstance | None:
+        """Fresh DamageInstance-time read of the target's operational Share state."""
+        instance = self._unique_instance(
+            context.states.find(
+                owner_id=target_id,
+                state_id=OfficialStateId.DAMAGE_SHARE.value,
+            ),
+            state_name="DAMAGE_SHARE",
+            owner_id=target_id,
+        )
+        if instance is None:
+            return None
+        if not isinstance(instance.runtime_params, DamageShareStateParams):
+            raise TypeError("DAMAGE_SHARE state requires DamageShareStateParams")
+        sharer_id = instance.runtime_params.sharer_id
+        if sharer_id == target_id:
+            return None
+        sharer = context.units.get(sharer_id)
+        if sharer is None or not sharer.is_alive or sharer.troops <= 0:
+            return None
+        return instance
+
+    def get_operational_distribution(
+        self,
+        context: BattleContext,
+        target_id: str,
+    ) -> StateInstance | None:
+        """Fresh DamageInstance-time read of the target's operational Distribution state."""
+        instance = self._unique_instance(
+            context.states.find(
+                owner_id=target_id,
+                state_id=OfficialStateId.DAMAGE_SPLIT.value,
+            ),
+            state_name="DISTRIBUTION",
+            owner_id=target_id,
+        )
+        if instance is None:
+            return None
+        if not isinstance(instance.runtime_params, DistributionStateParams):
+            raise TypeError("DISTRIBUTION state requires DistributionStateParams")
+        return instance
+
     def get_operational_confusion(
         self,
         context: BattleContext,
@@ -66,12 +130,6 @@ class Stage9StateRuntime:
         context: BattleContext,
         taunt_instance: StateInstance,
     ) -> frozenset[SuppressionReason]:
-        """Return the frozenset of active typed SuppressionReason for a Taunt instance.
-
-        Multi-suppressor model (Taunt P0):
-        - INSIGHT: holder has active Insight state (Insight is a state-level suppressor of existing Taunt)
-        - SOURCE_SKILL_DISABLED or other reasons specified on TauntStateParams.suppressors
-        """
         suppressors: set[SuppressionReason] = set()
         if isinstance(taunt_instance.runtime_params, TauntStateParams):
             suppressors.update(taunt_instance.runtime_params.suppressors)
@@ -84,7 +142,6 @@ class Stage9StateRuntime:
         context: BattleContext,
         taunt_instance: StateInstance,
     ) -> TauntLifecycleState:
-        """Evaluate Taunt lifecycle state: ACTIVE <-> SUPPRESSED."""
         suppressors = self.get_taunt_suppressors(context, taunt_instance)
         if suppressors:
             return TauntLifecycleState.SUPPRESSED
@@ -95,10 +152,6 @@ class Stage9StateRuntime:
         context: BattleContext,
         taunt_instance: StateInstance,
     ) -> bool:
-        """A Taunt instance is operational if it is ACTIVE and its source unit is alive.
-
-        Note: source unit liveness is independent from lifecycleState.
-        """
         if self.get_taunt_lifecycle_state(context, taunt_instance) != TauntLifecycleState.ACTIVE:
             return False
         target_unit_id = self.get_taunt_target_unit_id(taunt_instance)
@@ -112,7 +165,6 @@ class Stage9StateRuntime:
         context: BattleContext,
         unit_id: str,
     ) -> StateInstance | None:
-        """Return operational Taunt StateInstance on unit_id if active and source is alive, else None."""
         instances = context.states.find(
             owner_id=unit_id,
             state_id=OfficialStateId.TAUNT.value,
@@ -125,11 +177,6 @@ class Stage9StateRuntime:
         return taunt
 
     def get_taunt_target_unit_id(self, instance: StateInstance) -> str | None:
-        """Get the unit_id that the taunted holder is forced to attack.
-
-        Authoritative forced target is strictly instance.source_id (the taunter).
-        Structural invariant: TauntStateParams.taunt_target_id cannot disagree with source_id.
-        """
         if (
             isinstance(instance.runtime_params, TauntStateParams)
             and instance.runtime_params.taunt_target_id is not None
@@ -146,7 +193,6 @@ class Stage9StateRuntime:
         context: BattleContext,
         guard_instance: StateInstance,
     ) -> bool:
-        """A Guard instance is operational if it is not disabled and its protector is alive."""
         if not isinstance(guard_instance.runtime_params, GuardStateParams):
             return False
         if guard_instance.runtime_params.is_disabled:
@@ -163,17 +209,6 @@ class Stage9StateRuntime:
         intended_target_id: str,
         attacker_id: str | None = None,
     ) -> str | None:
-        """Find an alive operational protector for intended_target_id under Guard, if any.
-
-        State_Owner = PROTECTED_TARGET / HOLDER (owner_id == intended_target_id).
-        Protector identity is explicit on GuardStateParams.protector_id.
-        Protector is distinct from sourceUnit provenance (no guessing from source_id).
-        Protector must be alive, cannot be intended_target_id (no self-guard).
-        Attacker == protector is legally allowed (Guard P0).
-        Disabled Guard does not redirect (Guard Cover Check).
-        Protector-owned reverse Guard representation is rejected.
-        Guard is single-pass non-recursive (no chain guard).
-        """
         for inst in context.states.find(
             owner_id=intended_target_id,
             state_id=OfficialStateId.GUARD.value,
@@ -182,7 +217,6 @@ class Stage9StateRuntime:
                 continue
             assert isinstance(inst.runtime_params, GuardStateParams)
             return inst.runtime_params.protector_id
-
         return None
 
     def has_operational_insight(
@@ -190,7 +224,6 @@ class Stage9StateRuntime:
         context: BattleContext,
         unit_id: str,
     ) -> bool:
-        """Return True if unit_id has active Insight state."""
         return context.states.has(
             owner_id=unit_id,
             state_id=OfficialStateId.INSIGHT.value,
@@ -202,7 +235,6 @@ class Stage9StateRuntime:
         instance_id: str,
         is_disabled: bool,
     ) -> StateInstance:
-        """Operational maintenance for Guard is_disabled flag."""
         instance = context.states.get(instance_id)
         if not isinstance(instance.runtime_params, GuardStateParams):
             raise TypeError(f"State instance {instance_id} is not a Guard state")
@@ -218,7 +250,6 @@ class Stage9StateRuntime:
         instance_id: str,
         suppressors: frozenset[SuppressionReason] | set[SuppressionReason],
     ) -> StateInstance:
-        """Operational maintenance for Taunt suppressors set."""
         instance = context.states.get(instance_id)
         if not isinstance(instance.runtime_params, TauntStateParams):
             raise TypeError(f"State instance {instance_id} is not a Taunt state")
@@ -227,4 +258,3 @@ class Stage9StateRuntime:
             suppressors=frozenset(suppressors),
         )
         return self._lifecycle.update_runtime_params(context, instance_id, new_params)
-

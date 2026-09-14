@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 from .context import BattleContext
-from .effects import DamageEffect, Effect, RecoverEffect
+from .effects import DamageEffect, Effect, EffectSourceRef, RecoverEffect
 from .enums import DamageSourceType
+from .operation_identity import SourceType
 from .rule_hooks import RoundStartHook, RuleHook, UnitActionStartHook
 from .stage7_state_params import (
     PeriodicDamageStateParams,
@@ -63,6 +64,12 @@ class TriggerSystem:
                     source_skill_id=instance.source_skill_id,
                     source_state_id=instance.state_id,
                     source_state_instance_id=instance.instance_id,
+                    source_ref=EffectSourceRef(
+                        stage9_source_type=SourceType.PERIODIC_DAMAGE,
+                        source_unit_id=instance.source_id,
+                        source_skill_id=instance.source_skill_id,
+                        source_skill_slot=instance.source_skill_slot,
+                    ),
                 ),
             )
 

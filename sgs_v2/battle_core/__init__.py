@@ -37,7 +37,26 @@ from .damage_prevention_system import (
     DamagePreventionReason,
     DamagePreventionSystem,
 )
-from .damage_instance_coordinator import DamageInstanceCoordinator
+from .damage_instance_coordinator import (
+    DamageInstanceCoordinator,
+    DamageInstanceExecution,
+    PartitionExecutionStatus,
+)
+from .damage_partition_system import (
+    DamagePartitionCoordinator,
+    DamagePartitionKind,
+    DamagePartitionPlan,
+    DamageShareTransactionPlan,
+    DistributionRuntimeAuthority,
+    DistributionTransactionPlan,
+    NoPartitionPlan,
+)
+from .direct_troop_loss_system import (
+    AttributedDirectTroopLoss,
+    DirectTroopLossRequest,
+    DirectTroopLossResolution,
+    DirectTroopLossResolver,
+)
 from .damage_resolution_system import (
     DamageResolutionResult,
     DamageResolutionSystem,
@@ -260,6 +279,19 @@ __all__ = [
     "DamagePreventionReason",
     "DamagePreventionSystem",
     "DamageInstanceCoordinator",
+    "DamageInstanceExecution",
+    "PartitionExecutionStatus",
+    "DamagePartitionCoordinator",
+    "DamagePartitionKind",
+    "DamagePartitionPlan",
+    "NoPartitionPlan",
+    "DamageShareTransactionPlan",
+    "DistributionTransactionPlan",
+    "DistributionRuntimeAuthority",
+    "AttributedDirectTroopLoss",
+    "DirectTroopLossRequest",
+    "DirectTroopLossResolution",
+    "DirectTroopLossResolver",
     "DamageResolutionResult",
     "DamageResolutionSystem",
     "DamageSettlementRequest",
@@ -403,4 +435,18 @@ __all__ = [
     "RedirectReason",
     "TauntLifecycleState",
     "SuppressionReason",
+    # Stage9 Phase 9.5 Partition / Direct Troop Loss
+    "DamagePartitionCoordinator",
+    "DamagePartitionKind",
+    "DamagePartitionPlan",
+    "NoPartitionPlan",
+    "DamageShareTransactionPlan",
+    "DistributionTransactionPlan",
+    "DistributionRuntimeAuthority",
+    "AttributedDirectTroopLoss",
+    "DirectTroopLossRequest",
+    "DirectTroopLossResolution",
+    "DirectTroopLossResolver",
+    "DamageInstanceExecution",
+    "PartitionExecutionStatus",
 ]

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .context import BattleContext
+from .damage_instance_coordinator import DamageInstanceCoordinator
 from .damage_resolution_system import DamageResolutionSystem
 from .effect_result import (
     ApplyStateEffectResult,
@@ -22,11 +23,42 @@ class EffectExecutor:
 
     def __init__(
         self,
-        damage_resolution_system: DamageResolutionSystem,
-        state_lifecycle_system: StateLifecycleSystem,
+        damage_instance_coordinator: DamageInstanceCoordinator | DamageResolutionSystem | None = None,
+        state_lifecycle_system: StateLifecycleSystem | None = None,
         recovery_system: RecoverySystem | None = None,
+        *,
+        damage_resolution_system: DamageResolutionSystem | None = None,
     ) -> None:
-        self._damage_resolution = damage_resolution_system
+        # Phase 9.5 production composition passes DamageInstanceCoordinator. The old
+        # DamageResolutionSystem constructor shape remains accepted only so callers
+        # that exercise non-damage branches do not suffer a gratuitous API break.
+        # It is never retained as a DamageEffect execution fallback.
+        if isinstance(damage_instance_coordinator, DamageResolutionSystem):
+            if damage_resolution_system is not None:
+                raise TypeError(
+                    "DamageResolutionSystem may be supplied either positionally or by keyword, not both"
+                )
+            damage_resolution_system = damage_instance_coordinator
+            damage_instance_coordinator = None
+
+        if damage_instance_coordinator is not None and not isinstance(
+            damage_instance_coordinator, DamageInstanceCoordinator
+        ):
+            raise TypeError(
+                "damage_instance_coordinator must be DamageInstanceCoordinator or None"
+            )
+        if damage_resolution_system is not None and not isinstance(
+            damage_resolution_system, DamageResolutionSystem
+        ):
+            raise TypeError(
+                "damage_resolution_system must be DamageResolutionSystem or None"
+            )
+        if state_lifecycle_system is None or not isinstance(
+            state_lifecycle_system, StateLifecycleSystem
+        ):
+            raise TypeError("state_lifecycle_system must be StateLifecycleSystem")
+
+        self._damage_instances = damage_instance_coordinator
         self._state_lifecycle = state_lifecycle_system
         self._recovery = recovery_system
 
@@ -36,11 +68,19 @@ class EffectExecutor:
         effect: Effect,
     ) -> EffectExecutionResult:
         if isinstance(effect, DamageEffect):
-            resolution = self._damage_resolution.resolve(
-                context,
-                effect.to_request(),
+            if self._damage_instances is None:
+                raise RuntimeError(
+                    "DamageEffect execution requires DamageInstanceCoordinator; "
+                    "legacy DamageResolutionSystem construction is compatibility-only"
+                )
+            execution = self._damage_instances.execute_damage_effect(context, effect)
+            return DamageEffectResult(
+                effect=effect,
+                resolution=execution.resolution,
+                damage_instance_id=execution.damage_instance_id,
+                partition_plan=execution.partition_plan,
+                direct_losses=execution.direct_losses,
             )
-            return DamageEffectResult(effect=effect, resolution=resolution)
 
         if isinstance(effect, ApplyStateEffect):
             source_skill_slot = (

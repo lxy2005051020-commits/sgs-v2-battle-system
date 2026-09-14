@@ -7,7 +7,12 @@ from .enums import BattlePhase
 from .events import EventType
 from .official_state_catalog import OfficialStateId
 from .skill_runtime import SkillSlot
-from .stage9_state_params import GuardStateParams, TauntStateParams
+from .stage9_state_params import (
+    DamageShareStateParams,
+    DistributionStateParams,
+    GuardStateParams,
+    TauntStateParams,
+)
 from .state_instance import StateInstance
 from .state_runtime_params import (
     EmptyStateRuntimeParams,
@@ -113,6 +118,17 @@ class StateLifecycleSystem:
                     f"taunt_target_id '{actual_runtime_params.taunt_target_id}' "
                     f"cannot disagree with authoritative source_id '{source_id}'"
                 )
+        if state_id == OfficialStateId.DAMAGE_SHARE.value:
+            assert isinstance(actual_runtime_params, DamageShareStateParams)
+            context.get_unit(actual_runtime_params.sharer_id)
+            if actual_runtime_params.sharer_id == owner_id:
+                raise ValueError("Self-share is forbidden")
+        if state_id == OfficialStateId.DAMAGE_SPLIT.value:
+            assert isinstance(actual_runtime_params, DistributionStateParams)
+
+        # Phase 9.5 authoritative partition application arbitration. This remains
+        # inside the sole state mutation owner and does not create a stacking framework.
+        self._apply_partition_precedence(context, state_id=state_id, owner_id=owner_id)
 
         instance = StateInstance(
             instance_id=context.states.next_instance_id(),
@@ -139,6 +155,43 @@ class StateLifecycleSystem:
         )
         return instance
 
+    def _apply_partition_precedence(
+        self,
+        context: BattleContext,
+        *,
+        state_id: str,
+        owner_id: str,
+    ) -> None:
+        if state_id not in (
+            OfficialStateId.DAMAGE_SHARE.value,
+            OfficialStateId.DAMAGE_SPLIT.value,
+        ):
+            return
+
+        existing_share = context.states.find(
+            owner_id=owner_id,
+            state_id=OfficialStateId.DAMAGE_SHARE.value,
+        )
+        existing_distribution = context.states.find(
+            owner_id=owner_id,
+            state_id=OfficialStateId.DAMAGE_SPLIT.value,
+        )
+
+        if state_id == OfficialStateId.DAMAGE_SPLIT.value and existing_share:
+            raise ValueError(
+                "DISTRIBUTION application rejected because operational precedence is DAMAGE_SHARE > DISTRIBUTION"
+            )
+
+        # One physical instance per partition family. Incoming Share terminally
+        # replaces Distribution; the removed Distribution cannot resurrect later.
+        to_remove: tuple[StateInstance, ...]
+        if state_id == OfficialStateId.DAMAGE_SHARE.value:
+            to_remove = existing_share + existing_distribution
+        else:
+            to_remove = existing_distribution
+        for existing in to_remove:
+            self.remove(context, existing.instance_id)
+
     def update_runtime_params(
         self,
         context: BattleContext,
@@ -152,7 +205,6 @@ class StateLifecycleSystem:
         """
         instance = context.states.get(instance_id)
 
-        # R3-M02: generic runtime parameter replacement is blocked for unauthorized state families
         if instance.state_id not in (OfficialStateId.GUARD.value, OfficialStateId.TAUNT.value):
             raise ValueError(
                 f"Runtime parameter maintenance is not authorized for state '{instance.state_id}' in Phase 9.3"
@@ -166,7 +218,6 @@ class StateLifecycleSystem:
                 f"got {type(runtime_params).__name__}"
             )
 
-        # R3-M01: Guard protector identity is strictly immutable across maintenance
         if instance.state_id == OfficialStateId.GUARD.value:
             assert isinstance(runtime_params, GuardStateParams)
             if isinstance(instance.runtime_params, GuardStateParams):
@@ -182,7 +233,6 @@ class StateLifecycleSystem:
                     f"cannot equal owner_id '{instance.owner_id}'"
                 )
 
-        # Taunt maintenance: forced target is immutable, suppressors are typed
         if instance.state_id == OfficialStateId.TAUNT.value:
             assert isinstance(runtime_params, TauntStateParams)
             if isinstance(instance.runtime_params, TauntStateParams):

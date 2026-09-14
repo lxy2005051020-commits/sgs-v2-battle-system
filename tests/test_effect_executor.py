@@ -16,6 +16,7 @@ from sgs_v2.battle_core import (
     DamageSourceType,
     DamageType,
     EffectExecutionStatus,
+    EffectSourceRef,
     EventBus,
     EventType,
     LineupPosition,
@@ -26,6 +27,7 @@ from sgs_v2.battle_core import (
     RecoveryResolvedResult,
     RemoveStateEffect,
     RemoveStateEffectResult,
+    SourceType,
     UnitRuntime,
     register_official_state_definitions,
 )
@@ -66,6 +68,11 @@ def test_damage_effect_routes_through_shared_damage_resolution_system() -> None:
         source_type=DamageSourceType.SKILL,
         coefficient=1.25,
         source_skill_id="test-skill",
+        source_ref=EffectSourceRef(
+            stage9_source_type=SourceType.ACTIVE_SKILL,
+            source_unit_id="a1",
+            source_skill_id="test-skill",
+        ),
     )
 
     result = systems.effect_executor.execute(context, effect)
