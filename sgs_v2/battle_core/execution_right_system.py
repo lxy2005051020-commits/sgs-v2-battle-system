@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, TYPE_CHECKING
+from typing import Any, Protocol, runtime_checkable, TYPE_CHECKING
 
 from .operation_identity import ActionId, DamageInstanceId, FinalizationId, OperationIdAllocator
 
@@ -149,6 +149,17 @@ class FinalizationProjectionPermit:
         _forbid_ordering("FinalizationProjectionPermit", ">=")
 
 
+@runtime_checkable
+class FinalizationCoordinatorContract(Protocol):
+    """Acyclic runtime-checkable contract for coordinator lifecycle properties."""
+
+    @property
+    def termination_state(self) -> BattleTerminationState: ...
+
+    @property
+    def termination_generation(self) -> int: ...
+
+
 class FutureAdmissionGate:
     """
     Single global future-admission authority in Stage9.
@@ -159,14 +170,12 @@ class FutureAdmissionGate:
 
     def __init__(
         self,
-        coordinator: BattleFinalizationCoordinator,
+        coordinator: FinalizationCoordinatorContract,
         id_allocator: OperationIdAllocator | None = None,
     ) -> None:
-        from .battle_finalization_coordinator import BattleFinalizationCoordinator
-
-        if not isinstance(coordinator, BattleFinalizationCoordinator):
+        if not isinstance(coordinator, FinalizationCoordinatorContract):
             raise TypeError(
-                f"coordinator must be BattleFinalizationCoordinator, got {type(coordinator)}"
+                f"coordinator must satisfy FinalizationCoordinatorContract, got {type(coordinator)}"
             )
         self._coordinator = coordinator
         self._id_allocator = id_allocator or OperationIdAllocator()

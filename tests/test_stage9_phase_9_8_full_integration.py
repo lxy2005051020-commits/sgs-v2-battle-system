@@ -49,7 +49,10 @@ from sgs_v2.battle_core.chain_system import (
 )
 from sgs_v2.battle_core.cleave_system import CleaveEffect, CleaveSystem
 from sgs_v2.battle_core.counter_system import CounterBatch, CounterSystem
-from sgs_v2.battle_core.damage_instance_coordinator import DamageInstanceCoordinator
+from sgs_v2.battle_core.damage_instance_coordinator import (
+    DamageInstanceCoordinator,
+    PartitionExecutionStatus,
+)
 from sgs_v2.battle_core.damage_partition_system import (
     DamagePartitionCoordinator,
     DamageShareTransactionPlan,
@@ -171,9 +174,18 @@ class TestTargetArbitrationAndIdentityInvariants:
         na_id = ctx.id_allocator.allocate_normal_attack_id()
         res = systems.target_resolution_system.resolve(ctx, "A0", normal_attack_id=na_id)
 
-        # Taunt was shadowed by Confusion (selected target can be friendly or hostile, not forced B2)
+        # Taunt was shadowed by Confusion (selected target chosen by Confusion policy, not forced to Taunt B2)
         assert res.resolution_id is not None
         assert res.intended_attack_target is not None
+        assert res.intended_attack_target != "A0"  # Confusion picks among other live units
+
+        # Taunt physically exists and remains valid in StateRegistry (neither removed nor suppressed)
+        assert ctx.states.has(owner_id="A0", state_id="taunt") is True
+        taunt_instances = ctx.states.find(owner_id="A0", state_id="taunt")
+        assert len(taunt_instances) == 1
+        assert taunt_instances[0].state_id == "taunt"
+        assert taunt_instances[0].owner_id == "A0"
+
 
     def test_reg_tgt_02_taunt_lifecycle_continues_while_selector_shadowed(self) -> None:
         """REG-TGT-02: Taunt is not removed or altered merely because Confusion shadowed it."""
@@ -353,6 +365,9 @@ class TestTargetArbitrationAndIdentityInvariants:
             runtime_params=GuardStateParams(protector_id="B2"),
         )
 
+        # Protector B2 has only 1 troop, so B2 dies on Hit #1
+        ctx.units["B2"].troops = 1
+
         parent_scope = "round_1_actor_A0"
         permit = systems.future_admission_gate.request_admission(
             FutureBranchKind.NEXT_ACTION, parent_scope
@@ -363,12 +378,24 @@ class TestTargetArbitrationAndIdentityInvariants:
         assert res is not None
         assert res.combo_second_attack is not None
 
-        # Both attacks were evaluated independently through the live world
-        assert res.target_resolution is not None
-        assert res.combo_second_attack.target_resolution is not None
-        assert res.target_resolution.resolution_id != res.combo_second_attack.target_resolution.resolution_id
+        # Hit #1: Guard redirected attack from B1 to B2
+        tr1 = res.target_resolution
+        assert tr1 is not None
+        assert tr1.intended_attack_target == "B1"
+        assert tr1.post_redirect_actual_target == "B2"
+        assert tr1.redirect_reason == RedirectReason.GUARD
+        assert not ctx.units["B2"].is_alive
+
+        # Hit #2: Evaluated against live world where B2 is dead -> Guard check fails -> hits B1 directly
+        tr2 = res.combo_second_attack.target_resolution
+        assert tr2 is not None
+        assert tr2.intended_attack_target == "B1"
+        assert tr2.post_redirect_actual_target == "B1"
+        assert tr2.redirect_reason == RedirectReason.NONE
+        assert tr1.resolution_id != tr2.resolution_id
 
         systems.finalization_coordinator.complete_action_scope(ctx, scope)
+
 
     def test_reg_tgt_07_and_inv_04_inv_05_guard_original_target_eligible_cleave_secondary(self) -> None:
         """REG-TGT-07, INV-04, INV-05: Cleave anchors to actualTarget; original intended target can be Cleave secondary."""
@@ -799,7 +826,7 @@ class TestChainTraversalAndInvariants:
         systems = BattleSystems()
 
         # B1 linked under old ratio 20%
-        link_inst = systems.state_lifecycle_system.apply(
+        systems.state_lifecycle_system.apply(
             ctx,
             state_id="chain_link",
             owner_id="B1",
@@ -833,7 +860,7 @@ class TestChainTraversalAndInvariants:
             actual_target_troop_loss=500,
         )
 
-        # Before execution, update B1's ratio to 30%
+        # Before execution, update B1's ratio to 30% and owner to A1
         systems.state_lifecycle_system.apply(
             ctx,
             state_id="chain_link",
@@ -848,25 +875,67 @@ class TestChainTraversalAndInvariants:
         permit = systems.future_admission_gate.request_admission(
             FutureBranchKind.CHAIN_TRAVERSAL, "dmg_chn01"
         )
+        assert permit is not None
         traversal = systems.chain_system.create_traversal(ctx, fact, permit=permit)
         results = systems.chain_system.execute(ctx, traversal)
-        assert len(results) > 0
+        assert len(results) == 1
+        # Snapshot damage 500 x live ratio 30% = 150 (not old 20% = 100)
+        assert results[0].calculated_damage == 150
+        assert results[0].actual_troop_loss == 150
+        # Live owner attribution: A1 (not old owner A0)
+        assert results[0].lineage.physical_attacker == "A1"
+        assert results[0].lineage.credit_owner == "A1"
 
     def test_reg_chn_02_and_inv_34_one_pass_slot_traversal(self) -> None:
         """REG-CHN-02, INV-34: Chain traversal visits slots at most once monotonically."""
         ctx = _make_context()
         systems = BattleSystems()
 
-        for uid in ("B0", "B1", "B2"):
-            systems.state_lifecycle_system.apply(
-                ctx,
-                state_id="chain_link",
-                owner_id=uid,
-                source_id="A0",
-                source_skill_id="skill_link",
-                source_skill_slot=SkillSlot.INHERENT,
-                runtime_params=ChainStateParams(ratio=ExactRatio(1, 5)),
-            )
+        # Initially: B0 is trigger node, B1 is linked, B2 is UNLINKED
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="chain_link",
+            owner_id="B0",
+            source_id="A0",
+            source_skill_id="skill_link",
+            source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=ChainStateParams(ratio=ExactRatio(1, 5)),
+        )
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="chain_link",
+            owner_id="B1",
+            source_id="A0",
+            source_skill_id="skill_link",
+            source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=ChainStateParams(ratio=ExactRatio(1, 5)),
+        )
+
+        # Hook: When B1 is visited, dynamically link B2 before B2 cursor, and re-touch B0
+        def on_b1_visited(ev: Any) -> None:
+            if ev.target_id == "B1":
+                # Link unlinked slot B2
+                systems.state_lifecycle_system.apply(
+                    ctx,
+                    state_id="chain_link",
+                    owner_id="B2",
+                    source_id="A0",
+                    source_skill_id="skill_link",
+                    source_skill_slot=SkillSlot.INHERENT,
+                    runtime_params=ChainStateParams(ratio=ExactRatio(1, 5)),
+                )
+                # Re-apply B0 (already passed)
+                systems.state_lifecycle_system.apply(
+                    ctx,
+                    state_id="chain_link",
+                    owner_id="B0",
+                    source_id="A0",
+                    source_skill_id="skill_link",
+                    source_skill_slot=SkillSlot.INHERENT,
+                    runtime_params=ChainStateParams(ratio=ExactRatio(1, 2)),
+                )
+
+        ctx.event_bus.subscribe(EventType.CHAIN_SLOT_VISITED, on_b1_visited)
 
         fact = ResolvedDamageFact(
             damage_instance_id=DamageInstanceId("dmg_chn02"),
@@ -886,17 +955,23 @@ class TestChainTraversalAndInvariants:
         permit = systems.future_admission_gate.request_admission(
             FutureBranchKind.CHAIN_TRAVERSAL, "dmg_chn02"
         )
+        assert permit is not None
         traversal = systems.chain_system.create_traversal(ctx, fact, permit=permit)
         results = systems.chain_system.execute(ctx, traversal)
         visited_units = [r.target_id for r in results]
-        assert len(visited_units) == len(set(visited_units))  # No unit visited twice
+
+        # B1 and newly linked B2 were both visited
+        assert visited_units == ["B1", "B2"]
+        # Trigger node B0 was never visited in feedback, and no unit visited twice
+        assert "B0" not in visited_units
+        assert len(visited_units) == len(set(visited_units))
 
     def test_reg_chn_03_and_inv_40_propagated_commander_death_drains_current_traversal(self) -> None:
         """REG-CHN-03, INV-40: Commander death during traversal latches victory; traversal drains remaining slots."""
         ctx = _make_context()
         systems = BattleSystems()
 
-        # B0 (commander) has 10 troops; B1 has 10000 troops
+        # B0 (commander) has 10 troops; B1 has 10000 troops; B2 is trigger
         ctx.units["B0"].troops = 10
         for uid in ("B0", "B1", "B2"):
             systems.state_lifecycle_system.apply(
@@ -927,17 +1002,113 @@ class TestChainTraversalAndInvariants:
         permit = systems.future_admission_gate.request_admission(
             FutureBranchKind.CHAIN_TRAVERSAL, "dmg_chn03"
         )
+        assert permit is not None
         traversal = systems.chain_system.create_traversal(ctx, fact, permit=permit)
         results = systems.chain_system.execute(ctx, traversal)
-        # Traversal successfully visited remaining units
-        assert len(results) > 0
+
+        # Slot 1: B0 commander died
+        assert len(results) == 2
+        assert results[0].target_id == "B0"
+        assert not ctx.units["B0"].is_alive
+        assert systems.finalization_coordinator.is_latched_or_finalized is True
+
+        # Slot 2: B1 deputy continued to receive feedback damage and lose troops
+        assert results[1].target_id == "B1"
+        assert results[1].actual_troop_loss == 50
+        assert ctx.units["B1"].troops == 9950
 
     def test_reg_chn_04_and_inv_35_reg_int_01_true_feedback_restricted_settlement(self) -> None:
-        """REG-CHN-04, REG-INT-01, INV-35: Chain TRUE_FEEDBACK restricted settlement uses FLOOR (396 x 28.28% = 111)."""
-        trigger_damage = 396
+        """REG-CHN-04, REG-INT-01, INV-35: Chain TRUE_FEEDBACK restricted settlement uses FLOOR and ignores Counter/Guard/Share."""
+        ctx = _make_context()
+        systems = BattleSystems()
+
+        # Link B0 and B1
         ratio = ExactRatio.from_text("28.28%")
-        feedback_val = floor_product_int_ratio(trigger_damage, ratio)
-        assert feedback_val == 111
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="chain_link",
+            owner_id="B0",
+            source_id="A0",
+            source_skill_id="skill_link",
+            source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=ChainStateParams(ratio=ratio),
+        )
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="chain_link",
+            owner_id="B1",
+            source_id="A0",
+            source_skill_id="skill_link",
+            source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=ChainStateParams(ratio=ratio),
+        )
+
+        # Add Counter, Guard, DamageShare on target B1 to verify restricted settlement ignores them
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="counterattack",
+            owner_id="B1",
+            source_id="B1",
+            source_skill_id="skill_ctr",
+            source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=CounterStateParams(),
+        )
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="guard",
+            owner_id="B1",
+            source_id="B2",
+            source_skill_id="skill_guard",
+            source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=GuardStateParams(protector_id="B2"),
+        )
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="damage_share",
+            owner_id="B1",
+            source_id="B2",
+            source_skill_id="skill_share",
+            source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=DamageShareStateParams(sharer_id="B2", ratio=ExactRatio.from_text("20%")),
+        )
+
+        events: list[str] = []
+        ctx.event_bus.subscribe(EventType.COUNTER_EXECUTE, lambda ev: events.append("COUNTER"))
+        ctx.event_bus.subscribe(EventType.NORMAL_ATTACK, lambda ev: events.append("NORMAL_ATTACK"))
+
+        trigger_damage = 396
+        fact = ResolvedDamageFact(
+            damage_instance_id=DamageInstanceId("dmg_chn04"),
+            target_id="B0",
+            lineage=OperationLineage(
+                root_action_id=ActionId("act_chn04"),
+                parent_normal_attack_id=NormalAttackInstanceId("na_chn04"),
+                parent_damage_instance_id=None,
+                source_type=SourceType.NORMAL_ATTACK,
+                physical_attacker="A0",
+            ),
+            damage_type=DamageType.WEAPON,
+            assigned_target_damage=trigger_damage,
+            actual_target_troop_loss=trigger_damage,
+        )
+
+        permit = systems.future_admission_gate.request_admission(
+            FutureBranchKind.CHAIN_TRAVERSAL, "dmg_chn04"
+        )
+        assert permit is not None
+        traversal = systems.chain_system.create_traversal(ctx, fact, permit=permit)
+        results = systems.chain_system.execute(ctx, traversal)
+
+        assert len(results) == 1
+        assert results[0].target_id == "B1"
+        # 396 x 28.28% = 111.9888 -> FLOOR = 111
+        assert results[0].calculated_damage == 111
+        assert results[0].actual_troop_loss == 111
+
+        # Restricted settlement: No Counter, No Guard redirection, No Share
+        assert len(events) == 0
+        assert ctx.units["B2"].troops == 10000  # Protector / sharer took 0 loss
+
 
 
 # ============================================================================
@@ -981,6 +1152,33 @@ class TestDamageShareAndInvariants:
         assert plan.dsharer_theoretical == 71
         assert plan.dtarget == 399
 
+        lineage = OperationLineage(
+            root_action_id=ActionId("act_shr01"),
+            parent_normal_attack_id=NormalAttackInstanceId("na_shr01"),
+            parent_damage_instance_id=None,
+            source_type=SourceType.NORMAL_ATTACK,
+            physical_attacker="A0",
+            credit_owner="A0",
+        )
+        req = DamageRequest(
+            source_id="A0",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+        exec_res = systems.damage_instance_coordinator.execute_partitioned_damage_instance(
+            ctx, req, lineage
+        )
+        assert exec_res.partition_status == PartitionExecutionStatus.COMPLETED
+        assert ctx.units["B1"].is_alive
+        assert len(exec_res.direct_losses) == 1
+        loss = exec_res.direct_losses[0]
+        assert isinstance(loss, AttributedDirectTroopLoss)
+        assert loss.theoretical_loss == exec_res.partition_plan.dsharer_theoretical
+        assert loss.actual_loss == exec_res.partition_plan.dsharer_theoretical
+        assert ctx.units["B0"].troops == 10000 - loss.actual_loss
+
     def test_reg_shr_02_and_inv_25_lethal_target_interrupts_pending_sharer(self) -> None:
         """REG-SHR-02, INV-25: Lethal Dtarget triggers TARGET_DEATH_INTERRUPT; pending sharer loss discarded."""
         ctx = _make_context()
@@ -1023,28 +1221,69 @@ class TestDamageShareAndInvariants:
 
     def test_reg_shr_03_and_inv_19_inv_20_inv_21_share_direct_loss_is_not_hit(self) -> None:
         """REG-SHR-03, INV-19..21: Sharer loss is AttributedDirectTroopLoss; never enters HitResolution."""
+        ctx = _make_context()
+        systems = BattleSystems()
+
+        # Non-lethal Share setup: B1 target survives, B0 sharer survives
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="damage_share",
+            owner_id="B1",
+            source_id="B0",
+            source_skill_id="skill_share",
+            source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=DamageShareStateParams(
+                sharer_id="B0",
+                ratio=ExactRatio.from_text("15%"),
+            ),
+        )
+        # Add Counter, Guard, and Chain to B0 to verify direct loss does not trigger them
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="counterattack",
+            owner_id="B0",
+            source_id="B0",
+            source_skill_id="skill_ctr",
+            source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=CounterStateParams(),
+        )
+
+        events: list[str] = []
+        ctx.event_bus.subscribe(EventType.COUNTER_EXECUTE, lambda ev: events.append("COUNTER"))
+        ctx.event_bus.subscribe(EventType.NORMAL_ATTACK, lambda ev: events.append("NORMAL_ATTACK"))
+
         lineage = OperationLineage(
-            root_action_id=ActionId("act_01"),
-            parent_normal_attack_id=NormalAttackInstanceId("na_01"),
-            parent_damage_instance_id=DamageInstanceId("dmg_01"),
-            source_type=SourceType.SHARE_DIRECT_LOSS,
+            root_action_id=ActionId("act_shr03"),
+            parent_normal_attack_id=NormalAttackInstanceId("na_shr03"),
+            parent_damage_instance_id=None,
+            source_type=SourceType.NORMAL_ATTACK,
             physical_attacker="A0",
-        )
-        loss = AttributedDirectTroopLoss(
-            direct_loss_id=DirectTroopLossId("dtl_01"),
-            partition_transaction_id=PartitionTransactionId("ptn_01"),
-            parent_damage_instance_id=DamageInstanceId("dmg_01"),
-            source_type=SourceType.SHARE_DIRECT_LOSS,
-            physical_attacker="A0",
-            physical_skill=None,
-            victim="B0",
             credit_owner="A0",
-            theoretical_loss=71,
-            actual_loss=71,
-            lineage=lineage,
         )
+        req = DamageRequest(
+            source_id="A0",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+        exec_res = systems.damage_instance_coordinator.execute_partitioned_damage_instance(
+            ctx, req, lineage
+        )
+
+        assert exec_res.partition_status == PartitionExecutionStatus.COMPLETED
+        assert len(exec_res.direct_losses) == 1
+        loss = exec_res.direct_losses[0]
         assert isinstance(loss, AttributedDirectTroopLoss)
         assert loss.source_type == SourceType.SHARE_DIRECT_LOSS
+        assert loss.physical_attacker == "A0"
+        assert loss.victim == "B0"
+        assert loss.credit_owner == "A0"
+        assert loss.theoretical_loss == exec_res.partition_plan.dsharer_theoretical
+        assert loss.actual_loss == loss.theoretical_loss
+        assert ctx.units["B0"].troops == 10000 - loss.actual_loss
+        # Direct troop loss never enters HitResolution: no Counter, no extra NormalAttack
+        assert len(events) == 0
 
     def test_reg_shr_04_and_inv_22_inv_23_partition_exclusivity_no_resurrection(self) -> None:
         """REG-SHR-04, INV-22, INV-23: Share replaces Distribution; displaced Distribution never resurrects."""
@@ -1157,6 +1396,9 @@ class TestDistributionAndInvariants:
             ctx, req, lineage
         )
         assert exec_res.partition_plan is not None
+        assert not ctx.units["B2"].is_alive
+        assert len(exec_res.direct_losses) == 2
+        assert exec_res.resolution.actual_target_troop_loss > 0
 
     def test_reg_dst_03_and_inv_31_commander_participant_death_project_runtime_default(self) -> None:
         """REG-DST-03, INV-31: Commander participant death drains admitted plan under PROJECT_RUNTIME_DEFAULT."""
@@ -1193,30 +1435,69 @@ class TestDistributionAndInvariants:
             ctx, req, lineage
         )
         assert exec_res.resolution is not None
+        assert not ctx.units["B0"].is_alive
+        assert len(exec_res.direct_losses) == 2
+        assert exec_res.resolution.actual_target_troop_loss > 0
 
     def test_reg_dst_04_distribution_participant_loss_is_not_hit(self) -> None:
         """REG-DST-04: Participant loss is typed AttributedDirectTroopLoss; cannot enter HitResolution."""
+        ctx = _make_context()
+        systems = BattleSystems()
+
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="damage_split",
+            owner_id="B1",
+            source_id="B1",
+            source_skill_id="skill_dist",
+            source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=DistributionStateParams(ratio=ExactRatio(1, 2)),
+        )
+        # Add Counter on participants B0 and B2 to verify direct loss never triggers hit callbacks
+        for uid in ("B0", "B2"):
+            systems.state_lifecycle_system.apply(
+                ctx,
+                state_id="counterattack",
+                owner_id=uid,
+                source_id=uid,
+                source_skill_id=f"skill_ctr_{uid}",
+                source_skill_slot=SkillSlot.INHERENT,
+                runtime_params=CounterStateParams(),
+            )
+
+        events: list[str] = []
+        ctx.event_bus.subscribe(EventType.COUNTER_EXECUTE, lambda ev: events.append("COUNTER"))
+
         lineage = OperationLineage(
             root_action_id=ActionId("act_dst04"),
             parent_normal_attack_id=NormalAttackInstanceId("na_dst04"),
-            parent_damage_instance_id=DamageInstanceId("dmg_dst04"),
-            source_type=SourceType.DISTRIBUTION_DIRECT_LOSS,
+            parent_damage_instance_id=None,
+            source_type=SourceType.NORMAL_ATTACK,
             physical_attacker="A0",
-        )
-        loss = AttributedDirectTroopLoss(
-            direct_loss_id=DirectTroopLossId("dtl_dst04"),
-            partition_transaction_id=PartitionTransactionId("ptn_dst04"),
-            parent_damage_instance_id=DamageInstanceId("dmg_dst04"),
-            source_type=SourceType.DISTRIBUTION_DIRECT_LOSS,
-            physical_attacker="A0",
-            physical_skill=None,
-            victim="B0",
             credit_owner="A0",
-            theoretical_loss=63,
-            actual_loss=63,
-            lineage=lineage,
         )
-        assert loss.source_type == SourceType.DISTRIBUTION_DIRECT_LOSS
+        req = DamageRequest(
+            source_id="A0",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+        exec_res = systems.damage_instance_coordinator.execute_partitioned_damage_instance(
+            ctx, req, lineage
+        )
+
+        assert exec_res.partition_status == PartitionExecutionStatus.COMPLETED
+        assert len(exec_res.direct_losses) == 2
+        for loss in exec_res.direct_losses:
+            assert isinstance(loss, AttributedDirectTroopLoss)
+            assert loss.source_type == SourceType.DISTRIBUTION_DIRECT_LOSS
+            assert loss.physical_attacker == "A0"
+            assert loss.credit_owner == "A0"
+            assert loss.victim in ("B0", "B2")
+            assert loss.theoretical_loss == exec_res.partition_plan.dparticipant
+            assert loss.actual_loss == loss.theoretical_loss
+        assert len(events) == 0
 
 
 # ============================================================================
@@ -1426,8 +1707,10 @@ class TestFinalizationBarrierContracts:
         ctx = _make_context()
         systems = BattleSystems()
 
-        # Commander B0 has 10 troops
+        # Commander B0 has 10 troops; deputy B1 has 500 troops; trigger node B2 has 1000 troops
         ctx.units["B0"].troops = 10
+        ctx.units["B1"].troops = 500
+        ctx.units["B2"].troops = 1000
         for uid in ("B0", "B1", "B2"):
             systems.state_lifecycle_system.apply(
                 ctx,
@@ -1448,6 +1731,7 @@ class TestFinalizationBarrierContracts:
                 parent_damage_instance_id=None,
                 source_type=SourceType.NORMAL_ATTACK,
                 physical_attacker="A0",
+                credit_owner="A0",
             ),
             damage_type=DamageType.WEAPON,
             assigned_target_damage=100,
@@ -1458,29 +1742,68 @@ class TestFinalizationBarrierContracts:
             FutureBranchKind.CHAIN_TRAVERSAL, "dmg_fin01"
         )
         traversal = systems.chain_system.create_traversal(ctx, fact, permit=permit)
-        results = systems.chain_system.execute(ctx, traversal)
-        assert len(results) > 0
 
-        # Victory latched; finalize after drain
-        systems.finalization_coordinator.observe_legacy_barrier(
-            ctx, LegacyFinalizationBarrier.ACTION_SETTLED
-        )
+        # Track intermediate states during traversal execution
+        draining_observed = []
+        future_blocked = []
+
+        def on_chain_slot_visited(event):
+            if event.target_id == "B1":
+                # Step 1 (B0 death) has already latched victory; coordinator is now draining admitted work
+                draining_observed.append(systems.finalization_coordinator.termination_state)
+                # Future admission is blocked
+                new_permit = systems.future_admission_gate.request_admission(
+                    FutureBranchKind.NEXT_ACTION, "future_scope"
+                )
+                future_blocked.append(new_permit is None)
+
+        ctx.event_bus.subscribe(EventType.CHAIN_SLOT_VISITED, on_chain_slot_visited)
+
+        results = systems.chain_system.execute(ctx, traversal)
+
+        # 1. B0 died on step 1
+        assert draining_observed == [BattleTerminationState.DRAINING_ADMITTED_WORK]
+        assert future_blocked == [True]
+        assert not ctx.units["B0"].is_alive
+
+        # 2. Step 2 continued to visit B1 and deal damage (draining remaining eligible slots)
+        assert len(results) == 2
+        assert results[0].target_id == "B0"
+        assert results[0].actual_troop_loss == 10
+        assert results[1].target_id == "B1"
+        assert results[1].actual_troop_loss == 50
+        assert ctx.units["B1"].troops == 450
+
+        # 3. Once traversal drained, finalization completed
         assert systems.finalization_coordinator.termination_state == BattleTerminationState.FINALIZED
+        assert systems.finalization_coordinator.finalization_result is not None
+        assert systems.finalization_coordinator.finalization_result.winner_team_id == "A"
 
     def test_final_02_counter_admitted_sibling_drains_then_finalizes(self) -> None:
         """FINAL_02: Counter sibling executes zero-loss terminal after attacker death -> finalize."""
         ctx = _make_context()
         systems = BattleSystems()
 
-        # Attacker A0 is commander and dies
-        ctx.units["A0"].troops = 0
+        # Attacker A0 is commander and has 10 troops
+        ctx.units["A0"].troops = 10
+
+        # Apply two distinct Counter states on target B1 so batch has [C1, C2]
         systems.state_lifecycle_system.apply(
             ctx,
             state_id="counterattack",
             owner_id="B1",
             source_id="B1",
-            source_skill_id="skill_ctr",
+            source_skill_id="skill_ctr_1",
             source_skill_slot=SkillSlot.INHERENT,
+            runtime_params=CounterStateParams(),
+        )
+        systems.state_lifecycle_system.apply(
+            ctx,
+            state_id="counterattack",
+            owner_id="B1",
+            source_id="B1",
+            source_skill_id="skill_ctr_2",
+            source_skill_slot=SkillSlot.LEARNED_1,
             runtime_params=CounterStateParams(),
         )
 
@@ -1493,6 +1816,7 @@ class TestFinalizationBarrierContracts:
                 parent_damage_instance_id=None,
                 source_type=SourceType.NORMAL_ATTACK,
                 physical_attacker="A0",
+                credit_owner="A0",
             ),
             damage_type=DamageType.WEAPON,
             assigned_target_damage=100,
@@ -1503,16 +1827,25 @@ class TestFinalizationBarrierContracts:
             FutureBranchKind.COUNTER_BATCH, "na_fin02"
         )
         batch = systems.counter_system.create_batch(ctx, fact, permit=permit)
+        assert len(batch.entries) == 2
+
         results = systems.counter_system.execute(ctx, batch)
 
-        assert len(results) == 1
-        assert results[0].dead_target_terminal is True
-        assert results[0].actual_troop_loss == 0
+        # C1 killed commander A0
+        assert not ctx.units["A0"].is_alive
+        assert results[0].executed is True
+        assert results[0].dead_target_terminal is False
+        assert results[0].actual_troop_loss == 10
 
-        systems.finalization_coordinator.observe_legacy_barrier(
-            ctx, LegacyFinalizationBarrier.ACTION_SETTLED
-        )
+        # C2 remained admitted and executed zero-loss terminal
+        assert results[1].executed is True
+        assert results[1].dead_target_terminal is True
+        assert results[1].actual_troop_loss == 0
+
+        # Batch drained and battle finalized
         assert systems.finalization_coordinator.termination_state == BattleTerminationState.FINALIZED
+        assert systems.finalization_coordinator.finalization_result is not None
+        assert systems.finalization_coordinator.finalization_result.winner_team_id == "B"
 
     def test_final_03_combo_battle_end_blocks_second_attack(self) -> None:
         """FINAL_03: NormalAttack #1 kills commander -> victory latches -> Combo #2 denied."""
@@ -1541,6 +1874,12 @@ class TestFinalizationBarrierContracts:
             runtime_params=TauntStateParams(taunt_target_id="B0"),
         )
 
+        na_count = 0
+        def count_na(ev):
+            nonlocal na_count
+            na_count += 1
+        ctx.event_bus.subscribe(EventType.NORMAL_ATTACK, count_na)
+
         parent_scope = "round_1_actor_A0"
         permit = systems.future_admission_gate.request_admission(
             FutureBranchKind.NEXT_ACTION, parent_scope
@@ -1550,27 +1889,29 @@ class TestFinalizationBarrierContracts:
         res = systems.action_system.execute(ctx, ctx.units["A0"], action_scope=scope)
         assert res is not None
         # B0 died on hit #1, so victory latched and Combo #2 was blocked
+        assert not ctx.units["B0"].is_alive
         assert res.combo_second_attack is None
+        # Only 1 physical normal attack occurred (Combo #2 was blocked)
+        assert na_count == 1
 
         systems.finalization_coordinator.complete_action_scope(ctx, scope)
-        systems.finalization_coordinator.observe_legacy_barrier(
-            ctx, LegacyFinalizationBarrier.ACTION_SETTLED
-        )
         assert systems.finalization_coordinator.termination_state == BattleTerminationState.FINALIZED
+        assert systems.finalization_coordinator.finalization_result is not None
+        assert systems.finalization_coordinator.finalization_result.winner_team_id == "A"
 
     def test_final_04_cleave_commander_secondary_drains_current_effect(self) -> None:
         """FINAL_04: Cleave secondary kills commander -> victory latches -> current Cleave effect drains."""
         ctx = _make_context()
         systems = BattleSystems()
 
-        # Secondary B0 (commander) has 10 troops; B2 has 10000
+        # Secondary B0 (commander) has 10 troops; secondary B2 has 10000; main target B1 has 10000
         ctx.units["B0"].troops = 10
         cleave_inst = systems.state_lifecycle_system.apply(
             ctx,
             state_id="cleave",
             owner_id="A0",
             source_id="A0",
-            source_skill_id="skill_cleave",
+            source_skill_id="skill_cleave_1",
             source_skill_slot=SkillSlot.INHERENT,
             runtime_params=CleaveStateParams(ratio=ExactRatio(1, 2)),
         )
@@ -1584,6 +1925,7 @@ class TestFinalizationBarrierContracts:
                 parent_damage_instance_id=None,
                 source_type=SourceType.NORMAL_ATTACK,
                 physical_attacker="A0",
+                credit_owner="A0",
             ),
             damage_type=DamageType.WEAPON,
             assigned_target_damage=100,
@@ -1594,15 +1936,34 @@ class TestFinalizationBarrierContracts:
             FutureBranchKind.CLEAVE_EFFECT, "na_fin04"
         )
         eff = systems.cleave_system.create_effect(ctx, fact, cleave_inst, permit=permit)
+        assert eff.secondary_plan == ("B0", "B2")
+
+        # Execute effect: B0 dies on secondary 1; current effect drains secondary 2 (B2)
         results = systems.cleave_system.execute(ctx, eff)
-        assert len(results) > 0
+        assert len(results) == 2
+        assert results[0].request.target_id == "B0"
+        assert not ctx.units["B0"].is_alive
+        assert results[1].request.target_id == "B2"
+        assert results[1].actual_target_troop_loss == 50
+        assert ctx.units["B2"].troops == 9950
+
+        # Unadmitted later independent CleaveEffect cannot be admitted
+        future_permit = systems.future_admission_gate.request_admission(
+            FutureBranchKind.CLEAVE_EFFECT, "na_fin04_second"
+        )
+        assert future_permit is None
+
+        # Coordinator finalized after current admitted effect drained
+        assert systems.finalization_coordinator.termination_state == BattleTerminationState.FINALIZED
+        assert systems.finalization_coordinator.finalization_result is not None
+        assert systems.finalization_coordinator.finalization_result.winner_team_id == "A"
 
     def test_final_05_share_commander_target_death_interrupt(self) -> None:
         """FINAL_05: Share target is commander; lethal Dtarget interrupts sharer loss -> finalize."""
         ctx = _make_context()
         systems = BattleSystems()
 
-        # Commander B0 is target and has only 10 troops
+        # Commander B0 is target and has only 10 troops; sharer B1 has 10000 troops
         ctx.units["B0"].troops = 10
         systems.state_lifecycle_system.apply(
             ctx,
@@ -1622,6 +1983,8 @@ class TestFinalizationBarrierContracts:
             parent_normal_attack_id=NormalAttackInstanceId("na_fin05"),
             parent_damage_instance_id=None,
             source_type=SourceType.NORMAL_ATTACK,
+            physical_attacker="A0",
+            credit_owner="A0",
         )
         req = DamageRequest(
             source_id="A0",
@@ -1634,16 +1997,24 @@ class TestFinalizationBarrierContracts:
             ctx, req, lineage
         )
 
+        # Target commander B0 died
+        assert not ctx.units["B0"].is_alive
         # Target death interrupted transaction: sharer B1 took 0 loss
+        assert res.partition_status == PartitionExecutionStatus.TARGET_DEATH_INTERRUPT
         assert len(res.direct_losses) == 0
         assert ctx.units["B1"].troops == 10000
+
+        # Micro-transaction completed and battle finalized
+        assert systems.finalization_coordinator.termination_state == BattleTerminationState.FINALIZED
+        assert systems.finalization_coordinator.finalization_result is not None
+        assert systems.finalization_coordinator.finalization_result.winner_team_id == "A"
 
     def test_final_06_distribution_commander_participant_death_project_runtime_default(self) -> None:
         """FINAL_06: Commander participant dies; drains under PROJECT_RUNTIME_DEFAULT (NOT EMPIRICALLY PROVEN)."""
         ctx = _make_context()
         systems = BattleSystems()
 
-        # Commander B0 has 10 troops and is participant in Distribution
+        # Target is B1; commander B0 has 10 troops; deputy B2 has 10000 troops
         ctx.units["B0"].troops = 10
         systems.state_lifecycle_system.apply(
             ctx,
@@ -1660,6 +2031,8 @@ class TestFinalizationBarrierContracts:
             parent_normal_attack_id=NormalAttackInstanceId("na_fin06"),
             parent_damage_instance_id=None,
             source_type=SourceType.NORMAL_ATTACK,
+            physical_attacker="A0",
+            credit_owner="A0",
         )
         req = DamageRequest(
             source_id="A0",
@@ -1671,7 +2044,23 @@ class TestFinalizationBarrierContracts:
         res = systems.damage_instance_coordinator.execute_partitioned_damage_instance(
             ctx, req, lineage
         )
+
         assert res.partition_plan is not None
+        assert res.partition_plan.participant_ids == ("B0", "B2")
+        # Commander B0 died during its participant loss commit
+        assert not ctx.units["B0"].is_alive
+        # Fixed plan drained without repartition under PROJECT_RUNTIME_DEFAULT
+        assert len(res.direct_losses) == 2
+        assert res.direct_losses[0].victim == "B0"
+        assert res.direct_losses[0].actual_loss == 10
+        assert res.direct_losses[1].victim == "B2"
+        assert res.direct_losses[1].theoretical_loss == res.partition_plan.dparticipant
+        assert res.direct_losses[1].actual_loss == res.partition_plan.dparticipant
+
+        # Crosses finalization barrier after draining
+        assert systems.finalization_coordinator.termination_state == BattleTerminationState.FINALIZED
+        assert systems.finalization_coordinator.finalization_result is not None
+        assert systems.finalization_coordinator.finalization_result.winner_team_id == "A"
 
 
 # ============================================================================

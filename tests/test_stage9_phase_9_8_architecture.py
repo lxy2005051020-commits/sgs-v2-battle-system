@@ -218,14 +218,23 @@ class TestArch02FutureAdmissionGateNoBypass:
             parent_scope_identity="parent_test",
             termination_generation=0,
         )
-        with pytest.raises(ValueError, match="not issued by this gate"):
+        with pytest.raises(ValueError, match="issued by this gate"):
             gate.consume_permit(forged, kind, "parent_test")
 
-        # 3. Valid permit consumes successfully
+        # 3. Cross-gate permit from a different gate instance rejected
+        other_gate = FutureAdmissionGate(coordinator=systems.finalization_coordinator)
+        other_permit = other_gate.request_admission(kind, "parent_test")
+        assert other_permit is not None
+        with pytest.raises(ValueError, match="issued by this gate"):
+            gate.consume_permit(other_permit, kind, "parent_test")
+
+
+
+        # 4. Valid permit consumes successfully
         gate.consume_permit(permit, kind, "parent_test")
         assert permit.permit_id in gate._consumed_permits
 
-        # 4. Replay of consumed permit is rejected
+        # 5. Replay of consumed permit is rejected
         with pytest.raises(RuntimeError, match="already been consumed"):
             gate.consume_permit(permit, kind, "parent_test")
 
@@ -245,6 +254,21 @@ class TestArch02FutureAdmissionGateNoBypass:
                 expected_branch_kind=FutureBranchKind.COMBO_SECOND_NORMAL_ATTACK,
                 expected_parent_scope_identity="parent_action",
             )
+
+    def test_arch_02_structural_branch_instantiation_without_permit_rejected(self) -> None:
+        from sgs_v2.battle_core.cleave_system import CleaveEffect
+        from sgs_v2.battle_core.chain_system import ChainTraversal
+        from sgs_v2.battle_core.counter_system import CounterBatch
+
+        with pytest.raises(TypeError, match="Use CleaveSystem.create_effect with an authentic permit"):
+            CleaveEffect()
+
+        with pytest.raises(TypeError, match="Use ChainSystem.create_traversal with an authentic permit"):
+            ChainTraversal()
+
+        with pytest.raises(TypeError, match="Use CounterSystem.create_batch with an authentic permit"):
+            CounterBatch()
+
 
 
 # ============================================================================
@@ -327,6 +351,26 @@ class TestArch04FinalizationProjectionExactlyOnce:
         with pytest.raises(RuntimeError, match="already been consumed"):
             coord.consume_projection_permit(permit)
 
+    def test_arch_04_battle_engine_consumes_projection_permit_exactly_once(self) -> None:
+        from sgs_v2.battle_core.engine import BattleEngine
+
+        ctx = _create_test_context()
+        systems = BattleSystems()
+        # B0 (commander) has 1 troop, will die on first attack
+        ctx.units["B0"].troops = 1
+        events_emitted: list[str] = []
+        ctx.event_bus.subscribe(
+            EventType.BATTLE_ENDED, lambda ev: events_emitted.append("BATTLE_ENDED")
+        )
+
+        engine = BattleEngine(context=ctx, systems=systems)
+        result = engine.run()
+        assert result is not None
+        assert systems.finalization_coordinator._projection_consumed is True
+        assert systems.finalization_coordinator.claim_finalized_projection() is None
+        assert events_emitted == ["BATTLE_ENDED"]
+
+
 
 # ============================================================================
 # ARCH-05: Operation IDs never gameplay comparator
@@ -336,7 +380,7 @@ class TestArch05OperationIdsNeverGameplayComparator:
 
     def test_arch_05_ast_scan_no_id_used_with_sorted_min_max_key(self) -> None:
         target_dir = Path("sgs_v2/battle_core")
-        id_names = [
+        id_names = {
             "ActionId",
             "NormalAttackInstanceId",
             "TargetResolutionId",
@@ -347,27 +391,65 @@ class TestArch05OperationIdsNeverGameplayComparator:
             "CleaveEffectId",
             "ChainTraversalId",
             "DirectTroopLossId",
-        ]
+        }
 
         violations = []
         for fpath in target_dir.glob("*.py"):
             with open(fpath, "r", encoding="utf-8") as fh:
-                for idx, line in enumerate(fh, 1):
-                    for id_name in id_names:
-                        if id_name in line and ("key=" in line or "sorted" in line) and "id.value" in line:
-                            violations.append((fpath.name, idx, line.strip()))
+                tree = ast.parse(fh.read(), filename=str(fpath))
+
+            for node in ast.walk(tree):
+                if isinstance(node, ast.Call):
+                    is_sort_call = False
+                    if isinstance(node.func, ast.Name) and node.func.id in ("sorted", "min", "max"):
+                        is_sort_call = True
+                    elif isinstance(node.func, ast.Attribute) and node.func.attr == "sort":
+                        is_sort_call = True
+
+                    if is_sort_call:
+                        for kw in node.keywords:
+                            if kw.arg == "key":
+                                key_str = ast.unparse(kw.value)
+                                for id_name in id_names:
+                                    if id_name in key_str:
+                                        violations.append((fpath.name, node.lineno, key_str))
 
         assert len(violations) == 0, f"Found ID comparators: {violations}"
 
     def test_arch_05_behavioral_permits_and_ids_forbid_relational_operators(self) -> None:
+        # Permits
         permit1 = FutureAdmissionPermit("p1", FutureBranchKind.NEXT_ACTION, "parent1", 0)
         permit2 = FutureAdmissionPermit("p2", FutureBranchKind.NEXT_ACTION, "parent2", 0)
 
         with pytest.raises(TypeError, match="does not support comparison operator"):
             _ = permit1 < permit2
-
         with pytest.raises(TypeError, match="does not support comparison operator"):
             _ = permit1 > permit2
+
+        # All 10 Operation Identities
+        all_ids = [
+            (ActionId("act1"), ActionId("act2")),
+            (NormalAttackInstanceId("na1"), NormalAttackInstanceId("na2")),
+            (TargetResolutionId("tr1"), TargetResolutionId("tr2")),
+            (DamageInstanceId("dmg1"), DamageInstanceId("dmg2")),
+            (PartitionTransactionId("ptn1"), PartitionTransactionId("ptn2")),
+            (ReactionBatchId("rbt1"), ReactionBatchId("rbt2")),
+            (CounterBatchEntryId("cbe1"), CounterBatchEntryId("cbe2")),
+            (CleaveEffectId("cle1"), CleaveEffectId("cle2")),
+            (ChainTraversalId("chn1"), ChainTraversalId("chn2")),
+            (DirectTroopLossId("dtl1"), DirectTroopLossId("dtl2")),
+        ]
+
+        for id1, id2 in all_ids:
+            with pytest.raises(TypeError, match="does not support comparison operator"):
+                _ = id1 < id2
+            with pytest.raises(TypeError, match="does not support comparison operator"):
+                _ = id1 <= id2
+            with pytest.raises(TypeError, match="does not support comparison operator"):
+                _ = id1 > id2
+            with pytest.raises(TypeError, match="does not support comparison operator"):
+                _ = id1 >= id2
+
 
 
 # ============================================================================
@@ -458,7 +540,54 @@ class TestArch08EventBusFactsOnly:
 class TestArch09BattleSystemsCompositionRootAndAcyclicGraph:
     """ARCH-09: BattleSystems is composition root; import graph is strictly acyclic."""
 
-    def test_arch_09_production_top_level_import_graph_has_zero_cycles(self) -> None:
+    @staticmethod
+    def _get_all_runtime_imports(filepath: Path, modules: dict[str, Path]) -> set[str]:
+        with open(filepath, "r", encoding="utf-8") as fh:
+            tree = ast.parse(fh.read(), filename=str(filepath))
+        deps: set[str] = set()
+
+        def is_type_checking(node: ast.AST) -> bool:
+            if isinstance(node, ast.If):
+                if (isinstance(node.test, ast.Name) and node.test.id == "TYPE_CHECKING") or (
+                    isinstance(node.test, ast.Attribute) and node.test.attr == "TYPE_CHECKING"
+                ):
+                    return True
+            return False
+
+        def visit(node: ast.AST) -> None:
+            if is_type_checking(node):
+                return
+            if isinstance(node, ast.Import):
+                for alias in node.names:
+                    if alias.name.startswith("sgs_v2.battle_core."):
+                        parts = alias.name.split(".")
+                        if len(parts) >= 3 and parts[2] in modules:
+                            deps.add(parts[2])
+                    elif alias.name in modules:
+                        deps.add(alias.name)
+            elif isinstance(node, ast.ImportFrom):
+                if node.level == 1:
+                    if node.module and node.module in modules:
+                        deps.add(node.module)
+                    else:
+                        for alias in node.names:
+                            if alias.name in modules:
+                                deps.add(alias.name)
+                elif node.module and node.module.startswith("sgs_v2.battle_core"):
+                    parts = node.module.split(".")
+                    if len(parts) >= 3 and parts[2] in modules:
+                        deps.add(parts[2])
+                    elif len(parts) == 2:
+                        for alias in node.names:
+                            if alias.name in modules:
+                                deps.add(alias.name)
+            for child in ast.iter_child_nodes(node):
+                visit(child)
+
+        visit(tree)
+        return {d for d in deps if d in modules and d != filepath.stem}
+
+    def test_arch_09_production_full_import_graph_has_zero_cycles(self) -> None:
         package_dir = Path("sgs_v2/battle_core")
         modules = {
             f.stem: f
@@ -466,41 +595,10 @@ class TestArch09BattleSystemsCompositionRootAndAcyclicGraph:
             if not f.name.startswith("__")
         }
 
-        def get_top_level_imports(filepath: Path) -> set[str]:
-            with open(filepath, "r", encoding="utf-8") as fh:
-                tree = ast.parse(fh.read(), filename=str(filepath))
-            deps = set()
-            for stmt in tree.body:
-                if isinstance(stmt, ast.If):
-                    if (isinstance(stmt.test, ast.Name) and stmt.test.id == "TYPE_CHECKING") or (
-                        isinstance(stmt.test, ast.Attribute) and stmt.test.attr == "TYPE_CHECKING"
-                    ):
-                        continue
-                if isinstance(stmt, ast.Import):
-                    for alias in stmt.names:
-                        if alias.name.startswith("sgs_v2.battle_core."):
-                            deps.add(alias.name.split(".")[2])
-                elif isinstance(stmt, ast.ImportFrom):
-                    if stmt.level == 1:
-                        if stmt.module:
-                            deps.add(stmt.module)
-                        else:
-                            for alias in stmt.names:
-                                if alias.name in modules:
-                                    deps.add(alias.name)
-                    elif stmt.module and stmt.module.startswith("sgs_v2.battle_core"):
-                        parts = stmt.module.split(".")
-                        if len(parts) >= 3:
-                            deps.add(parts[2])
-                        elif len(parts) == 2:
-                            for alias in stmt.names:
-                                if alias.name in modules:
-                                    deps.add(alias.name)
-            return {d for d in deps if d in modules}
+        adj = {mod: self._get_all_runtime_imports(path, modules) for mod, path in modules.items()}
 
-        adj = {mod: get_top_level_imports(path) for mod, path in modules.items()}
 
-        cycles = []
+        cycles: list[list[str]] = []
         visited: dict[str, int] = {}
         path: list[str] = []
 
@@ -520,7 +618,23 @@ class TestArch09BattleSystemsCompositionRootAndAcyclicGraph:
             if visited.get(mod, 0) == 0:
                 dfs(mod)
 
-        assert len(cycles) == 0, f"Found cycles: {cycles}"
+        assert len(cycles) == 0, f"Found runtime import cycles: {cycles}"
+
+    def test_arch_09_regression_execution_right_and_coordinator_no_cycle(self) -> None:
+        from sgs_v2.battle_core.execution_right_system import FinalizationCoordinatorContract
+        from sgs_v2.battle_core.battle_systems import BattleSystems
+
+        systems = BattleSystems()
+        coord = systems.finalization_coordinator
+        assert isinstance(coord, FinalizationCoordinatorContract)
+
+        # Confirm execution_right_system has no runtime import of battle_finalization_coordinator
+        fpath = Path("sgs_v2/battle_core/execution_right_system.py")
+        package_dir = Path("sgs_v2/battle_core")
+        modules = {f.stem: f for f in package_dir.glob("*.py") if not f.name.startswith("__")}
+        runtime_deps = self._get_all_runtime_imports(fpath, modules)
+        assert "battle_finalization_coordinator" not in runtime_deps
+
 
     def test_arch_09_battlesystems_is_sole_composition_root(self) -> None:
         systems = BattleSystems()
@@ -532,6 +646,44 @@ class TestArch09BattleSystemsCompositionRootAndAcyclicGraph:
         assert systems.future_admission_gate is not None
         assert systems.finalization_coordinator is not None
         assert systems.state_lifecycle_system is not None
+
+    def test_arch_09_no_service_self_construction(self) -> None:
+        # Systems must receive dependencies rather than constructing other core systems internally
+        target_dir = Path("sgs_v2/battle_core")
+        service_constructors = {
+            "DamageSystem()",
+            "CleaveSystem(",
+            "ChainSystem(",
+            "CounterSystem(",
+            "BattleFinalizationCoordinator()",
+            "FutureAdmissionGate(",
+        }
+        violations = []
+        for fpath in target_dir.glob("*.py"):
+            if fpath.name in ("battle_systems.py", "__init__.py"):
+                continue
+            with open(fpath, "r", encoding="utf-8") as fh:
+                content = fh.read()
+            for sc in service_constructors:
+                if sc in content:
+                    violations.append((fpath.name, sc))
+        assert len(violations) == 0, f"Found service self-construction: {violations}"
+
+    def test_arch_09_context_is_not_service_locator(self) -> None:
+        ctx = _create_test_context()
+        # Context holds state, data, event bus, random, and id allocator, but NO references to systems
+        for forbidden in (
+            "damage_system",
+            "normal_attack_system",
+            "cleave_system",
+            "chain_system",
+            "counter_system",
+            "future_admission_gate",
+            "finalization_coordinator",
+            "state_lifecycle_system",
+        ):
+            assert not hasattr(ctx, forbidden), f"Context should not be service locator for {forbidden}"
+
 
 
 # ============================================================================
@@ -689,3 +841,45 @@ class TestArch12SourceSkillSlotIngressAndImmutability:
         # Resolving cleave on state with missing required slot raises ValueError (domain error)
         with pytest.raises(ValueError, match="authoritative source_skill_slot"):
             systems.cleave_system.resolve(ctx, fact)
+
+    def test_arch_12_skill_slot_invalid_domain_value_rejected(self) -> None:
+        with pytest.raises(ValueError):
+            SkillSlot(3)
+
+        with pytest.raises(ValueError):
+            SkillSlot(-1)
+
+    def test_arch_12_duplicate_slot_in_unit_runtime_loadout_rejected(self) -> None:
+        from sgs_v2.battle_core.skill_runtime import LoadedSkillRef, LoadedSkillSet
+        from sgs_v2.battle_core.skill_definition import (
+            SkillDefinition,
+            SkillTargetMode,
+            ApplyStateSkillEffectSpec,
+        )
+
+        def0 = SkillDefinition(
+            skill_id="s0",
+            name="Skill 0",
+            activation_rate=1.0,
+            target_mode=SkillTargetMode.SINGLE_RANDOM_ENEMY,
+            effect_specs=(ApplyStateSkillEffectSpec("some_state"),),
+        )
+        def1 = SkillDefinition(
+            skill_id="s1",
+            name="Skill 1",
+            activation_rate=1.0,
+            target_mode=SkillTargetMode.SINGLE_RANDOM_ENEMY,
+            effect_specs=(ApplyStateSkillEffectSpec("some_state2"),),
+        )
+        ref0 = LoadedSkillRef(owner_id="A0", definition=def0, skill_slot=SkillSlot.INHERENT)
+        ref1 = LoadedSkillRef(owner_id="A0", definition=def1, skill_slot=SkillSlot.LEARNED_1)
+        valid_set = LoadedSkillSet(owner_id="A0", loaded=(ref0, ref1))
+        assert len(valid_set.loaded) == 2
+
+        # Duplicate slot in loadout is rejected
+        ref1_dup = LoadedSkillRef(owner_id="A0", definition=def0, skill_slot=SkillSlot.LEARNED_1)
+        with pytest.raises(ValueError, match="Duplicate SkillSlot"):
+            LoadedSkillSet(owner_id="A0", loaded=(ref0, ref1, ref1_dup))
+
+
+
