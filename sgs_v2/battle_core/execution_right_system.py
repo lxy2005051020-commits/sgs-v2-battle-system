@@ -427,8 +427,6 @@ class ActionScope:
     def mark_terminal(self) -> None:
         self.terminal = True
         self.execution_state = ActionExecutionState.TERMINAL
-        if self._coordinator is not None and hasattr(self._coordinator, "_mark_action_scope_terminal"):
-            self._coordinator._mark_action_scope_terminal(self.action_id)
 
 
 def admit_action_scope(

@@ -141,7 +141,6 @@ class BattleEngine:
                                 action_scope=action_scope,
                             )
                         finally:
-                            action_scope.mark_terminal()
                             self.systems.finalization_coordinator.complete_action_scope(
                                 context=self.context,
                                 scope=action_scope,

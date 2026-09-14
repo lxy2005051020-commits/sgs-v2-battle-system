@@ -82,3 +82,12 @@
 ## Conclusion
 
 Phase 9.6 Capability Closure Repair is COMPLETE. All capability bypasses, mutable authority leaks, and completion gaps are closed.
+
+---
+
+## Final Re-Audit Round 3
+
+- **Result**: **FAIL**
+- **Findings**:
+  - **FR96-R3-B01**: `ActionScope.mark_terminal()` can mutate coordinator authoritative lifecycle using ActionId-only terminalization, thereby bypassing exact ActionScope capability identity and potentially releasing finalization barrier early.
+

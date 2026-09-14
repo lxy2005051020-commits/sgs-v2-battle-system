@@ -369,9 +369,18 @@ class BattleFinalizationCoordinator:
                 f"ActionScope actor mismatch: admission record actor is '{record.actor_id}', "
                 f"expected executing actor '{expected_actor_id}'"
             )
-        if record.execution_state in (ActionExecutionState.COMPLETED, ActionExecutionState.TERMINAL):
+        if (
+            record.execution_state in (ActionExecutionState.COMPLETED, ActionExecutionState.TERMINAL)
+            or scope.terminal
+            or scope.execution_state == ActionExecutionState.TERMINAL
+        ):
+            state_str = (
+                record.execution_state.value
+                if record.execution_state in (ActionExecutionState.COMPLETED, ActionExecutionState.TERMINAL)
+                else scope.execution_state.value
+            )
             raise RuntimeError(
-                f"ActionScope '{scope.action_id}' is already terminal ({record.execution_state.value})"
+                f"ActionScope '{scope.action_id}' is already terminal ({state_str})"
             )
         if record.execution_state != ActionExecutionState.ADMITTED:
             raise RuntimeError(
@@ -433,12 +442,6 @@ class BattleFinalizationCoordinator:
                 f"Primary NormalAttack entry for ActionScope '{scope.action_id}' has already been consumed"
             )
         record.primary_normal_attack_executed = True
-
-    def _mark_action_scope_terminal(self, action_id: ActionId) -> None:
-        from .execution_right_system import ActionExecutionState
-        rec = self._action_scope_records.get(action_id)
-        if rec is not None and rec.execution_state != ActionExecutionState.COMPLETED:
-            rec.execution_state = ActionExecutionState.TERMINAL
 
     def observe_damage_instance_death(
         self,

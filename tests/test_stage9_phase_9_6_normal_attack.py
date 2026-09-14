@@ -50,6 +50,7 @@ from sgs_v2.battle_core.execution_right_system import (
     FutureAdmissionGate,
     FutureAdmissionPermit,
     FutureBranchKind,
+    LegacyFinalizationBarrier,
     admit_action_scope,
 )
 from sgs_v2.battle_core.stage9_state_params import (
@@ -1668,4 +1669,218 @@ def test_fr96_r2_a13_foreign_context_assault_dispatch_consumes_no_permit() -> No
 
     # Verify permit was NOT consumed
     assert assault_permit.permit_id not in gate._consumed_permits
+
+
+# ============================================================================
+# Phase 9.6 Final Re-Audit Round 3 Regressions: FR96-R3-01..06 (FR96-R3-B01)
+# ============================================================================
+
+
+def test_fr96_r3_01_forged_same_id_scope_mark_terminal_cannot_mutate_legitimate_record() -> None:
+    """FR96-R3-01: Forged ActionScope with identical action_id calling mark_terminal()
+    cannot mutate coordinator authoritative record for legitimate scope.
+    """
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    legitimate = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # Legitimate scope starts execution
+    systems.action_system.execute(context, context.get_unit("a1"), action_scope=legitimate)
+    assert legitimate.execution_state == ActionExecutionState.EXECUTING
+    coordinator = systems.finalization_coordinator
+    record = coordinator._action_scope_records[legitimate.action_id]
+    assert record.execution_state == ActionExecutionState.EXECUTING
+    assert legitimate.action_id in coordinator.active_action_scope_ids
+    assert coordinator.has_admitted_work is True
+
+    # Construct forged scope with same action_id and actor_id
+    forged = ActionScope(
+        action_id=legitimate.action_id,
+        actor_id=legitimate.actor_id,
+        _coordinator=coordinator,
+    )
+    forged.mark_terminal()
+
+    # Authoritative record for legitimate scope MUST remain EXECUTING
+    assert record.execution_state == ActionExecutionState.EXECUTING
+    assert coordinator.active_action_scope_ids == (legitimate.action_id,)
+    assert coordinator.has_admitted_work is True
+    assert legitimate.terminal is False
+    assert legitimate.execution_state == ActionExecutionState.EXECUTING
+
+    # Legitimate scope can continue and complete normally
+    coordinator.complete_action_scope(context, legitimate)
+    assert record.execution_state == ActionExecutionState.COMPLETED
+    assert coordinator.has_admitted_work is False
+
+
+def test_fr96_r3_02_forged_terminalization_cannot_release_victory_drain_barrier_early() -> None:
+    """FR96-R3-02: Battle victory already latched with legitimate ActionScope still EXECUTING.
+    Forged same-id terminalization cannot release the barrier early.
+    Termination state must remain VICTORY_LATCHED or DRAINING_ADMITTED_WORK,
+    and must not become FINALIZED until exact legitimate scope completes.
+    Directly verifies INV-40.
+    """
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    legitimate = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # Legitimate scope is executing
+    systems.action_system.execute(context, context.get_unit("a1"), action_scope=legitimate)
+    coordinator = systems.finalization_coordinator
+    assert coordinator.has_admitted_work is True
+
+    # Latch victory while legitimate scope is still active (team B eliminated)
+    context.get_unit("b1").troops = 0
+    coordinator.observe_legacy_barrier(context, LegacyFinalizationBarrier.ACTION_SETTLED)
+
+    assert coordinator.termination_state in (
+        BattleTerminationState.VICTORY_LATCHED,
+        BattleTerminationState.DRAINING_ADMITTED_WORK,
+    )
+    assert coordinator.termination_state != BattleTerminationState.FINALIZED
+
+    # Forged same-id scope attempts terminalization
+    forged = ActionScope(
+        action_id=legitimate.action_id,
+        actor_id=legitimate.actor_id,
+        _coordinator=coordinator,
+    )
+    forged.mark_terminal()
+
+    # Trigger barrier observation
+    coordinator.observe_legacy_barrier(context, LegacyFinalizationBarrier.ACTION_SETTLED)
+
+    # Termination state MUST remain DRAINING_ADMITTED_WORK / VICTORY_LATCHED, NOT FINALIZED
+    assert coordinator.has_admitted_work is True
+    assert coordinator.termination_state in (
+        BattleTerminationState.VICTORY_LATCHED,
+        BattleTerminationState.DRAINING_ADMITTED_WORK,
+    )
+    assert coordinator.termination_state != BattleTerminationState.FINALIZED
+
+    # Only when exact legitimate scope completes can finalization occur
+    coordinator.complete_action_scope(context, legitimate)
+    assert coordinator.has_admitted_work is False
+    assert coordinator.termination_state == BattleTerminationState.FINALIZED
+
+
+def test_fr96_r3_03_legitimate_completion_releases_barrier_exactly_once() -> None:
+    """FR96-R3-03: Legitimate exact ActionScope completion releases barrier exactly once;
+    second completion call is rejected.
+    """
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    legitimate = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+    coordinator = systems.finalization_coordinator
+
+    assert coordinator.has_admitted_work is True
+    assert legitimate.action_id in coordinator.active_action_scope_ids
+
+    # First completion succeeds and releases barrier
+    coordinator.complete_action_scope(context, legitimate)
+    assert legitimate.action_id not in coordinator.active_action_scope_ids
+    assert coordinator.has_admitted_work is False
+    assert legitimate.execution_state == ActionExecutionState.COMPLETED
+    assert legitimate.terminal is True
+
+    # Second completion call is rejected
+    with pytest.raises(RuntimeError, match="has already been completed"):
+        coordinator.complete_action_scope(context, legitimate)
+
+
+def test_fr96_r3_04_same_id_forged_completion_rejected() -> None:
+    """FR96-R3-04: Same-id forged ActionScope completion is rejected with ValueError
+    and does not complete legitimate scope or release barrier.
+    """
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    legitimate = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+    coordinator = systems.finalization_coordinator
+
+    forged = ActionScope(
+        action_id=legitimate.action_id,
+        actor_id=legitimate.actor_id,
+        execution_state=ActionExecutionState.ADMITTED,
+        _coordinator=coordinator,
+        _owning_context_id=id(context),
+    )
+
+    with pytest.raises(ValueError, match="ActionScope object identity mismatch"):
+        coordinator.complete_action_scope(context, forged)
+
+    # Legitimate scope remains uncompleted and barrier remains active
+    assert coordinator.has_admitted_work is True
+    assert legitimate.action_id in coordinator.active_action_scope_ids
+    assert coordinator._action_scope_records[legitimate.action_id].execution_state == ActionExecutionState.ADMITTED
+
+
+def test_fr96_r3_05_action_id_only_completion_rejected() -> None:
+    """FR96-R3-05: ActionId-only completion is rejected with TypeError
+    and does not complete legitimate scope or release barrier.
+    """
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    legitimate = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+    coordinator = systems.finalization_coordinator
+
+    with pytest.raises(TypeError, match="complete_action_scope requires exact ActionScope capability, not naked ActionId"):
+        coordinator.complete_action_scope(context, legitimate.action_id)
+
+    # Legitimate scope remains uncompleted and barrier remains active
+    assert coordinator.has_admitted_work is True
+    assert legitimate.action_id in coordinator.active_action_scope_ids
+
+
+def test_fr96_r3_06_exception_path_still_completes_exact_scope_once_without_action_replay() -> None:
+    """FR96-R3-06: When Action execution raises an exception, the finally path still
+    completes the exact scope once without allowing action replay or resetting authoritative state.
+    """
+    context = _make_context()
+    systems = BattleSystems()
+    coordinator = systems.finalization_coordinator
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # Simulate an engine execution that raises inside try block
+    try:
+        # ActionSystem execution starts, validating scope into EXECUTING
+        coordinator.validate_action_scope(context, scope, "a1")
+        raise RuntimeError("Simulated execution failure inside action")
+    except RuntimeError:
+        pass
+    finally:
+        # Finally block completes exact scope
+        coordinator.complete_action_scope(context, scope)
+
+    # Authoritative record is COMPLETED
+    record = coordinator._action_scope_records[scope.action_id]
+    assert record.execution_state == ActionExecutionState.COMPLETED
+    assert coordinator.has_admitted_work is False
+
+    # Action replay is strictly blocked
+    with pytest.raises(RuntimeError, match=r"is already terminal \(COMPLETED\)"):
+        systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+
+    # Secondary completion is strictly blocked
+    with pytest.raises(RuntimeError, match="has already been completed"):
+        coordinator.complete_action_scope(context, scope)
+
 
