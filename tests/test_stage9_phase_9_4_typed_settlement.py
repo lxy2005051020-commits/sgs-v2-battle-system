@@ -267,8 +267,8 @@ class TestDamageResolutionSystemSettle:
         res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
         coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
 
-        dmg_id = coordinator.allocate_damage_instance_id(ctx)
         lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
         permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
 
         dmg_result = _make_dummy_damage_result(final_damage=300)
@@ -303,8 +303,8 @@ class TestDamageResolutionSystemSettle:
         res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
         coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
 
-        dmg_id = coordinator.allocate_damage_instance_id(ctx)
         lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
         permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
 
         dmg_result = _make_dummy_damage_result(final_damage=300)
@@ -336,8 +336,8 @@ class TestDamageResolutionSystemSettle:
         res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
         coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
 
-        dmg_id = coordinator.allocate_damage_instance_id(ctx)
         lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
         # Create a fake permit not issued by coordinator
         fake_permit = DamageSettlementPermit(
             permit_id="fake_permit_999",
@@ -366,9 +366,9 @@ class TestDamageResolutionSystemSettle:
         res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
         coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
 
-        id_a = DamageInstanceId("dmg_A")
-        id_b = DamageInstanceId("dmg_B")
         lineage = _make_lineage()
+        id_a = coordinator.begin_damage_instance(ctx, lineage)
+        id_b = coordinator.begin_damage_instance(ctx, lineage)
 
         permit_a = coordinator.issue_settlement_permit(id_a, lineage, ctx)
 
@@ -395,9 +395,9 @@ class TestDamageResolutionSystemSettle:
         res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
         coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
 
-        dmg_id = coordinator.allocate_damage_instance_id(ctx)
         lineage_issued = _make_lineage(SourceType.NORMAL_ATTACK)
         lineage_request = _make_lineage(SourceType.ACTIVE_SKILL)
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage_issued)
 
         permit = coordinator.issue_settlement_permit(dmg_id, lineage_issued, ctx)
 
@@ -423,8 +423,8 @@ class TestDamageResolutionSystemSettle:
         res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
         coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
 
-        dmg_id = coordinator.allocate_damage_instance_id(ctx)
         lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
         permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
 
         dmg_result = _make_dummy_damage_result(final_damage=300, prevented=True)

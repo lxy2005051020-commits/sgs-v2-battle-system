@@ -102,8 +102,8 @@ class TestThreeLayerSeparationFixture:
         res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
         coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
 
-        dmg_id = coordinator.allocate_damage_instance_id(ctx)
         lineage = _make_lineage(SourceType.NORMAL_ATTACK)
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
         permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
 
         # X = 300 (Dtotal)
@@ -197,8 +197,8 @@ class TestThreeLayerSeparationFixture:
         res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
         coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
 
-        dmg_id = coordinator.allocate_damage_instance_id(ctx)
         lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
         permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
 
         dummy_result = DamageResult(
@@ -250,8 +250,8 @@ class TestBattleSystemsAndFinalizationObservation:
         ctx = _make_context(troops_b=50)
 
         coordinator = systems.damage_instance_coordinator
-        dmg_id = coordinator.allocate_damage_instance_id(ctx)
         lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
         permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
 
         dummy_result = DamageResult(
@@ -356,7 +356,7 @@ class TestCoordinatorPermitLifecycleRepair:
         )
         assert res.actual_target_troop_loss > 0
         assert len(coordinator._permits) == 0
-        assert len(coordinator._instance_to_permit_id) == 0
+        assert len(coordinator._active_instances) == 0
         assert not hasattr(coordinator, "_completed_instances")
 
     def test_p94_r04_calculate_exception_causes_zero_permit_leak(self) -> None:
@@ -384,7 +384,7 @@ class TestCoordinatorPermitLifecycleRepair:
             )
 
         assert len(coordinator._permits) == 0
-        assert len(coordinator._instance_to_permit_id) == 0
+        assert len(coordinator._active_instances) == 0
 
     def test_p94_r05_replaying_old_completed_permit_raises_value_error_with_zero_mutations(self) -> None:
         ctx = _make_context(troops_b=1000)
@@ -393,9 +393,8 @@ class TestCoordinatorPermitLifecycleRepair:
         res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
         coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
 
-        # Manually issue a permit, execute settle, and then release
-        dmg_id = coordinator.allocate_damage_instance_id(ctx)
         lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
         permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
 
         dmg_result = DamageResult(
@@ -423,8 +422,9 @@ class TestCoordinatorPermitLifecycleRepair:
         initial_events_count = len(ctx.event_bus.history)
 
         # Release coordinator state for this instance
-        coordinator.release_damage_instance(dmg_id)
+        coordinator.close_damage_instance(dmg_id)
         assert len(coordinator._permits) == 0
+        assert len(coordinator._active_instances) == 0
 
         # Attempt to replay the old permit against res_sys.settle
         with pytest.raises(ValueError, match="closed, or not active|was not issued"):
@@ -433,3 +433,217 @@ class TestCoordinatorPermitLifecycleRepair:
         # Target troops unchanged, zero new events
         assert ctx.get_unit("B1").troops == 900
         assert len(ctx.event_bus.history) == initial_events_count
+
+    def test_p94_r2_01_damage_instance_id_exists_before_calculate(self) -> None:
+        """P94-R2-01: Verify DamageInstance scope/identity exists when DamageSystem.calculate() runs."""
+        import unittest.mock
+
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        req = DamageRequest(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+        lineage = _make_lineage()
+
+        observed_active_during_calc: list[list[DamageInstanceId]] = []
+
+        orig_calc = dmg_sys.calculate
+
+        def _spy_calc(c, r):
+            active_ids = list(coordinator._active_instances.keys())
+            observed_active_during_calc.append(active_ids)
+            assert len(active_ids) == 1
+            assert coordinator.is_instance_active(active_ids[0])
+            return orig_calc(c, r)
+
+        with unittest.mock.patch.object(dmg_sys, "calculate", side_effect=_spy_calc):
+            res = coordinator.execute_standard_damage_instance(ctx, req, lineage)
+
+        assert len(observed_active_during_calc) == 1
+        assert len(observed_active_during_calc[0]) == 1
+        assert res.damage_instance_id == observed_active_during_calc[0][0]
+        assert len(coordinator._active_instances) == 0
+
+    def test_p94_r2_02_calculate_failure_lifecycle_and_sequence_gap(self) -> None:
+        """P94-R2-02: Verify calculate failure allocates ID, issues 0 permits, cleans scope, and leaves allocator gap."""
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        bad_req = DamageRequest(
+            source_id="NON_EXISTENT_UNIT",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+        lineage = _make_lineage()
+
+        # Calculation raises
+        with pytest.raises(Exception):
+            coordinator.execute_standard_damage_instance(ctx, bad_req, lineage)
+
+        # 0 permits issued, 0 active scope residue
+        assert len(coordinator._permits) == 0
+        assert len(coordinator._active_instances) == 0
+
+        # Next fresh DamageInstance executes successfully
+        good_req = DamageRequest(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+        res = coordinator.execute_standard_damage_instance(ctx, good_req, lineage)
+        assert res.actual_target_troop_loss > 0
+        # The new ID reflects a sequence increment (gap created by failed instance)
+        assert len(coordinator._permits) == 0
+        assert len(coordinator._active_instances) == 0
+
+    def test_p94_r2_03_duplicate_permit_issuance_rejected_on_active_instance(self) -> None:
+        """P94-R2-03: Same active DamageInstance rejects second permit issuance."""
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
+
+        permit1 = coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
+        assert permit1 is not None
+
+        # Second attempt to issue permit for the same active instance
+        with pytest.raises(ValueError, match="already been issued.*At most one permit"):
+            coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
+
+        coordinator.close_damage_instance(dmg_id)
+
+    def test_p94_r2_04_closed_instance_permit_reissuance_rejected(self) -> None:
+        """P94-R2-04: Closed DamageInstance cannot be issued another permit."""
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx, lineage)
+        coordinator.close_damage_instance(dmg_id)
+
+        # Attempt to issue permit on closed ID
+        with pytest.raises(ValueError, match="not an active instance|closed"):
+            coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
+
+    def test_p94_r2_05_arbitrary_damage_instance_id_permit_issuance_rejected(self) -> None:
+        """P94-R2-05: Arbitrary manually constructed DamageInstanceId rejected for permit issuance."""
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        arbitrary_id = DamageInstanceId("arbitrary_crafted_id")
+        lineage = _make_lineage()
+
+        with pytest.raises(ValueError, match="not an active instance owned by this coordinator"):
+            coordinator.issue_settlement_permit(arbitrary_id, lineage, ctx)
+
+    def test_p94_r2_06_foreign_or_inactive_permit_rejected_by_settle(self) -> None:
+        """P94-R2-06: Permit from another coordinator or inactive scope is rejected by settle()."""
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator1 = DamageInstanceCoordinator(dmg_sys, res_sys)
+        res_sys2 = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator2 = DamageInstanceCoordinator(dmg_sys, res_sys2)
+
+        lineage = _make_lineage()
+        dmg_id2 = coordinator2.begin_damage_instance(ctx, lineage)
+        permit2 = coordinator2.issue_settlement_permit(dmg_id2, lineage, ctx)
+
+        dmg_result = DamageResult(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+            base_damage=100.0,
+            scaled_damage=100.0,
+            final_damage=100,
+        )
+        req = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=dmg_id2,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+
+        # coordinator1 is bound to res_sys; permit2 from coordinator2 must be rejected
+        with pytest.raises(ValueError, match="was not issued by this coordinator|closed, or not active"):
+            res_sys.settle(ctx, req, permit2)
+
+        coordinator2.close_damage_instance(dmg_id2)
+
+    def test_p94_r2_07_replay_attack_with_minted_permit_blocked(self) -> None:
+        """P94-R2-07: Prove that after standard execution, replaying request with minted permit is blocked with 0 side-effects."""
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        req = DamageRequest(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+        lineage = _make_lineage()
+
+        # Step 1: legitimate execution of dmg_1
+        res1 = coordinator.execute_standard_damage_instance(ctx, req, lineage)
+        initial_loss = res1.actual_target_troop_loss
+        assert initial_loss > 0
+        troops_after_first = ctx.get_unit("B1").troops
+        events_after_first = len(ctx.event_bus.history)
+        old_id = res1.damage_instance_id
+
+        # Step 2: Attacker attempts to mint a second permit for old_id
+        with pytest.raises(ValueError, match="not an active instance|closed"):
+            coordinator.issue_settlement_permit(old_id, lineage, ctx)
+
+        # Step 3: Attacker tries to pair old_id with a fresh permit minted for fresh_id
+        fresh_id = coordinator.begin_damage_instance(ctx, lineage)
+        fresh_permit = coordinator.issue_settlement_permit(fresh_id, lineage, ctx)
+
+        replay_req = DamageSettlementRequest(
+            damage_result=res1.damage,
+            assigned_target_damage=res1.assigned_target_damage,
+            damage_instance_id=old_id,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+        with pytest.raises(ValueError, match="does not match request damage_instance_id"):
+            res_sys.settle(ctx, replay_req, fresh_permit)
+
+        coordinator.close_damage_instance(fresh_id)
+
+        # Confirm ZERO additional troop mutation and ZERO additional events
+        assert ctx.get_unit("B1").troops == troops_after_first
+        assert len(ctx.event_bus.history) == events_after_first

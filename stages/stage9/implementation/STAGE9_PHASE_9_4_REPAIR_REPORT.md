@@ -1,4 +1,4 @@
-﻿# Stage9 Phase 9.4 Repair Report
+# Stage9 Phase 9.4 Repair Report
 
 ## Phase Information
 
@@ -7,6 +7,9 @@ Phase:
 
 Implementation commit:
 a8aa1360bd86bc620e947bc28729fb19fcfa5447 feat(stage9): implement phase 9.4 settlement core
+
+Repair Round 1 commit:
+352968e74e947a5919225102bd522fa4cb22c960 fix(stage9): repair phase 9.4 settlement lifecycle
 
 Parent:
 a8aa1360bd86bc620e947bc28729fb19fcfa5447
@@ -17,8 +20,23 @@ State authority baseline:
 Build Prompt blob:
 835206ba39ce64c42a822a7138afeee307e0a492
 
+Repair Round 1 Re-Audit:
+FAIL
+
+Reason:
+DamageInstance identity lifetime ordering
++
+permit re-issuance after scope cleanup
+
+Repair Round 2 required:
+YES
+
+Repair Round 2 report:
+stages/stage9/implementation/STAGE9_PHASE_9_4_REPAIR_ROUND2_REPORT.md
+
 Lifecycle status:
-Phase 9.4 Repair = COMPLETE / PASS
+Phase 9.4 Repair Round 1 = FAIL
+Phase 9.4 Repair Round 2 = REQUIRED
 Phase 9.5 = NOT AUTHORIZED
 
 ---
