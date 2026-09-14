@@ -5,7 +5,7 @@
 - **Phase**: 9.8 (Full Integration / Regression / Architecture Closure)
 - **Repository**: lxy2005051020-commits/sgs-v2-battle-system (D:\sgs-v2-battle-system)
 - **Starting Remote Main**: 214d19e07fec1144e3b3eb4e8d0948c4c0df5966
-- **Parent**: b1dd8c150168823b7e29a5224205d22cdd63218a
+- **Parent**: 214d19e07fec1144e3b3eb4e8d0948c4c0df5966
 - **Build Prompt Blob**: 835206ba39ce64c42a822a7138afeee307e0a492
 - **State Authority**: 15ed915435f328a6ecd8f488d98b5b9e13c913b5
 - **Initial Implementation Commit**: 932772cee7bad9dc57887446843b87cb8c8f64b7
@@ -41,7 +41,7 @@
 | ID | Specification Guarantee | Test Verification | Result |
 | :--- | :--- | :--- | :---: |
 | **ARCH-01** | Stage8 semantic/import inversion blocked; Stage8 calculation modules do not import Stage9 mechanism services | `test_arch_01_ast_stage8_modules_do_not_import_stage9_mechanisms`, `test_arch_01_behavioral_damage_result_final_damage_is_dtotal` | **PASS** |
-| **ARCH-02** | FutureAdmissionGate no bypass; all 6 future branch kinds structurally require authentic permit | `test_arch_02_all_six_future_branches_require_authentic_permit`, `test_arch_02_cross_gate_kind_mismatch_rejected`, `test_arch_02_unpermitted_direct_branch_instantiation_blocked` | **PASS** |
+| **ARCH-02** | FutureAdmissionGate no bypass; all 6 future branch kinds structurally require authentic permit | `test_arch_02_all_six_future_branches_require_authentic_permit`, `test_arch_02_cross_gate_kind_mismatch_rejected`, `test_arch_02_structural_branch_instantiation_without_permit_rejected` | **PASS** |
 | **ARCH-03** | Finalization semantic writer single; only BattleFinalizationCoordinator writes BattleTerminationState.FINALIZED | `test_arch_03_ast_finalized_state_written_only_by_coordinator`, `test_arch_03_ast_context_ended_and_result_written_only_by_engine` | **PASS** |
 | **ARCH-04** | Finalization projection exactly once; duplicate projection permit claim/consume rejected | `test_arch_04_projection_permit_claim_and_consume_exactly_once`, `test_arch_04_battle_engine_consumes_projection_permit_exactly_once` | **PASS** |
 | **ARCH-05** | Operation IDs never gameplay comparator; AST and behavioral scan prove no relational operators or key sort usage | `test_arch_05_ast_scan_no_id_used_with_sorted_min_max_key`, `test_arch_05_behavioral_permits_and_ids_forbid_relational_operators` | **PASS** |

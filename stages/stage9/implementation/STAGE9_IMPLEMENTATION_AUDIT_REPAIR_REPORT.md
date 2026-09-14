@@ -4,12 +4,18 @@
 
 - **Repository**: `lxy2005051020-commits/sgs-v2-battle-system` (`D:\sgs-v2-battle-system`)
 - **Target Branch**: `main`
-- **Starting Audit Baseline**: `932772cee7bad9dc57887446843b87cb8c8f64b7` (`feat(stage9): complete phase 9.8 integration`)
-- **Parent Baseline**: `214d19e07fec1144e3b3eb4e8d0948c4c0df5966` (`fix(stage9): close phase 9.7 reaction audit gaps`)
+- **Initial Phase9.8 Implementation**: `932772cee7bad9dc57887446843b87cb8c8f64b7`
+- **Independent Implementation Audit**: FAIL (`P98-B01`, `P98-B02`, `P98-B03`, `P98-B04`, `P98-M01`)
+- **Implementation Audit Repair Commit**: `2baeceb9e792490c8b6b00caf7fae8ae544f5b46`
+- **Parent Baseline**: `932772cee7bad9dc57887446843b87cb8c8f64b7`
 - **Build Prompt Authority Blob**: `835206ba39ce64c42a822a7138afeee307e0a492` (`stages/stage9/STAGE9_BUILD_PROMPT.md`)
 - **State Mechanics Authority**: `15ed915435f328a6ecd8f488d98b5b9e13c913b5`
-- **Audit Outcome**: **REPAIR COMPLETE / ALL 5 GAPS CLOSED (PASS)**
-- **Lifecycle Restriction**: Stage9 Final Freeze is **NOT AUTHORIZED**. Stop immediately after audit repair completion.
+- **Audit Gap Closure Status**:
+  - `P98-B01..B04`: CLOSED
+  - `P98-M01`: required documentation correction
+- **Stage9 Implementation Audit Repair Gate**: PASS
+- **Stage9 Implementation Re-Audit**: PENDING
+- **Stage9 Final Freeze**: NOT AUTHORIZED
 
 ---
 
@@ -135,6 +141,7 @@ Entire repository:     753 / 753 PASS (1.77s)
 Production demo:       PASS (Exit code 0)
 Prompt authority blob: 835206ba39ce64c42a822a7138afeee307e0a492 (UNTOUCHED)
 
-Stage9 Implementation Audit: PASS
+Stage9 Implementation Audit Repair Gate: PASS
+Stage9 Implementation Re-Audit: PENDING
 Stage9 Final Freeze: NOT AUTHORIZED (Execution halted at boundary)
 ```
