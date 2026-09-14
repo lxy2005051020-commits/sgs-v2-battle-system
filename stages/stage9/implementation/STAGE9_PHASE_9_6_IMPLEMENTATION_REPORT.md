@@ -112,3 +112,19 @@ In compliance with Stage9 architectural rules:
   - `python demo.py`: **PASS** (Full 7-round battle simulation completing with valid victory latch).
 
 All Stage9 Phase 9.6 requirements are satisfied and verified.
+
+---
+
+## 8. Independent Implementation Audit
+
+- **Initial Implementation Status**:
+  - Full pytest: 549 passed, 0 failed
+  - Demo: PASS
+- **Independent Implementation Audit**: FAIL
+- **Audit Findings**:
+  - `P96-B01`: broad TypeError replay fallback in BattleEngine
+  - `P96-B02`: Combo ACTION_START maintenance incorrectly occurs after STUN early-return
+  - `P96-B03`: NormalAttack #1 identity/count allocated before physical attack permission
+  - `P96-B04`: Combo #2 incorrectly skips Assault admission seam
+  - `P96-B05`: Frozen regression/invariant contract mapping is incorrect and incomplete
+- **Audit Repair**: REQUIRED (see `stages/stage9/implementation/STAGE9_PHASE_9_6_AUDIT_REPAIR_REPORT.md`)

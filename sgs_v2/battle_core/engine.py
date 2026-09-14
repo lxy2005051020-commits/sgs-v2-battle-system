@@ -135,17 +135,11 @@ class BattleEngine:
                             parent_scope_identity=parent_scope,
                         )
                         try:
-                            try:
-                                self.systems.action_system.execute(
-                                    context=self.context,
-                                    actor=actor,
-                                    action_scope=action_scope,
-                                )
-                            except TypeError:
-                                self.systems.action_system.execute(
-                                    self.context,
-                                    actor,
-                                )
+                            self.systems.action_system.execute(
+                                context=self.context,
+                                actor=actor,
+                                action_scope=action_scope,
+                            )
                         finally:
                             action_scope.mark_terminal()
                             self.systems.finalization_coordinator.complete_action_scope(

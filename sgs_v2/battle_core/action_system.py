@@ -32,22 +32,8 @@ class ActionSystem:
         if not actor.is_alive:
             return None
 
-        stun_state_id = OfficialStateId.STUN.value
-        if context.states.has(owner_id=actor.unit_id, state_id=stun_state_id):
-            context.event_bus.publish(
-                event_type=EventType.ACTION_BLOCKED,
-                phase=context.current_phase,
-                round_no=context.current_round,
-                actor_id=actor.unit_id,
-                payload={
-                    "action_type": "ALL",
-                    "reason_state_id": stun_state_id,
-                },
-            )
-            return None
-
-        # Phase 9.6: COMBO holder maintenance runs at ACTION_START before grant creation.
-        # This decrements remaining_actions for finite buffs.
+        # Phase 9.6 / P96-B02: COMBO holder maintenance runs at ACTION_START before grant creation.
+        # This decrements remaining_actions for finite buffs. STUN does NOT freeze Combo duration.
         if self._state_lifecycle_system is not None:
             self._state_lifecycle_system.process_combo_action_start(
                 context=context,
@@ -75,6 +61,20 @@ class ActionSystem:
                     state=ComboGrantState.VALID,
                 )
                 action_scope.combo_grant = grant
+
+        stun_state_id = OfficialStateId.STUN.value
+        if context.states.has(owner_id=actor.unit_id, state_id=stun_state_id):
+            context.event_bus.publish(
+                event_type=EventType.ACTION_BLOCKED,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=actor.unit_id,
+                payload={
+                    "action_type": "ALL",
+                    "reason_state_id": stun_state_id,
+                },
+            )
+            return None
 
         return self._normal_attack.execute(
             context=context,

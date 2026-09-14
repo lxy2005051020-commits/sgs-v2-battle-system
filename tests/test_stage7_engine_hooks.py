@@ -22,7 +22,7 @@ class RecordingActionSystem:
     def __init__(self) -> None:
         self.calls: list[str] = []
 
-    def execute(self, context, actor):
+    def execute(self, context, actor, action_scope=None):
         self.calls.append(actor.unit_id)
         return None
 

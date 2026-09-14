@@ -159,7 +159,35 @@ class NormalAttackSystem:
     ) -> NormalAttackResult:
         """Executes NormalAttack #1 and orchestrates the pre-checkpoint lifecycle and Combo #2."""
         if not actor.is_alive or actor.troops <= 0:
-            return NormalAttackResult(actor.unit_id, None, None, None)
+            return NormalAttackResult(actor.unit_id, None, None, None, normal_attack_id=None)
+
+        stun_state_id = OfficialStateId.STUN.value
+        if context.states.has(owner_id=actor.unit_id, state_id=stun_state_id):
+            context.event_bus.publish(
+                event_type=EventType.ACTION_BLOCKED,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=actor.unit_id,
+                payload={
+                    "action_type": "ALL",
+                    "reason_state_id": stun_state_id,
+                },
+            )
+            return NormalAttackResult(actor.unit_id, None, None, None, normal_attack_id=None)
+
+        disarm_state_id = OfficialStateId.DISARM.value
+        if context.states.has(owner_id=actor.unit_id, state_id=disarm_state_id):
+            context.event_bus.publish(
+                event_type=EventType.ACTION_BLOCKED,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=actor.unit_id,
+                payload={
+                    "action_type": "NORMAL_ATTACK",
+                    "reason_state_id": disarm_state_id,
+                },
+            )
+            return NormalAttackResult(actor.unit_id, None, None, None, normal_attack_id=None)
 
         if action_scope is not None:
             action_scope.physical_normal_attack_count += 1
@@ -183,28 +211,7 @@ class NormalAttackSystem:
         target_resolution: TargetResolutionResult | None,
         combo_checkpoint_allowed: bool,
     ) -> NormalAttackResult:
-        # Step 1: DISARM gate
-        disarm_state_id = OfficialStateId.DISARM.value
-        if context.states.has(owner_id=actor.unit_id, state_id=disarm_state_id):
-            context.event_bus.publish(
-                event_type=EventType.ACTION_BLOCKED,
-                phase=context.current_phase,
-                round_no=context.current_round,
-                actor_id=actor.unit_id,
-                payload={
-                    "action_type": "NORMAL_ATTACK",
-                    "reason_state_id": disarm_state_id,
-                },
-            )
-            return NormalAttackResult(
-                actor.unit_id,
-                None,
-                None,
-                None,
-                normal_attack_id=normal_attack_id,
-            )
-
-        # Step 2: Fresh Target Resolution
+        # Step 1: Fresh Target Resolution
         if target_resolution is None:
             if self._target_resolution_system is not None:
                 target_resolution = self._target_resolution_system.resolve(
@@ -311,11 +318,8 @@ class NormalAttackSystem:
             resolution=resolution_result,
         )
 
-        if not combo_checkpoint_allowed:
-            return hit_result
-
         # Step 7: Pre-checkpoint synchronous lifecycle
-        # A. Assault admission seam
+        # A. Assault admission seam (runs for all physical normal attacks: NA #1 and NA #2)
         if (
             self._assault_dispatch_port is not None
             and self._future_admission_gate is not None
@@ -336,10 +340,11 @@ class NormalAttackSystem:
                     actual_target_id=actual_target_id,
                 )
 
+        if not combo_checkpoint_allowed:
+            return hit_result
+
         # B. Combo Checkpoint
         if action_scope is not None and action_scope.combo_checkpoint_state == ComboCheckpointState.NOT_REACHED:
-            action_scope.combo_checkpoint_state = ComboCheckpointState.REACHED
-
             # Checkpoint Local Gate:
             # 1. Attacker alive? (REG-CMB-05)
             if not actor.is_alive or actor.troops <= 0:
@@ -352,7 +357,11 @@ class NormalAttackSystem:
             # 3. Valid Action grant? (REG-CMB-02, REG-CMB-03)
             grant = action_scope.combo_grant
             if grant is None or not grant.is_valid(context):
+                action_scope.combo_checkpoint_state = ComboCheckpointState.BLOCKED
                 return hit_result
+
+            # Only when local gates pass: transition to REACHED
+            action_scope.combo_checkpoint_state = ComboCheckpointState.REACHED
 
             # Atomic Consume: grant -> CONSUMED, checkpoint -> CONSUMED (REG-CMB-04)
             grant.consume()
@@ -372,7 +381,7 @@ class NormalAttackSystem:
                 },
             )
 
-            # Standard can_normal_attack live gate:
+            # Standard can_normal_attack live gate for #2:
             if not actor.is_alive or actor.troops <= 0:
                 return hit_result
 
@@ -415,44 +424,18 @@ class NormalAttackSystem:
                     expected_parent_scope_identity=parent_scope,
                 )
 
-            # ONLY AFTER permit consumed: allocate NA #2 ID
+            # ONLY AFTER permit consumed: increment physical count and allocate NA #2 ID
+            action_scope.physical_normal_attack_count += 1
             na_2_id = context.id_allocator.allocate_normal_attack_id()
 
-            # Fresh live Target Resolution for #2 (REG-TGT-05, REG-TGT-06)
-            if self._target_resolution_system is not None:
-                target_res_2 = self._target_resolution_system.resolve(
-                    context,
-                    actor,
-                    normal_attack_id=na_2_id,
-                )
-            elif self._targets is not None:
-                legacy_t2 = self._targets.random_enemy(context, actor)
-                target_res_2 = (
-                    TargetResolutionResult(
-                        resolution_id=context.id_allocator.allocate_target_resolution_id(),
-                        normal_attack_id=na_2_id,
-                        intended_attack_target=legacy_t2.unit_id,
-                        post_redirect_actual_target=legacy_t2.unit_id,
-                        redirect_source=None,
-                        redirect_reason=RedirectReason.NONE,
-                    )
-                    if legacy_t2 is not None
-                    else None
-                )
-            else:
-                target_res_2 = None
-
-            if target_res_2 is None:
-                return hit_result
-
-            # Dispatch NA #2 with combo_checkpoint_allowed = False (INV-10, INV-11, INV-12)
-            action_scope.physical_normal_attack_count += 1
+            # Dispatch NA #2 with fresh target resolution and combo_checkpoint_allowed = False (INV-10, INV-11, INV-12)
+            # NA #2 will execute its own Assault seam, but cannot open another Combo checkpoint
             hit_2_result = self._execute_single_hit(
                 context=context,
                 actor=actor,
                 action_scope=action_scope,
                 normal_attack_id=na_2_id,
-                target_resolution=target_res_2,
+                target_resolution=None,
                 combo_checkpoint_allowed=False,
             )
             hit_result = dataclasses.replace(hit_result, combo_attack_result=hit_2_result)
