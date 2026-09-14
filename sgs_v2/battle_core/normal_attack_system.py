@@ -6,6 +6,7 @@ from typing import Any
 
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
 from .context import BattleContext
+from .chain_system import DamageCallbackTiming, ResolvedDamageFact
 from .damage_instance_coordinator import DamageInstanceCoordinator
 from .damage_resolution_system import DamageResolutionResult, DamageResolutionSystem
 from .damage_system import DamageRequest, DamageResult
@@ -83,6 +84,10 @@ class NormalAttackSystem:
         target_system: TargetSystem | None = None,
         damage_resolution_system: DamageResolutionSystem | None = None,
         state_runtime: Stage9StateRuntime | None = None,
+        cleave_system=None,
+        chain_system=None,
+        counter_system=None,
+        damage_callbacks=None,
     ) -> None:
         self._target_resolution_system: TargetResolutionSystem | None = None
         self._damage_instance_coordinator: DamageInstanceCoordinator | None = None
@@ -103,6 +108,10 @@ class NormalAttackSystem:
         self._finalization_coordinator = finalization_coordinator
         self._assault_dispatch_port = assault_dispatch_port
         self._state_runtime = state_runtime
+        self._cleave = cleave_system
+        self._chain = chain_system
+        self._counter = counter_system
+        self._damage_callbacks = damage_callbacks
 
     @property
     def target_system(self) -> TargetSystem | None:
@@ -302,12 +311,26 @@ class NormalAttackSystem:
             )
 
         # Step 6: Dispatch via Stage9 DamageInstanceCoordinator
+        resolved_facts = []
+        deferred_chain = []
+
+        def on_resolved(ctx, fact):
+            resolved_facts.append(fact)
+            if self._damage_callbacks is not None:
+                timing = DamageCallbackTiming.INLINE
+                if self._state_runtime.get_cleave_effects(ctx, actor.unit_id):
+                    timing = DamageCallbackTiming.AFTER_CLEAVE
+                work = self._damage_callbacks.accept(ctx, fact, timing=timing)
+                if work is not None:
+                    deferred_chain.append(work)
+
         if self._damage_instance_coordinator is not None:
             execution = self._damage_instance_coordinator.execute_partitioned_damage_instance(
                 context=context,
                 request=request,
                 lineage=lineage,
                 on_calculated=on_calculated,
+                resolved_fact_consumer=on_resolved,
             )
             damage_result = execution.damage_result
             resolution_result = execution.resolution
@@ -331,6 +354,29 @@ class NormalAttackSystem:
         )
 
         # Step 7: Pre-checkpoint synchronous lifecycle
+        # Frozen P0: Cleave (with inline secondary Chain), deferred main Chain,
+        # Counter, then the existing Assault / Combo seams.
+        try:
+            if resolved_facts and self._cleave is not None:
+                self._cleave.resolve(context, resolved_facts[0])
+            while deferred_chain:
+                self._chain.execute(context, deferred_chain.pop(0))
+            if self._counter is not None and resolution_result.damage_instance_id is not None:
+                # Counter qualifies from NormalAttack received identity, including
+                # zero loss, not from positive damage or Chain eligibility.
+                fact = ResolvedDamageFact(resolution_result.damage_instance_id, actual_target_id,
+                    lineage, damage_result.damage_type, resolution_result.assigned_target_damage,
+                    resolution_result.actual_target_troop_loss)
+                if self._state_runtime.get_counter_effects(context, actual_target_id):
+                    permit = self._future_admission_gate.request_admission(
+                        FutureBranchKind.COUNTER_BATCH, str(normal_attack_id))
+                    if permit is not None:
+                        batch = self._counter.create_batch(context, fact, permit=permit)
+                        self._counter.execute(context, batch)
+        finally:
+            for pending in deferred_chain:
+                self._chain.cancel(context, pending)
+
         # A. Assault admission seam (runs for all physical normal attacks: NA #1 and NA #2)
         if (
             self._assault_dispatch_port is not None

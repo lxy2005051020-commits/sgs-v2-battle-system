@@ -7,6 +7,12 @@ from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
+from .chain_system import ChainSystem, DamageCallbackAdmissionPoint
+from .cleave_system import CleaveSystem
+from .cleave_derived_damage_system import CleaveDerivedDamageResolver
+from .counter_system import CounterSystem
+from .hit_resolution_system import HitResolutionSystem
+from .damage_rule_provider import StateDamageRuleProvider
 from .damage_instance_coordinator import DamageInstanceCoordinator
 from .damage_partition_system import DamagePartitionCoordinator
 from .damage_resolution_system import DamageResolutionSystem
@@ -49,6 +55,13 @@ class BattleSystems:
     strategy_low_damage_floor_range: tuple[int, int] = (5, 15)
 
     state_lifecycle_system: StateLifecycleSystem = field(default_factory=StateLifecycleSystem)
+    # Effect owners supply evidence-backed policies. Official Stage8 DEFER states
+    # are not silently activated by the Stage9 orchestration layer.
+    cleave_hit_rules: object | None = None
+    cleave_hit_consumption: object | None = None
+    cleave_first_aid: object | None = None
+    cleave_attacker_recovery: object | None = None
+    counter_operationality: object | None = None
 
     action_order_system: ActionOrderSystem = field(init=False)
     damage_system: DamageSystem = field(init=False)
@@ -69,6 +82,11 @@ class BattleSystems:
     assault_dispatch_port: AssaultDispatchPort = field(init=False)
     stage9_state_runtime: Stage9StateRuntime = field(init=False)
     target_resolution_system: TargetResolutionSystem = field(init=False)
+    chain_system: ChainSystem = field(init=False)
+    damage_callbacks: DamageCallbackAdmissionPoint = field(init=False)
+    cleave_derived_damage_resolver: CleaveDerivedDamageResolver = field(init=False)
+    cleave_system: CleaveSystem = field(init=False)
+    counter_system: CounterSystem = field(init=False)
 
     def __post_init__(self) -> None:
         self.action_order_system = ActionOrderSystem(self.attribute_system)
@@ -87,6 +105,7 @@ class BattleSystems:
         )
         self.stage9_state_runtime = Stage9StateRuntime(
             state_lifecycle_system=self.state_lifecycle_system,
+            counter_operationality=self.counter_operationality,
         )
         self.damage_partition_coordinator = DamagePartitionCoordinator(
             self.stage9_state_runtime,
@@ -97,16 +116,28 @@ class BattleSystems:
         self.finalization_coordinator = BattleFinalizationCoordinator(
             victory_system=self.victory_system,
         )
+        self.future_admission_gate = FutureAdmissionGate(
+            coordinator=self.finalization_coordinator,
+        )
+        self.chain_system = ChainSystem(self.stage9_state_runtime, self.future_admission_gate, self.troop_system)
+        self.damage_callbacks = DamageCallbackAdmissionPoint(self.future_admission_gate, self.chain_system, self.stage9_state_runtime)
         self.damage_instance_coordinator = DamageInstanceCoordinator(
             self.damage_system,
             self.damage_resolution_system,
             partition_coordinator=self.damage_partition_coordinator,
             direct_troop_loss_resolver=self.direct_troop_loss_resolver,
             finalization_coordinator=self.finalization_coordinator,
+            resolved_damage_callback=self.damage_callbacks.accept,
         )
-        self.future_admission_gate = FutureAdmissionGate(
-            coordinator=self.finalization_coordinator,
-        )
+        self.cleave_derived_damage_resolver = CleaveDerivedDamageResolver(
+            troops=self.troop_system, partition=self.damage_partition_coordinator,
+            direct_loss=self.direct_troop_loss_resolver, finalization=self.finalization_coordinator,
+            hit_resolution=HitResolutionSystem(), hit_rules=self.cleave_hit_rules or StateDamageRuleProvider(()),
+            damage_callbacks=self.damage_callbacks, first_aid=self.cleave_first_aid,
+            attacker_recovery=self.cleave_attacker_recovery,
+            consume_hit_prevention=self.cleave_hit_consumption)
+        self.cleave_system = CleaveSystem(self.stage9_state_runtime, self.future_admission_gate, self.cleave_derived_damage_resolver)
+        self.counter_system = CounterSystem(self.stage9_state_runtime, self.future_admission_gate, self.damage_instance_coordinator)
         self.assault_dispatch_port = AssaultDispatchPort(
             gate=self.future_admission_gate,
         )
@@ -123,6 +154,10 @@ class BattleSystems:
             finalization_coordinator=self.finalization_coordinator,
             assault_dispatch_port=self.assault_dispatch_port,
             state_runtime=self.stage9_state_runtime,
+            cleave_system=self.cleave_system,
+            chain_system=self.chain_system,
+            counter_system=self.counter_system,
+            damage_callbacks=self.damage_callbacks,
         )
         self.action_system = ActionSystem(
             normal_attack_system=self.normal_attack_system,

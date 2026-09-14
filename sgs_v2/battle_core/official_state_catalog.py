@@ -5,6 +5,9 @@ from enum import Enum
 
 from .stage9_state_params import (
     ComboStateParams,
+    CleaveStateParams,
+    ChainStateParams,
+    CounterStateParams,
     DamageShareStateParams,
     DistributionStateParams,
     GuardStateParams,
@@ -125,6 +128,9 @@ OFFICIAL_STATE_CATALOG: tuple[OfficialStateEntry, ...] = (
 
 
 _OFFICIAL_STATE_RUNTIME_PARAMS_TYPES: dict[OfficialStateId, type[StateRuntimeParams]] = {
+    OfficialStateId.CLEAVE: CleaveStateParams,
+    OfficialStateId.CHAIN_LINK: ChainStateParams,
+    OfficialStateId.COUNTERATTACK: CounterStateParams,
     OfficialStateId.TAUNT: TauntStateParams,
     OfficialStateId.GUARD: GuardStateParams,
     OfficialStateId.DAMAGE_SHARE: DamageShareStateParams,

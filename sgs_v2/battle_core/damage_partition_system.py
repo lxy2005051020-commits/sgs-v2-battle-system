@@ -162,6 +162,19 @@ class DamagePartitionCoordinator:
             raise ValueError("DamageResult.final_damage must be a non-negative int")
         target_id = damage_result.target_id
 
+        return self._plan_amount(context, damage_instance_id, target_id, dtotal)
+
+    def plan_derived(self, context, damage_instance_id, target_id, calculated_damage):
+        """Cleave's typed owner supplies an already-derived integer, never a fake Stage8 result."""
+        if not isinstance(context, BattleContext) or not isinstance(damage_instance_id, DamageInstanceId):
+            raise TypeError("Expected context and typed damage identity")
+        context.get_unit(target_id)
+        if type(calculated_damage) is not int or calculated_damage < 0:
+            raise ValueError("Derived calculated damage must be a nonnegative integer")
+        return self._plan_amount(context, damage_instance_id, target_id, calculated_damage)
+
+    def _plan_amount(self, context, damage_instance_id, target_id, dtotal):
+
         # Frozen precedence: DAMAGE_SHARE > DISTRIBUTION. A legal zero Dtotal still
         # reaches these live reads and can produce a real transaction identity.
         share = self._state_runtime.get_operational_damage_share(context, target_id)

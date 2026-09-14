@@ -5,6 +5,9 @@ from typing import TYPE_CHECKING
 from .official_state_catalog import OfficialStateId
 from .stage9_state_params import (
     ComboStateParams,
+    CleaveStateParams,
+    ChainStateParams,
+    CounterStateParams,
     DamageShareStateParams,
     DistributionStateParams,
     GuardStateParams,
@@ -36,12 +39,14 @@ class Stage9StateRuntime:
     def __init__(
         self,
         state_lifecycle_system: StateLifecycleSystem,
+        counter_operationality=None,
     ) -> None:
         if not isinstance(state_lifecycle_system, StateLifecycleSystem):
             raise TypeError(
                 f"state_lifecycle_system must be a StateLifecycleSystem, got {type(state_lifecycle_system)}"
             )
         self._lifecycle = state_lifecycle_system
+        self._counter_operationality = counter_operationality
 
     @property
     def lifecycle(self) -> StateLifecycleSystem:
@@ -88,6 +93,43 @@ class Stage9StateRuntime:
         if sharer is None or not sharer.is_alive or sharer.troops <= 0:
             return None
         return instance
+
+    def get_cleave_effects(self, context, actor_id):
+        from .skill_runtime import SkillSlot
+        instances = context.states.find(owner_id=actor_id, state_id=OfficialStateId.CLEAVE.value)
+        slots = set()
+        for instance in instances:
+            if not isinstance(instance.runtime_params, CleaveStateParams):
+                raise TypeError("CLEAVE requires CleaveStateParams")
+            if not isinstance(instance.source_skill_slot, SkillSlot):
+                raise ValueError("Cleave SKILL_SLOT_ORDER requires authoritative source_skill_slot")
+            if instance.source_skill_slot in slots:
+                raise ValueError("Duplicate Cleave skill slot is an invalid loadout")
+            slots.add(instance.source_skill_slot)
+        return tuple(sorted(instances, key=lambda item: item.source_skill_slot))
+
+    def get_operational_chain(self, context, target_id):
+        target = context.units.get(target_id)
+        if target is None or not target.is_alive:
+            return None
+        instance = self._unique_instance(context.states.find(owner_id=target_id, state_id=OfficialStateId.CHAIN_LINK.value), state_name="CHAIN", owner_id=target_id)
+        if instance is not None and not isinstance(instance.runtime_params, ChainStateParams):
+            raise TypeError("CHAIN requires ChainStateParams")
+        return instance
+
+    def get_counter_effects(self, context, holder_id):
+        holder = context.units.get(holder_id)
+        if holder is None or not holder.is_alive:
+            return ()
+        instances = context.states.find(owner_id=holder_id, state_id=OfficialStateId.COUNTERATTACK.value)
+        for instance in instances:
+            if not isinstance(instance.runtime_params, CounterStateParams):
+                raise TypeError("COUNTER requires CounterStateParams")
+        if self._counter_operationality is not None:
+            instances = tuple(item for item in instances if self._counter_operationality(context, item))
+        # Stable registration for sources without a slot is Counter's isolated
+        # PROJECT_DETERMINISTIC_DEFAULT; not empirically proven / not official order.
+        return tuple(sorted(instances, key=lambda item: (item.source_skill_slot is None, item.source_skill_slot if item.source_skill_slot is not None else 0)))
 
     def get_operational_distribution(
         self,
@@ -295,4 +337,3 @@ class Stage9StateRuntime:
             is_suppressed=is_suppressed,
         )
         return self._lifecycle.update_runtime_params(context, instance_id, new_params)
-

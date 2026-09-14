@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 from typing import Any, TYPE_CHECKING
 
 from .enums import BattleEndReason
@@ -10,7 +11,7 @@ from .execution_right_system import (
     LegacyFinalizationBarrier,
     _forbid_ordering,
 )
-from .operation_identity import ActionId, DamageInstanceId, FinalizationId, OperationIdAllocator
+from .operation_identity import ActionId, DamageInstanceId, FinalizationId, OperationIdAllocator, CleaveEffectId, ChainTraversalId, ReactionBatchId
 from .victory_system import VictorySystem
 
 if TYPE_CHECKING:
@@ -128,6 +129,20 @@ class ActionScopeAdmissionRecord:
     primary_normal_attack_executed: bool = False
 
 
+class ReactionOperationState(str, Enum):
+    ADMITTED = "ADMITTED"
+    EXECUTING = "EXECUTING"
+    COMPLETED = "COMPLETED"
+
+
+@dataclass(slots=True)
+class _ReactionAdmissionRecord:
+    owning_context: Any
+    operation_id: CleaveEffectId | ChainTraversalId | ReactionBatchId
+    capability: Any
+    state: ReactionOperationState = ReactionOperationState.ADMITTED
+
+
 class BattleFinalizationCoordinator:
     """Unique semantic owner of battle termination and finalization.
 
@@ -156,6 +171,7 @@ class BattleFinalizationCoordinator:
         self._projection_claimed: bool = False
         self._projection_consumed: bool = False
         self._active_damage_instances: dict[DamageInstanceId, None] = {}
+        self._reaction_records: dict[Any, _ReactionAdmissionRecord] = {}
         self._action_scope_records: dict[ActionId, ActionScopeAdmissionRecord] = {}
         self._latched_winner_team_id: str | None = None
         self._latched_reason: BattleEndReason | None = None
@@ -214,7 +230,58 @@ class BattleFinalizationCoordinator:
 
     @property
     def has_admitted_work(self) -> bool:
-        return bool(self._active_damage_instances or self.active_action_scope_ids)
+        return bool(self._active_damage_instances or self.active_action_scope_ids or self._reaction_records)
+
+    def _register_reaction(self, context, operation_id, capability) -> None:
+        """Called only by permit-consuming mechanism factories, never by ID alone."""
+        self._validate_context(context)
+        if not isinstance(operation_id, (CleaveEffectId, ChainTraversalId, ReactionBatchId)):
+            raise TypeError("Expected a typed reaction operation identity")
+        if self.is_latched_or_finalized or operation_id in self._reaction_records:
+            raise RuntimeError("Reaction cannot be newly admitted or replayed")
+        self._bind_or_validate_context(context)
+        self._reaction_records[operation_id] = _ReactionAdmissionRecord(context, operation_id, capability)
+
+    def validate_reaction(self, context, operation_id, capability, *, executing=False):
+        self._validate_context(context)
+        record = self._reaction_records.get(operation_id)
+        if record is None or record.capability is not capability or record.owning_context is not context:
+            raise ValueError("Unknown, completed, forged, or foreign reaction capability")
+        if executing and record.state is not ReactionOperationState.EXECUTING:
+            raise RuntimeError("Reaction is not executing")
+        return record.state
+
+    def start_reaction(self, context, operation_id, capability) -> None:
+        state = self.validate_reaction(context, operation_id, capability)
+        if state is not ReactionOperationState.ADMITTED:
+            raise RuntimeError("Reaction execution is one-shot")
+        self._reaction_records[operation_id].state = ReactionOperationState.EXECUTING
+
+    def complete_reaction(self, context, operation_id, capability) -> None:
+        self.validate_reaction(context, operation_id, capability)
+        record = self._reaction_records.pop(operation_id)
+        record.state = ReactionOperationState.COMPLETED
+        if self.is_latched_or_finalized and not self.has_admitted_work:
+            self._finalize(context)
+
+    def observe_reaction_death(self, context, operation_id, capability) -> None:
+        self.validate_reaction(context, operation_id, capability, executing=True)
+        if self.is_latched_or_finalized:
+            return
+        result = self._victory_system.check(context)
+        if result is not None:
+            self._latch_victory(result)
+            self._termination_state = BattleTerminationState.DRAINING_ADMITTED_WORK
+            self._refresh_latched_record()
+
+    def admit_reaction_local_damage(self, context, damage_instance_id, operation_id, capability) -> None:
+        """Existing admitted work may start a local damage microstep after latch."""
+        self.validate_reaction(context, operation_id, capability, executing=True)
+        if not isinstance(damage_instance_id, DamageInstanceId):
+            raise TypeError("damage_instance_id must be DamageInstanceId")
+        if damage_instance_id in self._active_damage_instances:
+            raise ValueError("DamageInstance already admitted")
+        self._active_damage_instances[damage_instance_id] = None
 
     @property
     def is_latched_or_finalized(self) -> bool:

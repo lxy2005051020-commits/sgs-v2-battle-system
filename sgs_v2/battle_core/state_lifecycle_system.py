@@ -147,6 +147,15 @@ class StateLifecycleSystem:
         # inside the sole state mutation owner and does not create a stacking framework.
         self._apply_partition_precedence(context, state_id=state_id, owner_id=owner_id)
 
+        # Phase 9.7 source-bound coexistence / refresh and Chain single-instance
+        # replacement. Physical mutation remains with this lifecycle owner.
+        if state_id in (OfficialStateId.CLEAVE.value, OfficialStateId.COUNTERATTACK.value, OfficialStateId.CHAIN_LINK.value):
+            for existing in context.states.find(owner_id=owner_id, state_id=state_id):
+                if state_id == OfficialStateId.CHAIN_LINK.value or (
+                    existing.source_id == source_id and existing.source_skill_id == source_skill_id
+                ):
+                    self.remove(context, existing.instance_id)
+
         instance = StateInstance(
             instance_id=context.states.next_instance_id(),
             state_id=state_id,

@@ -6,6 +6,7 @@ from typing import Any, Callable, TYPE_CHECKING
 
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
 from .context import BattleContext
+from .chain_system import ResolvedDamageFact
 from .damage_partition_system import (
     DamagePartitionCoordinator,
     DamagePartitionPlan,
@@ -28,6 +29,7 @@ from .direct_troop_loss_system import (
 from .enums import DamageSourceType
 from .execution_right_system import DamageSettlementPermit
 from .operation_identity import (
+    ReactionBatchId,
     DamageInstanceId,
     OperationIdAllocator,
     OperationLineage,
@@ -104,6 +106,7 @@ class DamageInstanceCoordinator:
         direct_troop_loss_resolver: DirectTroopLossResolver | None = None,
         finalization_coordinator: BattleFinalizationCoordinator | None = None,
         id_allocator: OperationIdAllocator | None = None,
+        resolved_damage_callback=None,
     ) -> None:
         if not isinstance(damage_system, DamageSystem):
             raise TypeError(
@@ -131,6 +134,7 @@ class DamageInstanceCoordinator:
         self._direct_loss = direct_troop_loss_resolver
         self._finalization = finalization_coordinator
         self._id_allocator = id_allocator
+        self._resolved_damage_callback = resolved_damage_callback
         self._active_instances: dict[tuple[int, DamageInstanceId], _ActiveDamageInstanceRecord] = {}
         self._permits: dict[tuple[int, str], _PermitRecord] = {}
         self._damage_resolution.bind_coordinator(self)
@@ -412,6 +416,8 @@ class DamageInstanceCoordinator:
         lineage: OperationLineage,
         *,
         on_calculated: Callable[[DamageResult], None] | None = None,
+        resolved_fact_consumer=None,
+        admitted_reaction=None,
     ) -> DamageInstanceExecution:
         """Full Phase 9.5 transaction used by production DamageEffect."""
         if self._partition is None or self._direct_loss is None or self._finalization is None:
@@ -423,10 +429,30 @@ class DamageInstanceCoordinator:
         if not isinstance(lineage, OperationLineage):
             raise TypeError(f"lineage must be OperationLineage, got {type(lineage)}")
 
+        if admitted_reaction is not None:
+            if (not isinstance(admitted_reaction[0], ReactionBatchId)
+                    or lineage.source_type is not SourceType.COUNTER
+                    or request.source_type is not DamageSourceType.COUNTER):
+                raise ValueError("Only an admitted Counter batch can extend standard local damage")
+            self._finalization.validate_reaction(context, *admitted_reaction, executing=True)
+
+        def finish(execution):
+            # Forward a resolved fact only. No state lookup, Chain rule, or permit logic.
+            callback = resolved_fact_consumer if resolved_fact_consumer is not None else self._resolved_damage_callback
+            if callback is not None and not execution.damage_result.prevented:
+                callback(context, ResolvedDamageFact(execution.damage_instance_id,
+                    execution.damage_result.target_id, lineage, execution.damage_result.damage_type,
+                    execution.resolution.assigned_target_damage,
+                    execution.resolution.actual_target_troop_loss))
+            return execution
+
         damage_instance_id = self.begin_damage_instance(context, lineage)
         finalization_admitted = False
         try:
-            self._finalization.admit_damage_instance(context, damage_instance_id)
+            if admitted_reaction is None:
+                self._finalization.admit_damage_instance(context, damage_instance_id)
+            else:
+                self._finalization.admit_reaction_local_damage(context, damage_instance_id, *admitted_reaction)
             finalization_admitted = True
             damage_result = self._damage_system.calculate(context, request)
             if on_calculated is not None:
@@ -442,14 +468,14 @@ class DamageInstanceCoordinator:
                     assigned_target_damage=0,
                     permit=permit,
                 )
-                return DamageInstanceExecution(
+                return finish(DamageInstanceExecution(
                     damage_instance_id=damage_instance_id,
                     damage_result=damage_result,
                     resolution=resolution,
                     partition_plan=None,
                     partition_status=PartitionExecutionStatus.NONE,
                     direct_losses=(),
-                )
+                ))
 
             plan = self._partition.plan(context, damage_instance_id, damage_result)
             permit = self.issue_settlement_permit(damage_instance_id, lineage, context)
@@ -466,14 +492,14 @@ class DamageInstanceCoordinator:
                 )
                 self._observe_target_death(context, damage_instance_id, resolution)
                 if resolution.target_defeated:
-                    return DamageInstanceExecution(
+                    return finish(DamageInstanceExecution(
                         damage_instance_id=damage_instance_id,
                         damage_result=damage_result,
                         resolution=resolution,
                         partition_plan=plan,
                         partition_status=PartitionExecutionStatus.TARGET_DEATH_INTERRUPT,
                         direct_losses=(),
-                    )
+                    ))
 
                 sharer = context.units.get(plan.sharer_id)
                 if sharer is not None and sharer.is_alive and sharer.troops > 0:
@@ -490,14 +516,14 @@ class DamageInstanceCoordinator:
                         self._finalization.observe_damage_instance_death(
                             context, damage_instance_id
                         )
-                return DamageInstanceExecution(
+                return finish(DamageInstanceExecution(
                     damage_instance_id=damage_instance_id,
                     damage_result=damage_result,
                     resolution=resolution,
                     partition_plan=plan,
                     partition_status=PartitionExecutionStatus.COMPLETED,
                     direct_losses=tuple(direct_losses),
-                )
+                ))
 
             if isinstance(plan, DistributionTransactionPlan):
                 for participant_id in plan.participant_ids:
@@ -528,14 +554,14 @@ class DamageInstanceCoordinator:
                     permit=permit,
                 )
                 self._observe_target_death(context, damage_instance_id, resolution)
-                return DamageInstanceExecution(
+                return finish(DamageInstanceExecution(
                     damage_instance_id=damage_instance_id,
                     damage_result=damage_result,
                     resolution=resolution,
                     partition_plan=plan,
                     partition_status=PartitionExecutionStatus.COMPLETED,
                     direct_losses=tuple(direct_losses),
-                )
+                ))
 
             assert isinstance(plan, NoPartitionPlan)
             resolution = self._settle_target(
@@ -547,14 +573,14 @@ class DamageInstanceCoordinator:
                 permit=permit,
             )
             self._observe_target_death(context, damage_instance_id, resolution)
-            return DamageInstanceExecution(
+            return finish(DamageInstanceExecution(
                 damage_instance_id=damage_instance_id,
                 damage_result=damage_result,
                 resolution=resolution,
                 partition_plan=plan,
                 partition_status=PartitionExecutionStatus.NONE,
                 direct_losses=(),
-            )
+            ))
         finally:
             self.close_damage_instance(damage_instance_id, context)
             if finalization_admitted:
