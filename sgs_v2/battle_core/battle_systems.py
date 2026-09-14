@@ -6,23 +6,25 @@ from dataclasses import dataclass, field
 from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
+from .battle_finalization_coordinator import BattleFinalizationCoordinator
+from .damage_instance_coordinator import DamageInstanceCoordinator
+from .damage_partition_system import DamagePartitionCoordinator
 from .damage_resolution_system import DamageResolutionSystem
 from .damage_system import DamageSystem
+from .direct_troop_loss_system import DirectTroopLossResolver
 from .effect_executor import EffectExecutor
+from .execution_right_system import FutureAdmissionGate, LegacyActionDispatchAdapter
 from .normal_attack_system import NormalAttackSystem
 from .recovery_system import RecoverySystem
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
+from .stage9_state_runtime import Stage9StateRuntime
 from .state_lifecycle_system import StateLifecycleSystem
+from .target_resolution_system import TargetResolutionSystem
 from .target_system import TargetSystem
 from .trigger_system import TriggerSystem
 from .troop_system import TroopSystem
 from .victory_system import VictorySystem
-from .battle_finalization_coordinator import BattleFinalizationCoordinator
-from .damage_instance_coordinator import DamageInstanceCoordinator
-from .execution_right_system import FutureAdmissionGate, LegacyActionDispatchAdapter
-from .stage9_state_runtime import Stage9StateRuntime
-from .target_resolution_system import TargetResolutionSystem
 
 
 @dataclass(slots=True)
@@ -42,14 +44,14 @@ class BattleSystems:
     strategy_random_percent_range: tuple[int, int] = (86, 94)
     strategy_low_damage_floor_range: tuple[int, int] = (5, 15)
 
-    state_lifecycle_system: StateLifecycleSystem = field(
-        default_factory=StateLifecycleSystem
-    )
+    state_lifecycle_system: StateLifecycleSystem = field(default_factory=StateLifecycleSystem)
 
     action_order_system: ActionOrderSystem = field(init=False)
     damage_system: DamageSystem = field(init=False)
     damage_resolution_system: DamageResolutionSystem = field(init=False)
     damage_instance_coordinator: DamageInstanceCoordinator = field(init=False)
+    damage_partition_coordinator: DamagePartitionCoordinator = field(init=False)
+    direct_troop_loss_resolver: DirectTroopLossResolver = field(init=False)
     normal_attack_system: NormalAttackSystem = field(init=False)
     action_system: ActionSystem = field(init=False)
     recovery_system: RecoverySystem = field(init=False)
@@ -78,9 +80,24 @@ class BattleSystems:
             self.damage_system,
             self.troop_system,
         )
+        self.stage9_state_runtime = Stage9StateRuntime(
+            state_lifecycle_system=self.state_lifecycle_system,
+        )
+        self.damage_partition_coordinator = DamagePartitionCoordinator(
+            self.stage9_state_runtime,
+        )
+        self.direct_troop_loss_resolver = DirectTroopLossResolver(
+            self.troop_system,
+        )
+        self.finalization_coordinator = BattleFinalizationCoordinator(
+            victory_system=self.victory_system,
+        )
         self.damage_instance_coordinator = DamageInstanceCoordinator(
             self.damage_system,
             self.damage_resolution_system,
+            partition_coordinator=self.damage_partition_coordinator,
+            direct_troop_loss_resolver=self.direct_troop_loss_resolver,
+            finalization_coordinator=self.finalization_coordinator,
         )
         self.normal_attack_system = NormalAttackSystem(
             self.target_system,
@@ -88,6 +105,10 @@ class BattleSystems:
         )
         self.action_system = ActionSystem(self.normal_attack_system)
         self.recovery_system = RecoverySystem(self.troop_system)
+
+        # Phase 9.5 Cutover Gate: this branch intentionally remains on the legacy
+        # DamageEffect router until partition/direct-loss/finalization infrastructure
+        # and producer coverage tests are green. EffectExecutor is switched LAST.
         self.effect_executor = EffectExecutor(
             self.damage_resolution_system,
             self.state_lifecycle_system,
@@ -99,18 +120,12 @@ class BattleSystems:
             self.trigger_system,
             self.effect_executor,
         )
-        self.finalization_coordinator = BattleFinalizationCoordinator(
-            victory_system=self.victory_system,
-        )
         self.future_admission_gate = FutureAdmissionGate(
             coordinator=self.finalization_coordinator,
         )
         self.legacy_action_dispatch_adapter = LegacyActionDispatchAdapter(
             action_system=lambda: self.action_system,
             gate=self.future_admission_gate,
-        )
-        self.stage9_state_runtime = Stage9StateRuntime(
-            state_lifecycle_system=self.state_lifecycle_system,
         )
         self.target_resolution_system = TargetResolutionSystem(
             self.target_system,
