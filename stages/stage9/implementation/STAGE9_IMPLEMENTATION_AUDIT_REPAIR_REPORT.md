@@ -12,8 +12,10 @@
 - **State Mechanics Authority**: `15ed915435f328a6ecd8f488d98b5b9e13c913b5`
 - **Audit Gap Closure Status**:
   - `P98-B01..B04`: CLOSED
-  - `P98-M01`: required documentation correction
+  - `P98-M01`: CLOSED (implementation audit lineage corrected in commit `3723c29a4a56725ba88ce37be2a5b31c21afbc33`)
+  - `P98-M02`: CLOSED (test evidence names aligned verbatim with actual test definitions)
 - **Stage9 Implementation Audit Repair Gate**: PASS
+- **Documentation Evidence Closure Gate**: PASS
 - **Stage9 Implementation Re-Audit**: PENDING
 - **Stage9 Final Freeze**: NOT AUTHORIZED
 
@@ -23,11 +25,12 @@
 
 | Audit Gap ID | Category | Initial Failure Cause | Applied Engineering Resolution | Test Verification |
 | :--- | :--- | :--- | :--- | :--- |
-| **P98-B01** | Architecture Dependency Cycle | Top-level-only import scan masked real runtime dependency cycle between `execution_right_system.py` and `battle_finalization_coordinator.py`. | Defined `FinalizationCoordinatorContract(Protocol)` in `sgs_v2/battle_core/execution_right_system.py` to break the direct runtime dependency on `BattleFinalizationCoordinator`. Implemented recursive AST runtime import walker scanning all 64 modules in `sgs_v2/battle_core/` (excluding `if TYPE_CHECKING:`). Cycle count = 0 across all 64 modules. | `test_arch_09_production_import_graph_has_zero_cycles`, `test_arch_09_execution_right_system_and_coordinator_dependency_direction` |
+| **P98-B01** | Architecture Dependency Cycle | Top-level-only import scan masked real runtime dependency cycle between `execution_right_system.py` and `battle_finalization_coordinator.py`. | Defined `FinalizationCoordinatorContract(Protocol)` in `sgs_v2/battle_core/execution_right_system.py` to break the direct runtime dependency on `BattleFinalizationCoordinator`. Implemented recursive AST runtime import walker scanning all 64 modules in `sgs_v2/battle_core/` (excluding `if TYPE_CHECKING:`). Cycle count = 0 across all 64 modules. | `test_arch_09_production_full_import_graph_has_zero_cycles`, `test_arch_09_regression_execution_right_and_coordinator_no_cycle`, `test_arch_09_battlesystems_is_sole_composition_root`, `test_arch_09_no_service_self_construction`, `test_arch_09_context_is_not_service_locator` |
 | **P98-B02** | Golden Trace Integrity | Golden traces did not assert the operation identities or production ordering they claimed to prove; used loose mocks and lacked authentic pipeline execution. | Rebuilt all 3 golden traces with spies instrumented directly on production services (`damage_instance_coordinator.execute_partitioned_damage_instance`, `cleave_system.execute`, `chain_system.execute`, `counter_system.execute`). Asserted all 10 distinct typed operation identities and parentage hierarchy in Trace 1; asserted distinct NA IDs, same ActionId, and atomic consume ceiling in Trace 2; executed authentic `BattleEngine.run()` in Trace 3, verifying event sequence and exact-once projection claim and consumption. | `test_golden_trace_1_full_action_reaction_pipeline_identities`, `test_golden_trace_2_combo_second_attack_identities_and_caps`, `test_golden_trace_3_finalization_ordering_and_draining`, `test_golden_trace_3_distinction_death_fact_victory_latched_finalized` |
 | **P98-B03** | Finalization Contract Alignment | Full integration test suite `FINAL_01..06` fixtures diverged from `STAGE9_REGRESSION_CONTRACTS.md` text. | Completely rebuilt all 6 finalization fixtures strictly according to the contractual text: `FINAL_01` (chain commander death on step 1 latches victory, step 2 continues to deputy, drains traversal, blocks future admission, then finalizes); `FINAL_02` (admitted batch `[C1, C2]`, C1 kills commander attacker, C2 executes dead-target zero-loss terminal, batch drains, then finalizes); `FINAL_03` (NA #1 kills commander, victory latches, Combo #2 denied admission, no second target resolution created, drains, then finalizes); `FINAL_04` (cleave secondary 1 kills commander, current effect drains secondary 2, unadmitted second CleaveEffect blocked, then finalizes); `FINAL_05` (share target is commander, lethal Dtarget triggers `TARGET_DEATH_INTERRUPT`, sharer commits 0 loss, transaction drains, then finalizes); `FINAL_06` (commander is Distribution participant and dies during participant loss commit, drains fixed plan without repartition under `PROJECT_RUNTIME_DEFAULT`, then finalizes). | `test_final_01_chain_commander_death_drains_traversal_then_finalizes`, `test_final_02_counter_admitted_sibling_drains_then_finalizes`, `test_final_03_combo_battle_end_blocks_second_attack`, `test_final_04_cleave_commander_secondary_drains_current_effect`, `test_final_05_share_commander_target_death_interrupt`, `test_final_06_distribution_commander_participant_death_project_runtime_default` |
 | **P98-B04** | Regression & Architecture Depth | Shallow integration mappings weakened guarantees (`REG-TGT-01`, `REG-TGT-06`, `REG-CHN-01..04`, `REG-SHR-03`, `REG-DST-04`, `ARCH-01..12`). | Strengthened all listed regression tests with authentic coordinator transactions and deep state assertions: `REG-TGT-01` verifies Taunt remains physically ACTIVE in `StateRegistry`; `REG-TGT-06` verifies lethal protector death on Hit 1 redirects to protector while Hit 2 re-evaluates live world and hits original target directly; `REG-CHN-01` verifies live 30% ratio (150 damage) and attribution; `REG-CHN-02` verifies dynamic linking during traversal and no revisit; `REG-CHN-03` verifies commander death drains traversal; `REG-CHN-04` verifies restricted settlement (396 * 28.28% = 111 FLOOR, no callbacks); `REG-SHR-03` and `REG-DST-04` verify `AttributedDirectTroopLoss` type, exact amounts, and no HitResolution/callbacks. Strengthened ARCH tests with cross-gate permit rejection, AST comparator leakage scan across all `sorted/min/max/sort`, relational operator rejection on permits and IDs, duplicate slot rejection in `LoadedSkillSet`, invalid domain slot rejection. | `TestTargetArbitrationAndIdentityInvariants`, `TestChainTraversalAndInvariants`, `TestDamageShareAndInvariants`, `TestDistributionAndInvariants`, `test_stage9_phase_9_8_architecture.py` |
 | **P98-M01** | Documentation Alignment | Implementation reports required update to document audit fail history, correct parent commit, and full audit repair report. | Updated `STAGE9_PHASE_9_8_IMPLEMENTATION_REPORT.md` (corrected parent commit to `214d19e07fec1144e3b3eb4e8d0948c4c0df5966`, cleaned formatting, added audit FAIL history reference). Created `STAGE9_IMPLEMENTATION_AUDIT_REPAIR_REPORT.md` containing full audit matrix and verification evidence. | `stages/stage9/implementation/STAGE9_PHASE_9_8_IMPLEMENTATION_REPORT.md`, `stages/stage9/implementation/STAGE9_IMPLEMENTATION_AUDIT_REPAIR_REPORT.md` |
+| **P98-M02** | Test Reference Verbatim Alignment | Audit reports previously contained draft test names for ARCH-09 and ARCH-12 that diverged from implemented test names in the test suite. | Automated AST verification scan performed across all test files. Verified 100% of referenced tests exist verbatim in `tests/test_stage9_phase_9_8_architecture.py`. Updated reports with exact symbol names. | `test_arch_09_production_full_import_graph_has_zero_cycles`, `test_arch_09_regression_execution_right_and_coordinator_no_cycle`, `test_arch_12_skill_slot_invalid_domain_value_rejected`, `test_arch_12_duplicate_slot_in_unit_runtime_loadout_rejected` |
 
 ---
 
@@ -102,19 +105,19 @@ All 42 invariants defined in `STAGE9_TYPED_RUNTIME_CONTRACTS.md` are directly ve
 | Guarantee | Description | Tests | Status |
 | :--- | :--- | :--- | :---: |
 | **ARCH-01** | Stage8 import / semantic inversion blocked | 2 tests | **PASS** |
-| **ARCH-02** | FutureAdmissionGate no bypass; all 6 branches permit-gated; cross-gate mismatch rejected | 3 tests | **PASS** |
+| **ARCH-02** | FutureAdmissionGate no bypass; all 6 branches permit-gated; cross-gate mismatch rejected | 8 tests (3 functions, 1 parametrized across 6 branch kinds) | **PASS** |
 | **ARCH-03** | Finalization semantic writer single | 2 tests | **PASS** |
 | **ARCH-04** | Finalization projection claimed and consumed exactly once | 2 tests | **PASS** |
 | **ARCH-05** | Operation IDs never gameplay comparator; AST scan across all `sorted/min/max/sort`; relational operators blocked | 2 tests | **PASS** |
 | **ARCH-06** | StateRegistry sole physical state storage | 1 test | **PASS** |
 | **ARCH-07** | StateLifecycleSystem sole mutation owner | 1 test | **PASS** |
 | **ARCH-08** | EventBus facts-only; 0 event subscribers during combat execution | 1 test | **PASS** |
-| **ARCH-09** | BattleSystems sole composition root; 0 runtime cycles across all 64 modules; dependency direction decoupled | 3 tests | **PASS** |
-| **ARCH-10** | Damage settlement one-shot and authentic; duplicate permit replay rejected | 2 tests | **PASS** |
+| **ARCH-09** | BattleSystems sole composition root; 0 runtime cycles across all 64 modules; dependency direction decoupled | 5 tests | **PASS** |
+| **ARCH-10** | Damage settlement one-shot and authentic; duplicate permit replay rejected | 1 test | **PASS** |
 | **ARCH-11** | EffectExecutor DamageEffect source coverage 100%; constructors classified with authoritative EffectSourceRef | 2 tests | **PASS** |
-| **ARCH-12** | SkillSlot domain and loadout binding; invalid domain values and duplicates rejected | 3 tests | **PASS** |
+| **ARCH-12** | SkillSlot domain and loadout binding; invalid domain values and duplicates rejected | 4 tests | **PASS** |
 
-Total Architecture Tests: **31 / 31 PASS** in `tests/test_stage9_phase_9_8_architecture.py`.
+Total Architecture Tests: **31 / 31 PASS** in `tests/test_stage9_phase_9_8_architecture.py` (26 test functions, 31 collected test cases).
 
 ---
 
@@ -142,6 +145,7 @@ Production demo:       PASS (Exit code 0)
 Prompt authority blob: 835206ba39ce64c42a822a7138afeee307e0a492 (UNTOUCHED)
 
 Stage9 Implementation Audit Repair Gate: PASS
-Stage9 Implementation Re-Audit: PENDING
+Documentation Evidence Closure Gate: PASS
+Stage9 Implementation Final Re-Audit: PENDING
 Stage9 Final Freeze: NOT AUTHORIZED (Execution halted at boundary)
 ```

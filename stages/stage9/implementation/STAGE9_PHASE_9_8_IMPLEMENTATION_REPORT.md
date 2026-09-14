@@ -48,10 +48,10 @@
 | **ARCH-06** | StateRegistry sole physical state storage; no secondary state container | `test_arch_06_ast_scan_no_duplicate_physical_state_collections` | **PASS** |
 | **ARCH-07** | StateLifecycleSystem sole mutation owner; no direct states.add/remove/replace outside lifecycle system | `test_arch_07_ast_scan_state_registry_mutations_only_in_lifecycle_system` | **PASS** |
 | **ARCH-08** | EventBus facts-only; combat actions and reaction pipelines execute to completion with 0 EventBus subscribers | `test_arch_08_combat_action_completes_with_zero_eventbus_subscribers` | **PASS** |
-| **ARCH-09** | BattleSystems sole composition root; production import graph has 0 cycles across all 64 modules | `test_arch_09_production_import_graph_has_zero_cycles`, `test_arch_09_battlesystems_is_sole_composition_root`, `test_arch_09_execution_right_system_and_coordinator_dependency_direction` | **PASS** |
+| **ARCH-09** | BattleSystems sole composition root; production import graph has 0 cycles across all 64 modules | `test_arch_09_production_full_import_graph_has_zero_cycles`, `test_arch_09_regression_execution_right_and_coordinator_no_cycle`, `test_arch_09_battlesystems_is_sole_composition_root`, `test_arch_09_no_service_self_construction`, `test_arch_09_context_is_not_service_locator` | **PASS** |
 | **ARCH-10** | Damage settlement one-shot and authentic; duplicate settlement permit replay rejected with ValueError | `test_arch_10_settlement_permit_authenticity_and_replay_protection` | **PASS** |
 | **ARCH-11** | EffectExecutor DamageEffect source coverage 100%; constructors classified with authoritative EffectSourceRef | `test_arch_11_production_damage_effect_constructors_are_100_percent_classified`, `test_arch_11_effect_executor_rejects_damage_effect_without_source_ref` | **PASS** |
-| **ARCH-12** | source_skill_slot ingress and immutability; typed domain binding enforced | `test_arch_12_skill_slot_domain_and_loadout_binding`, `test_arch_12_cleave_requires_valid_slot_or_raises_domain_error`, `test_arch_12_skill_slot_rejects_invalid_values` | **PASS** |
+| **ARCH-12** | source_skill_slot ingress and immutability; typed domain binding enforced | `test_arch_12_skill_slot_domain_and_loadout_binding`, `test_arch_12_cleave_requires_valid_slot_or_raises_domain_error`, `test_arch_12_skill_slot_invalid_domain_value_rejected`, `test_arch_12_duplicate_slot_in_unit_runtime_loadout_rejected` | **PASS** |
 
 ---
 
@@ -116,7 +116,8 @@ Production stub/TODO dependency: 0
 Gameplay semantic changes: 0
 Engineering defaults added: 0
 Empirical claims added: 0
-
 Implementation Audit Status: REPAIRED / ALL GAPS CLOSED
+Documentation Evidence Closure Gate: PASS
+Stage9 Implementation Final Re-Audit: PENDING
 Stage9 Final Freeze: NOT AUTHORIZED
 ```
