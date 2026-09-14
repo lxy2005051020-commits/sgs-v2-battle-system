@@ -10,24 +10,16 @@ from .execution_right_system import (
     LegacyFinalizationBarrier,
     _forbid_ordering,
 )
-from .operation_identity import FinalizationId, OperationIdAllocator
+from .operation_identity import DamageInstanceId, FinalizationId, OperationIdAllocator
 from .victory_system import VictorySystem
 
 if TYPE_CHECKING:
-    from .context import BattleContext
+    from .context import BattleContext, BattleResult
 
 
 @dataclass(frozen=True, slots=True, order=False)
 class FinalizationResult:
-    """
-    Frozen deep-immutable representation of battle finalization outcome.
-
-    Invariants:
-    - Deep immutable value type.
-    - Does not hold live UnitRuntime or BattleContext references.
-    - final_troops_snapshot is an immutable tuple of (unit_id, troops) sorted stably by unit_id.
-    - Comparison operators (<, <=, >, >=) are explicitly rejected.
-    """
+    """Frozen deep-immutable representation of battle finalization outcome."""
 
     finalization_id: FinalizationId
     winner_team_id: str | None
@@ -125,9 +117,11 @@ class BattleTerminationRecord:
 
 
 class BattleFinalizationCoordinator:
-    """
-    Unique semantic owner of battle termination state, victory latch,
-    FinalizationResult creation, and projection permit issuance/validation.
+    """Unique semantic owner of battle termination and finalization.
+
+    Phase 9.5 adds a real admitted DamageInstance barrier. Unit death may latch
+    victory while that DamageInstance (including its local partition transaction)
+    continues to drain; finalization occurs only after the admitted instance closes.
     """
 
     def __init__(
@@ -148,6 +142,9 @@ class BattleFinalizationCoordinator:
         self._projection_permit: FinalizationProjectionPermit | None = None
         self._projection_claimed: bool = False
         self._projection_consumed: bool = False
+        self._active_damage_instances: dict[DamageInstanceId, None] = {}
+        self._latched_winner_team_id: str | None = None
+        self._latched_reason: BattleEndReason | None = None
 
     @property
     def victory_system(self) -> VictorySystem:
@@ -170,12 +167,77 @@ class BattleFinalizationCoordinator:
         return self._finalization_result
 
     @property
+    def active_damage_instance_ids(self) -> tuple[DamageInstanceId, ...]:
+        return tuple(self._active_damage_instances)
+
+    @property
     def is_latched_or_finalized(self) -> bool:
         return self._termination_state in (
             BattleTerminationState.VICTORY_LATCHED,
             BattleTerminationState.DRAINING_ADMITTED_WORK,
             BattleTerminationState.FINALIZED,
         )
+
+    def admit_damage_instance(
+        self,
+        context: BattleContext,
+        damage_instance_id: DamageInstanceId,
+    ) -> None:
+        if not isinstance(damage_instance_id, DamageInstanceId):
+            raise TypeError("damage_instance_id must be DamageInstanceId")
+        if self._termination_state != BattleTerminationState.RUNNING:
+            raise RuntimeError(
+                f"Cannot admit new DamageInstance while termination state is {self._termination_state.value}"
+            )
+        if damage_instance_id in self._active_damage_instances:
+            raise ValueError(f"DamageInstance '{damage_instance_id}' is already admitted")
+        self._active_damage_instances[damage_instance_id] = None
+
+    def observe_damage_instance_death(
+        self,
+        context: BattleContext,
+        damage_instance_id: DamageInstanceId,
+    ) -> None:
+        if damage_instance_id not in self._active_damage_instances:
+            raise ValueError(
+                f"DamageInstance '{damage_instance_id}' is not active in finalization barrier"
+            )
+        if self._termination_state == BattleTerminationState.FINALIZED:
+            return
+        if self._termination_state in (
+            BattleTerminationState.VICTORY_LATCHED,
+            BattleTerminationState.DRAINING_ADMITTED_WORK,
+        ):
+            return
+        eval_result = self._victory_system.check(context)
+        if eval_result is None:
+            return
+        self._latch_victory(eval_result)
+        if self._active_damage_instances:
+            self._termination_state = BattleTerminationState.DRAINING_ADMITTED_WORK
+            self._refresh_latched_record()
+        else:
+            self._finalize(context)
+
+    def complete_damage_instance(
+        self,
+        context: BattleContext,
+        damage_instance_id: DamageInstanceId,
+    ) -> None:
+        if damage_instance_id not in self._active_damage_instances:
+            raise ValueError(
+                f"DamageInstance '{damage_instance_id}' is not active in finalization barrier"
+            )
+        self._active_damage_instances.pop(damage_instance_id)
+        if self._termination_state in (
+            BattleTerminationState.VICTORY_LATCHED,
+            BattleTerminationState.DRAINING_ADMITTED_WORK,
+        ):
+            if self._active_damage_instances:
+                self._termination_state = BattleTerminationState.DRAINING_ADMITTED_WORK
+                self._refresh_latched_record()
+            else:
+                self._finalize(context)
 
     def observe_legacy_barrier(
         self,
@@ -186,26 +248,56 @@ class BattleFinalizationCoordinator:
             raise TypeError(
                 f"barrier must be LegacyFinalizationBarrier, got {type(barrier)}"
             )
-
-        # If already finalized, never evaluate victory or re-create result
         if self._termination_state == BattleTerminationState.FINALIZED:
+            return
+
+        if self._termination_state in (
+            BattleTerminationState.VICTORY_LATCHED,
+            BattleTerminationState.DRAINING_ADMITTED_WORK,
+        ):
+            if not self._active_damage_instances:
+                self._finalize(context)
             return
 
         if barrier == LegacyFinalizationBarrier.MAX_ROUND_SETTLED:
             eval_result = self._victory_system.resolve_max_rounds(context)
         else:
             eval_result = self._victory_system.check(context)
-
         if eval_result is None:
             return
 
-        # Victory condition satisfied -> latch victory
+        self._latch_victory(eval_result)
+        if self._active_damage_instances:
+            self._termination_state = BattleTerminationState.DRAINING_ADMITTED_WORK
+            self._refresh_latched_record()
+            return
+        self._finalize(context)
+
+    def _latch_victory(self, eval_result: BattleResult) -> None:
+        if self._termination_state != BattleTerminationState.RUNNING:
+            return
         self._termination_state = BattleTerminationState.VICTORY_LATCHED
         self._termination_generation += 1
+        self._latched_winner_team_id = eval_result.winner_team_id
+        self._latched_reason = eval_result.reason
+        self._refresh_latched_record()
 
-        # Phase 9.2: admitted Stage9 operation set is EMPTY.
-        # Immediate zero-drain transition to FINALIZED.
-        self._termination_state = BattleTerminationState.FINALIZED
+    def _refresh_latched_record(self) -> None:
+        self._termination_record = BattleTerminationRecord(
+            state=self._termination_state,
+            termination_generation=self._termination_generation,
+            winner_team_id=self._latched_winner_team_id,
+            reason=self._latched_reason,
+            finalization_id=None,
+        )
+
+    def _finalize(self, context: BattleContext) -> None:
+        if self._termination_state == BattleTerminationState.FINALIZED:
+            return
+        if self._active_damage_instances:
+            raise RuntimeError("Cannot finalize while admitted DamageInstance work remains")
+        if self._latched_reason is None:
+            raise RuntimeError("Cannot finalize without a latched victory result")
 
         alloc = getattr(context, "id_allocator", None) or self._id_allocator
         if alloc is None:
@@ -214,15 +306,14 @@ class BattleFinalizationCoordinator:
 
         finalization_id = alloc.allocate_finalization_id()
         permit_id = alloc.allocate_permit_id("prm_fin")
-
-        # Stable sort by unit_id for snapshot serialization consistency only (NOT gameplay comparator)
         sorted_units = sorted(context.units.values(), key=lambda u: u.unit_id)
         snapshot = tuple((u.unit_id, int(u.troops)) for u in sorted_units)
 
+        self._termination_state = BattleTerminationState.FINALIZED
         self._finalization_result = FinalizationResult(
             finalization_id=finalization_id,
-            winner_team_id=eval_result.winner_team_id,
-            reason=eval_result.reason,
+            winner_team_id=self._latched_winner_team_id,
+            reason=self._latched_reason,
             rounds_completed=context.current_round,
             final_troops_snapshot=snapshot,
         )
@@ -233,18 +324,14 @@ class BattleFinalizationCoordinator:
         self._termination_record = BattleTerminationRecord(
             state=self._termination_state,
             termination_generation=self._termination_generation,
-            winner_team_id=eval_result.winner_team_id,
-            reason=eval_result.reason,
+            winner_team_id=self._latched_winner_team_id,
+            reason=self._latched_reason,
             finalization_id=finalization_id,
         )
 
     def claim_finalized_projection(
         self,
     ) -> tuple[FinalizationProjectionPermit, FinalizationResult] | None:
-        """
-        Claim the finalization projection capability.
-        Returns (permit, result) exactly once on first legal claim, None on all subsequent calls.
-        """
         if self._termination_state != BattleTerminationState.FINALIZED:
             return None
         if self._projection_claimed:
@@ -258,10 +345,6 @@ class BattleFinalizationCoordinator:
         self,
         permit: FinalizationProjectionPermit,
     ) -> None:
-        """
-        Validate and consume the projection permit before compatibility side effects.
-        Raises domain/programmer error on any violation or reuse.
-        """
         if not isinstance(permit, FinalizationProjectionPermit):
             raise TypeError(
                 f"Expected FinalizationProjectionPermit, got {type(permit)}"
