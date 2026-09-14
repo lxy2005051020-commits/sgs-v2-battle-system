@@ -354,14 +354,13 @@ class NormalAttackSystem:
             if self._is_latched_or_finalized():
                 return hit_result
 
+            # Only when local gates pass: transition to REACHED
+            action_scope.combo_checkpoint_state = ComboCheckpointState.REACHED
+
             # 3. Valid Action grant? (REG-CMB-02, REG-CMB-03)
             grant = action_scope.combo_grant
             if grant is None or not grant.is_valid(context):
-                action_scope.combo_checkpoint_state = ComboCheckpointState.BLOCKED
                 return hit_result
-
-            # Only when local gates pass: transition to REACHED
-            action_scope.combo_checkpoint_state = ComboCheckpointState.REACHED
 
             # Atomic Consume: grant -> CONSUMED, checkpoint -> CONSUMED (REG-CMB-04)
             grant.consume()
@@ -408,21 +407,25 @@ class NormalAttackSystem:
                 return hit_result
 
             # FutureAdmission gate for COMBO_SECOND_NORMAL_ATTACK:
-            if self._future_admission_gate is not None:
-                parent_scope = f"combo_action_{action_scope.action_id}_actor_{actor.unit_id}"
-                permit = self._future_admission_gate.request_admission(
-                    branch_kind=FutureBranchKind.COMBO_SECOND_NORMAL_ATTACK,
-                    parent_scope_identity=parent_scope,
+            if self._future_admission_gate is None:
+                raise RuntimeError(
+                    "NormalAttackSystem requires FutureAdmissionGate to admit COMBO_SECOND_NORMAL_ATTACK"
                 )
-                if permit is None:
-                    return hit_result
 
-                # STRICT ARCHITECTURAL GATE: consume permit BEFORE allocating NA #2 ID
-                self._future_admission_gate.consume_permit(
-                    permit=permit,
-                    expected_branch_kind=FutureBranchKind.COMBO_SECOND_NORMAL_ATTACK,
-                    expected_parent_scope_identity=parent_scope,
-                )
+            parent_scope = f"combo_action_{action_scope.action_id}_actor_{actor.unit_id}"
+            permit = self._future_admission_gate.request_admission(
+                branch_kind=FutureBranchKind.COMBO_SECOND_NORMAL_ATTACK,
+                parent_scope_identity=parent_scope,
+            )
+            if permit is None:
+                return hit_result
+
+            # STRICT ARCHITECTURAL GATE: consume permit BEFORE allocating NA #2 ID
+            self._future_admission_gate.consume_permit(
+                permit=permit,
+                expected_branch_kind=FutureBranchKind.COMBO_SECOND_NORMAL_ATTACK,
+                expected_parent_scope_identity=parent_scope,
+            )
 
             # ONLY AFTER permit consumed: increment physical count and allocate NA #2 ID
             action_scope.physical_normal_attack_count += 1

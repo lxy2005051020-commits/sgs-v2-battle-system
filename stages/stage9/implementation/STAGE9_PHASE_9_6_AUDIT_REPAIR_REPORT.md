@@ -79,3 +79,20 @@
 ## Conclusion
 
 Phase 9.6 Audit Repair is complete. Working tree is verified, regression-free, and aligned with frozen specifications.
+
+---
+
+## Final Re-Audit Verdict: FAIL
+
+An independent re-audit of the Phase 9.6 audit repair commit (`13204fa2e0f78a95cb941731a595f05c29642671`) identified 3 remaining gaps:
+
+1. **FR96-B01** (ActionScope production construction & execution FutureAdmission bypass): **FAIL**
+   - Direct outside construction without FutureAdmissionPermit / coordinator capability binding was possible.
+   - Forged or mismatched scopes (context, actor, object identity, terminal state, execution replay) were not authenticated prior to execution.
+2. **FR96-B02** (Combo #2 execution when FutureAdmissionGate is absent): **FAIL**
+   - `NormalAttackSystem._execute_single_hit` silently bypassed admission gate if gate was None and executed NA #2 anyway instead of failing closed.
+3. **FR96-M01** (ComboCheckpointState transition violates frozen REACHED-before-grant-validation ordering): **FAIL**
+   - Checkpoint transitioned to BLOCKED before reaching checkpoint boundary; frozen state mechanics require REACHED upon meeting local gate conditions, remaining REACHED if grant is missing or revoked.
+
+**Final Repair Required**: Directed surgical repair authorized to close `FR96-B01`, `FR96-B02`, `FR96-M01`.
+

@@ -228,10 +228,17 @@ class BattleFinalizationCoordinator:
     def admit_action_scope(
         self,
         context: BattleContext,
-        action_id: ActionId,
+        action_scope: Any,
     ) -> None:
-        if not isinstance(action_id, ActionId):
-            raise TypeError("action_id must be ActionId")
+        from .execution_right_system import ActionScope
+        if isinstance(action_scope, ActionScope):
+            action_id = action_scope.action_id
+            scope_obj = action_scope
+        elif isinstance(action_scope, ActionId):
+            action_id = action_scope
+            scope_obj = None
+        else:
+            raise TypeError(f"action_scope must be ActionScope or ActionId, got {type(action_scope)}")
         self._validate_context(context)
         if self._termination_state != BattleTerminationState.RUNNING:
             raise RuntimeError(
@@ -240,7 +247,7 @@ class BattleFinalizationCoordinator:
         if action_id in self._active_action_scopes:
             raise ValueError(f"ActionScope '{action_id}' is already admitted")
         self._bind_or_validate_context(context)
-        self._active_action_scopes[action_id] = None
+        self._active_action_scopes[action_id] = scope_obj
 
     def complete_action_scope(
         self,
@@ -255,7 +262,10 @@ class BattleFinalizationCoordinator:
                 f"ActionScope '{action_id}' is not active in finalization barrier"
             )
         self._bind_or_validate_context(context)
-        self._active_action_scopes.pop(action_id)
+        scope_obj = self._active_action_scopes.pop(action_id)
+        if scope_obj is not None:
+            from .execution_right_system import ActionExecutionState
+            scope_obj.execution_state = ActionExecutionState.COMPLETED
         if self._termination_state in (
             BattleTerminationState.VICTORY_LATCHED,
             BattleTerminationState.DRAINING_ADMITTED_WORK,
@@ -265,6 +275,50 @@ class BattleFinalizationCoordinator:
                 self._refresh_latched_record()
             else:
                 self._finalize(context)
+
+    def validate_action_scope(
+        self,
+        context: BattleContext,
+        scope: Any,
+        expected_actor_id: str | None = None,
+    ) -> None:
+        """Validate ActionScope authenticity, context binding, actor ownership, and state."""
+        from .execution_right_system import ActionExecutionState, ActionScope
+
+        if not isinstance(scope, ActionScope):
+            raise TypeError(f"scope must be ActionScope, got {type(scope)}")
+        self._validate_context(context)
+        if scope._owning_context_id is not None and scope._owning_context_id != id(context):
+            raise ValueError(
+                f"ActionScope '{scope.action_id}' belongs to context {scope._owning_context_id}, "
+                f"not execution context {id(context)}"
+            )
+        if scope._coordinator is not self:
+            raise RuntimeError(
+                f"ActionScope '{scope.action_id}' was not admitted by this coordinator"
+            )
+        if scope.action_id not in self._active_action_scopes:
+            raise ValueError(
+                f"ActionScope '{scope.action_id}' is not active in coordinator"
+            )
+        admitted_obj = self._active_action_scopes[scope.action_id]
+        if admitted_obj is not None and admitted_obj is not scope:
+            raise ValueError(
+                f"ActionScope object identity mismatch for action_id '{scope.action_id}'"
+            )
+        if expected_actor_id is not None and scope.actor_id != expected_actor_id:
+            raise ValueError(
+                f"ActionScope actor mismatch: scope actor is '{scope.actor_id}', "
+                f"expected executing actor '{expected_actor_id}'"
+            )
+        if scope.terminal or scope.execution_state == ActionExecutionState.TERMINAL:
+            raise RuntimeError(
+                f"ActionScope '{scope.action_id}' is already terminal"
+            )
+        if scope.execution_state != ActionExecutionState.ADMITTED:
+            raise RuntimeError(
+                f"ActionScope '{scope.action_id}' has already been executed or is in state {scope.execution_state.value}"
+            )
 
     def observe_damage_instance_death(
         self,

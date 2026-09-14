@@ -373,6 +373,15 @@ class ComboActionGrant:
             self.state = ComboGrantState.REVOKED_BY_PHYSICAL_REMOVE
 
 
+class ActionExecutionState(str, Enum):
+    """Execution lifecycle state of an ActionScope."""
+
+    ADMITTED = "ADMITTED"
+    EXECUTING = "EXECUTING"
+    COMPLETED = "COMPLETED"
+    TERMINAL = "TERMINAL"
+
+
 class ComboCheckpointState(str, Enum):
     """State machine governing entry and consumption at the Combo Checkpoint boundary."""
 
@@ -397,6 +406,9 @@ class ActionScope:
     combo_checkpoint_state: ComboCheckpointState = ComboCheckpointState.NOT_REACHED
     physical_normal_attack_count: int = 0
     terminal: bool = False
+    execution_state: ActionExecutionState = ActionExecutionState.ADMITTED
+    _coordinator: Any = None
+    _owning_context_id: int | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.action_id, ActionId):
@@ -407,9 +419,14 @@ class ActionScope:
             raise TypeError(
                 f"combo_checkpoint_state must be ComboCheckpointState, got {type(self.combo_checkpoint_state)}"
             )
+        if not isinstance(self.execution_state, ActionExecutionState):
+            raise TypeError(
+                f"execution_state must be ActionExecutionState, got {type(self.execution_state)}"
+            )
 
     def mark_terminal(self) -> None:
         self.terminal = True
+        self.execution_state = ActionExecutionState.TERMINAL
 
 
 def admit_action_scope(
@@ -424,7 +441,7 @@ def admit_action_scope(
     Enforces strict architectural ordering:
     1. Validates exact issued capability and consumes NEXT_ACTION permit.
     2. ONLY AFTER successful consume: allocates ActionId from context.id_allocator.
-    3. Admits action_id into coordinator's active action scopes.
+    3. Admits action_id into coordinator's active action scopes with exact object identity.
     4. Returns admitted ActionScope.
     """
     if not isinstance(gate, FutureAdmissionGate):
@@ -446,15 +463,20 @@ def admit_action_scope(
     # Step 2: ONLY AFTER successful consume: allocate ActionId
     action_id = context.id_allocator.allocate_action_id()
 
-    # Step 3: Register in coordinator barrier
-    gate.coordinator.admit_action_scope(context, action_id)
-
-    # Step 4: Construct and return ActionScope
-    return ActionScope(
+    # Step 3: Construct ActionScope with capability bindings
+    scope = ActionScope(
         action_id=action_id,
         actor_id=actor.unit_id,
         admitted=True,
+        execution_state=ActionExecutionState.ADMITTED,
+        _coordinator=gate.coordinator,
+        _owning_context_id=id(context),
     )
+
+    # Step 4: Register exact scope object in coordinator barrier
+    gate.coordinator.admit_action_scope(context, scope)
+
+    return scope
 
 
 class AssaultDispatchPort:

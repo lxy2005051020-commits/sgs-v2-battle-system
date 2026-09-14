@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from .context import BattleContext
 from .events import EventType
-from .execution_right_system import ActionScope, ComboActionGrant, ComboGrantState
+from .execution_right_system import ActionExecutionState, ActionScope, ComboActionGrant, ComboGrantState
 from .normal_attack_system import NormalAttackResult, NormalAttackSystem
 from .official_state_catalog import OfficialStateId
 from .stage9_state_runtime import Stage9StateRuntime
@@ -29,6 +29,20 @@ class ActionSystem:
         actor: UnitRuntime,
         action_scope: ActionScope | None = None,
     ) -> NormalAttackResult | None:
+        if action_scope is not None:
+            coordinator = getattr(action_scope, "_coordinator", None)
+            if coordinator is None:
+                raise RuntimeError(
+                    f"ActionScope '{action_scope.action_id}' has no coordinator capability binding "
+                    "(must be created via admit_action_scope with authentic permit)"
+                )
+            coordinator.validate_action_scope(
+                context=context,
+                scope=action_scope,
+                expected_actor_id=actor.unit_id,
+            )
+            action_scope.execution_state = ActionExecutionState.EXECUTING
+
         if not actor.is_alive:
             return None
 

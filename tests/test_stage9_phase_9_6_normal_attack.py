@@ -40,6 +40,7 @@ from sgs_v2.battle_core.battle_finalization_coordinator import (
     BattleTerminationRecord,
 )
 from sgs_v2.battle_core.execution_right_system import (
+    ActionExecutionState,
     ActionScope,
     AssaultDispatchPort,
     BattleTerminationState,
@@ -618,9 +619,9 @@ def test_reg_cmb_02_physical_remove_revokes_unconsumed_grant() -> None:
     assert res is not None
     assert res.combo_second_attack is None
 
-    # Grant revoked, checkpoint blocked, no fact
+    # Grant revoked, checkpoint reached but unconsumed, no fact
     assert scope.combo_grant.state == ComboGrantState.REVOKED_BY_PHYSICAL_REMOVE
-    assert scope.combo_checkpoint_state == ComboCheckpointState.BLOCKED
+    assert scope.combo_checkpoint_state == ComboCheckpointState.REACHED
     assert len(combo_facts) == 0
     assert scope.physical_normal_attack_count == 1
 
@@ -1266,3 +1267,151 @@ def test_inv_39_to_42_victory_barrier_and_lineage_authority() -> None:
     )
     assert lineage.root_action_id == ActionId("act_1")
     assert lineage.source_type == SourceType.NORMAL_ATTACK
+
+
+# ============================================================================
+# Phase 9.6 Final Re-Audit Regressions: FR96-B01, FR96-B02, FR96-M01
+# ============================================================================
+
+
+def test_fr96_act_01_direct_constructed_scope_without_coordinator_rejected() -> None:
+    """FR96-ACT-01: ActionScope constructed without capability origin has no coordinator binding and is rejected."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    # Scope created directly, bypassing admit_action_scope & FutureAdmissionGate
+    forged_scope = ActionScope(
+        action_id=ActionId("act_forged"),
+        actor_id="a1",
+    )
+
+    with pytest.raises(RuntimeError, match="has no coordinator capability binding"):
+        systems.action_system.execute(context, context.get_unit("a1"), action_scope=forged_scope)
+
+
+def test_fr96_act_02_identity_mismatch_forged_scope_rejected() -> None:
+    """FR96-ACT-02: Scope with forged object identity (same action_id but not admitted object) is rejected."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    authentic_scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # Construct duplicate scope with identical attributes but different object identity
+    imposter_scope = ActionScope(
+        action_id=authentic_scope.action_id,
+        actor_id="a1",
+        execution_state=ActionExecutionState.ADMITTED,
+        _coordinator=systems.finalization_coordinator,
+        _owning_context_id=id(context),
+    )
+
+    with pytest.raises(ValueError, match="ActionScope object identity mismatch"):
+        systems.action_system.execute(context, context.get_unit("a1"), action_scope=imposter_scope)
+
+
+def test_fr96_act_03_actor_mismatch_rejected_before_side_effects() -> None:
+    """FR96-ACT-03: Scope admitted for actor A executed with actor B is rejected before any side effects."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope_a1 = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # Attempt to execute with unit b1
+    with pytest.raises(ValueError, match="ActionScope actor mismatch"):
+        systems.action_system.execute(context, context.get_unit("b1"), action_scope=scope_a1)
+
+    # Verify no execution occurred on b1
+    assert scope_a1.physical_normal_attack_count == 0
+    assert scope_a1.execution_state == ActionExecutionState.ADMITTED
+
+
+def test_fr96_act_04_execution_state_transition_prevents_replay() -> None:
+    """FR96-ACT-04: ActionScope transitions to EXECUTING upon execution; replay attempts are rejected."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+    assert scope.execution_state == ActionExecutionState.ADMITTED
+
+    # First execution succeeds and sets state to EXECUTING
+    res = systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+    assert res is not None
+    assert scope.execution_state == ActionExecutionState.EXECUTING
+
+    # Second execution of the same scope is rejected as a replay
+    with pytest.raises(RuntimeError, match="has already been executed or is in state EXECUTING"):
+        systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+
+
+def test_fr96_act_05_terminal_scope_rejected() -> None:
+    """FR96-ACT-05: ActionScope marked terminal cannot be executed."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    scope.mark_terminal()
+    assert scope.terminal is True
+    assert scope.execution_state == ActionExecutionState.TERMINAL
+
+    with pytest.raises(RuntimeError, match="is already terminal"):
+        systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+
+
+def test_fr96_cmb_01_combo_second_attack_without_gate_fails_closed() -> None:
+    """FR96-CMB-01: When FutureAdmissionGate is absent on NormalAttackSystem, Combo #2 fails closed with RuntimeError."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    # Apply Combo state to a1
+    systems.state_lifecycle_system.apply(
+        context=context,
+        state_id=OfficialStateId.COMBO.value,
+        owner_id="a1",
+        source_id="a1",
+        source_skill_id="combo_skill",
+        source_skill_slot=SkillSlot.INHERENT,
+        runtime_params=ComboStateParams(remaining_actions=1),
+    )
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # Detach gate from normal attack system
+    systems.normal_attack_system._future_admission_gate = None
+
+    # Executing NA #1 with Combo grant must fail closed when checkpoint tries to admit #2
+    with pytest.raises(RuntimeError, match="requires FutureAdmissionGate to admit COMBO_SECOND_NORMAL_ATTACK"):
+        systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+
+    # Only NA #1 was performed before the exception, physical count did not increment to 2
+    assert scope.physical_normal_attack_count == 1
+
+
+def test_fr96_cmb_02_no_grant_checkpoint_remains_reached() -> None:
+    """FR96-CMB-02: Checkpoint transitions to REACHED when local gates pass, and remains REACHED when no grant exists."""
+    context = _make_context()
+    systems = BattleSystems()
+
+    parent_scope = "round_1_actor_a1"
+    permit = systems.future_admission_gate.request_admission(FutureBranchKind.NEXT_ACTION, parent_scope)
+    scope = admit_action_scope(context, systems.future_admission_gate, permit, context.get_unit("a1"), parent_scope)
+
+    # No combo state applied -> scope.combo_grant will be None
+    res = systems.action_system.execute(context, context.get_unit("a1"), action_scope=scope)
+    assert res is not None
+    assert res.combo_second_attack is None
+
+    # Checkpoint was reached, but no grant existed to consume -> remains REACHED
+    assert scope.combo_grant is None
+    assert scope.combo_checkpoint_state == ComboCheckpointState.REACHED
+    assert scope.physical_normal_attack_count == 1
