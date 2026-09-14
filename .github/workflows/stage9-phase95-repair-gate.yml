@@ -1,0 +1,44 @@
+name: stage9-phase95-repair-gate
+
+on:
+  push:
+    branches:
+      - stage9-phase9-5-repair
+
+jobs:
+  repair-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package and test runner
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest
+
+      - name: Run Phase 9.4 DamageInstance regression
+        run: python -m pytest tests/test_stage9_phase_9_4_damage_instance.py -v
+
+      - name: Run Phase 9.5 regression files
+        run: python -m pytest tests/test_stage9_phase_9_5_infrastructure.py tests/test_stage9_phase_9_5_cutover.py -v
+
+      - name: Run full regression
+        run: python -m pytest -q | tee pytest-full.txt
+
+      - name: Run demo
+        run: python demo.py
+
+      - name: Upload repair gate results
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage9-phase95-repair-gate-${{ github.sha }}
+          path: pytest-full.txt
+          if-no-files-found: error
+          retention-days: 1
