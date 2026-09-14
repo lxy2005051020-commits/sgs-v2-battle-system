@@ -151,6 +151,13 @@ class StateLifecycleSystem:
         remains the sole physical mutation owner.
         """
         instance = context.states.get(instance_id)
+
+        # R3-M02: generic runtime parameter replacement is blocked for unauthorized state families
+        if instance.state_id not in (OfficialStateId.GUARD.value, OfficialStateId.TAUNT.value):
+            raise ValueError(
+                f"Runtime parameter maintenance is not authorized for state '{instance.state_id}' in Phase 9.3"
+            )
+
         definition = context.states.get_definition(instance.state_id)
         if not isinstance(runtime_params, definition.runtime_params_type):
             raise TypeError(
@@ -158,14 +165,32 @@ class StateLifecycleSystem:
                 f"expected {definition.runtime_params_type.__name__}, "
                 f"got {type(runtime_params).__name__}"
             )
-        if instance.state_id == OfficialStateId.GUARD.value and isinstance(runtime_params, GuardStateParams):
+
+        # R3-M01: Guard protector identity is strictly immutable across maintenance
+        if instance.state_id == OfficialStateId.GUARD.value:
+            assert isinstance(runtime_params, GuardStateParams)
+            if isinstance(instance.runtime_params, GuardStateParams):
+                if runtime_params.protector_id != instance.runtime_params.protector_id:
+                    raise ValueError(
+                        f"Guard protector_id is immutable: existing '{instance.runtime_params.protector_id}' "
+                        f"cannot be changed to '{runtime_params.protector_id}'"
+                    )
             context.get_unit(runtime_params.protector_id)
             if runtime_params.protector_id == instance.owner_id:
                 raise ValueError(
                     f"Self-guard is forbidden: protector_id '{runtime_params.protector_id}' "
                     f"cannot equal owner_id '{instance.owner_id}'"
                 )
-        if instance.state_id == OfficialStateId.TAUNT.value and isinstance(runtime_params, TauntStateParams):
+
+        # Taunt maintenance: forced target is immutable, suppressors are typed
+        if instance.state_id == OfficialStateId.TAUNT.value:
+            assert isinstance(runtime_params, TauntStateParams)
+            if isinstance(instance.runtime_params, TauntStateParams):
+                if runtime_params.taunt_target_id != instance.runtime_params.taunt_target_id:
+                    raise ValueError(
+                        f"Taunt taunt_target_id is immutable: existing '{instance.runtime_params.taunt_target_id}' "
+                        f"cannot be changed to '{runtime_params.taunt_target_id}'"
+                    )
             if (
                 runtime_params.taunt_target_id is not None
                 and runtime_params.taunt_target_id != instance.source_id
@@ -176,8 +201,7 @@ class StateLifecycleSystem:
                 )
 
         updated = dataclasses.replace(instance, runtime_params=runtime_params)
-        context.states._instances[instance_id] = updated
-        return updated
+        return context.states.replace(updated)
 
     def remove(
         self,

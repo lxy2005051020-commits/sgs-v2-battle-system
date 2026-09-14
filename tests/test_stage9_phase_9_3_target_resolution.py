@@ -6,6 +6,7 @@ from sgs_v2.battle_core import (
     BattleContext,
     BattlePhase,
     BattleSystems,
+    EmptyStateRuntimeParams,
     EventBus,
     GuardStateParams,
     LineupPosition,
@@ -874,6 +875,170 @@ class TestPhase93RepairAuthorityRegressions:
         assert result.intended_attack_target == "b1"
         assert result.post_redirect_actual_target == "b2"
         assert result.redirect_reason is RedirectReason.GUARD
+
+    def test_p93_r3_grd_01_protector_identity_immutable_across_maintenance(self) -> None:
+        """P93-R3-GRD-01: Guard protector identity is strictly immutable across maintenance."""
+        context = make_test_context()
+        context.units["b3"] = UnitRuntime(
+            "b3", "武将B3", "B", 1000, 1000, 100, 100, 80,
+            lineup_position=LineupPosition.DEPUTY_2,
+        )
+        _, state_runtime, _, lifecycle = make_system()
+
+        guard_inst = lifecycle.apply(
+            context,
+            state_id=OfficialStateId.GUARD.value,
+            owner_id="b1",
+            source_id="b2",
+            runtime_params=GuardStateParams(protector_id="b2"),
+        )
+        assert guard_inst.runtime_params.protector_id == "b2"
+
+        # Attempt to change protector from B2 to B3 -> DOMAIN ERROR (ValueError)
+        with pytest.raises(ValueError, match="Guard protector_id is immutable"):
+            lifecycle.update_runtime_params(
+                context,
+                guard_inst.instance_id,
+                GuardStateParams(protector_id="b3"),
+            )
+
+        # Original protector remains B2, physical instance unchanged
+        current = context.states.get(guard_inst.instance_id)
+        assert current.runtime_params.protector_id == "b2"
+        assert state_runtime.get_guard_protector(context, "b1", attacker_id="a1") == "b2"
+
+    def test_p93_r3_grd_02_toggle_is_disabled_preserves_protector(self) -> None:
+        """P93-R3-GRD-02: toggle is_disabled False -> True -> False preserves protector."""
+        context = make_test_context()
+        _, state_runtime, _, lifecycle = make_system()
+
+        guard_inst = lifecycle.apply(
+            context,
+            state_id=OfficialStateId.GUARD.value,
+            owner_id="b1",
+            source_id="b2",
+            runtime_params=GuardStateParams(protector_id="b2", is_disabled=False),
+        )
+        assert state_runtime.is_guard_operational(context, guard_inst) is True
+        assert state_runtime.get_guard_protector(context, "b1", attacker_id="a1") == "b2"
+
+        # Toggle to disabled
+        updated_disabled = lifecycle.update_runtime_params(
+            context,
+            guard_inst.instance_id,
+            GuardStateParams(protector_id="b2", is_disabled=True),
+        )
+        assert updated_disabled.runtime_params.protector_id == "b2"
+        assert updated_disabled.runtime_params.is_disabled is True
+        assert state_runtime.is_guard_operational(context, updated_disabled) is False
+        assert state_runtime.get_guard_protector(context, "b1", attacker_id="a1") is None
+
+        # Toggle back to enabled via state_runtime helper
+        updated_enabled = state_runtime.set_guard_disabled(
+            context,
+            guard_inst.instance_id,
+            is_disabled=False,
+        )
+        assert updated_enabled.runtime_params.protector_id == "b2"
+        assert updated_enabled.runtime_params.is_disabled is False
+        assert state_runtime.is_guard_operational(context, updated_enabled) is True
+        assert state_runtime.get_guard_protector(context, "b1", attacker_id="a1") == "b2"
+
+    def test_p93_r3_state_01_generic_runtime_mutation_unauthorized_family_rejected(self) -> None:
+        """P93-R3-STATE-01: generic runtime parameter replacement for unauthorized state family is rejected."""
+        context = make_test_context()
+        _, _, _, lifecycle = make_system()
+
+        # Apply Confusion (state without authorized Phase 9.3 runtime parameter maintenance)
+        cfs_inst = lifecycle.apply(
+            context,
+            state_id=OfficialStateId.CONFUSION.value,
+            owner_id="a1",
+            source_id="b2",
+        )
+
+        # Attempt to update runtime params via update_runtime_params -> ValueError
+        with pytest.raises(ValueError, match="Runtime parameter maintenance is not authorized"):
+            lifecycle.update_runtime_params(
+                context,
+                cfs_inst.instance_id,
+                EmptyStateRuntimeParams(),
+            )
+
+    def test_p93_r3_tnt_01_taunt_suppressors_accept_only_typed_suppression_reason(self) -> None:
+        """P93-R3-TNT-01: Taunt suppressors accept only typed/frozen SuppressionReason values."""
+        params1 = TauntStateParams(suppressors=frozenset({SuppressionReason.SOURCE_SKILL_DISABLED}))
+        assert params1.suppressors == frozenset({SuppressionReason.SOURCE_SKILL_DISABLED})
+        for item in params1.suppressors:
+            assert isinstance(item, SuppressionReason)
+
+        params2 = TauntStateParams(suppressors={"INSIGHT"})
+        assert params2.suppressors == frozenset({SuppressionReason.INSIGHT})
+        for item in params2.suppressors:
+            assert isinstance(item, SuppressionReason)
+
+        # Invalid type inside set raises TypeError
+        with pytest.raises(TypeError, match="Suppressor item must be a SuppressionReason or valid str"):
+            TauntStateParams(suppressors={123})  # type: ignore[arg-type]
+
+    def test_p93_r3_tnt_02_unknown_arbitrary_suppressor_rejected(self) -> None:
+        """P93-R3-TNT-02: unknown arbitrary suppressor string is rejected."""
+        with pytest.raises(ValueError, match="is not a valid SuppressionReason"):
+            TauntStateParams(suppressors={"whatever"})
+
+        with pytest.raises(ValueError, match="is not a valid SuppressionReason"):
+            TauntStateParams(suppressors={"DEBUG"})
+
+        with pytest.raises(ValueError, match="is not a valid SuppressionReason"):
+            TauntStateParams(suppressors={"UNKNOWN"})
+
+    def test_p93_r3_tnt_03_source_skill_disabled_suppresses_taunt_and_can_be_removed(self) -> None:
+        """P93-R3-TNT-03: SOURCE_SKILL_DISABLED -> Taunt SUPPRESSED; remove it -> ACTIVE."""
+        context = make_test_context()
+        system, state_runtime, _, lifecycle = make_system()
+
+        taunt_inst = lifecycle.apply(
+            context,
+            state_id=OfficialStateId.TAUNT.value,
+            owner_id="a1",
+            source_id="b1",
+            runtime_params=TauntStateParams(
+                taunt_target_id="b1",
+                suppressors=frozenset({SuppressionReason.SOURCE_SKILL_DISABLED}),
+            ),
+        )
+
+        # Taunt is operationally suppressed by SOURCE_SKILL_DISABLED
+        suppressors = state_runtime.get_taunt_suppressors(context, taunt_inst)
+        assert SuppressionReason.SOURCE_SKILL_DISABLED in suppressors
+        for item in suppressors:
+            assert isinstance(item, SuppressionReason)
+        assert state_runtime.get_taunt_lifecycle_state(context, taunt_inst) == TauntLifecycleState.SUPPRESSED
+        assert state_runtime.is_taunt_operational(context, taunt_inst) is False
+        assert state_runtime.get_operational_taunt(context, "a1") is None
+
+        # Targeting does not force B1
+        na_id = context.id_allocator.allocate_normal_attack_id()
+        result = system.resolve(context, "a1", normal_attack_id=na_id)
+        assert result is not None
+        assert result.intended_attack_target in {"b1", "b2"}
+
+        # Remove suppressor via maintenance helper
+        updated = state_runtime.set_taunt_suppressors(
+            context,
+            taunt_inst.instance_id,
+            suppressors=frozenset(),
+        )
+        assert state_runtime.get_taunt_suppressors(context, updated) == frozenset()
+        assert state_runtime.get_taunt_lifecycle_state(context, updated) == TauntLifecycleState.ACTIVE
+        assert state_runtime.is_taunt_operational(context, updated) is True
+        assert state_runtime.get_operational_taunt(context, "a1") == updated
+
+        # Targeting now forces B1
+        na_id2 = context.id_allocator.allocate_normal_attack_id()
+        result2 = system.resolve(context, "a1", normal_attack_id=na_id2)
+        assert result2 is not None
+        assert result2.intended_attack_target == "b1"
 
     def test_target_p93_01_confusion_legal_candidate_consumes_target_system_authority(self) -> None:
         """TARGET-P93-01: Confusion legal candidate construction consumes TargetSystem authority."""

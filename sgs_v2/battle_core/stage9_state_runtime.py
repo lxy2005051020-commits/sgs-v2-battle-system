@@ -1,25 +1,25 @@
 from __future__ import annotations
 
-from enum import Enum
 from typing import TYPE_CHECKING
 
 from .official_state_catalog import OfficialStateId
-from .stage9_state_params import GuardStateParams, TauntStateParams
+from .stage9_state_params import (
+    GuardStateParams,
+    SuppressionReason,
+    TauntLifecycleState,
+    TauntStateParams,
+)
 from .state_instance import StateInstance
 from .state_lifecycle_system import StateLifecycleSystem
 
 if TYPE_CHECKING:
     from .context import BattleContext
 
-
-class TauntLifecycleState(str, Enum):
-    ACTIVE = "ACTIVE"
-    SUPPRESSED = "SUPPRESSED"
-
-
-class SuppressionReason(str, Enum):
-    INSIGHT = "INSIGHT"
-    SOURCE_SKILL_DISABLED = "SOURCE_SKILL_DISABLED"
+__all__ = [
+    "Stage9StateRuntime",
+    "SuppressionReason",
+    "TauntLifecycleState",
+]
 
 
 class Stage9StateRuntime:
@@ -65,19 +65,19 @@ class Stage9StateRuntime:
         self,
         context: BattleContext,
         taunt_instance: StateInstance,
-    ) -> set[str]:
-        """Return the set of active suppressors for a Taunt instance.
+    ) -> frozenset[SuppressionReason]:
+        """Return the frozenset of active typed SuppressionReason for a Taunt instance.
 
         Multi-suppressor model (Taunt P0):
         - INSIGHT: holder has active Insight state (Insight is a state-level suppressor of existing Taunt)
         - SOURCE_SKILL_DISABLED or other reasons specified on TauntStateParams.suppressors
         """
-        suppressors: set[str] = set()
+        suppressors: set[SuppressionReason] = set()
         if isinstance(taunt_instance.runtime_params, TauntStateParams):
             suppressors.update(taunt_instance.runtime_params.suppressors)
         if self.has_operational_insight(context, taunt_instance.owner_id):
-            suppressors.add(SuppressionReason.INSIGHT.value)
-        return suppressors
+            suppressors.add(SuppressionReason.INSIGHT)
+        return frozenset(suppressors)
 
     def get_taunt_lifecycle_state(
         self,
@@ -195,3 +195,36 @@ class Stage9StateRuntime:
             owner_id=unit_id,
             state_id=OfficialStateId.INSIGHT.value,
         )
+
+    def set_guard_disabled(
+        self,
+        context: BattleContext,
+        instance_id: str,
+        is_disabled: bool,
+    ) -> StateInstance:
+        """Operational maintenance for Guard is_disabled flag."""
+        instance = context.states.get(instance_id)
+        if not isinstance(instance.runtime_params, GuardStateParams):
+            raise TypeError(f"State instance {instance_id} is not a Guard state")
+        new_params = GuardStateParams(
+            protector_id=instance.runtime_params.protector_id,
+            is_disabled=is_disabled,
+        )
+        return self._lifecycle.update_runtime_params(context, instance_id, new_params)
+
+    def set_taunt_suppressors(
+        self,
+        context: BattleContext,
+        instance_id: str,
+        suppressors: frozenset[SuppressionReason] | set[SuppressionReason],
+    ) -> StateInstance:
+        """Operational maintenance for Taunt suppressors set."""
+        instance = context.states.get(instance_id)
+        if not isinstance(instance.runtime_params, TauntStateParams):
+            raise TypeError(f"State instance {instance_id} is not a Taunt state")
+        new_params = TauntStateParams(
+            taunt_target_id=instance.runtime_params.taunt_target_id,
+            suppressors=frozenset(suppressors),
+        )
+        return self._lifecycle.update_runtime_params(context, instance_id, new_params)
+

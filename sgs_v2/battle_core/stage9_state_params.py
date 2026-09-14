@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from enum import Enum
 
 from .stage9_integerization import ExactRatio
 from .state_runtime_params import StateRuntimeParams
@@ -61,24 +62,45 @@ class DistributionStateParams(StateRuntimeParams):
             raise ValueError("Distribution ratio cannot be negative")
 
 
+class TauntLifecycleState(str, Enum):
+    ACTIVE = "ACTIVE"
+    SUPPRESSED = "SUPPRESSED"
+
+
+class SuppressionReason(str, Enum):
+    INSIGHT = "INSIGHT"
+    SOURCE_SKILL_DISABLED = "SOURCE_SKILL_DISABLED"
+
+
 @dataclass(frozen=True, slots=True)
 class TauntStateParams(StateRuntimeParams):
     """Runtime parameters for Taunt state (state 690106)."""
 
     taunt_target_id: str | None = None
-    suppressors: frozenset[str] = field(default_factory=frozenset)
+    suppressors: frozenset[SuppressionReason] = field(default_factory=frozenset)
 
     def __post_init__(self) -> None:
         if self.taunt_target_id is not None:
             if not isinstance(self.taunt_target_id, str) or not self.taunt_target_id.strip():
                 raise ValueError("taunt_target_id cannot be empty or whitespace when provided")
         if not isinstance(self.suppressors, (frozenset, set)):
-            raise TypeError("suppressors must be a frozenset or set")
-        if not isinstance(self.suppressors, frozenset):
-            object.__setattr__(self, "suppressors", frozenset(self.suppressors))
+            raise TypeError("suppressors must be a frozenset or set of SuppressionReason")
+        converted: set[SuppressionReason] = set()
         for item in self.suppressors:
-            if not isinstance(item, str) or not item.strip():
-                raise ValueError("suppressor items must be non-empty strings")
+            if isinstance(item, SuppressionReason):
+                converted.add(item)
+            elif isinstance(item, str):
+                try:
+                    converted.add(SuppressionReason(item))
+                except ValueError:
+                    raise ValueError(
+                        f"Unknown arbitrary suppressor '{item}' is not a valid SuppressionReason"
+                    )
+            else:
+                raise TypeError(
+                    f"Suppressor item must be a SuppressionReason or valid str, got {type(item)}"
+                )
+        object.__setattr__(self, "suppressors", frozenset(converted))
 
 
 @dataclass(frozen=True, slots=True)

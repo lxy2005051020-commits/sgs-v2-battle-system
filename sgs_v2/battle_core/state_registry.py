@@ -40,6 +40,13 @@ class StateRegistry:
         self._instances[instance.instance_id] = instance
         return instance
 
+    def replace(self, instance: StateInstance) -> StateInstance:
+        """Replace an existing state instance in the registry."""
+        if instance.instance_id not in self._instances:
+            raise KeyError(f"unknown state instance: {instance.instance_id}")
+        self._instances[instance.instance_id] = instance
+        return instance
+
     def get(self, instance_id: str) -> StateInstance:
         try:
             return self._instances[instance_id]
