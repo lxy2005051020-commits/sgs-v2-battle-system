@@ -859,11 +859,11 @@ def test_phase95_production_damage_effect_constructor_scan_is_fully_classified()
                 )
             )
 
-    assert [(name, line) for name, line, _ in constructors] == [
-        ("skill_resolver.py", next(line for name, line, _ in constructors if name == "skill_resolver.py")),
-        ("trigger_system.py", next(line for name, line, _ in constructors if name == "trigger_system.py")),
-    ]
     assert len(constructors) == 2
+    assert {name for name, _, _ in constructors} == {
+        "skill_resolver.py",
+        "trigger_system.py",
+    }
     assert all("source_ref" in keywords for _, _, keywords in constructors)
 
 
