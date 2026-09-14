@@ -1,207 +1,162 @@
-# Stage 9：Cross-Mechanism Runtime Orchestration / Build Prompt Re-Audit PASS — Phase 9.1 Authorized
+# Stage 9：Cross-Mechanism Runtime Orchestration — FROZEN
 
 [返回阶段索引](../README.md)
 
 ## Current gate
 
 ```text
-Stage 8 = FROZEN
+Stage8 = FROZEN
 Formal Stage8 Reopen = NO
 
-Stage9 Design = FROZEN — FREEZE AUDIT PASSED
-Stage9 Design Audit Round 1 = COMPLETE / REPAIR REQUIRED
-Stage9 Design Repair Round 1 = COMPLETE
-Stage9 Design Audit Round 2 = COMPLETE / REPAIR REQUIRED
-Stage9 Design Repair Round 2 = COMPLETE
-Stage9 Design Audit Round 3 = COMPLETE / PASS
+Stage9 Design = FROZEN
+Stage9 Build Prompt = AUDITED
+Phase 9.1..9.8 = COMPLETE
 
-STAGE9.md = DESIGN FROZEN — FREEZE AUDIT PASSED
-Stage9 Design Frozen = YES
-Design Freeze Verified = YES
-Build Prompt Authored = YES
-Stage9 Build Prompt Audit = COMPLETE / FAIL — REPAIR REQUIRED
-Stage9 Build Prompt Repair = COMPLETE
-Stage9 Build Prompt Re-Audit = PASS
-Build Prompt Audited = YES
-Build Prompt Approved = YES
-Production Implementation = NOT STARTED
-Production Implementation Authorized = YES
+Stage9 Independent Implementation Audit = COMPLETE
+Stage9 Final Re-Audit Round 2 = PASS
 
-Build Prompt finding:
-BPA-M01 = CLOSED
+FF9-B01 = CLOSED
+Stage9 Pre-Freeze Verification Repair Re-Audit = PASS
+Stage9 Final Freeze = COMPLETE
+
+STAGE9 = FROZEN
 ```
 
-Stage 9 只在 Stage 8 已冻结 seams 周围做 orchestration、target arbitration、derived operation、partition、typed settlement 与 finalization coordination；**不替换 Stage 8 Damage Pipeline**。
+## Final authorities
 
-## Implementation design authority
+- Final Audit: [STAGE9_FINAL_AUDIT.md](STAGE9_FINAL_AUDIT.md)
+- Freeze Record: [STAGE9_FREEZE_RECORD.md](STAGE9_FREEZE_RECORD.md)
+- Historical audited Build Prompt: [STAGE9_BUILD_PROMPT.md](STAGE9_BUILD_PROMPT.md)
+- Pre-implementation design freeze: [STAGE9_DESIGN_FREEZE.md](STAGE9_DESIGN_FREEZE.md)
+- Frozen design: [STAGE9.md](STAGE9.md)
 
-- [STAGE9.md — DESIGN FROZEN](STAGE9.md)
-- [Stage9 Design Freeze Record](STAGE9_DESIGN_FREEZE.md)
-- [Stage9 Design Freeze Audit — PASS](audits/STAGE9_DESIGN_FREEZE_AUDIT.md)
-- [Stage9 Build Prompt — AUDITED EXECUTION ARTIFACT](STAGE9_BUILD_PROMPT.md)
-- [Stage9 Build Prompt Re-Audit — PASS / PRODUCTION AUTHORIZED](audits/STAGE9_BUILD_PROMPT_REAUDIT.md)
-- [Stage9 Build Prompt Repair](audits/STAGE9_BUILD_PROMPT_REPAIR.md)
-- [Stage9 Build Prompt Authoring Report](STAGE9_BUILD_PROMPT_AUTHORING_REPORT.md)
-- [Stage9 Build Prompt Audit — FAIL / REPAIR REQUIRED](audits/STAGE9_BUILD_PROMPT_AUDIT.md)
-- [Stage9 Design Audit Round 3 — PASS](audits/STAGE9_DESIGN_AUDIT_ROUND3.md)
-- [Stage9 Authoring Report](STAGE9_AUTHORING_REPORT.md)
-- [Stage9 Design Audit Round 1](audits/STAGE9_DESIGN_AUDIT_ROUND1.md)
-- [Stage9 Design Repair Round 1](audits/STAGE9_DESIGN_REPAIR_ROUND1.md)
-- [Stage9 Design Audit Round 2](audits/STAGE9_DESIGN_AUDIT_ROUND2.md)
-- [Stage9 Design Repair Round 2](audits/STAGE9_DESIGN_REPAIR_ROUND2.md)
+Build Prompt audited blob remains:
 
-`STAGE9.md` 负责“已冻结玩法语义如何映射为可实现、可测试、可审计的代码架构”，不负责重新研究玩法。
+`835206ba39ce64c42a822a7138afeee307e0a492`
 
-`STAGE9_DESIGN_FREEZE.md` 冻结施工设计；它与未来 production implementation 完成后的 `STAGE9_FREEZE_RECORD.md` 不是同一个生命周期记录。
+Do not rewrite the Build Prompt banner for cosmetic status synchronization.
 
-`STAGE9_BUILD_PROMPT_AUDIT.md` 是 Build Prompt 首轮审计 authority。首轮审计未授权 implementation；其唯一开放项 `BPA-M01` 已由 `STAGE9_BUILD_PROMPT_REPAIR.md` 修复，并由 `STAGE9_BUILD_PROMPT_REAUDIT.md` 独立复审通过。Re-Audit 明确关闭 `BPA-M01` 并创建 Production Implementation authority。
+Frozen State Authority remains:
 
-Re-Audit 锁定的可执行 Build Prompt 身份为：
+`lxy2005051020-commits/sgs-state-mechanics-research@15ed915435f328a6ecd8f488d98b5b9e13c913b5`
+
+## Frozen runtime source
+
+`7380682164cf4a71256e23207bd031171c3e6231`
+
+This source superseded `57ff7bbc6df6f85010add43d8fcc9567d3a0f95b` only because FF9-B01 repaired a nondeterministic verification-test ordering assumption. Production/gameplay semantics did not change.
+
+## Mechanism status
 
 ```text
-path:
-stages/stage9/STAGE9_BUILD_PROMPT.md
-
-blob:
-835206ba39ce64c42a822a7138afeee307e0a492
-
-audited source commit:
-2d764a9d82d27de3f30f242d05f23eff2ce0f692
+690103 CONFUSION      RUNTIME FROZEN
+690106 TAUNT          RUNTIME FROZEN
+690098 GUARD          RUNTIME FROZEN
+690081 COMBO          RUNTIME FROZEN
+690084 CLEAVE         RUNTIME FROZEN
+690097 CHAIN_LINK     RUNTIME FROZEN
+690087 DAMAGE_SHARE   RUNTIME FROZEN
+690085 COUNTERATTACK  RUNTIME FROZEN
 ```
 
-不要为了同步状态而改写该 Build Prompt 本体；任何后续修改都会产生新的 blob，并需要 impact review / re-audit 后才能作为施工 authority。
-
-`STAGE9_AUTHORING_REPORT.md` 保留 authoring 时点历史记录；当前 file plan / phase graph / ownership 以 `STAGE9.md`、Round3 Audit、`STAGE9_DESIGN_FREEZE.md` 与已通过的 Build Prompt Re-Audit 为准。
-
-## Round2 repair closure
+Distribution:
 
 ```text
-R2 findings repaired = 8/8
-BLOCKER remaining = 0
-MAJOR remaining = 0
-MINOR remaining = 0
-DOC_ONLY remaining = 0
+690086 DISTRIBUTION
+RUNTIME FROZEN
+PROJECT_RUNTIME_DEFAULT FROZEN
 
-Legacy finalization barriers mapped = 6/6
-Unclassified production DamageEffect at Phase 9.5 gate = 0 required
-Unenforced invariants = 0
-Architecture tests READY = 12/12
-Architecture tests BLOCKED = 0
+EMPIRICAL:
+OPEN / UNOBSERVED
 
-P0 semantic change = 0
+RESEARCH DEBT:
+YES
+```
+
+DSTS9-B02 remains research debt and is not empirically closed.
+
+## Frozen boundary summary
+
+Target pipeline:
+
+```text
+Alive/legal pool
+→ camp
+→ Confusion
+→ Taunt
+→ default selector
+→ intended target
+→ Guard exactly once
+→ actual target
+```
+
+Six FutureBranch families only:
+
+```text
+NEXT_ACTION
+ASSAULT
+COMBO_SECOND_NORMAL_ATTACK
+COUNTER_BATCH
+CHAIN_TRAVERSAL
+CLEAVE_EFFECT
+```
+
+All require authentic one-shot `FutureAdmissionGate` permit consumption before operation identity allocation and admission.
+
+Finalization semantic owner: `BattleFinalizationCoordinator`.
+
+Lifecycle:
+
+```text
+RUNNING
+→ VICTORY_LATCHED
+→ DRAINING_ADMITTED_WORK
+→ FINALIZED
+```
+
+Integerization:
+
+```text
+CHAIN = FLOOR
+CLEAVE = FLOOR
+DAMAGE_SHARE = ROUND_HALF_UP
+DISTRIBUTION target = ROUND_HALF_UP
+DISTRIBUTION participant = ROUND_HALF_UP
+```
+
+Detailed Cleave, Chain, Counter, Combo, provenance, capability-authenticity, partition, finalization and formal-reopen contracts are frozen in [STAGE9_FREEZE_RECORD.md](STAGE9_FREEZE_RECORD.md).
+
+## Final closure
+
+```text
+P98-B01 = CLOSED
+P98-B02 = CLOSED
+P98-B03 = CLOSED
+P98-B04 = CLOSED
+P98-M01 = CLOSED
+P98-M02 = CLOSED
+FF9-B01 = CLOSED
+
+Runtime invariants = 42 / 42 PASS
+Gameplay regressions = 45 / 45 PASS
+Architecture guarantees = 12 / 12 PASS
+Finalization contracts = 6 / 6 PASS
+Integerization vectors = 5 / 5 PASS
+FutureBranch families = 6 / 6 PASS
+Runtime dependency cycles = 0
+Unclassified production DamageEffect = 0
+DamageEffect constructor count = 2
+DamageEffect source_ref coverage = 100%
 Stage8 reopen = NO
 ```
 
-Round2 repair introduces only implementation-safety contracts such as `LegacyFinalizationBarrier`, `EffectSourceRef`, typed `SkillSlot`, and one-shot permit capabilities. These are not new gameplay rules.
+## NEXT LIFECYCLE
 
-## Round3 design-freeze admission
+Define the next independent stage's:
 
-```text
-Round3 Audit = PASS
-Design Freeze Admission = ELIGIBLE / CONSUMED
-Runtime invariants = 42/42 enforced/design-enforceable
-Gameplay regressions = 45/45 mapped/testable
-Architecture tests = 12/12 READY
-Planned NEW production files = 16
-Planned MODIFY production files = 17
-```
+- evidence scope
+- authority hierarchy
+- design boundary
+- implementation phases
 
-## Current Build Prompt audit status
-
-```text
-Build Prompt phase mapping = 8/8
-Build Prompt NEW file mapping = 16/16
-Build Prompt MODIFY file mapping = 17/17
-Build Prompt invariant mapping = 42/42
-Build Prompt regression mapping = 45/45
-Build Prompt architecture mapping = 12/12
-Stage8 reopen = 0
-P0 semantic conflict = 0
-
-BPA-M01:
-Frozen public runtime contract change-control wording restored exactly.
-
-Severity = MAJOR
-Status = CLOSED
-
-Open Build Prompt findings = 0
-Build Prompt Re-Audit = PASS
-Production Implementation Authorized = YES
-```
-
-## Current entry points
-
-### Authoring / audit / current authority
-
-- [Stage9 Design Freeze Record](STAGE9_DESIGN_FREEZE.md)
-- [Stage9 Build Prompt](STAGE9_BUILD_PROMPT.md)
-- [Stage9 Build Prompt Re-Audit — PASS](audits/STAGE9_BUILD_PROMPT_REAUDIT.md)
-- [Stage9 Build Prompt Repair](audits/STAGE9_BUILD_PROMPT_REPAIR.md)
-- [Stage9 Build Prompt Audit — historical failed audit](audits/STAGE9_BUILD_PROMPT_AUDIT.md)
-- [Stage9 Design Audit Round 3](audits/STAGE9_DESIGN_AUDIT_ROUND3.md)
-- [Pre-Spec Delta Audit](audits/STAGE9_PRE_SPEC_DELTA_AUDIT.md)
-- [Stage 9 Authority Map + Mechanism Status Matrix](docsync/STAGE9_AUTHORITY_MAP.md)
-- [Global Cross-Mechanism Final Audit](audits/STAGE9_GLOBAL_CROSS_MECHANISM_FINAL_AUDIT.md)
-
-### Shared P0 arbitration
-
-- [Core Arbitration Rules V2](research/core_arbitration_v2/STAGE9_CORE_ARBITRATION_RULES_V2.md)
-- [Execution Right and Death Scope Contract](research/core_arbitration_v2/STAGE9_EXECUTION_RIGHT_AND_DEATH_SCOPE_CONTRACT.md)
-- [Battle Finalization Barrier Contract](research/core_arbitration_v2/STAGE9_BATTLE_FINALIZATION_BARRIER_CONTRACT.md)
-
-### RF-C01 implementation hardening entry
-
-- [RF-C01 Hardening Ledger](hardening/RF_C01_HARDENING_LEDGER.md)
-- [Stage 9 Typed Runtime Contracts](hardening/STAGE9_TYPED_RUNTIME_CONTRACTS.md)
-- [Stage 9 Runtime Invariants](hardening/STAGE9_RUNTIME_INVARIANTS.md)
-- [Stage 9 Regression Contracts](hardening/STAGE9_REGRESSION_CONTRACTS.md)
-- [RF-C01 Implementation Hardening Report](hardening/RF_C01_IMPLEMENTATION_HARDENING_REPORT.md)
-
-### Repair packages
-
-- [RF-P01 Integerization Re-freeze](repairs/RF_P01_STAGE9_INTEGERIZATION_REFREEZE.md)
-- [RF-P02 Normal Attack Lifecycle / Combo Re-freeze](repairs/RF_P02_NORMAL_ATTACK_LIFECYCLE_AND_COMBO_REFREEZE.md)
-- [RF-P03 Execution Right / Death Scope Re-freeze](repairs/RF_P03_EXECUTION_RIGHT_AND_DEATH_SCOPE_REFREEZE.md)
-- [RF-P04 Battle Finalization Barrier Re-freeze](repairs/RF_P04_BATTLE_FINALIZATION_BARRIER_REFREEZE.md)
-- [RF-P05 Partition Transaction Death Re-freeze](repairs/RF_P05_PARTITION_TRANSACTION_DEATH_REFREEZE.md)
-- [RF-P06 Cleave Damage Layer / Recovery Basis Re-freeze](repairs/RF_P06_CLEAVE_DAMAGE_LAYER_AND_RECOVERY_BASIS_REFREEZE.md)
-- [RF-P07 Cleave State / Secondary Target Re-freeze](repairs/RF_P07_CLEAVE_STATE_AND_SECONDARY_TARGET_REFREEZE.md)
-
-## Nine-mechanism current status
-
-| ID | Mechanism | Current status | Runtime ready | Research debt |
-|---:|---|---|---|---|
-| 690103 | CONFUSION / 混乱 | FROZEN | YES | NO current blocking debt |
-| 690106 | TAUNT / 嘲讽 | FROZEN | YES | NO current blocking debt |
-| 690098 | GUARD / 援护 | FROZEN | YES | NO current blocking debt |
-| 690081 | COMBO / 连击 | FROZEN | YES | NO current blocking debt |
-| 690084 | CLEAVE / 群攻 | FROZEN | YES | NO current blocking debt |
-| 690097 | CHAIN_LINK / 铁索连环 | FROZEN | YES | NO current blocking debt |
-| 690087 | DAMAGE_SHARE / 分担 | FROZEN | YES | NO current blocking debt |
-| 690086 | DISTRIBUTION / 分摊 | RUNTIME_READY_WITH_RESEARCH_DEBT | YES | `DSTS9-B02` empirical OPEN / UNOBSERVED; runtime CLOSED BY EXPLICIT PROJECT_RUNTIME_DEFAULT |
-| 690085 | COUNTERATTACK / 反击 | FROZEN | YES | non-blocking universal comparator/dispel fidelity notes |
-
-## Distribution dual status
-
-```text
-DSTS9-B02
-Empirical Status: OPEN / UNOBSERVED
-Runtime Status: CLOSED BY EXPLICIT PROJECT_RUNTIME_DEFAULT
-Design Admission: NOT BLOCKING
-Research Debt: YES
-```
-
-禁止简化为 `DSTS9-B02 CLOSED`，也禁止写成 `DISTRIBUTION BLOCKED`。
-
-## Historical material policy
-
-九份 independent contract audit 与 R1-R8 evidence reports 是 **HISTORICAL** 研究/审计快照。Current closure status 以 current mechanism/shared P0、RF-P01..P07、RF-C01、RF-C02、Global Final Audit、Pre-Spec Delta Audit，以及当前 Stage9 design repair/audit/freeze/build-prompt chain 为准。
-
-## Next step
-
-```text
-NEXT STEP:
-Stage9 Phase 9.1 Implementation
-```
-
-Build Prompt 已通过独立 Re-Audit，`BPA-M01` 已关闭，Production Implementation 已授权。现在只允许严格按照已审计 Build Prompt 从 Phase 9.1 开始；不得跳到 Phase 9.2，不得 Big Bang，不得修改 Stage8 语义或冻结 public runtime contracts。
+No next-stage production implementation is authorized by Stage9 Final Freeze.

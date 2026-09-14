@@ -4,22 +4,26 @@
 - [当前项目状态](PROJECT_STATUS.md)
 - [项目路线图](PROJECT_ROADMAP.md)
 - [跨阶段状态研究](research/README.md)
-- [Stage 9 当前合同闭环与 authority 导航](stages/stage9/README.md)
+- [Stage 9 authority 导航](stages/stage9/README.md)
+- [Stage 9 Final Audit](stages/stage9/STAGE9_FINAL_AUDIT.md)
+- [Stage 9 Freeze Record](stages/stage9/STAGE9_FREEZE_RECORD.md)
 
 当前边界：
 
 ```text
 Stage 8 = FROZEN
 Formal Stage8 Reopen = NO
-Stage 9 = contract closure / orchestration research around Stage8 seams
-Stage 9 Build Prompt Re-Audit = PASS
-Stage 9 production implementation authority = CREATED
-STAGE9.md = DESIGN FROZEN — BUILD PROMPT AUDITED / PHASE 9.1 AUTHORIZED
+
+Stage 9 = FROZEN
+Stage9 Implementation = COMPLETE
+Stage9 Final Re-Audit = PASS
+Stage9 Pre-Freeze Verification Repair Re-Audit = PASS
+Stage9 Final Freeze = COMPLETE
 ```
 
-Stage 9 的 current authority、九机制状态与 RF-C02 文档同步结果统一从 [`stages/stage9/README.md`](stages/stage9/README.md) 进入；历史 audits/research 不因后续 repair 而被无痕改写。
+Stage 9 的冻结运行时语义以 `stages/stage9/STAGE9_FREEZE_RECORD.md` 为最终 post-implementation authority；`STAGE9_BUILD_PROMPT.md` 保持其 audited blob 不变，历史 audits / repairs / implementation reports 不回写。
 
-从仓库根目录运行现有生产系统：
+从仓库根目录运行：
 
 ```bash
 python -m pytest -q

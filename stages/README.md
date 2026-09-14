@@ -10,21 +10,26 @@
 - [Stage 6：Skill Runtime](stage6/README.md)
 - [Stage 7：Trigger / Recovery](stage7/README.md)
 - [Stage 8：Damage Pipeline — FROZEN](stage8/README.md)
-- [Stage 9：Cross-Mechanism Runtime Orchestration — BUILD PROMPT RE-AUDIT PASS / PHASE 9.1 AUTHORIZED](stage9/README.md)
+- [Stage 9：Cross-Mechanism Runtime Orchestration — FROZEN](stage9/README.md)
 
 ```text
 Stage 8 = FROZEN
 Formal Stage8 Reopen = NO
-Stage 9 = wraps / coordinates / derives around Stage8 seams
-Stage 9 does NOT replace the Stage8 Damage Pipeline
+Stage 9 = FROZEN
 ```
 
-Stage 9 implementation design authority 已冻结并经 Freeze Audit 验证。Build Prompt 首轮审计发现的 `BPA-M01` 已完成 repair 并通过独立 Re-Audit；Build Prompt 已审计通过，Production implementation 已授权，但仍必须严格从 Phase 9.1 开始并逐阶段独立 green / commit / remote verify。
+Stage 9 final authorities:
 
-当前下一步：
+- [Final Audit](stage9/STAGE9_FINAL_AUDIT.md)
+- [Freeze Record](stage9/STAGE9_FREEZE_RECORD.md)
+- [Audited Build Prompt](stage9/STAGE9_BUILD_PROMPT.md)
+
+下一独立阶段只能先进入：
 
 ```text
-Stage9 Phase 9.1 Implementation
+DESIGN / EVIDENCE / BOUNDARY DEFINITION
 ```
 
-共享源码保留在 `sgs_v2/`，运行测试保留在 `tests/`。阶段状态以 [PROJECT_STATUS.md](../PROJECT_STATUS.md)、对应阶段 current authority 与 Stage 9 authority map 为准。
+不得把 Stage9 Final Freeze 解释为下一 Stage implementation authority。
+
+共享源码保留在 `sgs_v2/`，运行测试保留在 `tests/`。当前状态以 [PROJECT_STATUS.md](../PROJECT_STATUS.md) 与各阶段 final authority 为准。
