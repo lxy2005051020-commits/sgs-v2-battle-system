@@ -126,7 +126,7 @@ class DamagePartitionCoordinator:
 
     It owns state reads, eligibility, precedence, transaction identity, and exact
     integerization only. It never calculates damage, settles damage, mutates troops,
-    writes state, or finalizes battle.
+    writes state, or owns battle termination.
     """
 
     def __init__(self, state_runtime: Stage9StateRuntime) -> None:
