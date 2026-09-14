@@ -3,8 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 
+from .damage_partition_system import DamagePartitionPlan
 from .damage_resolution_system import DamageResolutionResult
+from .direct_troop_loss_system import AttributedDirectTroopLoss
 from .effects import ApplyStateEffect, DamageEffect, RecoverEffect, RemoveStateEffect
+from .operation_identity import DamageInstanceId
 from .recovery_system import RecoveryResult
 from .state_instance import StateInstance
 
@@ -16,8 +19,18 @@ class EffectExecutionStatus(str, Enum):
 
 @dataclass(frozen=True, slots=True)
 class DamageEffectResult:
+    """Compatibility result surface for a production DamageEffect.
+
+    `resolution` remains the authoritative normal target settlement result. Stage9
+    details are exposed only through narrow immutable typed fields rather than a
+    generic metadata bag.
+    """
+
     effect: DamageEffect
     resolution: DamageResolutionResult
+    damage_instance_id: DamageInstanceId | None = None
+    partition_plan: DamagePartitionPlan | None = None
+    direct_losses: tuple[AttributedDirectTroopLoss, ...] = ()
     status: EffectExecutionStatus = field(
         default=EffectExecutionStatus.RESOLVED,
         init=False,
