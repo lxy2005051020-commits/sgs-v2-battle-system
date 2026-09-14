@@ -236,7 +236,8 @@ class DamageInstanceCoordinator:
             raise ValueError("OperationLineage mismatch for settlement permit")
         if record.permit_issued:
             raise ValueError(
-                f"A DamageSettlementPermit has already been issued for {damage_instance_id}"
+                f"A DamageSettlementPermit has already been issued for {damage_instance_id}. "
+                "At most one permit may be issued per active DamageInstance."
             )
 
         owning_ctx = record.owning_context
@@ -573,9 +574,9 @@ class DamageInstanceCoordinator:
             origin=SettlementOrigin.STAGE9,
         )
         return self._damage_resolution.settle(
-            context=context,
-            request=settlement_request,
-            permit=permit,
+            context,
+            settlement_request,
+            permit,
         )
 
     def _commit_direct_loss(
