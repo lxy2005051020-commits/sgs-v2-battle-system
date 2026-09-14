@@ -24,6 +24,7 @@ from .operation_identity import (
 class _ActiveDamageInstanceRecord:
     damage_instance_id: DamageInstanceId
     lineage: OperationLineage
+    owning_context: BattleContext
     permit_id: str | None = None
     permit_issued: bool = False
     permit_consumed: bool = False
@@ -35,6 +36,7 @@ class _PermitRecord:
     permit: DamageSettlementPermit
     damage_instance_id: DamageInstanceId
     lineage: OperationLineage
+    owning_context: BattleContext
     consumed: bool = False
 
 
@@ -43,10 +45,10 @@ class DamageInstanceCoordinator:
     Stage9 Standard DamageInstance Orchestration Owner.
 
     Responsibilities:
-    - Allocate DamageInstanceId and begin active DamageInstance scope
+    - Allocate DamageInstanceId and begin active DamageInstance scope bound to BattleContext
     - Own DamageInstance-local active scope and permit registry
     - Issue at most one DamageSettlementPermit per active DamageInstance
-    - Validate issuer ownership and unconsumed state
+    - Validate issuer ownership, context ownership, and unconsumed state
     - Preserve OperationLineage
     - Call DamageSystem.calculate while DamageInstance identity is active
     - Form typed DamageSettlementRequest
@@ -80,9 +82,9 @@ class DamageInstanceCoordinator:
         self._damage_resolution = damage_resolution_system
         self._id_allocator = id_allocator
 
-        # Active operation-local scope & permit tracking (zero battle-long leak)
-        self._active_instances: dict[DamageInstanceId, _ActiveDamageInstanceRecord] = {}
-        self._permits: dict[str, _PermitRecord] = {}
+        # Active operation-local scope & permit tracking keyed by (id(context), id) (zero battle-long leak)
+        self._active_instances: dict[tuple[int, DamageInstanceId], _ActiveDamageInstanceRecord] = {}
+        self._permits: dict[tuple[int, str], _PermitRecord] = {}
 
         # Bind this coordinator to the resolution system
         self._damage_resolution.bind_coordinator(self)
@@ -95,50 +97,51 @@ class DamageInstanceCoordinator:
     def damage_resolution_system(self) -> DamageResolutionSystem:
         return self._damage_resolution
 
-    def _get_allocator(self, context: BattleContext | None = None) -> OperationIdAllocator:
-        if (
-            context is not None
-            and hasattr(context, "id_allocator")
-            and context.id_allocator is not None
-        ):
-            return context.id_allocator
-        if self._id_allocator is not None:
-            return self._id_allocator
-        self._id_allocator = OperationIdAllocator()
-        return self._id_allocator
-
     def allocate_damage_instance_id(
         self,
-        context: BattleContext | None = None,
+        context: BattleContext,
     ) -> DamageInstanceId:
-        allocator = self._get_allocator(context)
-        return allocator.allocate_damage_instance_id()
+        if context is None or not isinstance(context, BattleContext):
+            raise TypeError(f"context must be BattleContext, got {type(context)}")
+        return context.id_allocator.allocate_damage_instance_id()
 
     def begin_damage_instance(
         self,
-        context: BattleContext | None = None,
-        lineage: OperationLineage | None = None,
+        context: BattleContext,
+        lineage: OperationLineage,
     ) -> DamageInstanceId:
         """
-        Begin an active coordinator-owned DamageInstance scope.
-        Allocates fresh DamageInstanceId, registers active record, and binds lineage.
+        Begin an active coordinator-owned DamageInstance scope bound to a BattleContext.
+        Allocates fresh DamageInstanceId from context.id_allocator, registers active record, and binds lineage.
         """
+        if context is None or not isinstance(context, BattleContext):
+            raise TypeError(f"context must be BattleContext, got {type(context)}")
         if lineage is None or not isinstance(lineage, OperationLineage):
             raise TypeError(
                 f"lineage must be OperationLineage, got {type(lineage)}"
             )
-        damage_instance_id = self.allocate_damage_instance_id(context)
+        damage_instance_id = context.id_allocator.allocate_damage_instance_id()
         record = _ActiveDamageInstanceRecord(
             damage_instance_id=damage_instance_id,
             lineage=lineage,
+            owning_context=context,
         )
-        self._active_instances[damage_instance_id] = record
+        self._active_instances[(id(context), damage_instance_id)] = record
         return damage_instance_id
 
-    def is_instance_active(self, damage_instance_id: DamageInstanceId) -> bool:
+    def is_instance_active(
+        self,
+        damage_instance_id: DamageInstanceId,
+        context: BattleContext | None = None,
+    ) -> bool:
         """Check whether a DamageInstance is currently active and not closed."""
-        record = self._active_instances.get(damage_instance_id)
-        return record is not None and not record.closed
+        if context is not None:
+            record = self._active_instances.get((id(context), damage_instance_id))
+            return record is not None and not record.closed
+        for (c_id, d_id), record in self._active_instances.items():
+            if d_id == damage_instance_id and not record.closed:
+                return True
+        return False
 
     def issue_settlement_permit(
         self,
@@ -148,7 +151,7 @@ class DamageInstanceCoordinator:
     ) -> DamageSettlementPermit:
         """
         Issue exactly one DamageSettlementPermit for an active coordinator-owned DamageInstance.
-        Rejects arbitrary IDs, closed IDs, mismatched lineages, and duplicate requests.
+        Rejects arbitrary IDs, closed IDs, mismatched lineages, duplicate requests, and foreign contexts.
         """
         if not isinstance(damage_instance_id, DamageInstanceId):
             raise TypeError(
@@ -157,11 +160,39 @@ class DamageInstanceCoordinator:
         if not isinstance(lineage, OperationLineage):
             raise TypeError(f"lineage must be OperationLineage, got {type(lineage)}")
 
-        record = self._active_instances.get(damage_instance_id)
+        record: _ActiveDamageInstanceRecord | None = None
+        if context is not None:
+            if not isinstance(context, BattleContext):
+                raise TypeError(f"context must be BattleContext, got {type(context)}")
+            record = self._active_instances.get((id(context), damage_instance_id))
+        else:
+            matching = [
+                r for (c_id, d_id), r in self._active_instances.items()
+                if d_id == damage_instance_id
+            ]
+            if len(matching) == 1:
+                record = matching[0]
+            elif len(matching) > 1:
+                raise ValueError(
+                    f"Ambiguous active DamageInstanceId '{damage_instance_id}' across multiple contexts; "
+                    "context must be provided"
+                )
+
         if record is None:
+            # Check if this damage_instance_id exists under another context
+            for (c_id, d_id), r in self._active_instances.items():
+                if d_id == damage_instance_id:
+                    raise ValueError(
+                        f"Supplied context does not match the owning BattleContext of DamageInstance '{damage_instance_id}'"
+                    )
             raise ValueError(
                 f"DamageInstanceId '{damage_instance_id}' is not an active instance "
                 "owned by this coordinator (unknown, closed, or never begun)"
+            )
+
+        if context is not None and context is not record.owning_context:
+            raise ValueError(
+                f"Supplied context does not match the owning BattleContext of DamageInstance '{damage_instance_id}'"
             )
 
         if record.closed:
@@ -181,8 +212,8 @@ class DamageInstanceCoordinator:
                 "At most one permit per DamageInstance lifetime."
             )
 
-        allocator = self._get_allocator(context)
-        permit_id = allocator.allocate_permit_id("dsp")
+        owning_ctx = record.owning_context
+        permit_id = owning_ctx.id_allocator.allocate_permit_id("dsp")
         permit = DamageSettlementPermit(
             permit_id=permit_id,
             damage_instance_id=damage_instance_id,
@@ -191,22 +222,27 @@ class DamageInstanceCoordinator:
             permit=permit,
             damage_instance_id=damage_instance_id,
             lineage=lineage,
+            owning_context=owning_ctx,
             consumed=False,
         )
-        self._permits[permit_id] = permit_record
+        self._permits[(id(owning_ctx), permit_id)] = permit_record
         record.permit_id = permit_id
         record.permit_issued = True
         return permit
 
     def validate_and_consume_permit(
         self,
+        context: BattleContext,
         permit: DamageSettlementPermit,
         request: DamageSettlementRequest,
     ) -> None:
         """
-        Validate that the permit was issued by this coordinator, belongs to an active
-        DamageInstanceId and OperationLineage, and is unconsumed. Atomically mark it consumed.
+        Validate that the permit was issued by this coordinator for the provided context,
+        belongs to an active DamageInstanceId and OperationLineage, and is unconsumed.
+        Atomically mark it consumed.
         """
+        if not isinstance(context, BattleContext):
+            raise TypeError(f"context must be BattleContext, got {type(context)}")
         if not isinstance(permit, DamageSettlementPermit):
             raise TypeError(f"permit must be DamageSettlementPermit, got {type(permit)}")
         if not isinstance(request, DamageSettlementRequest):
@@ -214,14 +250,31 @@ class DamageInstanceCoordinator:
                 f"request must be DamageSettlementRequest, got {type(request)}"
             )
 
-        record = self._permits.get(permit.permit_id)
+        permit_key = (id(context), permit.permit_id)
+        record = self._permits.get(permit_key)
+
         if record is None:
+            # Check if this permit was issued for another context
+            for (c_id, p_id), r in self._permits.items():
+                if p_id == permit.permit_id and r.permit == permit:
+                    # Permit was issued for a different context!
+                    # Reject before consuming so valid capability is not destroyed!
+                    raise ValueError(
+                        f"Permit '{permit.permit_id}' was issued for a different BattleContext "
+                        f"({r.owning_context.battle_id} != {context.battle_id})"
+                    )
+
             raise ValueError(
                 f"Permit '{permit.permit_id}' was not issued by this coordinator, closed, or not active"
             )
 
         if record.permit != permit:
             raise ValueError("Permit record mismatch")
+
+        if record.owning_context is not context:
+            raise ValueError(
+                f"Permit '{permit.permit_id}' owning context mismatch"
+            )
 
         if permit.damage_instance_id != request.damage_instance_id:
             raise ValueError(
@@ -240,10 +293,15 @@ class DamageInstanceCoordinator:
                 f"request provided {request.lineage}"
             )
 
-        active_record = self._active_instances.get(permit.damage_instance_id)
+        active_record = self._active_instances.get((id(context), permit.damage_instance_id))
         if active_record is None or active_record.closed:
             raise ValueError(
                 f"DamageInstance '{permit.damage_instance_id}' is no longer active"
+            )
+
+        if active_record.owning_context is not context:
+            raise ValueError(
+                f"DamageInstance '{permit.damage_instance_id}' was not begun in this BattleContext"
             )
 
         if active_record.permit_consumed:
@@ -251,7 +309,7 @@ class DamageInstanceCoordinator:
                 f"DamageInstance '{permit.damage_instance_id}' permit has already been consumed"
             )
 
-        # Atomic consume before any side effects
+        # Atomic consume before any side effects (ONLY reached if all checks above pass!)
         record.consumed = True
         active_record.permit_consumed = True
 
@@ -267,8 +325,8 @@ class DamageInstanceCoordinator:
         Execute an isolated standard DamageInstance.
 
         Phase 9.4 frozen orchestration sequence:
-        1. Validate request and lineage
-        2. Begin DamageInstance scope (allocate DamageInstanceId, register active record)
+        1. Validate context, request, and lineage
+        2. Begin DamageInstance scope on context (allocate DamageInstanceId, register active record)
         3. Call DamageSystem.calculate() -> freeze Dtotal while DamageInstance identity is active
         4. Determine isolated Dtarget
         5. Issue exactly one DamageSettlementPermit for this active DamageInstance
@@ -277,12 +335,14 @@ class DamageInstanceCoordinator:
         8. Close / release active DamageInstance scope in finally block
         9. Return DamageResolutionResult
         """
+        if not isinstance(context, BattleContext):
+            raise TypeError(f"context must be BattleContext, got {type(context)}")
         if not isinstance(request, DamageRequest):
             raise TypeError(f"request must be DamageRequest, got {type(request)}")
         if not isinstance(lineage, OperationLineage):
             raise TypeError(f"lineage must be OperationLineage, got {type(lineage)}")
 
-        # Step 1: begin DamageInstance identity FIRST
+        # Step 1: begin DamageInstance identity FIRST on context
         damage_instance_id = self.begin_damage_instance(context, lineage)
 
         try:
@@ -318,16 +378,36 @@ class DamageInstanceCoordinator:
                 permit=permit,
             )
         finally:
-            self.close_damage_instance(damage_instance_id)
+            self.close_damage_instance(damage_instance_id, context)
 
-    def close_damage_instance(self, damage_instance_id: DamageInstanceId) -> None:
+    def close_damage_instance(
+        self,
+        damage_instance_id: DamageInstanceId,
+        context: BattleContext | None = None,
+    ) -> None:
         """Close active DamageInstance scope and release operation-local state."""
-        record = self._active_instances.pop(damage_instance_id, None)
-        if record is not None:
-            record.closed = True
-            if record.permit_id is not None:
-                self._permits.pop(record.permit_id, None)
+        if context is not None:
+            record = self._active_instances.pop((id(context), damage_instance_id), None)
+            if record is not None:
+                record.closed = True
+                if record.permit_id is not None:
+                    self._permits.pop((id(context), record.permit_id), None)
+        else:
+            to_remove = [
+                key for key, r in self._active_instances.items()
+                if r.damage_instance_id == damage_instance_id
+            ]
+            for key in to_remove:
+                record = self._active_instances.pop(key, None)
+                if record is not None:
+                    record.closed = True
+                    if record.permit_id is not None:
+                        self._permits.pop((id(record.owning_context), record.permit_id), None)
 
-    def release_damage_instance(self, damage_instance_id: DamageInstanceId) -> None:
+    def release_damage_instance(
+        self,
+        damage_instance_id: DamageInstanceId,
+        context: BattleContext | None = None,
+    ) -> None:
         """Release operation-local permit state for a completed instance."""
-        self.close_damage_instance(damage_instance_id)
+        self.close_damage_instance(damage_instance_id, context)

@@ -398,7 +398,11 @@ class DamageResolutionSystem:
             )
 
         # 原子验证并消耗 permit (在任何扣兵与事件发布前必须先行消耗)
-        self._coordinator.validate_and_consume_permit(permit=permit, request=request)
+        self._coordinator.validate_and_consume_permit(
+            context=context,
+            permit=permit,
+            request=request,
+        )
 
         damage = request.damage_result
         target = context.get_unit(damage.target_id)

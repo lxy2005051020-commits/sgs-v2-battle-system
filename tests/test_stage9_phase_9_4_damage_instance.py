@@ -458,10 +458,10 @@ class TestCoordinatorPermitLifecycleRepair:
         orig_calc = dmg_sys.calculate
 
         def _spy_calc(c, r):
-            active_ids = list(coordinator._active_instances.keys())
+            active_ids = [rec.damage_instance_id for rec in coordinator._active_instances.values()]
             observed_active_during_calc.append(active_ids)
             assert len(active_ids) == 1
-            assert coordinator.is_instance_active(active_ids[0])
+            assert coordinator.is_instance_active(active_ids[0], c)
             return orig_calc(c, r)
 
         with unittest.mock.patch.object(dmg_sys, "calculate", side_effect=_spy_calc):
@@ -647,3 +647,257 @@ class TestCoordinatorPermitLifecycleRepair:
         # Confirm ZERO additional troop mutation and ZERO additional events
         assert ctx.get_unit("B1").troops == troops_after_first
         assert len(ctx.event_bus.history) == events_after_first
+
+
+class TestContextOwnershipBoundaryFinalRepair:
+    """Tests P94-FR-01 through P94-FR-06: DamageInstance BattleContext ownership boundary."""
+
+    def test_p94_fr_01_begin_damage_instance_binds_owning_context(self) -> None:
+        """P94-FR-01: begin_damage_instance(ctx_A, lineage) binds active record to ctx_A."""
+        ctx_a = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx_a, lineage)
+
+        record = coordinator._active_instances.get((id(ctx_a), dmg_id))
+        assert record is not None
+        assert record.owning_context is ctx_a
+        assert record.damage_instance_id == dmg_id
+        assert record.lineage == lineage
+
+        coordinator.close_damage_instance(dmg_id, ctx_a)
+
+    def test_p94_fr_02_context_none_rejected_without_state_mutation(self) -> None:
+        """P94-FR-02: begin_damage_instance(None, lineage) raises TypeError (no ID, no active scope created)."""
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+        lineage = _make_lineage()
+
+        with pytest.raises(TypeError, match="context must be BattleContext"):
+            coordinator.begin_damage_instance(None, lineage)  # type: ignore[arg-type]
+
+        with pytest.raises(TypeError, match="context must be BattleContext"):
+            coordinator.allocate_damage_instance_id(None)  # type: ignore[arg-type]
+
+        assert len(coordinator._active_instances) == 0
+        assert len(coordinator._permits) == 0
+
+    def test_p94_fr_03_cross_context_settlement_rejected_before_consume(self) -> None:
+        """P94-FR-03: permit issued on ctx_A, passed to res_sys.settle(ctx_B, req, permit) -> raises ValueError before consume."""
+        ctx_a = _make_context(troops_b=1000)
+        ctx_b = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx_a, lineage)
+        permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx_a)
+
+        dmg_result = DamageResult(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+            base_damage=100.0,
+            scaled_damage=100.0,
+            final_damage=100,
+        )
+        req_b = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=dmg_id,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+
+        troops_a_before = ctx_a.get_unit("B1").troops
+        troops_b_before = ctx_b.get_unit("B1").troops
+
+        with pytest.raises(ValueError, match="was issued for a different BattleContext"):
+            res_sys.settle(ctx_b, req_b, permit)
+
+        # Confirm permit is NOT marked consumed and active scope is intact
+        permit_rec = coordinator._permits.get((id(ctx_a), permit.permit_id))
+        assert permit_rec is not None
+        assert not permit_rec.consumed
+        active_rec = coordinator._active_instances.get((id(ctx_a), dmg_id))
+        assert active_rec is not None
+        assert not active_rec.permit_consumed
+
+        # 0 troops change on both contexts, 0 events on both buses
+        assert ctx_a.get_unit("B1").troops == troops_a_before
+        assert ctx_b.get_unit("B1").troops == troops_b_before
+        assert len(ctx_a.event_bus.history) == 0
+        assert len(ctx_b.event_bus.history) == 0
+
+        coordinator.close_damage_instance(dmg_id, ctx_a)
+
+    def test_p94_fr_04_permit_usable_on_original_context_after_cross_context_rejection(self) -> None:
+        """P94-FR-04: After failed ctx_B attempt, the exact same permit settles successfully on ctx_A exactly once."""
+        ctx_a = _make_context(troops_b=1000)
+        ctx_b = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx_a, lineage)
+        permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx_a)
+
+        dmg_result = DamageResult(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+            base_damage=100.0,
+            scaled_damage=100.0,
+            final_damage=100,
+        )
+        req_b = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=dmg_id,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+        req_a = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=dmg_id,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+
+        # First: rejected on ctx_B
+        with pytest.raises(ValueError, match="was issued for a different BattleContext"):
+            res_sys.settle(ctx_b, req_b, permit)
+
+        # Second: settles successfully on ctx_A
+        res_a = res_sys.settle(ctx_a, req_a, permit)
+        assert res_a.actual_target_troop_loss == 100
+        assert ctx_a.get_unit("B1").troops == 900
+        assert len(ctx_a.event_bus.history) > 0
+
+        # Third: second attempt on ctx_A is rejected (single consume invariant)
+        with pytest.raises(ValueError, match="already been consumed"):
+            res_sys.settle(ctx_a, req_a, permit)
+
+        coordinator.close_damage_instance(dmg_id, ctx_a)
+
+    def test_p94_fr_05_issue_permit_with_wrong_context_rejected(self) -> None:
+        """P94-FR-05: issue_settlement_permit(dmg_id, lineage, context=wrong_ctx) raises ValueError('Supplied context does not match the owning BattleContext')."""
+        ctx_a = _make_context(troops_b=1000)
+        ctx_b = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+        dmg_id = coordinator.begin_damage_instance(ctx_a, lineage)
+
+        with pytest.raises(ValueError, match="Supplied context does not match the owning BattleContext"):
+            coordinator.issue_settlement_permit(dmg_id, lineage, context=ctx_b)
+
+        # Permit can still be issued on legitimate context ctx_a
+        permit = coordinator.issue_settlement_permit(dmg_id, lineage, context=ctx_a)
+        assert permit.damage_instance_id == dmg_id
+
+        coordinator.close_damage_instance(dmg_id, ctx_a)
+
+    def test_p94_fr_06_concurrent_contexts_with_same_id_sequence_isolated(self) -> None:
+        """
+        P94-FR-06: Two BattleContexts (ctx_A, ctx_B) with fresh allocators (both allocating dmg_1)
+        can both begin active DamageInstances concurrently on the same coordinator without
+        overwriting or corrupting each other's ownership.
+        """
+        ctx_a = _make_context(troops_b=1000)
+        ctx_b = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        lineage = _make_lineage()
+
+        # Both fresh contexts allocate dmg_1
+        dmg_id_a = coordinator.begin_damage_instance(ctx_a, lineage)
+        dmg_id_b = coordinator.begin_damage_instance(ctx_b, lineage)
+
+        assert dmg_id_a == DamageInstanceId("dmg_1")
+        assert dmg_id_b == DamageInstanceId("dmg_1")
+        assert dmg_id_a == dmg_id_b  # Exact same string value!
+
+        # Both active records exist independently in coordinator keyed by (id(context), id)
+        rec_a = coordinator._active_instances.get((id(ctx_a), dmg_id_a))
+        rec_b = coordinator._active_instances.get((id(ctx_b), dmg_id_b))
+        assert rec_a is not None
+        assert rec_b is not None
+        assert rec_a.owning_context is ctx_a
+        assert rec_b.owning_context is ctx_b
+
+        # Issue permits explicitly targeting each context
+        permit_a = coordinator.issue_settlement_permit(dmg_id_a, lineage, context=ctx_a)
+        permit_b = coordinator.issue_settlement_permit(dmg_id_b, lineage, context=ctx_b)
+
+        assert permit_a is not None
+        assert permit_b is not None
+        assert (id(ctx_a), permit_a.permit_id) in coordinator._permits
+        assert (id(ctx_b), permit_b.permit_id) in coordinator._permits
+
+        dmg_result = DamageResult(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+            base_damage=100.0,
+            scaled_damage=100.0,
+            final_damage=100,
+        )
+        req_a = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=dmg_id_a,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+        req_b = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=dmg_id_b,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+
+        # Settling permit_a on ctx_a succeeds and does not consume permit_b
+        res_a = res_sys.settle(ctx_a, req_a, permit_a)
+        assert res_a.actual_target_troop_loss == 100
+        assert ctx_a.get_unit("B1").troops == 900
+        assert ctx_b.get_unit("B1").troops == 1000  # Untouched
+
+        rec_permit_b = coordinator._permits.get((id(ctx_b), permit_b.permit_id))
+        assert rec_permit_b is not None
+        assert not rec_permit_b.consumed
+
+        # Settling permit_b on ctx_b succeeds
+        res_b = res_sys.settle(ctx_b, req_b, permit_b)
+        assert res_b.actual_target_troop_loss == 100
+        assert ctx_b.get_unit("B1").troops == 900
+
+        coordinator.close_damage_instance(dmg_id_a, ctx_a)
+        coordinator.close_damage_instance(dmg_id_b, ctx_b)
+        assert len(coordinator._active_instances) == 0
+        assert len(coordinator._permits) == 0
+

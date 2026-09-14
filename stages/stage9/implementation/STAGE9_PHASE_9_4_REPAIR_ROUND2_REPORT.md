@@ -72,3 +72,14 @@ Phase 9.5 = NOT AUTHORIZED
 - **Stage8 formulas / policies**: 0 modifications.
 - **EffectExecutor**: production routing remains legacy (0 cutovers).
 - **Phase 9.5 scope**: 0 leaks (no partition system, no DirectTroopLoss).
+
+---
+
+## 3. Final Re-Audit
+
+Final Re-Audit:
+FAIL
+
+Remaining finding:
+DamageInstance BattleContext ownership
+
