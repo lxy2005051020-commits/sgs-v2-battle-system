@@ -37,6 +37,7 @@ from .damage_prevention_system import (
     DamagePreventionReason,
     DamagePreventionSystem,
 )
+from .damage_instance_coordinator import DamageInstanceCoordinator
 from .damage_resolution_system import (
     DamageResolutionResult,
     DamageResolutionSystem,
@@ -258,6 +259,7 @@ __all__ = [
     "DamagePreventedResult",
     "DamagePreventionReason",
     "DamagePreventionSystem",
+    "DamageInstanceCoordinator",
     "DamageResolutionResult",
     "DamageResolutionSystem",
     "DamageSettlementRequest",

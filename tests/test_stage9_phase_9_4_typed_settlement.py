@@ -490,3 +490,98 @@ class TestLegacyCompatibility:
             "apply_result must only accept context and damage; "
             "no optional assigned_amount parameter is permitted."
         )
+
+    def test_p94_r01_resolve_traverses_typed_settle_legacy(self) -> None:
+        import unittest.mock
+
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+
+        req = DamageRequest(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+
+        with unittest.mock.patch.object(
+            res_sys, "_settle_legacy", wraps=res_sys._settle_legacy
+        ) as spy:
+            res = res_sys.resolve(ctx, req)
+            spy.assert_called_once()
+            called_ctx, called_req = spy.call_args[0]
+            assert isinstance(called_req, DamageSettlementRequest)
+            assert called_req.origin == SettlementOrigin.LEGACY_COMPAT
+            assert called_req.damage_instance_id is None
+            assert called_req.lineage is None
+            assert called_req.assigned_target_damage == res.damage.final_damage
+            assert res.damage_instance_id is None
+            assert res.lineage is None
+            assert res.actual_target_troop_loss > 0
+
+    def test_p94_r02_apply_result_traverses_typed_settle_legacy_with_unchanged_signature(self) -> None:
+        import inspect
+        import unittest.mock
+
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+
+        sig = inspect.signature(res_sys.apply_result)
+        params = list(sig.parameters.values())
+        assert [p.name for p in params] == ["context", "damage"]
+        assert all(p.default == inspect.Parameter.empty for p in params)
+
+        dmg_result = _make_dummy_damage_result(final_damage=250)
+        with unittest.mock.patch.object(
+            res_sys, "_settle_legacy", wraps=res_sys._settle_legacy
+        ) as spy:
+            res = res_sys.apply_result(ctx, dmg_result)
+            spy.assert_called_once()
+            called_ctx, called_req = spy.call_args[0]
+            assert isinstance(called_req, DamageSettlementRequest)
+            assert called_req.origin == SettlementOrigin.LEGACY_COMPAT
+            assert called_req.damage_instance_id is None
+            assert called_req.lineage is None
+            assert called_req.assigned_target_damage == 250
+            assert res.actual_target_troop_loss == 250
+            assert res.damage_instance_id is None
+            assert res.lineage is None
+
+    def test_p94_r06_damage_resolution_result_rejects_damage_instance_id_without_lineage(self) -> None:
+        dmg_result = _make_dummy_damage_result(final_damage=100)
+        dmg_id = DamageInstanceId("test_id")
+        with pytest.raises(ValueError, match="damage_instance_id and lineage must either both be None"):
+            DamageResolutionResult(
+                damage=dmg_result,
+                assigned_target_damage=100,
+                actual_target_troop_loss=100,
+                target_troops_before=1000,
+                target_troops_after=900,
+                target_defeated=False,
+                credited_damage=100,
+                troop_change=None,
+                damage_instance_id=dmg_id,
+                lineage=None,
+            )
+
+    def test_p94_r07_damage_resolution_result_rejects_lineage_without_damage_instance_id(self) -> None:
+        dmg_result = _make_dummy_damage_result(final_damage=100)
+        lineage = _make_lineage()
+        with pytest.raises(ValueError, match="damage_instance_id and lineage must either both be None"):
+            DamageResolutionResult(
+                damage=dmg_result,
+                assigned_target_damage=100,
+                actual_target_troop_loss=100,
+                target_troops_before=1000,
+                target_troops_after=900,
+                target_defeated=False,
+                credited_damage=100,
+                troop_change=None,
+                damage_instance_id=None,
+                lineage=lineage,
+            )

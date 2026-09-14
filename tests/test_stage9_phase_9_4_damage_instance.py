@@ -328,3 +328,108 @@ class TestEffectExecutorRemainsLegacy:
         assert result.resolution.lineage is None
         assert result.resolution.assigned_target_damage == result.resolution.damage.final_damage
         assert result.resolution.actual_target_troop_loss > 0
+
+
+class TestCoordinatorPermitLifecycleRepair:
+    """Repair audit tests: permit lifecycle is strictly operation-local and leak-free."""
+
+    def test_p94_r03_successful_execution_leaves_zero_permit_tracking_residue(self) -> None:
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        req = DamageRequest(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+        lineage = _make_lineage()
+
+        res = coordinator.execute_standard_damage_instance(
+            context=ctx,
+            request=req,
+            lineage=lineage,
+        )
+        assert res.actual_target_troop_loss > 0
+        assert len(coordinator._permits) == 0
+        assert len(coordinator._instance_to_permit_id) == 0
+        assert not hasattr(coordinator, "_completed_instances")
+
+    def test_p94_r04_calculate_exception_causes_zero_permit_leak(self) -> None:
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        # Invalid DamageRequest (unknown unit) causes calculate to raise InvalidDamageParticipantError
+        bad_req = DamageRequest(
+            source_id="NON_EXISTENT_UNIT",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+        )
+        lineage = _make_lineage()
+
+        with pytest.raises(Exception):
+            coordinator.execute_standard_damage_instance(
+                context=ctx,
+                request=bad_req,
+                lineage=lineage,
+            )
+
+        assert len(coordinator._permits) == 0
+        assert len(coordinator._instance_to_permit_id) == 0
+
+    def test_p94_r05_replaying_old_completed_permit_raises_value_error_with_zero_mutations(self) -> None:
+        ctx = _make_context(troops_b=1000)
+        dmg_sys = DamageSystem(AttributeSystem())
+        troop_sys = TroopSystem()
+        res_sys = DamageResolutionSystem(dmg_sys, troop_sys)
+        coordinator = DamageInstanceCoordinator(dmg_sys, res_sys)
+
+        # Manually issue a permit, execute settle, and then release
+        dmg_id = coordinator.allocate_damage_instance_id(ctx)
+        lineage = _make_lineage()
+        permit = coordinator.issue_settlement_permit(dmg_id, lineage, ctx)
+
+        dmg_result = DamageResult(
+            source_id="A1",
+            target_id="B1",
+            damage_type=DamageType.WEAPON,
+            source_type=DamageSourceType.NORMAL_ATTACK,
+            coefficient=1.0,
+            base_damage=100.0,
+            scaled_damage=100.0,
+            final_damage=100,
+        )
+        req = DamageSettlementRequest(
+            damage_result=dmg_result,
+            assigned_target_damage=100,
+            damage_instance_id=dmg_id,
+            lineage=lineage,
+            origin=SettlementOrigin.STAGE9,
+        )
+
+        # First settle succeeds
+        res = res_sys.settle(ctx, req, permit)
+        assert res.actual_target_troop_loss == 100
+        assert ctx.get_unit("B1").troops == 900
+        initial_events_count = len(ctx.event_bus.history)
+
+        # Release coordinator state for this instance
+        coordinator.release_damage_instance(dmg_id)
+        assert len(coordinator._permits) == 0
+
+        # Attempt to replay the old permit against res_sys.settle
+        with pytest.raises(ValueError, match="closed, or not active|was not issued"):
+            res_sys.settle(ctx, req, permit)
+
+        # Target troops unchanged, zero new events
+        assert ctx.get_unit("B1").troops == 900
+        assert len(ctx.event_bus.history) == initial_events_count

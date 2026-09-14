@@ -72,7 +72,6 @@ class DamageInstanceCoordinator:
         # Operation-local permit tracking
         self._permits: dict[str, _PermitRecord] = {}
         self._instance_to_permit_id: dict[DamageInstanceId, str] = {}
-        self._completed_instances: set[DamageInstanceId] = set()
 
         # Bind this coordinator to the resolution system
         self._damage_resolution.bind_coordinator(self)
@@ -153,7 +152,7 @@ class DamageInstanceCoordinator:
         record = self._permits.get(permit.permit_id)
         if record is None:
             raise ValueError(
-                f"Permit '{permit.permit_id}' was not issued by this coordinator (fake or unknown permit)"
+                f"Permit '{permit.permit_id}' was not issued by this coordinator, closed, or not active"
             )
 
         if record.permit != permit:
@@ -190,23 +189,19 @@ class DamageInstanceCoordinator:
         """
         Execute an isolated standard DamageInstance.
 
-        Phase 9.4 orchestration sequence:
-        1. Allocate DamageInstanceId
-        2. Issue at most one DamageSettlementPermit
-        3. Call DamageSystem.calculate() -> freeze Dtotal
-        4. Form typed DamageSettlementRequest (Dtarget = assigned_target_damage or Dtotal)
-        5. Call DamageResolutionSystem.settle()
-        6. Mark instance completed
-        7. Return DamageResolutionResult
+        Phase 9.4 repair orchestration sequence:
+        1. Call DamageSystem.calculate() -> freeze Dtotal FIRST (if it fails, no permit is leaked)
+        2. Allocate DamageInstanceId & issue settlement permit
+        3. Form typed DamageSettlementRequest (Dtarget = assigned_target_damage or Dtotal)
+        4. Call DamageResolutionSystem.settle() inside try...finally to guarantee permit state cleanup
+        5. Return DamageResolutionResult
         """
         if not isinstance(request, DamageRequest):
             raise TypeError(f"request must be DamageRequest, got {type(request)}")
         if not isinstance(lineage, OperationLineage):
             raise TypeError(f"lineage must be OperationLineage, got {type(lineage)}")
 
-        damage_instance_id = self.allocate_damage_instance_id(context)
-        permit = self.issue_settlement_permit(damage_instance_id, lineage, context)
-
+        # Step 1: calculate first (zero permit leak on calculation failure)
         damage_result = self._damage_system.calculate(context, request)
 
         if assigned_target_damage is None:
@@ -220,6 +215,10 @@ class DamageInstanceCoordinator:
                 raise ValueError("assigned_target_damage must be >= 0")
             target_amount = assigned_target_damage
 
+        # Step 2: allocate DamageInstanceId & issue permit
+        damage_instance_id = self.allocate_damage_instance_id(context)
+        permit = self.issue_settlement_permit(damage_instance_id, lineage, context)
+
         settlement_request = DamageSettlementRequest(
             damage_result=damage_result,
             assigned_target_damage=target_amount,
@@ -228,18 +227,17 @@ class DamageInstanceCoordinator:
             origin=SettlementOrigin.STAGE9,
         )
 
-        result = self._damage_resolution.settle(
-            context=context,
-            request=settlement_request,
-            permit=permit,
-        )
-
-        self._completed_instances.add(damage_instance_id)
-        return result
+        try:
+            return self._damage_resolution.settle(
+                context=context,
+                request=settlement_request,
+                permit=permit,
+            )
+        finally:
+            self.release_damage_instance(damage_instance_id)
 
     def release_damage_instance(self, damage_instance_id: DamageInstanceId) -> None:
         """Release operation-local permit state for a completed instance."""
         permit_id = self._instance_to_permit_id.pop(damage_instance_id, None)
         if permit_id:
             self._permits.pop(permit_id, None)
-        self._completed_instances.discard(damage_instance_id)

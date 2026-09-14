@@ -166,6 +166,11 @@ class DamageResolutionResult:
             raise TypeError(
                 f"lineage must be OperationLineage or None, got {type(self.lineage)}"
             )
+        if (self.damage_instance_id is None) != (self.lineage is None):
+            raise ValueError(
+                "damage_instance_id and lineage must either both be None (legacy) "
+                "or both be non-None (Stage9)"
+            )
 
     @property
     def dtotal(self) -> int:
@@ -239,6 +244,33 @@ class DamageResolutionSystem:
         每次调用均作为独立的 legacy operation，不受 Stage9 DamageInstance replay guard 约束。
         禁止添加 optional assigned_amount 参数。
         """
+        legacy_request = DamageSettlementRequest(
+            damage_result=damage,
+            assigned_target_damage=damage.final_damage,
+            damage_instance_id=None,
+            lineage=None,
+            origin=SettlementOrigin.LEGACY_COMPAT,
+        )
+        return self._settle_legacy(context, legacy_request)
+
+    def _settle_legacy(
+        self,
+        context: BattleContext,
+        request: DamageSettlementRequest,
+    ) -> DamageResolutionResult:
+        """
+        Private legacy settlement execution seam.
+        """
+        if not isinstance(request, DamageSettlementRequest):
+            raise TypeError(
+                f"request must be DamageSettlementRequest, got {type(request)}"
+            )
+        if request.origin != SettlementOrigin.LEGACY_COMPAT:
+            raise ValueError(
+                f"_settle_legacy requires LEGACY_COMPAT origin, got {request.origin}"
+            )
+
+        damage = request.damage_result
         target = context.get_unit(damage.target_id)
         target_troops_before = target.troops
 
@@ -268,7 +300,7 @@ class DamageResolutionSystem:
             )
             return DamageResolutionResult(
                 damage=damage,
-                assigned_target_damage=damage.final_damage,
+                assigned_target_damage=request.assigned_target_damage,
                 actual_target_troop_loss=0,
                 target_troops_before=target_troops_before,
                 target_troops_after=target_troops_before,
@@ -280,7 +312,7 @@ class DamageResolutionSystem:
             )
 
         was_alive = target.is_alive
-        troop_change = self._troops.apply_damage(target, damage.final_damage)
+        troop_change = self._troops.apply_damage(target, request.assigned_target_damage)
         target_troops_after = target.troops
         actual_target_troop_loss = target_troops_before - target_troops_after
 
@@ -316,7 +348,7 @@ class DamageResolutionSystem:
 
         return DamageResolutionResult(
             damage=damage,
-            assigned_target_damage=damage.final_damage,
+            assigned_target_damage=request.assigned_target_damage,
             actual_target_troop_loss=actual_target_troop_loss,
             target_troops_before=target_troops_before,
             target_troops_after=target_troops_after,

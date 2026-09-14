@@ -307,5 +307,5 @@ def test_empty_stage9_operation_set() -> None:
     # Confirm no fake/stub scope classes are introduced in Phase 9.2
     assert not hasattr(bc, "ActionScope")
     assert not hasattr(bc, "FakeActionScope")
-    assert not hasattr(bc, "DamageInstanceCoordinator")
+    assert not hasattr(bc, "DamageInstanceScope")
     assert not hasattr(bc, "ReactionBatchCoordinator")
