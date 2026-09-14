@@ -40,6 +40,8 @@ from .damage_prevention_system import (
 from .damage_resolution_system import (
     DamageResolutionResult,
     DamageResolutionSystem,
+    DamageSettlementRequest,
+    SettlementOrigin,
 )
 from .damage_rule_models import (
     DamageFormulaPolicyContribution,
@@ -258,6 +260,8 @@ __all__ = [
     "DamagePreventionSystem",
     "DamageResolutionResult",
     "DamageResolutionSystem",
+    "DamageSettlementRequest",
+    "SettlementOrigin",
     "DamageRuleFamily",
     "RuleContributionSource",
     "DamagePreventionRuleKind",

@@ -19,6 +19,7 @@ from .trigger_system import TriggerSystem
 from .troop_system import TroopSystem
 from .victory_system import VictorySystem
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
+from .damage_instance_coordinator import DamageInstanceCoordinator
 from .execution_right_system import FutureAdmissionGate, LegacyActionDispatchAdapter
 from .stage9_state_runtime import Stage9StateRuntime
 from .target_resolution_system import TargetResolutionSystem
@@ -48,6 +49,7 @@ class BattleSystems:
     action_order_system: ActionOrderSystem = field(init=False)
     damage_system: DamageSystem = field(init=False)
     damage_resolution_system: DamageResolutionSystem = field(init=False)
+    damage_instance_coordinator: DamageInstanceCoordinator = field(init=False)
     normal_attack_system: NormalAttackSystem = field(init=False)
     action_system: ActionSystem = field(init=False)
     recovery_system: RecoverySystem = field(init=False)
@@ -75,6 +77,10 @@ class BattleSystems:
         self.damage_resolution_system = DamageResolutionSystem(
             self.damage_system,
             self.troop_system,
+        )
+        self.damage_instance_coordinator = DamageInstanceCoordinator(
+            self.damage_system,
+            self.damage_resolution_system,
         )
         self.normal_attack_system = NormalAttackSystem(
             self.target_system,
