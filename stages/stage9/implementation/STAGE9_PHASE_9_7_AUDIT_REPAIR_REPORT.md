@@ -1,7 +1,7 @@
 # Stage9 Phase 9.7 Audit Repair Report
 
 Starting remote:
-1dd8c150168823b7e29a5224205d22cdd63218a
+b1dd8c150168823b7e29a5224205d22cdd63218a
 
 Build Prompt:
 835206ba39ce64c42a822a7138afeee307e0a492
@@ -23,12 +23,10 @@ State authority:
     7. Any subsequent independent Cleave effects (e.g. Slot 2) are rejected by FutureAdmissionGate.request_admission because the coordinator is in DRAINING_ADMITTED_WORK, ensuring no blanket post-victory bypass.
 
 * **P97-B02**: **CLOSED**
-  * *Defect*: ResolvedDamageFact was previously conditioned solely on 
-ot damage.prevented. In the event of NormalAttack Resistance (HitPreventionReason.IMMUNITY_LIKE), damage.prevented was True and committed loss was 0. The system suppressed Cleave entirely because no ResolvedDamageFact reached Step 7 of NormalAttackSystem.
+  * *Defect*: ResolvedDamageFact was previously conditioned solely on not damage.prevented. In the event of NormalAttack Resistance (HitPreventionReason.IMMUNITY_LIKE), damage.prevented was True and committed loss was 0. The system suppressed Cleave entirely because no ResolvedDamageFact reached Step 7 of NormalAttackSystem.
   * *Repair*:
-    1. Disentangled DamageResult.prevented from reaction eligibility. Defined NormalAttackSystem._is_cleave_reaction_eligible(damage): returns True if 
-ot damage.prevented or if damage.pipeline_trace.hit_result.reason is HitPreventionReason.IMMUNITY_LIKE.
-    2. Resisted NormalAttack produces a valid ResolvedDamageFact with ctual_target_troop_loss = 0 and ssigned_target_damage = 0.
+    1. Disentangled DamageResult.prevented from reaction eligibility. Defined NormalAttackSystem._is_cleave_reaction_eligible(damage): returns True if not damage.prevented or if damage.pipeline_trace.hit_result.reason is HitPreventionReason.IMMUNITY_LIKE.
+    2. Resisted NormalAttack produces a valid ResolvedDamageFact with actual_target_troop_loss = 0 and assigned_target_damage = 0.
     3. Cleave derives damage using FLOOR(0 x ratio) = 0, admitting the CleaveEffect with base loss 0 and calculating secondary damage of 0.
     4. Negative controls (DISARM, STUN) block the action before NormalAttack instantiation; they do not enter the reaction lifecycle, allocating 0 NormalAttack IDs, 0 Cleave IDs, and 0 Counter batches.
     5. Injected damage_rule_provider through BattleSystems to DamageSystem for production orchestration and testing.
@@ -56,11 +54,11 @@ Per Section 27 of instructions:
 | --- | --- | --- |
 | P97-B01 | **CLOSED** | Main-target death pre-admits first Cleave; coordinator enters DRAINING_ADMITTED_WORK |
 | P97-B02 | **CLOSED** | Resistance decoupled from general prevention; Cleave admitted with base 0 |
-| Main-target commander death: current Cleave admitted | **PASS** | Verified in 	est_p97_rpr_01; secondary units receive Cleave damage |
-| Later independent Cleave after latch | **BLOCKED** | Verified in 	est_p97_rpr_02; Slot 0 drains, Slot 2 blocked, exactly 1 CleaveEffect |
-| Resistance normal attack: Cleave admitted | **PASS** | Verified in 	est_p97_rpr_03; NormalAttackInstanceId exists, CleaveEffect admitted |
-| Resistance Cleave base | **0** | ctual_target_troop_loss = 0, derived base = 0, calculated damage = 0 |
-| Blocked Action Cleave | **0** | Verified in 	est_p97_rpr_04; DISARM/STUN yield 0 NA, 0 Cleave, 0 Counter |
+| Main-target commander death: current Cleave admitted | **PASS** | Verified in test_p97_rpr_01; secondary units receive Cleave damage |
+| Later independent Cleave after latch | **BLOCKED** | Verified in test_p97_rpr_02; Slot 0 drains, Slot 2 blocked, exactly 1 CleaveEffect |
+| Resistance normal attack: Cleave admitted | **PASS** | Verified in test_p97_rpr_03; NormalAttackInstanceId exists, CleaveEffect admitted |
+| Resistance Cleave base | **0** | actual_target_troop_loss = 0, derived base = 0, calculated damage = 0 |
+| Blocked Action Cleave | **0** | Verified in test_p97_rpr_04; DISARM/STUN yield 0 NA, 0 Cleave, 0 Counter |
 | Reaction order | **PASS** | Main settlement -> Cleave -> deferred Chain -> CounterBatch -> Assault/Combo |
 | P97-CLV-REC-01 | **PASS** | Parent actual loss base; secondary Dtarget recovery basis |
 | P97-CLV-REC-02 | **PASS** | Distribution participant loss recovery attribution delegated |
