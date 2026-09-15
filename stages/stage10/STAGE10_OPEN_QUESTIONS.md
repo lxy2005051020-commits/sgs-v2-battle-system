@@ -1,8 +1,11 @@
 # Stage10 · Persistent State Runtime Integration · Question Closure Ledger
 
-> Status: `R3-B CONTRACT CLOSURE COMPLETE / ALL AUDIT FINDINGS REPAIRED`  
-> Production implementation: `NOT AUTHORIZED`  
-> Normative architecture: `STAGE10.md` Draft V4
+> Status: `DESIGN FROZEN / ALL BLOCKERS & AUDIT FINDINGS CLOSED`  
+> Design Freeze Record: `STAGE10_DESIGN_FREEZE.md`  
+> Final Audit: `PASS / DESIGN FREEZE ELIGIBLE`  
+> Open Design Blockers: `0`  
+> Open Freeze-Blocking Questions: `0`  
+> Normative architecture: `STAGE10.md` (FROZEN)
 
 This file was originally the Stage10 open-question list. It serves as a closure ledger so historical design blockers are not accidentally re-opened by an implementation author.
 
@@ -194,22 +197,18 @@ A: NO. Runtime RNG remains context.random.
 
 ## 6. Current admission gate
 
-The next authorized gate is no longer “author architecture”. It is:
+The design freeze-gate audit has completed with verdict PASS:
 
 ```text
-Stage10 Draft V4
-+ Stage7 compatibility addendum
-+ Stage8 compatibility addendum
-+ Stage9 compatibility addendum
-↓
-Stage10 Final Independent Design Freeze-Gate Audit
-```
+Stage10 Architecture Design: FROZEN
+Freeze Record: STAGE10_DESIGN_FREEZE.md
+Final Audit: STAGE10_FINAL_DESIGN_FREEZE_GATE_AUDIT.md (PASS)
 
-Until that audit returns PASS:
-
-```text
-DESIGN FROZEN             = NO
-BUILD PROMPT AUTHORIZED   = NO
-PRODUCTION IMPLEMENTATION = NO
+DESIGN BLOCKERS           = 0
+OPEN FREEZE QUESTIONS     = 0
+DESIGN FROZEN             = YES
+BUILD PROMPT AUTHORIZED   = YES
+PRODUCTION IMPLEMENTATION = NOT YET STARTED
+NEXT STEP                 = Stage10 Build Prompt Preparation
 ```
 

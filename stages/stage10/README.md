@@ -4,29 +4,24 @@
 
 ```text
 Mechanism Research:          COMPLETE
-Independent Design Audit R1: FAIL / REPAIR REQUIRED
-Design Repair R1-C (Draft V2): COMPLETE
-Independent Re-Audit R2:     FAIL / REPAIR REQUIRED
-R2-A Authority Recovery:     COMPLETE
-R2-A4 Authority Promotion:   PASS (HEAD a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe)
-Design Repair R2-B:          COMPLETE
-Independent Re-Audit R3:     FAIL / REPAIR REQUIRED (STAGE10_DESIGN_REAUDIT_R3.md)
-Design Repair R3-B:          COMPLETE
-Final Freeze-Gate Audit:     READY / NOT STARTED
-Production:                  NOT AUTHORIZED
-Design Freeze:               NOT AUTHORIZED
+Authority:                   PROMOTED / PINNED (HEAD a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe)
+Architecture:                FROZEN (STAGE10_DESIGN_FREEZE.md)
+Final Freeze-Gate Audit:     PASS (BLOCKER=0, MAJOR=0, MINOR=0, HARDENING=2)
+Build:                       NOT STARTED
+Production:                  NOT IMPLEMENTED
 ```
 
 当前设计版本：
 
 ```text
 STAGE10.md
-= ARCHITECTURE DESIGN DRAFT V4
-= R3-B REPAIR COMPLETE
-= READY FOR FINAL INDEPENDENT DESIGN FREEZE-GATE AUDIT
+= STAGE10 ARCHITECTURE DESIGN FROZEN
+= FROZEN BY STAGE10_DESIGN_FREEZE.md
+= AUDITED BY STAGE10_FINAL_DESIGN_FREEZE_GATE_AUDIT.md (PASS)
+= NEXT STEP: Stage10 Build Prompt Preparation
 ```
 
-Stage10 目标仍然是将以下 8 个 persistent state 正式接入 Runtime：
+Stage10 目标是将以下 8 个 persistent state 正式接入 Runtime：
 
 ```text
 690072 BURN / 灼烧
@@ -41,11 +36,13 @@ Stage10 目标仍然是将以下 8 个 persistent state 正式接入 Runtime：
 
 ## 当前文档
 
+- [Stage10 Design Freeze Record](STAGE10_DESIGN_FREEZE.md)
+- [Stage10 Final Independent Design Freeze-Gate Audit](STAGE10_FINAL_DESIGN_FREEZE_GATE_AUDIT.md)
+- [Stage10 Architecture Design (Frozen)](STAGE10.md)
 - [Stage10 Research Scope](STAGE10_RESEARCH_SCOPE.md)
 - [Stage10 Research Matrix](STAGE10_RESEARCH_MATRIX.md)
 - [Stage10 Runtime Mapping](STAGE10_RUNTIME_MAPPING.md)
 - [Stage10 Open Questions](STAGE10_OPEN_QUESTIONS.md)
-- [Stage10 Architecture Design Draft V4](STAGE10.md)
 - [Stage10 Independent Design Audit Round 1](STAGE10_DESIGN_AUDIT.md)
 - [Stage10 Independent Design Re-Audit Round 2](STAGE10_DESIGN_REAUDIT_R2.md)
 - [Stage10 Independent Design Re-Audit Round 3](STAGE10_DESIGN_REAUDIT_R3.md)
