@@ -1,67 +1,68 @@
-# Stage 10 · Persistent State Runtime Integration · Architecture Design Draft V2
+# Stage 10 · Persistent State Runtime Integration · Architecture Design Draft V3
 
-> Repair: `Stage10 Design Repair R1-C / Architecture Contract Repair`  
-> Status: `ARCHITECTURE DESIGN DRAFT V2`  
-> Independent design audit: `REQUIRED`  
+> Repair: `Stage10 Design Repair R2-B / Architecture Repair Round 2`  
+> Status: `ARCHITECTURE DESIGN DRAFT V3`  
+> Independent design audit: `REQUIRED (Round 3)`  
 > Production implementation: `NOT AUTHORIZED`  
 > Design freeze: `NOT AUTHORIZED`
 
 ---
 
-# 0. R1-C input baseline
+# 0. R2-B input baseline
 
-R1-C was authored from the real branch state, not from historical SHA values in an earlier prompt.
+R2-B was authored from the real repository state following R2-A4 Gameplay Authority formal promotion and R2-B Stage9 Addendum creation:
 
 ```text
 Battle repo:
 lxy2005051020-commits/sgs-v2-battle-system
 branch: stage10-persistent-state-research
-input HEAD: 2be2cfdd789ef9e035306fbb4c5fb40bf994a341
+input HEAD: 41cd51f33f115fa7eaee94191a87e5967008ee7a (docs(stage9): add Stage10 aftermath compatibility addendum)
+preceding HEAD: ecde9d156bc9ad890b5c838d7daf4280f0a6c46d (docs(stage10): add independent design re-audit round 2)
 
-STAGE10.md blob:
-b833f0c0a02ca8f45d9b2f560af0aad9599d041a
+STAGE10.md Draft V2 input blob:
+15f771037dddd2ac0956af59403a9030cf039a7a
 
-STAGE10_DESIGN_AUDIT.md blob:
-9e8e73d0cc296e8cdb8799ffaabfbcc34a9204d3
+STAGE10_DESIGN_REAUDIT_R2.md blob:
+d4e3185b7f35f04373a439f3048976aa7a581182
 
-STAGE10_AUTHORITY_GAP_TRIAGE.md blob:
-860160964e07cccbb9eabb50bd86c42750fefbae
+STAGE7_STAGE10_COMPATIBILITY_ADDENDUM.md blob:
+64cdb7d86c8bda5b9123b49afcb924db7e1fd485
 
-STAGE10_TARGETED_RESEARCH_QUESTIONS.md blob:
-cddaa78bb0cbdc1db0e94f740edfee2ccc065c75
+STAGE8_STAGE10_COMPATIBILITY_ADDENDUM.md blob:
+4c1e22eda97bdc0ef74ab6175a28672845771ddc
+
+STAGE9_STAGE10_COMPATIBILITY_ADDENDUM.md commit:
+41cd51f33f115fa7eaee94191a87e5967008ee7a
 
 Gameplay Authority repo:
 lxy2005051020-commits/sgs-state-mechanics-research
 branch: main
-input HEAD: 61f2be7e87e6bfab1433657ee7f766ae0c53da9d
+canonical authoritative HEAD: a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe
 ```
 
-R1-C also reread the current Stage7 / Stage8 / Stage9 frozen contracts and the current production runtime before choosing compatibility seams.
+## 0.1 Authority synchronization status: PASS
 
-## 0.1 Authority synchronization note
-
-At Gameplay Authority HEAD `61f2be7e...`, the repository tree does **not** yet contain the task-referenced files:
+Following Stage10 R2-A3 local provenance recovery and R2-A4 formal promotion, Gameplay Authority `main` at HEAD `a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe` now contains:
 
 ```text
-stage10/RECOVERY_RNG_EDGE_RESEARCH.md
-stage10/FIRST_AID_ZERO_LOSS_ELIGIBILITY_RESEARCH.md
+1. commit 4661f4ffa1074045ce17d9158499dc03a8dfbec3:
+   - stage10/TARGETED_RESEARCH_S10_TR_01.md
+   - stage10/TARGETED_RESEARCH_S10_TR_02.md
+   - stage10/TARGETED_RESEARCH_S10_TR_03.md
+   - stage10/research_tools/replay_inspector.py
+   - stage10/research_tools/battle_log_analyzer.py
+   - stage10/research_tools/state_matrix_generator.py
+   - stage10/evidence/raw_logs/...
+   - stage10/evidence/parsed_tables/...
+
+2. commit 0b9e172a4d3ce3b29025347b086738c0253e56ac:
+   - states/persistent/first_aid/MECHANISM_CONTRACT.md (zero-loss, full-troop, and trigger eligibility alignment)
+
+3. commit a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe:
+   - PROMOTION_STAGE10_R2_A4.md (formal promotion record)
 ```
 
-and the current `states/persistent/first_aid/MECHANISM_CONTRACT.md` blob still predates the zero-loss eligibility correction.
-
-R1-C therefore distinguishes two evidence sources instead of pretending the missing files exist:
-
-```text
-A. repository-pinned Gameplay Authority
-   → HEAD 61f2be7e...
-
-B. project-owner supplied targeted-research closure for R1-C
-   → zero-loss FIRST_AID eligibility facts
-   → full-troop recovery opportunity facts
-   → official recovery PRNG-consumption = UNKNOWN / UNOBSERVABLE
-```
-
-The supplied closure is treated as authoritative project input for this repair, but **Gameplay Authority repository contents are not modified by R1-C**. Independent re-audit must keep this repository-sync fact visible.
+Authority synchronization is therefore complete (`Authority Sync = PASS`). The dual-evidence divergence noted in Draft V2 is fully resolved. Draft V3 binds directly to canonical Gameplay Authority HEAD `a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe`.
 
 ---
 
@@ -206,29 +207,92 @@ target / owner defeat
 → remaining owner-state resolution is aborted
 ```
 
-## 4.1 Ownership
+## 4.1 System Responsibilities & Boundaries (S10-R2-M02)
+
+To eliminate ownership ambiguity between decision, dispatch, and execution, responsibilities are partitioned strictly:
 
 ```text
-StateLifecycleSystem
-→ owns physical state clear
+1. Decision Owner: ExecutionRightSystem
+   - Authoritative decision maker for intent/effect admissibility.
+   - Evaluates evaluate_rule_intent(intent, context).
+   - Validates live unit status, suppression, and defeat state.
+   - Returns typed ExecutionRightDecision:
+     * ALLOW
+     * REJECT_CURRENT
+     * ABORT_OWNER_STATE_REMAINDER
+     * ABORT_HOOK
 
-DefeatCleanupPort
-→ owns synchronous defeat checkpoint coordination
+2. Dispatch Owner: RuleHookSystem
+   - Manages hook registration, batch iteration, and loop control.
+   - Dispatches each collected intent/effect to ExecutionRightSystem prior to execution.
+   - Enforces abort scope actions (e.g. discarding remaining intents for the defeated owner or halting the hook batch).
 
-ExecutionRightSystem
-→ owns typed execution-right decision
+3. Execution Router: EffectExecutor
+   - Pure execution worker.
+   - Executes already-admitted Effect objects through domain handlers (Damage, Recovery, State).
+   - Performs NO secondary gameplay permission, suppression, or defeat arbitration.
 
-RuleHookSystem
-→ owns hook-tail abort decision
+4. Cleanup Port: DefeatCleanupPort
+   - Coordinates synchronous state cleanup upon unit defeat across all death paths.
 
-EffectExecutor
-→ validates execution right before dispatching each Effect
+5. State Owner: StateLifecycleSystem
+   - Owns physical container creation, refresh, and removal.
 
-EventBus
-→ observation only
+6. Observation: EventBus
+   - Strictly observational; no gameplay control flow or side-effects.
 ```
 
 Already-generated tail Effects are immutable historical intent. They are not rebound, retried, or executed after the hard boundary; they receive typed aborted outcomes.
+
+## 4.2 Typed Abort Scopes
+
+```text
+ALLOW
+→ Effect is admitted and forwarded to EffectExecutor. Batch continues normally.
+
+REJECT_CURRENT
+→ Current Effect is rejected with typed status (e.g. TARGET_DEFEATED, SUPPRESSED).
+→ Subsequent unrelated intents/effects in the batch continue evaluation.
+
+ABORT_OWNER_STATE_REMAINDER
+→ Current Effect is aborted because state owner is defeated/invalidated.
+→ All remaining intents/effects in the current batch belonging to the same state/owner are discarded.
+→ Effects belonging to other living units in the same batch proceed.
+
+ABORT_HOOK
+→ Critical execution boundary violation. Entire hook batch terminates immediately.
+```
+
+## 4.3 Effect A / B / C Execution Timeline
+
+Consider an action or hook producing multiple effects across units:
+- Effect A: State tick dealing damage to Unit X (reduces Unit X troops to 0).
+- Effect B: Secondary state effect or subsequent tick on Unit X.
+- Effect C: Independent effect or state tick on Unit Y.
+
+```text
+1. Effect A evaluation:
+   - RuleHookSystem requests evaluation from ExecutionRightSystem.
+   - Unit X is alive → ExecutionRightSystem returns ALLOW.
+   - RuleHookSystem passes Effect A to EffectExecutor.
+   - Damage settlement resolves; Unit X is defeated.
+   - Synchronous call to DefeatCleanupPort:
+     * StateLifecycleSystem removes Unit X states with reason OWNER_DEFEATED.
+     * Defeat is latched in UnitRegistry / BattleContext.
+
+2. Effect B evaluation:
+   - RuleHookSystem requests evaluation from ExecutionRightSystem for Effect B (target/owner Unit X).
+   - ExecutionRightSystem detects Unit X is defeated.
+   - ExecutionRightSystem returns ABORT_OWNER_STATE_REMAINDER.
+   - RuleHookSystem records typed abort for Effect B and skips any remaining intents targeting Unit X.
+   - Effect B is NEVER dispatched to EffectExecutor.
+
+3. Effect C evaluation:
+   - RuleHookSystem evaluates next intent/effect (Unit Y).
+   - Unit Y is alive and valid → ExecutionRightSystem returns ALLOW.
+   - RuleHookSystem forwards Effect C to EffectExecutor.
+   - Effect C executes normally.
+```
 
 Non-state Effect domains are not silently cancelled merely because a different unit died. Each Effect/domain uses its own execution-right rule. The Stage10 hard batch abort applies to the defeated owner's remaining state-resolution domain.
 
@@ -513,6 +577,26 @@ There is no externally observable stale interval by design.
 
 Owner death may physically remove the state earlier through defeat cleanup.
 
+## 8.1 Battle-end Persistent State Teardown Semantics (S10-R2-M05)
+
+Stage10 strictly distinguishes **Gameplay Expiration** from **Battle Teardown**:
+
+```text
+1. Gameplay Expiration:
+   - Triggered when a state naturally reaches the end of its duration window (round == last_eligible_round).
+   - Occurs at the completion of UNIT_ACTION_START.
+   - Emits STATE_EXPIRED event.
+   - Or triggered upon unit defeat via DefeatCleanupPort (emits STATE_REMOVED with reason OWNER_DEFEATED).
+
+2. Battle Teardown (clear_all_on_battle_end):
+   - Triggered ONLY upon battle completion/finalization.
+   - Unique Owner: StateLifecycleSystem.clear_all_on_battle_end(context).
+   - Execution Timing: Executes strictly AFTER victory is latched and all already-admitted work (including final local aftermath) is drained, immediately before returning the final BattleResult.
+   - Target Scope: Cleanses all remaining persistent and temporary state instances across ALL units (both surviving winners and losers).
+   - Observation: Emits observation-only non-gameplay event STATE_CLEARED_ON_BATTLE_END.
+   - Guarantees zero state leakage into subsequent simulations or context reuse.
+```
+
 ---
 
 # 9. ActionProgressTracker contract
@@ -548,6 +632,36 @@ max 1 per owner per combat round
 ```
 
 A second synthetic/duplicate action-start call in the same combat round cannot create a second Stage10 persistent opportunity.
+
+## 9.1 Exact Execution Ordering at UNIT_ACTION_START (S10-R2-N01)
+
+To prevent nondeterministic interleaving between state decay, tracking, and trigger collection, the exact sequence of operations at the start of each unit action is frozen:
+
+```text
+1. Set Acting Unit:
+   ActionProgressTracker.set_current_acting_unit(owner_id)
+
+2. Increment Action Index & Mark Round Consumption:
+   ActionProgressTracker.mark_action_start(owner_id, current_round)
+
+3. Publish Action Start Observation:
+   EventBus.publish(UNIT_ACTION_START, payload={unit_id: owner_id, round: current_round})
+
+4. Evaluate Action-Start Triggers & Persistent Opportunities:
+   TriggerSystem collects registered triggers for UNIT_ACTION_START.
+   Persistent opportunities (e.g. RECUPERATION, DOT ticks) are collected into an immutable batch.
+
+5. Execute Hook / Intent Batch:
+   RuleHookSystem dispatches batch through ExecutionRightSystem -> EffectExecutor.
+
+6. Synchronous Physical Expiration Check:
+   For each state on owner:
+     if current_round >= state.last_eligible_round:
+       StateLifecycleSystem.expire_state(state, reason="DURATION_EXPIRED")
+
+7. Hand off to Action Phase:
+   Engine proceeds to regular action execution (Command / Active skills, Normal Attack).
+```
 
 ---
 
@@ -717,13 +831,24 @@ QUERY_SKILL_RUNTIME
 EXTERNAL_LIFECYCLE
 ```
 
-## 12.1 ALWAYS_ACTIVE
+## 12.1 Normative Mapping per State Family and Source Class (S10-R2-M03)
+
+| State Family | Source Skill Class | Gate Mode | Operational Semantics |
+|---|---|---|---|
+| Periodic DOT (`BURN`, `FLOOD`, `POISON`, `ROUT`, `SANDSTORM`, `REBELLION`) | Active / Command / Passive | `ALWAYS_ACTIVE` | Never queries source skill runtime; source unit death or silence does not suppress DOT damage ticks. |
+| `FIRST_AID` | Passive / Command | `QUERY_SKILL_RUNTIME` | Queries `SkillRuntime.enabled`. Temporary deactivation (e.g. 伪报 / 军心动摇) suppresses recovery opportunity; clock continues. |
+| `FIRST_AID` | Active | `ALWAYS_ACTIVE` | Active skill buffs once applied run to duration completion; subsequent silence does not suppress opportunity. |
+| `RECUPERATION` | Passive / Command | `QUERY_SKILL_RUNTIME` | Queries `SkillRuntime.enabled`. Temporary deactivation suppresses opportunity; clock continues. |
+| `RECUPERATION` | Active | `ALWAYS_ACTIVE` | Buff runs to duration completion; cannot be silenced mid-duration. |
+| External Aura (Field / Aura) | External Provider | `EXTERNAL_LIFECYCLE` | External system manages physical attachment and lifetime; if state physically attached, admitted. No dynamic per-opportunity callback. |
+
+## 12.2 ALWAYS_ACTIVE
 
 The already-created persistent generation never dynamically queries source skill runtime.
 
 Source death has no generic effect.
 
-## 12.2 QUERY_SKILL_RUNTIME
+## 12.3 QUERY_SKILL_RUNTIME
 
 Each opportunity queries only the registered source skill's explicit temporary active/inactive fact:
 
@@ -741,9 +866,9 @@ source action permission
 
 unless a future Gameplay Authority explicitly requires those facts.
 
-## 12.3 EXTERNAL_LIFECYCLE
+## 12.4 EXTERNAL_LIFECYCLE
 
-R1-C chooses one meaning:
+Stage10 freezes exactly one meaning for `EXTERNAL_LIFECYCLE`:
 
 ```text
 external authoritative owner physically removes/replaces the persistent state through StateLifecycleSystem
@@ -751,7 +876,7 @@ external authoritative owner physically removes/replaces the persistent state th
 
 It does **not** mean a per-opportunity `is_external_active()` callback.
 
-While the state physically exists, Stage10 does not add a second dynamic gate for EXTERNAL_LIFECYCLE.
+While the state physically exists on the target container, Stage10 does not add a second dynamic gate for EXTERNAL_LIFECYCLE.
 
 ---
 
@@ -808,6 +933,46 @@ potency snapshot
 damage/recovery basis
 first eligible round
 last eligible round
+```
+
+## 13.2 StateApplicationGenerationId End-to-End Propagation Matrix (S10-R2-M04)
+
+Every DTO, request, result, trace, and observation event in the persistent pipeline must carry `StateApplicationGenerationId` end-to-end:
+
+| Pipeline Entity | Field Name | Type | Provenance Guarantee |
+|---|---|---|---|
+| `StateInstance` | `current_generation_id` | `StateApplicationGenerationId` | Allocated on initial apply or same-name refresh |
+| `StateGenerationSnapshot` | `application_generation_id` | `StateApplicationGenerationId` | Captured immutably at opportunity collection time |
+| `DamageRequest` | `source_generation_id` | `StateApplicationGenerationId \| None` | Attached when damage originates from persistent state |
+| `DamageResult` | `source_generation_id` | `StateApplicationGenerationId \| None` | Preserved from request through Stage8/Stage9 pipeline |
+| `RecoveryRequest` | `source_generation_id` | `StateApplicationGenerationId \| None` | Attached when recovery originates from persistent state |
+| `RecoveryResult` | `source_generation_id` | `StateApplicationGenerationId \| None` | Preserved from recovery request through RecoverySystem |
+| `DamageAftermathFact` | `source_state_generation` | `StateApplicationGenerationId \| None` | Links aftermath fact to triggering DOT / attack state |
+| `DamagePipelineTrace` | `source_generation_id` | `StateApplicationGenerationId \| None` | Embedded in execution trace for deterministic audit |
+| `STATE_APPLIED` event | `application_generation_id` | `StateApplicationGenerationId` | Authoritative generation identity of applied state |
+| `STATE_REFRESHED` event | `old/new_generation_id` | `StateApplicationGenerationId` | Provenance transition audit |
+| `STATE_EXPIRED` event | `application_generation_id` | `StateApplicationGenerationId` | Exact expiring generation identity |
+| `STATE_REMOVED` event | `application_generation_id` | `StateApplicationGenerationId` | Exact removed generation identity |
+| `DAMAGE_RESOLVED` event | `source_generation_id` | `StateApplicationGenerationId \| None` | Observation link to originating state generation |
+| `RECOVERY_RESOLVED` event| `source_generation_id` | `StateApplicationGenerationId \| None` | Observation link to originating state generation |
+
+## 13.3 Snapshot vs JIT Query Separation (S10-R2-M04)
+
+To prevent runtime race conditions and generation leakage, Stage10 strictly partitions snapshot values from JIT queries:
+
+```text
+1. Snapshot at Generation Creation (Immutable):
+   - Potency & Rates: recovery chance, treatment rate, ratio, base damage rate.
+   - Source Attributes: strength, intellect at application time (for frozen formula).
+   - Formula Policy: FROZEN_APPLICATION vs LIVE_RUNTIME.
+   - Locked Decisions: crit roll locked, modifier plan locked.
+   - Lifecycle Window: first_eligible_round, last_eligible_round.
+
+2. JIT Queries at Opportunity Execution (Dynamic):
+   - Source Skill Gate: SkillRuntime.enabled (queried only when mode == QUERY_SKILL_RUNTIME).
+   - Target Survival: target.is_alive() and defeat status.
+   - Target Missing Troops: target.troops < target.max_troops (for recovery amount clamping).
+   - Dynamic Suppression: healing ban (CANNOT_BE_HEALED / 禁疗), dynamic damage barriers/reductions.
 ```
 
 ---
@@ -936,9 +1101,9 @@ Exact predicate:
 FIRST_AID opportunity exists iff:
 
 1. an effective FIRST_AID generation is attached to target
-2. that generation is within its lifecycle
-3. source-skill gate for that generation is operational
-4. DamageAftermathFact represents a relevant source/event family
+2. that generation is within its lifecycle window
+3. source-skill gate for that generation is operational (PersistentSourceSkillGate)
+4. DamageAftermathFact represents an authorized source/event family per ReactionPermissionPolicy.can_trigger_recovery(source_type) == True (includes NORMAL_ATTACK, ACTIVE_SKILL, PERIODIC_DAMAGE, CLEAVE, COUNTER, and ASSAULT)
 5. hit_topology == RESOLVED_HIT
 6. target_defeated == false
 7. target remains alive after settlement/defeat cleanup
@@ -957,11 +1122,14 @@ Therefore:
 weakness-zero → YES
 barrier-zero  → YES
 evasion       → NO
+ASSAULT hit   → YES (Pursuit_Counterattack authorized)
 ```
 
 Share / Distribution `AttributedDirectTroopLoss` does not become FIRST_AID-eligible merely because it can kill a unit.
 
 Stage9 `CHAIN_TRUE_FEEDBACK` remains restricted by its frozen reaction-permission contract. It may pass through the shared aftermath topology for explicit classification/audit, but the source-type permission result is `FIRST_AID NOT PERMITTED`; Stage10 does not silently widen Chain feedback into a normal DamageEvent.
+
+`ReactionPermissionPolicy.can_trigger_recovery(source_type)` is the SINGLE AUTHORITATIVE PERMISSION OWNER for damage aftermath recovery eligibility.
 
 ---
 
@@ -1018,14 +1186,32 @@ including probability 0.0 and 1.0,
 and regardless of current recoverable_gap.
 ```
 
-The call happens only after:
+## 18.1 Normalized Pre-RNG Admission Gate Sequence (S10-R2-N02)
+
+To ensure trace and failure-reason determinism across the codebase, the exact sequence of checks before an opportunity is admitted to consume an RNG roll is frozen:
 
 ```text
-state/generation exists
-opportunity timing is valid
-source-skill active gate passes where applicable
-target survives / remains alive
-damage topology is eligible for FIRST_AID
+1. Target Validity & Alive Gate:
+   - Target unit exists and target.is_alive() == True.
+   - If dead or None: reject opportunity (TARGET_DEFEATED / INVALID_TARGET); NO RNG call.
+
+2. Hit Topology & Reaction Permission Gate:
+   - hit_topology == DamageHitTopology.RESOLVED_HIT.
+   - ReactionPermissionPolicy.can_trigger_recovery(source_type) == True.
+   - If not resolved hit (e.g. EVASION) or source ineligible (e.g. CHAIN_TRUE_FEEDBACK): reject; NO RNG call.
+
+3. Opportunity Lifecycle Window Gate:
+   - current_combat_round >= state.first_eligible_round and current_combat_round <= state.last_eligible_round.
+   - If outside lifecycle window: reject; NO RNG call.
+
+4. Source Skill Enablement Gate:
+   - PersistentSourceSkillGate evaluates source skill status.
+   - If mode == QUERY_SKILL_RUNTIME and SkillRuntime.enabled == False: suppress opportunity; NO RNG call.
+
+5. ADMITTED -> Exactly One RNG Draw:
+   - All pre-conditions satisfied.
+   - Consume exactly one context.random.chance(probability) call.
+   - (recoverable_gap == 0 does NOT suppress this draw; full troops proceed to draw).
 ```
 
 `recoverable_gap` is **not** an eligibility gate.
@@ -1172,15 +1358,37 @@ publish EventBus facts as control flow
 Unique responsibilities:
 
 ```text
-validate RecoveryOpportunity type/provenance/generation snapshot
-validate target still alive
-query PersistentSourceSkillGate when mode == QUERY_SKILL_RUNTIME
-consume exactly one simulator probability draw for admitted opportunity
-resolve frozen recovery potency
-for damage-ratio model, read typed ActualTargetTroopLoss from aftermath snapshot
-create RecoveryRequest
-call RecoverySystem
-return RecoveryOpportunityResult
+Normalized Admission Sequence before RNG Draw (S10-R2-N02):
+1. Target Validity & Alive Gate:
+   - Validate target unit exists and target.is_alive() == True.
+   - If dead/None: abort opportunity with TARGET_DEFEATED / INVALID_TARGET; NO RNG draw.
+
+2. Hit Topology & Reaction Permission Gate:
+   - Validate DamageAftermathFact.hit_topology == DamageHitTopology.RESOLVED_HIT.
+   - Validate ReactionPermissionPolicy.can_trigger_recovery(source_type) == True.
+   - (Includes NORMAL_ATTACK, ACTIVE_SKILL, PERIODIC_DAMAGE, CLEAVE, COUNTER, and ASSAULT).
+   - If not resolved hit or source ineligible: abort opportunity; NO RNG draw.
+
+3. Opportunity Lifecycle Window Gate:
+   - Validate current combat round is within [first_eligible_round, last_eligible_round].
+   - If outside window: abort opportunity; NO RNG draw.
+
+4. Source Skill Enablement Gate:
+   - Query PersistentSourceSkillGate.
+   - When mode == QUERY_SKILL_RUNTIME: query SkillRuntimeRegistry.lookup(owner_id, slot).enabled.
+   - If disabled: suppress opportunity (SKILL_TEMPORARILY_DISABLED); NO RNG draw. Clock continues.
+
+5. Simulator RNG Probability Draw:
+   - Consume exactly one context.random.chance(probability) call.
+   - (recoverable_gap == 0 does NOT suppress this draw; full troops proceed to draw).
+   - If roll fails: return OpportunityFailed(PROBABILITY_FAILED).
+
+6. Potency Calculation & RecoveryRequest:
+   - Resolve frozen recovery potency from generation snapshot.
+   - For damage-ratio model: read typed ActualTargetTroopLoss from aftermath snapshot.
+   - Create RecoveryRequest carrying source_generation_id.
+   - Call RecoverySystem.
+   - Return RecoveryOpportunityResult.
 ```
 
 It must not:
@@ -1265,7 +1473,7 @@ DamageSystem.calculate
 
 Fatal target path reaches the aftermath port as `target_defeated=true` and creates no recovery opportunity.
 
-## 24.2 Share
+## 24.2 Share (Reconciled per Stage9 Addendum)
 
 Frozen Stage9 partition arithmetic remains target-first.
 
@@ -1280,11 +1488,11 @@ target settlement with Dtarget
      no FIRST_AID
      finish current DamageInstance
 → else:
-     target DamageAftermathPort
-     → local FIRST_AID opportunity/recovery
-     → commit Share AttributedDirectTroopLoss to sharer
+     commit Share AttributedDirectTroopLoss to sharer
      → DefeatCleanupPort if sharer dies
      → victory/finalization death observation for sharer
+     → target DamageAftermathPort (invoked at reconciled Stage9 checkpoint after partition commit)
+        → local FIRST_AID opportunity/recovery if target alive
      → existing resolved-damage callbacks for the original target hit
 → complete current DamageInstance
 ```
@@ -1324,7 +1532,7 @@ FIRST_AID aftermath is a completion-local component of that admitted target sett
 
 However new global future branches requested afterward remain denied by `FutureAdmissionGate`.
 
-## 24.4 Cleave
+## 24.4 Cleave (Reconciled per Stage9 Addendum S10-R2-B01)
 
 The existing parallel `cleave_first_aid` callback is removed in Stage10 build.
 
@@ -1336,15 +1544,23 @@ Cleave derived hit topology
 → Distribution participant direct losses first when applicable
 → Cleave target troop settlement
 → DefeatCleanupPort if defeated
-→ shared DamageAftermathPort
-→ FIRST_AID local recovery if permitted
-→ Share direct loss after surviving target aftermath when applicable
-→ existing attacker-recovery contract
-→ existing resolved-damage callbacks / deferred Chain timing
+→ target death observation
+→ if target defeated:
+     discard pending sharer direct loss
+     no FIRST_AID
+     complete Cleave
+→ else:
+     commit Share DirectTroopLoss to sharer (if SharePlan exists)
+     → DefeatCleanupPort if sharer dies
+     → victory/finalization death observation for sharer
+     → shared DamageAftermathPort (checkpoint reconciled per Stage9 Addendum §4.1)
+        → FIRST_AID local recovery if permitted and target alive
+     → existing attacker-recovery contract (倒戈/吸血, if can_trigger_recovery)
+     → existing resolved-damage callbacks / deferred Chain timing
 → complete admitted Cleave local damage
 ```
 
-This intentionally closes the Stage9 implementation asymmetry where Cleave's Share direct loss previously occurred before its dedicated FIRST_AID callback.
+This preserves the Stage9 frozen execution order per `STAGE9_STAGE10_COMPATIBILITY_ADDENDUM.md`, confirming that `DamageAftermathPort` is a shared port invoked at each settlement path's respective frozen checkpoint rather than an unauthorized runtime reordering.
 
 Cleave remains derived damage and does not re-enter the standard Stage8 base formula/modifier pipeline.
 
@@ -1487,7 +1703,7 @@ S10 targeted research may use evasion/barrier topology to define FIRST_AID after
 
 ---
 
-# 31. Dependency graph V2
+# 31. Dependency graph V3
 
 Normative dependency direction:
 
@@ -1500,13 +1716,15 @@ BattleContext
 ├─ RandomSystem
 └─ OperationIdAllocator
 
+ReactionPermissionPolicy (static / policy authority)
+
 AttributeSystem
 TroopSystem
 StateLifecycleSystem
-ExecutionRightSystem
+ExecutionRightSystem (decision owner: evaluate_rule_intent, dead/suppression checks)
 SkillRuntimeRegistry/Lookup
         ↓
-DefeatCleanupPort
+DefeatCleanupPort (synchronous defeat checkpoint)
         ├─ StateLifecycleSystem
         └─ ExecutionRightSystem
 
@@ -1515,6 +1733,8 @@ RecoverySystem
 
 RecoveryOpportunitySystem
         ├─ SkillRuntimeRegistry/Lookup
+        ├─ PersistentSourceSkillGate
+        ├─ ReactionPermissionPolicy
         └─ RecoverySystem
 
 ContinuousDamageBasisProducer
@@ -1543,6 +1763,7 @@ TriggerSystem
 
 DamageAftermathSystem / Port
         ├─ TriggerSystem
+        ├─ ReactionPermissionPolicy
         └─ RecoveryOpportunitySystem
 
 DamageInstanceCoordinator
@@ -1550,6 +1771,7 @@ DamageInstanceCoordinator
         ├─ DamageResolutionSystem
         ├─ DamagePartitionCoordinator
         ├─ DirectTroopLossResolver
+        ├─ ReactionPermissionPolicy
         ├─ DamageAftermathPort
         └─ BattleFinalizationCoordinator
 
@@ -1559,24 +1781,29 @@ CleaveDerivedDamageResolver
         ├─ DamagePartitionCoordinator
         ├─ DirectTroopLossResolver
         ├─ HitResolutionSystem
+        ├─ ReactionPermissionPolicy
         ├─ DamageAftermathPort
         └─ BattleFinalizationCoordinator
 
 ChainSystem
         ├─ TroopSystem
         ├─ DefeatCleanupPort
+        ├─ ReactionPermissionPolicy
         └─ BattleFinalizationCoordinator
 
-EffectExecutor
+EffectExecutor (pure execution router)
         ├─ DamageInstanceCoordinator
         ├─ StateLifecycleSystem
         └─ RecoverySystem
 
-RuleHookSystem
+RuleHookSystem (dispatch owner & batch loop controller)
         ├─ TriggerSystem
+        ├─ ExecutionRightSystem (pre-dispatch decision check)
         ├─ EffectExecutor
-        ├─ RecoveryOpportunitySystem
-        └─ ExecutionRightSystem
+        └─ RecoveryOpportunitySystem
+
+BattleFinalizationCoordinator
+        └─ StateLifecycleSystem.clear_all_on_battle_end (post-victory teardown)
 
 BattleEngine
         └─ BattleSystems composition root
@@ -1689,16 +1916,19 @@ Shared aftermath topology does not erase Stage9 source identity.
 | PERIODIC_DAMAGE | YES | YES if resolved-hit + survived |
 | multi-hit | one fact per DamageInstance | YES independently per eligible hit |
 | COUNTER standard damage | YES | YES if existing Stage9 permission allows standard damage callbacks |
-| CLEAVE derived damage | YES | YES per frozen Cleave recovery permission |
+| CLEAVE derived damage | YES | YES per frozen Cleave recovery permission at reconciled Stage9 checkpoint |
+| ASSAULT pursuit/normal damage | YES | YES if resolved-hit + survived (Pursuit_Counterattack authorized) |
 | CHAIN_TRUE_FEEDBACK | restricted classification fact | NO; Stage9 restricted feedback permission remains frozen |
 | SHARE_DIRECT_LOSS | no DamageEvent aftermath | NO |
 | DISTRIBUTION_DIRECT_LOSS | no DamageEvent aftermath | NO |
 
+`ReactionPermissionPolicy.can_trigger_recovery(source_type)` is the SINGLE AUTHORITATIVE RUNTIME PERMISSION OWNER. No individual system may hardcode its own permission list.
+
 ---
 
-# 34. Mandatory regression plan V2
+# 34. Mandatory regression plan V3
 
-No tests are written in R1-C, but the next build/audit must include at least:
+No tests are written in R2-B, but the implementation build/audit must include at least:
 
 ```text
 LIFECYCLE
@@ -1711,10 +1941,19 @@ LIFECYCLE
 - last eligible window complete → physical state absent immediately afterward
 - suppressed opportunity → clock continues, no catch-up
 
-GENERATION
+BATTLE TEARDOWN (S10-R2-M05)
+- battle finalization drains all admitted aftermath work
+- StateLifecycleSystem.clear_all_on_battle_end executes after victory latched
+- all states across all units (both winners and losers) are cleansed
+- STATE_CLEARED_ON_BATTLE_END emitted; zero state leakage between battles
+
+GENERATION PROVENANCE & DTO PROPAGATION (S10-R2-M04)
 - refresh generation 3 → 4
 - pending generation-3 Effect executes with generation-3 snapshot
 - STATE_REFRESHED reports old/new generation
+- source_generation_id propagated end-to-end through DamageRequest, DamageResult,
+  RecoveryRequest, RecoveryResult, DamageAftermathFact, DamagePipelineTrace,
+  and observation events (DAMAGE_RESOLVED, RECOVERY_RESOLVED)
 
 FIRST_AID AFTERMATH
 - weakness-zero → opportunity YES
@@ -1725,19 +1964,24 @@ FIRST_AID AFTERMATH
 - zero-loss + existing missing troops + treatment model → may recover >0
 - zero-loss + ratio model → opportunity exists, nominal ratio amount 0
 - zero-loss + full troops → opportunity executes; successful recovery resolves actual 0
+- ASSAULT pursuit/counterattack hit → opportunity YES (S10-R2-B02)
 
 RECUPERATION
 - full troops → opportunity not skipped
 - source-skill inactive → opportunity suppressed without pausing finite lifecycle
 
-RNG
+RNG & ADMISSION GATES (S10-R2-N02)
+- normalized gate order: target alive -> hit topology & permission -> lifecycle window -> source skill gate -> RNG draw
 - probability == 1.0 → exactly one simulator probability draw per admitted opportunity
 - probability == 0.0 → exactly one simulator probability draw per admitted opportunity
 - recoverable_gap == 0 → does not suppress admitted opportunity draw
+- dead target or disabled skill → opportunity aborted/suppressed before RNG draw (zero RNG calls)
 - ineligible aftermath → zero recovery probability draws
 
-DEATH
-- owner dies during hook batch → cleanup synchronously; remaining owner-state intents aborted
+DEATH & EXECUTION RIGHT (S10-R2-M02)
+- owner dies during hook batch → synchronous cleanup via DefeatCleanupPort
+- ExecutionRightSystem returns ABORT_OWNER_STATE_REMAINDER for remaining owner intents
+- unrelated unit intents in same hook batch continue (Effect C)
 - future state application to dead owner rejected
 - source dies before DOT tick → existing target state survives and later tick executes
 - Chain/direct/Cleave death paths all call one defeat cleanup port
@@ -1752,15 +1996,16 @@ STAGE8
 - source-dead historical periodic source accepted only on authorized frozen lane
 - trace never marks skipped stage EXECUTED
 
-STAGE9 / AFTERMATH
+STAGE9 / AFTERMATH (S10-R2-B01, S10-R2-B02)
 - NoPartition target aftermath before callbacks
-- Share target aftermath before sharer DirectTroopLoss
-- Distribution participant direct loss drains before target settlement
+- Share: target settlement -> sharer direct loss -> target aftermath (reconciled checkpoint)
+- Distribution: participant direct loss drains before target settlement
 - victory latched during admitted Distribution still allows current target local FIRST_AID aftermath
 - Share/Distribution DirectTroopLoss never triggers FIRST_AID
-- Cleave uses same DamageAftermathPort as standard damage
+- Cleave: target settlement -> sharer direct loss -> DamageAftermathPort(target) -> attacker recovery -> callbacks
 - no `cleave_first_aid` production path remains
 - Chain restricted feedback remains FIRST_AID-ineligible
+- ASSAULT source type permitted for FIRST_AID aftermath recovery
 ```
 
 Hardening also requires:
@@ -1768,6 +2013,8 @@ Hardening also requires:
 ```text
 property tests for lifecycle windows
 conformance suite for all death-capable troop-loss paths
+S10-R2-H01: exactly-once defeat-cleanup conformance spy across every destructive route (standard, direct loss, Cleave, Chain, Counter)
+S10-R2-H02: frozen-lane instrumentation proving zero current-source formula/provider live recalculation
 RNG spy/golden sequence tests
 static dependency/import/constructor DAG tests
 no EventBus gameplay subscribers
@@ -1779,6 +2026,8 @@ LIVE_RUNTIME exact golden suite
 # 35. Finding Closure Matrix
 
 `REPAIR CLAIMED` means the authoring pass supplied an explicit design answer. It does **not** mean the independent re-audit has accepted it.
+
+### Round 1 Findings (Preserved from Draft V2)
 
 | Audit Finding | Severity | R1-C repair | Status |
 |---|---|---|---|
@@ -1805,37 +2054,54 @@ LIVE_RUNTIME exact golden suite
 | S10-A-H04 dependency/static architecture tests | HARDENING | explicit DAG + forbidden edges | `ACCEPTED FOR BUILD` |
 | S10-A-H05 LIVE_RUNTIME golden | HARDENING | exact backward-regression obligation | `ACCEPTED FOR BUILD` |
 
+### Round 2 Findings (Repaired in Draft V3)
+
+| Audit Finding | Severity | R2-B Repair / Resolution | Status |
+|---|---|---|---|
+| S10-R2-B01 Stage9 Cleave vs FIRST_AID ordering conflict | BLOCKER | Formal `STAGE9_STAGE10_COMPATIBILITY_ADDENDUM.md` created; preserved Stage9 frozen ordering (`Cleave target settlement -> Share direct loss -> DamageAftermathPort(target) -> attacker recovery -> callbacks`) | `REPAIR CLAIMED` |
+| S10-R2-B02 `SourceType.ASSAULT` FIRST_AID recovery permission conflict | BLOCKER | Formally authorized in Stage9 Addendum and `ReactionPermissionPolicy.can_trigger_recovery`; aligned with Authority `Pursuit_Counterattack: ELIGIBLE` | `REPAIR CLAIMED` |
+| S10-R2-M01 Gameplay Authority pinned commit missing targeted research | MAJOR | Formally promoted in R2-A4 to Gameplay Authority `main` @ `a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe`; `Authority Sync = PASS` | `PROMOTED & SYNC PASS` |
+| S10-R2-M02 ExecutionRight unique owner ambiguity | MAJOR | Partitioned into Decision Owner (`ExecutionRightSystem`), Dispatch Owner (`RuleHookSystem`), and Router (`EffectExecutor`); typed abort scopes (`ALLOW`, `REJECT_CURRENT`, `ABORT_OWNER_STATE_REMAINDER`, `ABORT_HOOK`); explicit Effect A/B/C timeline | `REPAIR CLAIMED` |
+| S10-R2-M03 `PersistentSourceSkillGate` mapping underdefined | MAJOR | Added normative mapping table per family + source class; single definition of `EXTERNAL_LIFECYCLE` (external physical lifetime management) | `REPAIR CLAIMED` |
+| S10-R2-M04 `StateApplicationGenerationId` propagation matrix absent | MAJOR | Added end-to-end propagation matrix across all DTOs/requests/results/events; explicit separation between snapshot values and JIT queries | `REPAIR CLAIMED` |
+| S10-R2-M05 Battle-end persistent state cleanup underdefined | MAJOR | Added `StateLifecycleSystem.clear_all_on_battle_end(context)` teardown contract distinct from gameplay expiration | `REPAIR CLAIMED` |
+| S10-R2-N01 `ActionProgressTracker` exact order in `UNIT_ACTION_START` | MINOR | Exact sequence frozen: set acting unit -> mark action start -> publish observation -> trigger/hook evaluation -> expiry | `REPAIR CLAIMED` |
+| S10-R2-N02 Recovery pre-RNG admission gate sequence inconsistent | MINOR | Normalized exact sequence across §18 and §22: target alive -> hit topology & permission -> lifecycle window -> source skill gate -> RNG draw | `REPAIR CLAIMED` |
+| S10-R2-N03 Regression contract omits critical invariants | MINOR | Added ASSAULT, battle teardown, generation propagation, and mixed-hook tests to §34 | `REPAIR CLAIMED` |
+| S10-R2-H01 Exactly-once defeat-cleanup conformance spy | HARDENING | Added conformance spy requirement across every destructive route to §34 | `ACCEPTED FOR BUILD` |
+| S10-R2-H02 Frozen-lane zero live formula read instrumentation | HARDENING | Added frozen-lane instrumentation test requirement to §34 | `ACCEPTED FOR BUILD` |
+
 Summary:
 
 ```text
-BLOCKER repaired claim = 7 / 7
-MAJOR repaired claim   = 6 / 6
-MINOR addressed        = 4 / 4
-HARDENING accepted     = 5 / 5
+Round 1 findings: 7 BLOCKER, 6 MAJOR, 4 MINOR, 5 HARDENING (retained repaired)
+Round 2 findings: 2 BLOCKER, 5 MAJOR, 3 MINOR, 2 HARDENING (all repaired/promoted)
 
-Independent acceptance = NOT YET PERFORMED
+Independent acceptance = PENDING RE-AUDIT ROUND 3
 ```
 
 ---
 
 # 36. Author self-audit scenarios
 
-R1-C author self-audit requires two independent implementers reading this Draft V2 to produce the same observable contract for:
+R2-B author self-audit requires two independent implementers reading this Draft V3 to produce the same observable contract for:
 
 ```text
 PRE_BATTLE N=1
 source dies before DOT tick
-target dies mid-hook
+target dies mid-hook (Effect A/B/C)
 same-name refresh before pending effect executes
 weakness-zero FIRST_AID
 barrier-zero FIRST_AID
 evasion FIRST_AID
+ASSAULT FIRST_AID
 full-troop FIRST_AID
 full-troop RECUPERATION
 probability=100%
 Share
 Distribution
 Cleave
+battle-end teardown
 victory latched during current DamageInstance
 ```
 
@@ -1848,8 +2114,8 @@ PRE_BATTLE N=1
 source dies before DOT tick
 → state persists; frozen source basis executes; dead source live validation not required
 
-target dies mid-hook
-→ synchronous cleanup; remaining owner-state intents aborted
+target dies mid-hook (Effect A/B/C)
+→ synchronous cleanup via DefeatCleanupPort; ExecutionRightSystem denies remaining owner intents (ABORT_OWNER_STATE_REMAINDER); unrelated unit intents (Effect C) proceed
 
 refresh before pending effect executes
 → pending effect remains bound to old generation snapshot
@@ -1863,6 +2129,9 @@ barrier-zero
 evasion/miss
 → FIRST_AID NO
 
+ASSAULT hit
+→ FIRST_AID YES (authorized in ReactionPermissionPolicy per Authority contract)
+
 full-troop FIRST_AID / RECUPERATION
 → opportunity not skipped; simulator probability policy still applies; successful RecoverySystem resolution may actual=0
 
@@ -1870,13 +2139,16 @@ probability=100%
 → exactly one simulator RNG chance draw per admitted opportunity; ENGINEERING ONLY
 
 Share
-→ target settlement → cleanup if fatal → target aftermath if alive → sharer direct loss
+→ target settlement → if target alive: commit sharer direct loss → target DamageAftermathPort (reconciled checkpoint)
 
 Distribution
 → participant direct losses → target settlement → cleanup → local target aftermath; admitted drain survives victory latch
 
 Cleave
-→ shared DamageAftermathPort; no parallel first-aid callback
+→ Cleave target settlement → if target alive: commit sharer direct loss → shared DamageAftermathPort (reconciled Stage9 checkpoint) → attacker recovery → callbacks
+
+battle-end teardown
+→ StateLifecycleSystem.clear_all_on_battle_end cleans all states across all units; emits STATE_CLEARED_ON_BATTLE_END
 
 victory latched during current DamageInstance
 → no new global branch, but already-admitted local target aftermath drains if target survived
@@ -1886,39 +2158,37 @@ No remaining item above is intentionally delegated to “implementation decides�
 
 ---
 
-# 37. R1-C completion claim
+# 37. R2-B completion claim
 
 ```text
-1. 7 BLOCKER explicit repair                      YES
-2. 6 MAJOR explicit repair                        YES
-3. Stage7 compatibility reopen documented         YES
-4. Stage8 compatibility reopen documented         YES
-5. FROZEN_APPLICATION pipeline unique              YES
-6. PRE_BATTLE lifecycle fixed                      YES
-7. physical expiration semantics unique            YES
-8. defeat cleanup unique owner/checkpoint          YES
-9. SkillRuntime lookup authority defined           YES
-10. refresh generation provenance defined          YES
-11. FIRST_AID zero-loss eligibility corrected      YES
-12. evasion/barrier distinction represented        YES
-13. full-troop opportunity not skipped             YES
-14. hidden PRNG uncertainty isolated               YES
-15. RecoveryOpportunity hierarchy closed           YES
-16. shared DamageAftermathPort defined              YES
-17. dependency graph analyzed as acyclic            YES
-18. BattleSystems construction order plausible      YES
-19. production code changed by R1-C                NO
-20. document remains DESIGN DRAFT                  YES
+1. 2 Round 2 BLOCKER explicit repair              YES
+2. 5 Round 2 MAJOR explicit repair                YES
+3. 3 Round 2 MINOR explicit repair                YES
+4. 2 Round 2 HARDENING accepted                   YES
+5. Stage9 compatibility addendum committed        YES (41cd51f)
+6. Gameplay Authority sync PASS                   YES (a9a05cef)
+7. Cleave vs FIRST_AID ordering preserved         YES
+8. ASSAULT recovery permission authorized         YES
+9. ExecutionRight decision vs dispatch owner set  YES
+10. Typed abort scopes defined                    YES
+11. PersistentSourceSkillGate table normative     YES
+12. Generation ID end-to-end propagation matrix   YES
+13. Battle-end teardown semantics defined         YES
+14. ActionProgressTracker exact order frozen      YES
+15. Recovery pre-RNG admission gate normalized    YES
+16. Production code modified by R2-B              NO
+17. Document remains DESIGN DRAFT                 YES
 ```
 
 Final authoring status:
 
 ```text
-R1-C REPAIR COMPLETE
-READY FOR INDEPENDENT DESIGN RE-AUDIT
+R2-B ARCHITECTURE REPAIR COMPLETE
+STATUS: ARCHITECTURE DESIGN DRAFT V3
+READY FOR INDEPENDENT DESIGN RE-AUDIT ROUND 3
 
 DESIGN PASS                  = NOT CLAIMED
 DESIGN FROZEN                = NO
 PRODUCTION IMPLEMENTATION    = NOT AUTHORIZED
-NEXT STEP                    = Stage10 Independent Design Re-Audit Round 2
+NEXT STEP                    = Stage10 Independent Design Re-Audit Round 3
 ```

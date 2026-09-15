@@ -1,41 +1,30 @@
 # Stage10 Targeted Research Closure Record
 
 > Origin: `Stage10 Design Repair R1-A / Authority Gap Triage`  
-> R1-C status: `TARGETED RESEARCH INPUT COMPLETE`  
+> R2-B status: `TARGETED RESEARCH FORMALLY PROMOTED & CLOSED`  
+> Authority synchronization: `PASS (a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe)`  
 > Production implementation: `NOT AUTHORIZED`
 
-This file preserves the two original targeted RNG questions and records the additional FIRST_AID zero-loss closure supplied to R1-C. It must not be read as permission to modify Gameplay Authority or as evidence that hidden official PRNG scheduling has become observable.
+This file preserves the original targeted research questions (S10-TR-01, S10-TR-02, S10-TR-03) and records their formal promotion into Gameplay Authority.
 
 ---
 
 ## 0. Repository synchronization boundary
 
-R1-C pinned Gameplay Authority at:
+Gameplay Authority `main` is canonically pinned at:
 
 ```text
 lxy2005051020-commits/sgs-state-mechanics-research
-main
-61f2be7e87e6bfab1433657ee7f766ae0c53da9d
+branch: main
+canonical authoritative HEAD: a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe
 ```
 
-At that exact HEAD, the task-referenced result files:
+Following Stage10 R2-A3 local provenance recovery and R2-A4 formal promotion:
+- Commit `4661f4ffa1074045ce17d9158499dc03a8dfbec3` added the full targeted research documentation, research tools, raw logs, and parsed tables to Gameplay Authority.
+- Commit `0b9e172a4d3ce3b29025347b086738c0253e56ac` updated `states/persistent/first_aid/MECHANISM_CONTRACT.md` with zero-loss, full-troop, and trigger eligibility alignment.
+- Commit `a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe` completed the formal promotion record (`PROMOTION_STAGE10_R2_A4.md`).
 
-```text
-stage10/RECOVERY_RNG_EDGE_RESEARCH.md
-stage10/FIRST_AID_ZERO_LOSS_ELIGIBILITY_RESEARCH.md
-```
-
-are not present in the repository tree, and the checked-in FIRST_AID mechanism contract still predates the zero-loss eligibility correction.
-
-Therefore this Battle-repository closure record distinguishes:
-
-```text
-repository-pinned Gameplay Authority
-from
-project-owner supplied targeted-research closure used by R1-C
-```
-
-R1-C does not modify or silently rewrite the Gameplay Authority repository.
+Authority synchronization is complete (`Authority Sync = PASS`). The dual-evidence distinction is closed.
 
 ---
 
@@ -281,20 +270,20 @@ Evasion/Barrier are used only as typed aftermath topology examples for FIRST_AID
 ## 7. Research package verdict
 
 ```text
-S10-TR-01 official PRNG draw count = UNKNOWN / UNOBSERVABLE
-S10-TR-02 official PRNG draw count = UNKNOWN / UNOBSERVABLE
-S10-TR-02 opportunity at zero gap  = CLOSED: opportunity not skipped
-S10-TR-03 zero-loss FIRST_AID      = CLOSED
+S10-TR-01 official PRNG draw count = UNKNOWN / UNOBSERVABLE (PROMOTED to Authority main)
+S10-TR-02 official PRNG draw count = UNKNOWN / UNOBSERVABLE (PROMOTED to Authority main)
+S10-TR-02 opportunity at zero gap  = CLOSED: opportunity not skipped (PROMOTED to Authority main)
+S10-TR-03 zero-loss FIRST_AID      = CLOSED (PROMOTED to Authority main)
 
-Additional battle-report research required for R1-C architecture repair = NO
-Gameplay research blocker for R1-C                                = NO
+Additional battle-report research required for R2-B architecture repair = NO
+Gameplay research blocker for R2-B                                = NO
 Simulator PRNG policy                                              = ENGINEERING-DEFINED
-Gameplay Authority repository modified by R1-C                     = NO
+Gameplay Authority formal promotion                                = PASS (HEAD a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe)
 ```
 
 Next gate:
 
 ```text
-Stage10 Architecture Draft V2
-→ Independent Design Re-Audit Round 2
+Stage10 Architecture Draft V3
+→ Independent Design Re-Audit Round 3
 ```
