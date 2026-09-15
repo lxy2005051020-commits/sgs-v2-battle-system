@@ -1,373 +1,300 @@
-# Stage10 Targeted Research Questions
+# Stage10 Targeted Research Closure Record
 
-> Work package: `Stage10 Design Repair R1-A`
->
-> Admission source: `STAGE10_AUTHORITY_GAP_TRIAGE.md`
->
-> Scope rule: this file contains only gameplay facts that passed the Research Admission Gate. It does not reopen FIRST_AID, RECUPERATION, or the continuous-damage family as a whole.
+> Origin: `Stage10 Design Repair R1-A / Authority Gap Triage`  
+> R1-C status: `TARGETED RESEARCH INPUT COMPLETE`  
+> Production implementation: `NOT AUTHORIZED`
 
----
-
-## 0. Admission Boundary
-
-Current authority already closes:
-
-```text
-FIRST_AID
-- one opportunity per eligible resolved damage event
-- no round cap
-- fatal damage cannot resurrect
-- inactive source skill suppresses opportunity
-- healing ban acts at recovery resolution
-
-RECUPERATION
-- TARGET_ACTION_START
-- inactive source skill loses the opportunity with no catch-up
-- duration clock continues
-- healing ban acts at recovery resolution
-- missing-troop cap is dynamic
-
-RNG owner in simulator
-- BattleContext.random only
-- Python random outside RandomSystem forbidden
-```
-
-This file does **not** ask any of those questions again.
-
-The unresolved gameplay fact is only whether particular otherwise-valid recovery opportunities consume a probability draw in two edge conditions that affect deterministic replay sequence.
+This file preserves the two original targeted RNG questions and records the additional FIRST_AID zero-loss closure supplied to R1-C. It must not be read as permission to modify Gameplay Authority or as evidence that hidden official PRNG scheduling has become observable.
 
 ---
 
-## S10-TR-01
+## 0. Repository synchronization boundary
 
-### Topic
-
-Guaranteed recovery RNG consumption
-
-### States
+R1-C pinned Gameplay Authority at:
 
 ```text
-690078 FIRST_AID / 急救
-690079 RECUPERATION / 休整
+lxy2005051020-commits/sgs-state-mechanics-research
+main
+61f2be7e87e6bfab1433657ee7f766ae0c53da9d
 ```
 
-### Question
-
-When the final effective recovery probability is exactly `100%`, does the official runtime still consume one probability RNG draw?
-
-### Known
+At that exact HEAD, the task-referenced result files:
 
 ```text
-1. FIRST_AID gives one probability opportunity per eligible resolved damage event.
-2. RECUPERATION sources can include guaranteed recovery behavior.
-3. 100% FIRST_AID sources have observed success with no failure cases.
-4. Temporary source-skill inactivity suppresses the opportunity and therefore no probability check occurs in that inactive window.
-5. Existing contracts explicitly keep PRNG internals / scheduling outside the currently frozen mechanism result.
-6. Current simulator RandomSystem.chance(1.0) calls random() and therefore consumes one draw.
+stage10/RECOVERY_RNG_EDGE_RESEARCH.md
+stage10/FIRST_AID_ZERO_LOSS_ELIGIBILITY_RESEARCH.md
 ```
 
-Observed `100% success` is **not** sufficient evidence that a random value was consumed.
+are not present in the repository tree, and the checked-in FIRST_AID mechanism contract still predates the zero-loss eligibility correction.
 
-### Unknown
+Therefore this Battle-repository closure record distinguishes:
 
 ```text
-Does official p == 1.0 enter the same probability-sampling path as 0 < p < 1,
-or is it deterministically short-circuited before PRNG consumption?
+repository-pinned Gameplay Authority
+from
+project-owner supplied targeted-research closure used by R1-C
 ```
 
-### Hypothesis A · DRAW_AT_1_0
+R1-C does not modify or silently rewrite the Gameplay Authority repository.
+
+---
+
+## 1. S10-TR-01 · Guaranteed recovery RNG consumption
+
+Original question:
 
 ```text
-opportunity reached
-→ consume one RNG value
-→ compare against 1.0
-→ guaranteed success
-→ recovery resolution
+When final effective recovery probability == 100%,
+does the official runtime still consume a probability RNG draw?
 ```
 
-### Hypothesis B · SHORT_CIRCUIT_1_0
+Research conclusion supplied to R1-C:
 
 ```text
-opportunity reached
-→ detect guaranteed probability
-→ no RNG draw
-→ success
-→ recovery resolution
+OFFICIAL HIDDEN PRNG CONSUMPTION
+= UNKNOWN / UNOBSERVABLE
 ```
 
-### Observable Difference
-
-The immediate recovery outcome can be identical under both hypotheses.
-
-The difference appears in every later RNG consumer:
+No battle-report/protocol evidence uniquely discriminates:
 
 ```text
-critical / proc / target-selection / chance event / other random factor
-```
-
-A simulator choosing the wrong hypothesis will diverge in deterministic replay even while the current recovery log looks correct.
-
-### Required Samples
-
-A valid sample must expose sequence position, not merely success:
-
-```text
-A. reproducible battle seed / replay-equivalent raw trace, if available
-B. one guaranteed FIRST_AID or RECUPERATION opportunity at a known point
-C. a downstream RNG-sensitive event whose result can discriminate one-draw offset
-D. a matched control where the guaranteed opportunity is absent but every earlier RNG consumer is identical
-```
-
-Preferred shapes:
-
-```text
-pair 1:
-control battle without guaranteed recovery opportunity
+CONSUME_ONE_DRAW
 vs
-same setup with guaranteed recovery opportunity
-
-pair 2:
-same deterministic seed / same preceding event stream
-→ compare first downstream stochastic branch
+CONSUME_ZERO_DRAWS
 ```
 
-If the available official battle-report format does not reveal seeds or enough downstream stochastic structure, raw protocol/event traces or another evidence source capable of proving draw position are required. Do not infer draw consumption from cfg success/failure frequency alone.
+Therefore the official question is **not converted into a gameplay fact**.
 
-### Acceptance Criteria
-
-Close only when evidence uniquely supports one of:
+R1-C disposition:
 
 ```text
-GUARANTEED_RECOVERY_RNG = CONSUME_ONE_DRAW
-or
-GUARANTEED_RECOVERY_RNG = CONSUME_ZERO_DRAWS
+Gameplay blocker                 = NO
+Official authority classification= OFFICIAL UNKNOWN
+Simulator exact replay behavior  = ENGINEERING DETERMINISM POLICY
 ```
 
-Minimum acceptance:
-
-```text
-- no unmatched earlier RNG consumer in the comparison
-- downstream discriminator behaves consistently with exactly one hypothesis
-- at least one FIRST_AID guaranteed-source case and one RECUPERATION guaranteed-source case,
-  unless shared official probability machinery is independently proven to be common and sufficient
-```
-
-A large number of `100% -> success` observations without sequence discrimination does not close the question.
-
-### Impact if unresolved
-
-```text
-Stage10 cannot truthfully freeze exact deterministic RNG replay semantics for p == 1.0.
-Stage10 architecture repair unrelated to this RNG edge may continue.
-Production recovery RNG implementation must not be frozen on an engineering guess.
-```
-
-### Blocking Stage10 design?
-
-`YES`, limited to the recovery RNG-admission contract.
+The chosen simulator policy is documented only in `STAGE10.md`.
 
 ---
 
-## S10-TR-02
+## 2. S10-TR-02 · Zero recoverable gap RNG consumption
 
-### Topic
-
-Zero recoverable gap / full-troop recovery opportunity RNG consumption
-
-### States
+Original question:
 
 ```text
-690079 RECUPERATION / 休整
-690078 FIRST_AID / 急救, only if an authority-valid eligible opportunity can reach zero recoverable gap
+When recoverable_gap == 0,
+does the official runtime consume the probability draw before actual recovery is capped to zero?
 ```
 
-### Question
-
-When a recovery opportunity is otherwise reached while `target.troops == target.max_troops`, does the official runtime consume the probability draw before recovery is capped to zero, or does zero missing troop short-circuit probability evaluation?
-
-### Known
+Research conclusion supplied to R1-C:
 
 ```text
-1. Missing-troop cap is a dynamic recovery-time fact.
-2. RECUPERATION battle evidence contains normal effect execution with actual recovery 0 under full/no-gap conditions.
-3. Healing-ban evidence proves that a recovery state/opportunity can still execute even when final actual recovery becomes 0.
-4. Healing-ban ordering does not answer the full-troop RNG question.
-5. Current frozen authority does not state whether missing-troop eligibility is tested before or after probability sampling.
+OFFICIAL HIDDEN PRNG CONSUMPTION
+= UNKNOWN / UNOBSERVABLE
 ```
 
-For FIRST_AID, ordinary positive troop loss normally creates missing troops before its AFTER_DAMAGE opportunity. Therefore the first research step for FIRST_AID is reachability: prove that an official eligible FIRST_AID opportunity can actually arrive at this checkpoint with zero recoverable gap. If not, this edge is RECUPERATION-only rather than a forced synthetic FIRST_AID case.
+Again, no official fact is claimed for draw count.
 
-### Unknown
+However the observable opportunity topology **is** closed:
 
 ```text
-Whether zero recoverable gap prevents the probability draw.
+recoverable_gap == 0
+!=
+skip recovery opportunity
 ```
 
-### Hypothesis A · ROLL_THEN_CAP
+For RECUPERATION:
 
 ```text
-active opportunity reached
-→ probability draw
-→ on success compute/submit recovery
-→ missing-troop cap = 0
-→ actual recovery = 0
+full troops
+→ opportunity is admitted/observable
+→ recovery execution may occur
+→ actual recovery is capped to 0
 ```
 
-### Hypothesis B · ZERO_GAP_SHORT_CIRCUIT
+R1-C therefore separates:
 
 ```text
-active opportunity reached
-→ missing troops == 0
-→ opportunity terminates before probability draw
-→ actual recovery = 0
+opportunity existence        = GAMEPLAY FROZEN
+hidden draw consumption      = OFFICIAL UNKNOWN
+simulator draw implementation= ENGINEERING DETERMINISM
 ```
-
-### Hypothesis C · OTHER
-
-Any other sequencing is admissible only if directly supported by evidence and documented precisely enough to determine RNG consumption.
-
-### Observable Difference
-
-```text
-Immediate troops:
-usually identical at 0 recovered
-
-Deterministic replay:
-different downstream RNG sequence if A consumes a draw and B does not
-
-Possible protocol/log difference:
-probability success/failure marker may be present or absent at zero gap
-```
-
-### Required Samples
-
-#### RECUPERATION primary sample
-
-Prefer a **non-guaranteed** source so the probability path itself can be observed:
-
-```text
-target at exact max troops
-+ RECUPERATION active at TARGET_ACTION_START
-+ source skill active
-+ no healing ban
-+ opportunity definitely reaches trigger node
-+ source probability strictly between 0 and 1
-+ downstream RNG-sensitive discriminator
-```
-
-Collect both apparent success/failure or protocol variants if available.
-
-#### FIRST_AID reachability sample
-
-Do not manufacture this case in the simulator.
-
-First establish an official battle-report/protocol case satisfying:
-
-```text
-eligible AFTER_DAMAGE_EVENT
-+ FIRST_AID opportunity admitted by the frozen contract
-+ target has zero recoverable gap at that exact opportunity checkpoint
-```
-
-If no such official path exists because positive `ActualTargetTroopLoss` necessarily creates a gap and prevented/zero-loss events are ineligible, record:
-
-```text
-FIRST_AID_ZERO_GAP = UNREACHABLE_BY_FROZEN_ELIGIBILITY
-```
-
-and scope the RNG question to RECUPERATION.
-
-### Minimum Battle-Report Sample Shape
-
-```text
-RECUPERATION:
-- max troops verified immediately before action-start recovery window
-- active probabilistic source
-- cfg/state execution evidence at that window
-- later stochastic event usable as sequence discriminator
-- matched/replay-equivalent control where possible
-
-FIRST_AID:
-- only after official reachability is proven
-- exact damage-event and troop snapshots around AFTER_DAMAGE checkpoint
-```
-
-### Acceptance Criteria
-
-Close only when authority can freeze one of:
-
-```text
-ZERO_GAP_RECOVERY_RNG = CONSUME_ONE_DRAW
-ZERO_GAP_RECOVERY_RNG = CONSUME_ZERO_DRAWS
-```
-
-or, for FIRST_AID specifically:
-
-```text
-FIRST_AID_ZERO_GAP = UNREACHABLE_BY_FROZEN_ELIGIBILITY
-```
-
-Evidence showing only `actual recovery = 0` is insufficient. The research must distinguish probability-path admission / draw consumption.
-
-### Impact if unresolved
-
-```text
-Stage10 cannot freeze exact RNG admission at zero recoverable gap.
-Downstream deterministic replay may diverge.
-No broader RECUPERATION or FIRST_AID re-research is justified.
-```
-
-### Blocking Stage10 design?
-
-`YES`, limited to exact recovery RNG-admission ordering.
 
 ---
 
-## Explicitly Not Admitted
+## 3. S10-TR-03 · FIRST_AID zero-loss eligibility
 
-The following are closed or architectural and must not be added to the battle-report queue under R1-A:
+R1-C targeted-research closure supplied by the project owner establishes:
 
 ```text
-continuous damage trigger timing
-same-name refresh / overwrite
+FIRST_AID eligibility
+!= ActualTargetTroopLoss > 0
+```
+
+Required topology:
+
+### WEAKNESS_ZERO
+
+```text
+resolved damage-event topology exists
+ActualTargetTroopLoss == 0
+target survives
+→ FIRST_AID opportunity = YES
+```
+
+### BARRIER_ZERO
+
+```text
+resolved damage-event topology exists
+ActualTargetTroopLoss == 0
+target survives
+→ FIRST_AID opportunity = YES
+```
+
+### EVASION / MISS
+
+```text
+no resolved-hit damage event
+ActualTargetTroopLoss == 0
+→ FIRST_AID opportunity = NO
+```
+
+This closes the architecture question that Draft V1 had represented with an insufficient:
+
+```text
+if actual_target_troop_loss <= 0:
+    stop
+```
+
+or a single ambiguous:
+
+```text
+if prevented:
+    stop
+```
+
+Both shortcuts are forbidden by Draft V2.
+
+---
+
+## 4. Full-troop FIRST_AID reachability
+
+The old R1-A question assumed positive damage was required before FIRST_AID and therefore treated zero-gap FIRST_AID as potentially unreachable.
+
+S10-TR-03 supersedes that assumption.
+
+A resolved zero-loss damage event can create a FIRST_AID opportunity while the target remains at full troops:
+
+```text
+resolved zero-loss hit
++
+target full troops
+→ FIRST_AID opportunity exists
+→ actual recovery may be 0
+```
+
+A resolved zero-loss hit can also occur while the target already has unrelated missing troops:
+
+```text
+resolved zero-loss hit
++
+existing missing troops > 0
++
+TREATMENT_AMOUNT model
+→ opportunity exists
+→ successful recovery can be > 0
+```
+
+For a `TRIGGER_DAMAGE_RATIO` model:
+
+```text
+ActualTargetTroopLoss == 0
+→ opportunity still exists
+→ nominal ratio amount may be 0
+```
+
+Eligibility and amount are separate contracts.
+
+---
+
+## 5. Simulator determinism boundary
+
+Because the official draw count is unobservable, Stage10 architecture is allowed to choose one simulator contract provided it is labeled honestly.
+
+R1-C chooses:
+
+```text
+Every admitted RecoveryOpportunity
+→ exactly one context.random.chance(probability) call
+→ including probability == 0.0
+→ including probability == 1.0
+→ regardless of recoverable_gap
+```
+
+This policy occurs only after opportunity admission gates pass.
+
+Classification:
+
+```text
+ENGINEERING DETERMINISM
+NOT OFFICIAL GAMEPLAY AUTHORITY
+```
+
+This file records the architecture handoff but does not promote the policy into Gameplay Authority.
+
+---
+
+## 6. Explicitly still not admitted as new gameplay research
+
+The targeted-research closure does not reopen:
+
+```text
+continuous-damage trigger timing
+same-name refresh/overwrite
 application-time snapshot policy
-source death persistence
-owner death hard termination
-REBELLION route and defense-stat bypass
+source-death persistence
+owner-death hard termination
+REBELLION route / defense-stat bypass
 FIRST_AID per-damage-event frequency
-FIRST_AID fatal no-resurrection
 RECUPERATION action-start timing
-source-skill inactive window / no catch-up
-HEALING_BAN versus recovery resolution ordering
-dead-source historical WEAKNESS snapshot
-Share DirectTroopLoss -> FIRST_AID
-Distribution DirectTroopLoss -> FIRST_AID
-Stage7 Hook death abort implementation
-PRE_BATTLE lifecycle representation
-Stage8 frozen-basis producer design
-DamagePipelineTrace representation
-SkillRuntime registry / lookup
-refresh application identity
-standard/Cleave aftermath port
+source-skill inactive/no-catch-up
+healing-ban ordering
+Share DirectTroopLoss → FIRST_AID
+Distribution DirectTroopLoss → FIRST_AID
 ```
+
+Nor does it authorize complete production implementation of:
+
+```text
+EVASION
+BARRIER
+CRITICAL
+STRATEGY_CRITICAL
+DAMAGE_REDUCTION_PIERCE
+positive dispel
+```
+
+Evasion/Barrier are used only as typed aftermath topology examples for FIRST_AID eligibility.
 
 ---
 
-## Research Stop Rule
-
-Research stops as soon as `S10-TR-01` and `S10-TR-02` are authoritatively closed.
-
-It must not expand into:
+## 7. Research package verdict
 
 ```text
-re-study BURN
-re-study FLOOD
-re-study POISON
-re-study ROUT
-re-study SANDSTORM
-re-study REBELLION
-re-study all FIRST_AID mechanics
-re-study all RECUPERATION mechanics
+S10-TR-01 official PRNG draw count = UNKNOWN / UNOBSERVABLE
+S10-TR-02 official PRNG draw count = UNKNOWN / UNOBSERVABLE
+S10-TR-02 opportunity at zero gap  = CLOSED: opportunity not skipped
+S10-TR-03 zero-loss FIRST_AID      = CLOSED
+
+Additional battle-report research required for R1-C architecture repair = NO
+Gameplay research blocker for R1-C                                = NO
+Simulator PRNG policy                                              = ENGINEERING-DEFINED
+Gameplay Authority repository modified by R1-C                     = NO
 ```
 
-The question is the unit of admission. The state family is not.
+Next gate:
+
+```text
+Stage10 Architecture Draft V2
+→ Independent Design Re-Audit Round 2
+```
