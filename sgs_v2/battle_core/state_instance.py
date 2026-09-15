@@ -140,6 +140,17 @@ class StateInstance:
     ) -> StateGenerationSnapshot:
         from .state_generation import StateGenerationSnapshot
 
+        effective_basis = (
+            frozen_damage_basis
+            if frozen_damage_basis is not None
+            else getattr(self.runtime_params, "frozen_damage_basis", None)
+        )
+        effective_potency = (
+            recovery_potency_context
+            if recovery_potency_context is not None
+            else getattr(self.runtime_params, "recovery_potency_context", None)
+        )
+
         return StateGenerationSnapshot(
             physical_instance_id=self.instance_id,
             application_generation_id=generation_id or self.current_generation_id,
@@ -150,7 +161,7 @@ class StateInstance:
             source_skill_slot=self.source_skill_slot,
             runtime_params=self.runtime_params,
             lifecycle_window=lifecycle_window or self.lifecycle_window,
-            frozen_damage_basis=frozen_damage_basis,  # type: ignore[arg-type]
-            recovery_potency_context=recovery_potency_context,  # type: ignore[arg-type]
+            frozen_damage_basis=effective_basis,  # type: ignore[arg-type]
+            recovery_potency_context=effective_potency,  # type: ignore[arg-type]
         )
 

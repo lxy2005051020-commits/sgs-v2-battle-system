@@ -271,6 +271,11 @@ from .rule_intent import (
     RuleIntent,
     RuleIntentResult,
 )
+from .defeat_cleanup_port import (
+    DefeatCleanupPort,
+    DefeatCleanupResult,
+    DefeatRemovalReason,
+)
 
 __all__ = [
     "BattleContext",
@@ -506,4 +511,7 @@ __all__ = [
     "AbortedRuleIntentResult",
     "RuleIntent",
     "RuleIntentResult",
+    "DefeatCleanupPort",
+    "DefeatCleanupResult",
+    "DefeatRemovalReason",
 ]

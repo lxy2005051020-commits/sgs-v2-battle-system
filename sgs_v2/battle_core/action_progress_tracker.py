@@ -9,11 +9,12 @@ class ActionProgressTracker:
     Control effects (stun/amnesia) may suppress subsequent actions, but do NOT refund the window.
     """
 
-    __slots__ = ("_consumed_action_starts", "_current_acting_unit")
+    __slots__ = ("_consumed_action_starts", "_current_acting_unit", "_action_start_counts")
 
     def __init__(self) -> None:
         self._consumed_action_starts: set[tuple[str, int]] = set()
         self._current_acting_unit: str | None = None
+        self._action_start_counts: dict[tuple[str, int], int] = {}
 
     @property
     def current_acting_unit(self) -> str | None:
@@ -39,6 +40,7 @@ class ActionProgressTracker:
             raise ValueError("round_num must be >= 1")
 
         key = (owner_id, round_num)
+        self._action_start_counts[key] = self._action_start_counts.get(key, 0) + 1
         if key in self._consumed_action_starts:
             return False
 
@@ -52,3 +54,7 @@ class ActionProgressTracker:
     def has_acted_in_round(self, owner_id: str, round_num: int) -> bool:
         """Lifecycle-perspective alias for has_consumed_action_start."""
         return self.has_consumed_action_start(owner_id, round_num)
+
+    def is_action_start_opportunity_eligible(self, owner_id: str, round_num: int) -> bool:
+        """True if the owner is at their exactly-one legal action-start opportunity for round_num."""
+        return self._action_start_counts.get((owner_id, round_num), 0) == 1

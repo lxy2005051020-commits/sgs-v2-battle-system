@@ -95,6 +95,8 @@ class BattleEngine:
                     continue
 
                 self._enter_phase(BattlePhase.UNIT_ACTION_START)
+                self.context.action_progress.set_current_acting_unit(actor.unit_id)
+                self.context.action_progress.mark_action_start(actor.unit_id, round_no)
                 self.context.event_bus.publish(
                     event_type=EventType.UNIT_ACTION_STARTED,
                     phase=self.context.current_phase,
@@ -107,6 +109,10 @@ class BattleEngine:
                         round_no=round_no,
                         actor_id=actor.unit_id,
                     ),
+                )
+                self.systems.state_lifecycle_system.expire_eligible_states(
+                    self.context,
+                    actor.unit_id,
                 )
 
                 # Barrier 3: UNIT_ACTION_START_HOOKS_SETTLED
@@ -152,6 +158,7 @@ class BattleEngine:
                         )
 
                 self._enter_phase(BattlePhase.UNIT_ACTION_END)
+                self.context.action_progress.set_current_acting_unit(None)
                 self.context.event_bus.publish(
                     event_type=EventType.UNIT_ACTION_ENDED,
                     phase=self.context.current_phase,
