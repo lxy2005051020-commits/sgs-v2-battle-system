@@ -264,6 +264,7 @@ from .rule_intent import (
     RecoveryOpportunityKind,
     ExecutionRightDecisionKind,
     ExecutionRightReason,
+    ExecutionRightDecision,
     RuleIntentExecutionDescriptor,
     RecoveryOpportunity,
     RecoveryOpportunityResult,
@@ -271,6 +272,7 @@ from .rule_intent import (
     RuleIntent,
     RuleIntentResult,
 )
+from .execution_right_system import ExecutionRightSystem
 from .defeat_cleanup_port import (
     DefeatCleanupPort,
     DefeatCleanupResult,
@@ -505,6 +507,8 @@ __all__ = [
     "RecoveryOpportunityKind",
     "ExecutionRightDecisionKind",
     "ExecutionRightReason",
+    "ExecutionRightDecision",
+    "ExecutionRightSystem",
     "RuleIntentExecutionDescriptor",
     "RecoveryOpportunity",
     "RecoveryOpportunityResult",

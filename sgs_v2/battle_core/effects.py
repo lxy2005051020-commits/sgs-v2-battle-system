@@ -81,7 +81,9 @@ class DamageEffect:
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
     source_ref: EffectSourceRef | None = None
-    execution_descriptor: RuleIntentExecutionDescriptor | None = None
+    execution_descriptor: RuleIntentExecutionDescriptor | None = field(
+        default=None, compare=False
+    )
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -142,7 +144,9 @@ class ApplyStateEffect:
         default_factory=EmptyStateRuntimeParams
     )
     source_ref: EffectSourceRef | None = None
-    execution_descriptor: RuleIntentExecutionDescriptor | None = None
+    execution_descriptor: RuleIntentExecutionDescriptor | None = field(
+        default=None, compare=False
+    )
 
     def __post_init__(self) -> None:
         if not self.state_id:
@@ -172,7 +176,9 @@ class ApplyStateEffect:
 @dataclass(frozen=True, slots=True)
 class RemoveStateEffect:
     instance_id: str
-    execution_descriptor: RuleIntentExecutionDescriptor | None = None
+    execution_descriptor: RuleIntentExecutionDescriptor | None = field(
+        default=None, compare=False
+    )
 
     def __post_init__(self) -> None:
         if not self.instance_id:
@@ -190,7 +196,9 @@ class RecoverEffect:
     source_skill_id: str | None = None
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
-    execution_descriptor: RuleIntentExecutionDescriptor | None = None
+    execution_descriptor: RuleIntentExecutionDescriptor | None = field(
+        default=None, compare=False
+    )
 
     def __post_init__(self) -> None:
         _validate_optional_id(self.source_id, "source_id")

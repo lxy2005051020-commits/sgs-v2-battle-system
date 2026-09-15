@@ -531,5 +531,106 @@ class AssaultDispatchPort:
             expected_parent_scope_identity=parent_scope_identity,
         )
         # Seam-only in Phase 9.6: no default Assault producer registered.
+from .rule_intent import (
+    ExecutionRightDecision,
+    ExecutionRightDecisionKind,
+    ExecutionRightReason,
+    RuleIntentExecutionDescriptor,
+)
+
+
+class ExecutionRightSystem:
+    """
+    Authoritative decision maker for intent/effect execution admissibility (STAGE10.md §4.1, §4.2).
+    Validates live unit status, suppression, and defeat state using typed descriptor and context.
+    Performs ZERO troop mutations, ZERO state mutations, ZERO dispatch, ZERO control-flow events.
+    """
+
+    def evaluate_rule_intent(
+        self,
+        descriptor: RuleIntentExecutionDescriptor,
+        context: BattleContext,
+    ) -> ExecutionRightDecision:
+        # Precondition type enforcement: zero duck-typing, only typed descriptor accepted
+        if not isinstance(descriptor, RuleIntentExecutionDescriptor):
+            raise TypeError(
+                f"descriptor must be a RuleIntentExecutionDescriptor, got {type(descriptor)}"
+            )
+
+        # 1. Battle Finalized Check
+        if context.ended:
+            return ExecutionRightDecision.abort_hook(
+                reason=ExecutionRightReason.BATTLE_FINALIZED,
+                detail="Battle has ended",
+            )
+        coord = getattr(context, "coordinator", None)
+        if coord is not None:
+            term_state = getattr(coord, "termination_state", None)
+            if term_state == BattleTerminationState.FINALIZED:
+                return ExecutionRightDecision.abort_hook(
+                    reason=ExecutionRightReason.BATTLE_FINALIZED,
+                    detail="Battle termination state is FINALIZED",
+                )
+
+        # 2. State Owner Defeat Check
+        # When state_owner_id is specified, verify that the state owner is alive.
+        # If defeated, return ABORT_OWNER_STATE_REMAINDER(OWNER_DEFEATED).
+        # If state_owner_id is None, check intent_owner_id.
+        owner_id_to_check = (
+            descriptor.state_owner_id
+            if descriptor.state_owner_id is not None
+            else descriptor.intent_owner_id
+        )
+        if owner_id_to_check is not None:
+            owner = context.units.get(owner_id_to_check)
+            if owner is None or not owner.is_alive or owner.troops <= 0:
+                return ExecutionRightDecision.abort_owner_state_remainder(
+                    reason=ExecutionRightReason.OWNER_DEFEATED,
+                    detail=f"State owner '{owner_id_to_check}' is defeated",
+                )
+
+        # 3. State Instance Existence Check (if state-driven)
+        # If physical state instance is specified, it must exist in context.states.
+        # Invariant: Generation refresh (G1 -> G2) does NOT mean state missing!
+        # Historical admitted G1 intents retain valid execution right if physical state instance exists.
+        if descriptor.state_instance_id is not None:
+            if descriptor.state_instance_id not in context.states:
+                return ExecutionRightDecision.reject_current(
+                    reason=ExecutionRightReason.STATE_NOT_FOUND,
+                    detail=f"State instance '{descriptor.state_instance_id}' not found in registry",
+                )
+
+        # 4. Suppression Check
+        # Check if acting / state-bearing unit is suppressed by control states (e.g. STUN).
+        # Under Frozen Draft V4, suppression scope is REJECT_CURRENT (not owner abort).
+        unit_to_check_suppression = descriptor.state_owner_id or descriptor.intent_owner_id
+        if unit_to_check_suppression is not None:
+            if context.states.has(owner_id=unit_to_check_suppression, state_id="stun"):
+                return ExecutionRightDecision.reject_current(
+                    reason=ExecutionRightReason.SUPPRESSED,
+                    detail=f"Unit '{unit_to_check_suppression}' is suppressed by STUN",
+                )
+
+        # 5. Target Defeat Check
+        # If target_id is specified:
+        # - Target unit must exist in context.units.
+        # - Target unit must be alive (target.is_alive and target.troops > 0).
+        # If target is defeated, return REJECT_CURRENT(TARGET_DEFEATED).
+        # CRITICAL INVARIANT: Rejection is CURRENT-ONLY! Never aborts owner tail!
+        if descriptor.target_id is not None:
+            target = context.units.get(descriptor.target_id)
+            if target is None:
+                return ExecutionRightDecision.reject_current(
+                    reason=ExecutionRightReason.INVALID_TARGET,
+                    detail=f"Target unit '{descriptor.target_id}' does not exist in context",
+                )
+            if not target.is_alive or target.troops <= 0:
+                return ExecutionRightDecision.reject_current(
+                    reason=ExecutionRightReason.TARGET_DEFEATED,
+                    detail=f"Target unit '{descriptor.target_id}' is defeated",
+                )
+
+        # 6. Admitted
+        return ExecutionRightDecision.allow()
 
 

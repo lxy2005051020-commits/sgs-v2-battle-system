@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
-from .effect_result import EffectExecutionResult
 from .effects import Effect, EffectSourceRef
 from .recovery_system import RecoveryResult
 from .skill_runtime_registry import PersistentSourceSkillGate
@@ -12,7 +11,7 @@ from .stage10_state_params import RecoveryModelKind, RecoveryPotencyContext
 from .state_generation import StateApplicationGenerationId
 
 if TYPE_CHECKING:
-    pass
+    from .effect_result import EffectExecutionResult
 
 
 class RuleIntentKind(str, Enum):
@@ -52,6 +51,51 @@ class ExecutionRightReason(str, Enum):
     SUPPRESSED = "SUPPRESSED"
     BATTLE_FINALIZED = "BATTLE_FINALIZED"
     INVALID_TARGET = "INVALID_TARGET"
+
+
+@dataclass(frozen=True, slots=True)
+class ExecutionRightDecision:
+    """Authoritative decision object returned by ExecutionRightSystem (STAGE10.md §4.2)."""
+
+    decision_kind: ExecutionRightDecisionKind
+    reason: ExecutionRightReason | None = None
+    detail: str | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.decision_kind, ExecutionRightDecisionKind):
+            raise TypeError(
+                f"decision_kind must be an ExecutionRightDecisionKind, got {type(self.decision_kind)}"
+            )
+        if self.reason is not None and not isinstance(self.reason, ExecutionRightReason):
+            raise TypeError(
+                f"reason must be an ExecutionRightReason or None, got {type(self.reason)}"
+            )
+
+    @classmethod
+    def allow(cls) -> ExecutionRightDecision:
+        return cls(ExecutionRightDecisionKind.ALLOW)
+
+    @classmethod
+    def reject_current(
+        cls, reason: ExecutionRightReason, detail: str | None = None
+    ) -> ExecutionRightDecision:
+        return cls(ExecutionRightDecisionKind.REJECT_CURRENT, reason=reason, detail=detail)
+
+    @classmethod
+    def abort_owner_state_remainder(
+        cls, reason: ExecutionRightReason, detail: str | None = None
+    ) -> ExecutionRightDecision:
+        return cls(
+            ExecutionRightDecisionKind.ABORT_OWNER_STATE_REMAINDER,
+            reason=reason,
+            detail=detail,
+        )
+
+    @classmethod
+    def abort_hook(
+        cls, reason: ExecutionRightReason, detail: str | None = None
+    ) -> ExecutionRightDecision:
+        return cls(ExecutionRightDecisionKind.ABORT_HOOK, reason=reason, detail=detail)
 
 
 @dataclass(frozen=True, slots=True)
@@ -156,14 +200,18 @@ class AbortedRuleIntentResult:
     descriptor: RuleIntentExecutionDescriptor
     decision_kind: ExecutionRightDecisionKind
     reason: ExecutionRightReason
+    intent: RuleIntent | None = None
 
 
 # Unified sibling RuleIntent representation
 RuleIntent = Effect | RecoveryOpportunity
 
 # Unified result outcome
-RuleIntentResult = (
-    EffectExecutionResult
-    | RecoveryOpportunityResult
-    | AbortedRuleIntentResult
-)
+if TYPE_CHECKING:
+    RuleIntentResult = (
+        EffectExecutionResult
+        | RecoveryOpportunityResult
+        | AbortedRuleIntentResult
+    )
+else:
+    RuleIntentResult = Any

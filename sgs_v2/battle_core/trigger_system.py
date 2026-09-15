@@ -9,6 +9,11 @@ from .stage7_state_params import (
     PeriodicDamageStateParams,
     PeriodicRecoveryStateParams,
 )
+from .rule_intent import (
+    RuleIntent,
+    RuleIntentExecutionDescriptor,
+    RuleIntentKind,
+)
 from .state_instance import StateInstance
 
 
@@ -54,6 +59,22 @@ class TriggerSystem:
                 raise ValueError(
                     "periodic damage state requires source_id for DamageSystem attribution"
                 )
+            source_ref = EffectSourceRef(
+                stage9_source_type=SourceType.PERIODIC_DAMAGE,
+                source_unit_id=instance.source_id,
+                source_skill_id=instance.source_skill_id,
+                source_skill_slot=instance.source_skill_slot,
+            )
+            desc = RuleIntentExecutionDescriptor(
+                intent_kind=RuleIntentKind.EFFECT,
+                intent_owner_id=instance.owner_id,
+                state_owner_id=instance.owner_id,
+                target_id=instance.owner_id,
+                source_ref=source_ref,
+                state_instance_id=instance.instance_id,
+                state_generation_id=instance.current_generation_id,
+                execution_domain="STATE_RESOLUTION",
+            )
             return (
                 DamageEffect(
                     source_id=instance.source_id,
@@ -64,16 +85,21 @@ class TriggerSystem:
                     source_skill_id=instance.source_skill_id,
                     source_state_id=instance.state_id,
                     source_state_instance_id=instance.instance_id,
-                    source_ref=EffectSourceRef(
-                        stage9_source_type=SourceType.PERIODIC_DAMAGE,
-                        source_unit_id=instance.source_id,
-                        source_skill_id=instance.source_skill_id,
-                        source_skill_slot=instance.source_skill_slot,
-                    ),
+                    source_ref=source_ref,
+                    execution_descriptor=desc,
                 ),
             )
 
         if isinstance(params, PeriodicRecoveryStateParams):
+            desc = RuleIntentExecutionDescriptor(
+                intent_kind=RuleIntentKind.EFFECT,
+                intent_owner_id=instance.owner_id,
+                state_owner_id=instance.owner_id,
+                target_id=instance.owner_id,
+                state_instance_id=instance.instance_id,
+                state_generation_id=instance.current_generation_id,
+                execution_domain="STATE_RESOLUTION",
+            )
             return (
                 RecoverEffect(
                     source_id=instance.source_id,
@@ -82,6 +108,7 @@ class TriggerSystem:
                     source_skill_id=instance.source_skill_id,
                     source_state_id=instance.state_id,
                     source_state_instance_id=instance.instance_id,
+                    execution_descriptor=desc,
                 ),
             )
 
