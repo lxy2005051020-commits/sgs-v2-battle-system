@@ -589,3 +589,149 @@ class TestGenerationPreservationAcrossRefresh:
         assert desc_g1.state_generation_id == g1_id
         # Invariant: physical state exists -> evaluates to ALLOW!
         assert decision.decision_kind == ExecutionRightDecisionKind.ALLOW
+
+
+class TestOwnerIdentityDivergence:
+    """
+    Closure Audit: Verify that OWNER_DEFEATED abort scope strictly checks state_owner_id,
+    and never conflates intent_owner_id with state_owner_id.
+    """
+
+    def test_state_owner_defeat_with_different_intent_owners(self) -> None:
+        """
+        Normative divergence test 1:
+        Intent A: intent_owner=p2, state_owner=p1, target=p2
+        Intent B: intent_owner=p3, state_owner=p1, target=p3
+        Intent C: intent_owner=p1, state_owner=p4, target=p3
+
+        P1 (state owner) is defeated. P2, P3, P4 are alive.
+        Expected:
+        A -> ABORT_OWNER_STATE_REMAINDER(OWNER_DEFEATED)
+        B -> discarded because state_owner == p1
+        C -> evaluates independently and executes because state_owner == p4 (alive)
+        """
+        context = make_test_context()
+        p1 = context.units["p1"]
+        p1.troops = 0
+
+        desc_a = RuleIntentExecutionDescriptor(
+            intent_kind=RuleIntentKind.EFFECT,
+            intent_owner_id="p2",
+            state_owner_id="p1",
+            target_id="p2",
+        )
+        desc_b = RuleIntentExecutionDescriptor(
+            intent_kind=RuleIntentKind.EFFECT,
+            intent_owner_id="p3",
+            state_owner_id="p1",
+            target_id="p3",
+        )
+        desc_c = RuleIntentExecutionDescriptor(
+            intent_kind=RuleIntentKind.EFFECT,
+            intent_owner_id="p1",
+            state_owner_id="p4",
+            target_id="p3",
+        )
+
+        eff_a = RecoverEffect(source_id="p2", target_id="p2", amount=50, execution_descriptor=desc_a)
+        eff_b = RecoverEffect(source_id="p3", target_id="p3", amount=50, execution_descriptor=desc_b)
+        eff_c = RecoverEffect(source_id="p4", target_id="p3", amount=50, execution_descriptor=desc_c)
+
+        class MockTrigger:
+            def collect(self, ctx: BattleContext, hook: Any) -> tuple[Any, ...]:
+                return (eff_a, eff_b, eff_c)
+
+        executed_intents: list[Any] = []
+
+        class MockExecutor:
+            def execute(self, ctx: BattleContext, eff: Any) -> Any:
+                executed_intents.append(eff)
+                return RecoverEffectResult(
+                    effect=eff,
+                    resolution=None,  # type: ignore[arg-type]
+                )
+
+        hook_system = RuleHookSystem(MockTrigger(), MockExecutor())
+        res = hook_system.process(context, RoundStartHook(1))
+
+        # A is aborted by OWNER_DEFEATED
+        assert isinstance(res.intent_results[0], AbortedRuleIntentResult)
+        assert res.intent_results[0].decision_kind == ExecutionRightDecisionKind.ABORT_OWNER_STATE_REMAINDER
+        assert res.intent_results[0].reason == ExecutionRightReason.OWNER_DEFEATED
+        assert res.intent_results[0].descriptor.intent_owner_id == "p2"
+        assert res.intent_results[0].descriptor.state_owner_id == "p1"
+
+        # B is discarded because state_owner == p1
+        assert isinstance(res.intent_results[1], AbortedRuleIntentResult)
+        assert res.intent_results[1].decision_kind == ExecutionRightDecisionKind.ABORT_OWNER_STATE_REMAINDER
+        assert res.intent_results[1].reason == ExecutionRightReason.OWNER_DEFEATED
+        assert res.intent_results[1].descriptor.intent_owner_id == "p3"
+        assert res.intent_results[1].descriptor.state_owner_id == "p1"
+
+        # C is evaluated and EXECUTED because state_owner == p4 (alive)
+        assert isinstance(res.intent_results[2], RecoverEffectResult)
+        assert len(executed_intents) == 1
+        assert executed_intents[0] is eff_c
+
+    def test_same_intent_owner_different_state_owners(self) -> None:
+        """
+        Normative divergence test 2:
+        Intent A: intent_owner=p1, state_owner=p2, target=p1
+        Intent B: intent_owner=p1, state_owner=p3, target=p1
+
+        P2 (state owner of A) is defeated.
+        P3 (state owner of B) is alive.
+        P1 (intent owner) is alive.
+        Expected:
+        A -> ABORT_OWNER_STATE_REMAINDER(OWNER_DEFEATED) for state_owner p2
+        B -> evaluated and executes because state_owner is p3 (not p2).
+             Must NOT be discarded just because intent_owner is p1!
+        """
+        context = make_test_context()
+        p2 = context.units["p2"]
+        p2.troops = 0
+
+        desc_a = RuleIntentExecutionDescriptor(
+            intent_kind=RuleIntentKind.EFFECT,
+            intent_owner_id="p1",
+            state_owner_id="p2",
+            target_id="p1",
+        )
+        desc_b = RuleIntentExecutionDescriptor(
+            intent_kind=RuleIntentKind.EFFECT,
+            intent_owner_id="p1",
+            state_owner_id="p3",
+            target_id="p1",
+        )
+
+        eff_a = RecoverEffect(source_id="p1", target_id="p1", amount=50, execution_descriptor=desc_a)
+        eff_b = RecoverEffect(source_id="p1", target_id="p1", amount=50, execution_descriptor=desc_b)
+
+        class MockTrigger:
+            def collect(self, ctx: BattleContext, hook: Any) -> tuple[Any, ...]:
+                return (eff_a, eff_b)
+
+        executed_intents: list[Any] = []
+
+        class MockExecutor:
+            def execute(self, ctx: BattleContext, eff: Any) -> Any:
+                executed_intents.append(eff)
+                return RecoverEffectResult(
+                    effect=eff,
+                    resolution=None,  # type: ignore[arg-type]
+                )
+
+        hook_system = RuleHookSystem(MockTrigger(), MockExecutor())
+        res = hook_system.process(context, RoundStartHook(1))
+
+        # A is aborted by OWNER_DEFEATED
+        assert isinstance(res.intent_results[0], AbortedRuleIntentResult)
+        assert res.intent_results[0].decision_kind == ExecutionRightDecisionKind.ABORT_OWNER_STATE_REMAINDER
+        assert res.intent_results[0].reason == ExecutionRightReason.OWNER_DEFEATED
+        assert res.intent_results[0].descriptor.state_owner_id == "p2"
+
+        # B is NOT discarded, but executes normally!
+        assert isinstance(res.intent_results[1], RecoverEffectResult)
+        assert len(executed_intents) == 1
+        assert executed_intents[0] is eff_b
+

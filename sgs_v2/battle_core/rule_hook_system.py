@@ -155,7 +155,7 @@ class RuleHookSystem:
 
         intents = self._trigger.collect(context, hook)
         intent_results: list[RuleIntentResult] = []
-        aborted_owner_ids: set[str] = set()
+        aborted_state_owner_ids: set[str] = set()
         batch_status = "COMPLETED"
         aborting_intent_index: int | None = None
 
@@ -168,7 +168,7 @@ class RuleHookSystem:
             assert desc.intent_owner_id, "intent_owner_id must be populated"
 
             # Check if this intent belongs to an owner whose state remainder was aborted
-            if desc.state_owner_id is not None and desc.state_owner_id in aborted_owner_ids:
+            if desc.state_owner_id is not None and desc.state_owner_id in aborted_state_owner_ids:
                 intent_results.append(
                     AbortedRuleIntentResult(
                         descriptor=desc,
@@ -218,7 +218,7 @@ class RuleHookSystem:
             elif decision.decision_kind == ExecutionRightDecisionKind.ABORT_OWNER_STATE_REMAINDER:
                 # Scope: Current intent + all remaining intents belonging to this state_owner_id!
                 if desc.state_owner_id is not None:
-                    aborted_owner_ids.add(desc.state_owner_id)
+                    aborted_state_owner_ids.add(desc.state_owner_id)
                 if batch_status == "COMPLETED":
                     batch_status = "ABORTED_BY_TARGET_DEFEAT"
                     aborting_intent_index = idx

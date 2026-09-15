@@ -573,20 +573,15 @@ class ExecutionRightSystem:
                 )
 
         # 2. State Owner Defeat Check
-        # When state_owner_id is specified, verify that the state owner is alive.
-        # If defeated, return ABORT_OWNER_STATE_REMAINDER(OWNER_DEFEATED).
-        # If state_owner_id is None, check intent_owner_id.
-        owner_id_to_check = (
-            descriptor.state_owner_id
-            if descriptor.state_owner_id is not None
-            else descriptor.intent_owner_id
-        )
-        if owner_id_to_check is not None:
-            owner = context.units.get(owner_id_to_check)
-            if owner is None or not owner.is_alive or owner.troops <= 0:
+        # Per STAGE10.md §4.1.1 & §4.2: state_owner_id is the unit to which state is physically attached.
+        # When this unit is defeated, return ABORT_OWNER_STATE_REMAINDER(OWNER_DEFEATED).
+        # intent_owner_id is the hook actor / submitter and MUST NOT substitute for state_owner_id.
+        if descriptor.state_owner_id is not None:
+            state_owner = context.units.get(descriptor.state_owner_id)
+            if state_owner is None or not state_owner.is_alive or state_owner.troops <= 0:
                 return ExecutionRightDecision.abort_owner_state_remainder(
                     reason=ExecutionRightReason.OWNER_DEFEATED,
-                    detail=f"State owner '{owner_id_to_check}' is defeated",
+                    detail=f"State owner '{descriptor.state_owner_id}' is defeated",
                 )
 
         # 3. State Instance Existence Check (if state-driven)
