@@ -1,335 +1,296 @@
-# Stage10 · Persistent State Runtime Integration · Research Matrix
+# Stage10 · Persistent State Runtime Integration · Research Matrix R1-C
 
-> Status: `RESEARCH COMPLETE / DESIGN NOT YET FROZEN`
->
+> Status: `MECHANISM RESEARCH COMPLETE / R1-C NORMALIZED`  
+> Architecture: `STAGE10.md DRAFT V2`  
 > Production implementation: `NOT AUTHORIZED`
->
-> Battle repo baseline: `main` at Stage9 FROZEN
->
-> Gameplay authority: `lxy2005051020-commits/sgs-state-mechanics-research`
 
-## 1. Purpose
+This matrix summarizes the mechanism facts Stage10 is allowed to consume. Architecture choices belong in `STAGE10.md`; hidden simulator policies must not be promoted to gameplay facts.
 
-This matrix converts the eight frozen persistent-state mechanism contracts into a runtime-facing research summary. It does **not** invent formulas or implementation behavior.
+---
 
-Normative rule:
+## 1. Shared continuous-damage family
+
+Members:
 
 ```text
-Mechanism Contract > this matrix > implementation convenience
+690072 BURN
+690073 FLOOD
+690074 POISON
+690075 ROUT
+690076 SANDSTORM
+690077 REBELLION
 ```
 
-If this matrix and the current authority repository disagree, the current frozen mechanism contract wins and Stage10 research must be corrected before design freeze.
-
-## 2. Shared family findings
-
-### 2.1 Continuous-damage family
-
-The following six states belong to one runtime family:
-
-```text
-690072 BURN / 灼烧
-690073 FLOOD / 水攻
-690074 POISON / 中毒
-690075 ROUT / 溃逃
-690076 SANDSTORM / 沙暴
-690077 REBELLION / 叛逃
-```
-
-Shared frozen semantics:
+Frozen family semantics:
 
 ```text
 trigger node                 = TARGET_ACTION_START
-normal reachable frequency  = max 1 tick / owner / combat round
-instance limit               = one effective same-name instance per owner
+max effective opportunity   = 1 per owner per combat round
+same-name effective limit   = 1
 same-source reapply          = REFRESH_AND_OVERWRITE
 cross-source reapply         = REFRESH_AND_OVERWRITE
-refresh                      = replace provenance + duration + application context + potency
-first tick                   = next valid target action start
-application before action    = same-round tick may occur
-application after action     = first tick moves to next round
 application context          = LOCKED_AT_APPLICATION
-runtime source attr changes  = do not recalculate existing potency
-runtime ordinary modifiers   = do not recalculate existing potency
-refresh                      = rebuild application snapshot
+refresh                      = rebuild complete application context
+source attributes            = locked at application/refresh
+ordinary source/target mods  = locked at application/refresh
+matching crit context        = locked at application/refresh when applicable
+weakness                     = dynamic at tick
+Evasion / Barrier topology   = dynamic at tick when those mechanisms exist
 source death                 = existing state persists
-owner death                  = hard termination / state cleanup
+owner death                  = clear states + abort remaining state resolution/action
 purify                       = removes negative continuous state
-stun/disarm/silence          = do not suppress an already eligible tick
-confusion                    = does not redirect existing DOT tick
-weakness                     = dynamic check at trigger/damage resolution
-Evasion / Barrier            = dynamic check at trigger/damage resolution when those mechanisms exist
+stun/disarm/silence          = do not suppress an already reached action-start tick
+confusion                    = does not redirect existing DOT tick by default
 ```
 
-The six states therefore must **not** be implemented as six independent combat loops.
+Application-time context and tick-time dynamic gates are distinct contracts.
 
-### 2.2 Recovery family
+---
+
+## 2. Damage-family mapping
+
+| State | Damage route | Application-time locked context | Tick-time dynamic topology | Special rule |
+|---|---|---|---|---|
+| BURN | STRATEGY | source formula facts, matching ordinary modifiers, strategy-crit context, source potency | weakness, evasion, barrier, target liveness | standard strategy continuous damage |
+| FLOOD | STRATEGY | same strategy family context | weakness, evasion, barrier | external FLOOD observers/delay remain external |
+| POISON | STRATEGY | same strategy family context | weakness, evasion, barrier | standard strategy continuous damage |
+| ROUT | WEAPON | source formula facts, matching weapon/generic modifiers, physical-crit context, source potency | weakness, evasion, barrier | no implicit defense pierce |
+| SANDSTORM | STRATEGY | same strategy family context | weakness, evasion, barrier | standard strategy continuous damage |
+| REBELLION | WEAPON or STRATEGY, locked at application | selected route, matching source formula facts/modifiers/crit context, potency | weakness, evasion, barrier | relevant target defense ignored by Stage8 formula policy |
+
+REBELLION is explicitly:
 
 ```text
-690078 FIRST_AID / 急救
-690079 RECUPERATION / 休整
+not DirectTroopLoss
+not true damage
+not a third damage family
+```
+
+Its route is redetermined only on successful reapplication/refresh.
+
+---
+
+## 3. Recovery family
+
+Members:
+
+```text
+690078 FIRST_AID
+690079 RECUPERATION
 ```
 
 Shared frozen semantics:
 
 ```text
-one effective same-name instance per owner
-same/cross-source reapply = REFRESH_AND_OVERWRITE
-application-time recovery context is snapshotted
-runtime recovery-modifier changes do not retroactively recalculate existing instance
-owner death hard-terminates the state
-healing prevention is a dynamic recovery-time gate
-actual recovery is dynamically capped by current missing troops
-negative cleanse does not remove these positive recovery states
+same-name effective limit = 1
+reapply                   = REFRESH_AND_OVERWRITE
+recovery potency context  = LOCKED_AT_APPLICATION
+owner death               = hard termination
+healing ban               = dynamic RecoverySystem gate
+actual troop restore cap  = dynamic TroopSystem cap
+full troops               != skip opportunity
 ```
 
-They are **not** the same trigger topology:
+Trigger topology differs:
 
 ```text
-RECUPERATION -> TARGET_ACTION_START
-FIRST_AID    -> AFTER_DAMAGE_EVENT, once per eligible resolved damage event
+FIRST_AID    = eligible DamageAftermath
+RECUPERATION = TARGET_ACTION_START
 ```
 
-## 3. Per-state matrix
+---
 
-| State | Category / Damage family | Trigger | Application-time snapshot | Trigger-time dynamic inputs | Reapply | Source death | Runtime special case |
-|---|---|---|---|---|---|---|---|
-| `690072 BURN` | Strategy continuous damage | `TARGET_ACTION_START` | source attributes, applicable ordinary damage modifiers, strategy-crit context, potency | weakness, evasion, barrier, owner alive | refresh + overwrite | persists | strategy route |
-| `690073 FLOOD` | Strategy continuous damage | `TARGET_ACTION_START` | same family snapshot | weakness, evasion, barrier, Flood external observers; Elephant delay when applicable | refresh + overwrite | persists | external observer semantics remain outside core Flood runtime |
-| `690074 POISON` | Strategy continuous damage | `TARGET_ACTION_START` | same family snapshot | weakness, evasion, barrier | refresh + overwrite | persists | standard strategy DOT |
-| `690075 ROUT` | Weapon continuous damage | `TARGET_ACTION_START` | source attributes, weapon modifiers, physical-crit context, potency | weakness, evasion, barrier | refresh + overwrite | persists | weapon route; no implicit defense pierce |
-| `690076 SANDSTORM` | Strategy continuous damage | `TARGET_ACTION_START` | strategy family snapshot | weakness, evasion, barrier | refresh + overwrite | persists | standard strategy DOT |
-| `690077 REBELLION` | Dynamic weapon/strategy continuous damage | `TARGET_ACTION_START` | route + driving attribute context + potency + matching modifiers + crit context | weakness, evasion, barrier, owner alive | refresh + overwrite + route redetermination | persists | route locked at application; relevant target defense stat ignored; opposite-family modifiers do not apply |
-| `690078 FIRST_AID` | triggered recovery | `AFTER_DAMAGE_EVENT` | recovery model, probability, source attributes, source/target recovery modifiers | triggering actual damage when ratio-based, target alive, missing troops, healing ban, source-skill active gate | refresh + overwrite | persists | independent probability check per eligible damage event; no round cap |
-| `690079 RECUPERATION` | periodic recovery | `TARGET_ACTION_START` | recovery potency model, source attributes, recovery modifiers | target alive, missing troops, healing ban, source-skill active gate | refresh + overwrite | active source: persists; command-aura cases externally owned | finite or battle-long lifecycle; inactive window loses tick with no catch-up |
+## 4. FIRST_AID corrected eligibility matrix
 
-## 4. Damage-family detail
+Eligibility and recovery amount are separate.
 
-### 4.1 Strategy DOT
+| Damage aftermath | Resolved-hit damage event exists | ActualTargetTroopLoss | Target survives | FIRST_AID opportunity |
+|---|---:|---:|---:|---:|
+| ordinary positive nonfatal settlement | YES | `> 0` | YES | YES |
+| WEAKNESS_ZERO | YES | `0` | YES | YES |
+| BARRIER_ZERO | YES | `0` | YES | YES |
+| EVASION / MISS | NO | `0` | YES | NO |
+| fatal resolved hit | YES | `>= 0` | NO | NO |
+| Share DirectTroopLoss | not a DamageEvent aftermath | any | any | NO |
+| Distribution DirectTroopLoss | not a DamageEvent aftermath | any | any | NO |
+
+Normative negative statement:
 
 ```text
-BURN / FLOOD / POISON / SANDSTORM
+FIRST_AID eligibility
+!= ActualTargetTroopLoss > 0
 ```
 
-Required semantics:
+No single `prevented: bool` can encode this table.
+
+---
+
+## 5. FIRST_AID potency models
+
+At minimum two source-defined models exist:
+
+### 5.1 TREATMENT_AMOUNT
 
 ```text
-damage_type                 = STRATEGY
-source_type                 = CONTINUOUS
-strategy modifiers          = applicable according to frozen snapshot
-weapon-only modifiers       = not applicable
-strategy critical context   = participates when applicable, locked at application
-physical critical context   = not applicable
+potency basis = frozen application-time treatment context
 ```
 
-The research contracts do **not** authorize Stage10 to claim that ordinary active strategy damage and strategy continuous damage have identical microscopic formulas. Exact formula constants remain outside the persistent-state mechanism research scope.
-
-### 4.2 Weapon DOT
+Therefore:
 
 ```text
-ROUT
+zero-loss resolved hit
++
+existing missing troops > 0
+→ eligible opportunity can recover > 0 after successful probability check
 ```
 
-Required semantics:
+### 5.2 TRIGGER_DAMAGE_RATIO
 
 ```text
-damage_type                 = WEAPON
-source_type                 = CONTINUOUS
-weapon modifiers            = applicable according to frozen snapshot
-strategy-only modifiers     = not applicable
-physical critical context   = participates when applicable, locked at application
-strategy critical context   = not applicable
+potency basis includes dynamic ActualTargetTroopLoss
 ```
 
-### 4.3 Rebellion
-
-Rebellion is not a third damage type.
-
-At application / refresh time:
+Therefore:
 
 ```text
-compare application-time effective source ATK and INT
-↓
-lock route = WEAPON or STRATEGY
-↓
-lock route-specific potency / modifier / crit context
+ActualTargetTroopLoss == 0
+→ eligible opportunity still exists
+→ nominal ratio amount may be 0
 ```
 
-At each tick:
+The amount being zero does not erase the opportunity.
+
+---
+
+## 6. RECUPERATION lifecycle
 
 ```text
-use the already locked route
-DO NOT recompare runtime ATK / INT
-DO NOT reroute because source attributes changed
+trigger = TARGET_ACTION_START
 ```
 
-Formula policy:
+Finite lifecycle facts:
 
 ```text
-IGNORE_RELEVANT_TARGET_DEFENSE
+apply before owner action in R
+→ R can be first eligible round
+
+apply after owner action in R
+→ first eligible round is R+1
+
+refresh
+→ lifecycle + potency + provenance replaced from refresh application
+
+temporary source-skill inactive
+→ current opportunity suppressed
+→ duration clock continues
+→ no catch-up
 ```
 
-means only the relevant defensive stat contribution is bypassed. Generic percentage reductions and the matching route-specific percentage reductions remain applicable; the opposite damage-family modifiers do not become applicable.
+PRE_BATTLE is a distinct lifecycle domain. R1-C architecture maps PRE_BATTLE application to first combat eligibility at Round1; this is an architecture correction to the Draft V1 arithmetic, not a new family research claim.
 
-## 5. Recovery-family detail
+---
 
-### 5.1 FIRST_AID
+## 7. Full-troop opportunity boundary
 
-Eligible damage-event families include:
+Target full troops is not an eligibility short-circuit:
 
 ```text
-normal attack
-skill damage
-command damage
-continuous damage tick
-multi-hit: each hit independently
-assault / pursuit damage
-counterattack damage
+recoverable_gap == 0
+→ opportunity may still be admitted
+→ probability policy still belongs to that admitted opportunity
+→ successful recovery request may resolve actual recovery = 0
 ```
 
-Trigger contract:
+This applies to RECUPERATION and to eligible FIRST_AID aftermath.
+
+---
+
+## 8. Recovery PRNG authority boundary
+
+Official hidden PRNG consumption for these edge cases is not observable:
 
 ```text
-one eligible resolved damage event
-→ one probability opportunity
-→ success creates one recovery resolution
+probability == 100%
+recoverable_gap == 0
 ```
 
-No combat-round cap is authorized.
-
-Recovery potency has at least two source-skill-defined models:
+Classification:
 
 ```text
-A. treatment-rate model
-B. triggering-damage-ratio model
+OFFICIAL GAMEPLAY FACT = UNKNOWN / UNOBSERVABLE
 ```
 
-For damage-ratio sources, the triggering damage amount is a trigger-time dynamic input. Stage10 must not freeze one universal flat `amount` as the FIRST_AID state model.
-
-### 5.2 RECUPERATION
-
-Trigger contract:
+Any simulator choice about draw consumption is:
 
 ```text
-TARGET_ACTION_START
+ENGINEERING DETERMINISM POLICY
 ```
 
-If applied before the owner acts in that combat round, the state may recover in the same round. If applied after the owner already acted, there is no catch-up tick; first recovery moves to the next valid action start.
+and must remain in Battle architecture documentation, not Gameplay Authority.
 
-Lifecycle includes two forms:
+---
+
+## 9. Source-skill lifecycle boundary
+
+Persistent source gate modes used by architecture:
 
 ```text
-finite N-round instance
-battle-long / source-lifecycle-owned instance
+ALWAYS_ACTIVE
+QUERY_SKILL_RUNTIME
+EXTERNAL_LIFECYCLE
 ```
 
-Temporary source-skill deactivation:
+Gameplay boundary:
 
 ```text
-execution suppressed
-probability/recovery opportunity lost
-clock continues
-no duration extension
-no catch-up after resume
+source death alone does not generically delete already-applied persistent effects
 ```
 
-## 6. Lifecycle findings
+`QUERY_SKILL_RUNTIME` must not reinterpret source death as temporary skill inactive.
 
-### 6.1 Same-name uniqueness
+`EXTERNAL_LIFECYCLE` means an external authoritative lifecycle owner may remove the state; it is not evidence for a generic per-opportunity callback.
 
-For all eight Stage10 states, current authority freezes a single effective same-name state instance per owner.
+---
 
-Stage10 therefore requires explicit lifecycle arbitration:
+## 10. Evidence-gated external mechanisms
+
+The following remain outside Stage10 official production promotion unless separately evidenced:
 
 ```text
-incoming same-name state
-→ remove/replace previous effective instance atomically under StateLifecycleSystem ownership
-→ create refreshed instance with new provenance and new application snapshot
+EVASION complete official binding
+BARRIER complete official binding
+CRITICAL complete official binding
+STRATEGY_CRITICAL complete official binding
+DAMAGE_REDUCTION_PIERCE complete official binding
+positive dispel universal behavior
 ```
 
-This is **not** a generic global stacking law for all states.
+Their typed topology may be referenced to define integration boundaries without claiming full implementation authority.
 
-### 6.2 Expiration
+---
 
-The mechanism contracts express expiration relative to the state owner's future action-start opportunities, not merely a global `ROUND_START` / `ROUND_END` timer.
+## 11. Authority synchronization note
 
-Required semantic invariant:
+Pinned Gameplay Authority for R1-C:
 
 ```text
-N-round persistent state
-→ at most N eligible action-start ticks/recovery opportunities
-→ no N+1 tick
+61f2be7e87e6bfab1433657ee7f766ae0c53da9d
 ```
 
-Suppressed/inactive opportunities are not retroactively replayed unless a specific contract says otherwise. Current Stage10 recovery authority explicitly says no catch-up.
+At this exact repository HEAD, the task-referenced targeted-research result files are not present and the checked-in FIRST_AID contract still predates the zero-loss correction.
 
-### 6.3 Death
+R1-C therefore records the project-owner supplied targeted-research closures separately rather than falsifying the repository history. Gameplay Authority is unchanged by this Battle-repo repair.
 
-Owner death:
+---
 
-```text
-clear attached persistent states
-abort remaining owner-state resolution
-reject later application to dead owner
-```
-
-Source death is distinct:
+## 12. Research verdict
 
 ```text
-continuous damage existing instance -> persists
-FIRST_AID existing instance          -> persists
-active-sourced RECUPERATION          -> persists
-command-aura RECUPERATION removal    -> external command-aura lifecycle ownership
-```
-
-Stage10 must not implement “source dead => delete every sourced state”.
-
-## 7. Ordering findings
-
-Research does **not** authorize a universal order such as:
-
-```text
-all DOT before all recovery
-or
-all recovery before all DOT
-```
-
-RECUPERATION evidence observes both relative orders with DOT, and the mechanism contract classifies the internal state ordering as non-blocking/unresolved.
-
-Therefore Stage10 may freeze an engineering-deterministic state iteration rule only if it is clearly labeled as runtime determinism rather than an official family-priority claim.
-
-The existing Stage7 `instance_id` deterministic ordering can remain a candidate implementation rule, but Stage10 design must audit lifecycle replacement and same-node semantics before freezing it.
-
-## 8. Research boundaries preserved
-
-Stage10 research intentionally does not invent:
-
-```text
-exact microscopic DOT formula constants
-exact treatment non-linear constants
-new PRNG algorithm
-universal positive dispel behavior
-universal same-node family priority
-external observer skill semantics
-external command-aura lifecycle semantics beyond the frozen interaction boundary
-unresearched official critical / evasion / barrier state application contracts
-```
-
-Those are either formula research, external mechanism ownership, or later official-state integration tasks.
-
-## 9. Research verdict
-
-```text
-8 / 8 mechanism contracts read and classified
-6 / 6 continuous-damage states share one trigger/lifecycle family
-2 / 2 recovery states separated by trigger topology
-same-name refresh semantics resolved
-application snapshot policy resolved
-death semantics resolved
-RNG ownership requirement resolved
-lifecycle timing requirement resolved
-remaining gaps moved to STAGE10_OPEN_QUESTIONS.md
-
-STAGE10 MECHANISM RESEARCH EXTRACTION = COMPLETE
-STAGE10 DESIGN FREEZE                  = NOT YET AUTHORIZED
-STAGE10 PRODUCTION IMPLEMENTATION      = NOT AUTHORIZED
+Core Stage10 mechanism research          = COMPLETE
+FIRST_AID zero-loss eligibility          = CLOSED
+full-troop opportunity semantics         = CLOSED
+hidden official recovery PRNG behavior   = UNKNOWN / NON-BLOCKING
+new battle-report research for R1-C      = NOT REQUIRED
+architecture re-audit                    = REQUIRED
+production implementation                = NOT AUTHORIZED
 ```
