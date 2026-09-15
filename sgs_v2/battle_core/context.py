@@ -8,6 +8,8 @@ from .state_registry import StateRegistry
 from .unit import UnitRuntime
 from .enums import BattleEndReason, LineupPosition
 from .operation_identity import OperationIdAllocator
+from .action_progress_tracker import ActionProgressTracker
+from .skill_runtime_registry import SkillRuntimeRegistry
 
 
 @dataclass(frozen=True, slots=True)
@@ -33,6 +35,8 @@ class BattleContext:
     random: RandomSystem
     max_rounds: int = 8
     states: StateRegistry = field(default_factory=StateRegistry)
+    skill_runtimes: SkillRuntimeRegistry = field(default_factory=SkillRuntimeRegistry)
+    action_progress: ActionProgressTracker = field(default_factory=ActionProgressTracker)
 
     current_round: int = 0
     current_phase: str = "NOT_STARTED"

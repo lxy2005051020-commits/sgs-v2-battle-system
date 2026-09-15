@@ -153,3 +153,51 @@ def register_official_state_definitions(registry: StateRegistry) -> None:
                 runtime_params_type=params_type,
             )
         )
+
+
+STAGE10_PERSISTENT_STATE_IDS: frozenset[OfficialStateId] = frozenset(
+    {
+        OfficialStateId.BURN,
+        OfficialStateId.FLOOD,
+        OfficialStateId.POISON,
+        OfficialStateId.ROUT,
+        OfficialStateId.SANDSTORM,
+        OfficialStateId.REBELLION,
+        OfficialStateId.FIRST_AID,
+        OfficialStateId.RECUPERATION,
+    }
+)
+
+
+def get_stage10_persistent_params_type(
+    state_id: OfficialStateId | str,
+) -> type[StateRuntimeParams]:
+    """Return the authoritative Stage 10 runtime params type for persistent states."""
+    from .stage10_state_params import (
+        ContinuousDamageStateParams,
+        FirstAidStateParams,
+        RecuperationStateParams,
+    )
+
+    if isinstance(state_id, str):
+        try:
+            state_id = OfficialStateId(state_id)
+        except ValueError as exc:
+            raise KeyError(f"Unknown official state_id: {state_id}") from exc
+
+    if state_id in {
+        OfficialStateId.BURN,
+        OfficialStateId.FLOOD,
+        OfficialStateId.POISON,
+        OfficialStateId.ROUT,
+        OfficialStateId.SANDSTORM,
+        OfficialStateId.REBELLION,
+    }:
+        return ContinuousDamageStateParams
+    elif state_id is OfficialStateId.FIRST_AID:
+        return FirstAidStateParams
+    elif state_id is OfficialStateId.RECUPERATION:
+        return RecuperationStateParams
+    else:
+        raise KeyError(f"State '{state_id.value}' is not an official Stage 10 persistent state")
+

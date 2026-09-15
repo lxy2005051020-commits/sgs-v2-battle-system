@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 from .damage_system import DamageRequest
 from .enums import DamageSourceType, DamageType
@@ -9,6 +10,9 @@ from .operation_identity import SourceType
 from .recovery_system import RecoveryRequest
 from .skill_runtime import SkillSlot
 from .state_runtime_params import EmptyStateRuntimeParams, StateRuntimeParams
+
+if TYPE_CHECKING:
+    from .rule_intent import RuleIntentExecutionDescriptor
 
 
 def _validate_optional_id(value: str | None, field_name: str) -> None:
@@ -27,6 +31,15 @@ def _validate_state_provenance_pair(
     if (source_state_id is None) != (source_state_instance_id is None):
         raise ValueError(
             "source_state_id and source_state_instance_id must both be set or both be None"
+        )
+
+
+def _validate_execution_descriptor(descriptor: object) -> None:
+    if descriptor is None:
+        return
+    if type(descriptor).__name__ != "RuleIntentExecutionDescriptor":
+        raise TypeError(
+            f"execution_descriptor must be a RuleIntentExecutionDescriptor or None, got {type(descriptor)}"
         )
 
 
@@ -68,6 +81,7 @@ class DamageEffect:
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
     source_ref: EffectSourceRef | None = None
+    execution_descriptor: RuleIntentExecutionDescriptor | None = None
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -101,6 +115,7 @@ class DamageEffect:
                     raise ValueError(
                         f"source_ref.source_skill_id '{self.source_ref.source_skill_id}' does not match source_skill_id '{self.source_skill_id}'"
                     )
+        _validate_execution_descriptor(self.execution_descriptor)
 
     def to_request(self) -> DamageRequest:
         return DamageRequest(
@@ -127,6 +142,7 @@ class ApplyStateEffect:
         default_factory=EmptyStateRuntimeParams
     )
     source_ref: EffectSourceRef | None = None
+    execution_descriptor: RuleIntentExecutionDescriptor | None = None
 
     def __post_init__(self) -> None:
         if not self.state_id:
@@ -150,15 +166,18 @@ class ApplyStateEffect:
                     raise ValueError(
                         f"source_ref.source_skill_id '{self.source_ref.source_skill_id}' does not match source_skill_id '{self.source_skill_id}'"
                     )
+        _validate_execution_descriptor(self.execution_descriptor)
 
 
 @dataclass(frozen=True, slots=True)
 class RemoveStateEffect:
     instance_id: str
+    execution_descriptor: RuleIntentExecutionDescriptor | None = None
 
     def __post_init__(self) -> None:
         if not self.instance_id:
             raise ValueError("instance_id cannot be empty")
+        _validate_execution_descriptor(self.execution_descriptor)
 
 
 @dataclass(frozen=True, slots=True)
@@ -171,6 +190,7 @@ class RecoverEffect:
     source_skill_id: str | None = None
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
+    execution_descriptor: RuleIntentExecutionDescriptor | None = None
 
     def __post_init__(self) -> None:
         _validate_optional_id(self.source_id, "source_id")
@@ -192,6 +212,7 @@ class RecoverEffect:
             raise TypeError("amount must be an int")
         if self.amount < 0:
             raise ValueError("amount must be >= 0")
+        _validate_execution_descriptor(self.execution_descriptor)
 
     def to_request(self) -> RecoveryRequest:
         return RecoveryRequest(

@@ -239,6 +239,38 @@ from .trigger_system import (
 from .troop_system import TroopChangeResult, TroopSystem
 from .victory_system import VictorySystem
 from .weapon_damage_formula import WeaponBaseDamageFormula
+from .state_generation import (
+    StateApplicationGenerationId,
+    PersistentLifecycleWindow,
+    StateGenerationAllocator,
+    StateGenerationSnapshot,
+)
+from .stage10_state_params import (
+    RecoveryModelKind,
+    RecoveryPotencyContext,
+    FrozenContinuousDamageBasis,
+    ContinuousDamageStateParams,
+    FirstAidStateParams,
+    RecuperationStateParams,
+)
+from .skill_runtime_registry import (
+    PersistentSourceSkillGateMode,
+    PersistentSourceSkillGate,
+    SkillRuntimeRegistry,
+)
+from .action_progress_tracker import ActionProgressTracker
+from .rule_intent import (
+    RuleIntentKind,
+    RecoveryOpportunityKind,
+    ExecutionRightDecisionKind,
+    ExecutionRightReason,
+    RuleIntentExecutionDescriptor,
+    RecoveryOpportunity,
+    RecoveryOpportunityResult,
+    AbortedRuleIntentResult,
+    RuleIntent,
+    RuleIntentResult,
+)
 
 __all__ = [
     "BattleContext",
@@ -449,4 +481,29 @@ __all__ = [
     "DirectTroopLossResolver",
     "DamageInstanceExecution",
     "PartitionExecutionStatus",
+    # Stage10 Phase 1 Primitives
+    "StateApplicationGenerationId",
+    "PersistentLifecycleWindow",
+    "StateGenerationAllocator",
+    "StateGenerationSnapshot",
+    "RecoveryModelKind",
+    "RecoveryPotencyContext",
+    "FrozenContinuousDamageBasis",
+    "ContinuousDamageStateParams",
+    "FirstAidStateParams",
+    "RecuperationStateParams",
+    "PersistentSourceSkillGateMode",
+    "PersistentSourceSkillGate",
+    "SkillRuntimeRegistry",
+    "ActionProgressTracker",
+    "RuleIntentKind",
+    "RecoveryOpportunityKind",
+    "ExecutionRightDecisionKind",
+    "ExecutionRightReason",
+    "RuleIntentExecutionDescriptor",
+    "RecoveryOpportunity",
+    "RecoveryOpportunityResult",
+    "AbortedRuleIntentResult",
+    "RuleIntent",
+    "RuleIntentResult",
 ]
