@@ -1,29 +1,29 @@
-# Stage 10 · Persistent State Runtime Integration · Architecture Design Draft V3
+# Stage 10 · Persistent State Runtime Integration · Architecture Design Draft V4
 
-> Repair: `Stage10 Design Repair R2-B / Architecture Repair Round 2`  
-> Status: `ARCHITECTURE DESIGN DRAFT V3`  
-> Independent design audit: `REQUIRED (Round 3)`  
+> Repair: `Stage10 Design Repair R3-B / Final Contract Closure`  
+> Status: `ARCHITECTURE DESIGN DRAFT V4`  
+> Independent design audit: `FINAL INDEPENDENT FREEZE-GATE AUDIT REQUIRED`  
 > Production implementation: `NOT AUTHORIZED`  
 > Design freeze: `NOT AUTHORIZED`
 
 ---
 
-# 0. R2-B input baseline
+# 0. R3-B input baseline
 
-R2-B was authored from the real repository state following R2-A4 Gameplay Authority formal promotion and R2-B Stage9 Addendum creation:
+R3-B was authored from the real repository state following the Stage10 Independent Design Re-Audit Round 3 (`STAGE10_DESIGN_REAUDIT_R3.md`):
 
 ```text
 Battle repo:
 lxy2005051020-commits/sgs-v2-battle-system
 branch: stage10-persistent-state-research
-input HEAD: 41cd51f33f115fa7eaee94191a87e5967008ee7a (docs(stage9): add Stage10 aftermath compatibility addendum)
-preceding HEAD: ecde9d156bc9ad890b5c838d7daf4280f0a6c46d (docs(stage10): add independent design re-audit round 2)
+input HEAD: 4fb5b966b37648b3572e92451b9ad51aecce70bf (docs(stage10): add independent design re-audit round 3)
+preceding HEAD: dfe9008ab74269c3239c214b65d25d626127884a (docs(stage10): repair round-2 architecture findings)
 
-STAGE10.md Draft V2 input blob:
-15f771037dddd2ac0956af59403a9030cf039a7a
+STAGE10.md Draft V3 input blob:
+1519189a744a0a7c4b31f8e834a08b4df39496ad
 
-STAGE10_DESIGN_REAUDIT_R2.md blob:
-d4e3185b7f35f04373a439f3048976aa7a581182
+STAGE10_DESIGN_REAUDIT_R3.md blob:
+3d49cf575dec6596d76733a277283d32d3b1b6f7
 
 STAGE7_STAGE10_COMPATIBILITY_ADDENDUM.md blob:
 64cdb7d86c8bda5b9123b49afcb924db7e1fd485
@@ -31,8 +31,8 @@ STAGE7_STAGE10_COMPATIBILITY_ADDENDUM.md blob:
 STAGE8_STAGE10_COMPATIBILITY_ADDENDUM.md blob:
 4c1e22eda97bdc0ef74ab6175a28672845771ddc
 
-STAGE9_STAGE10_COMPATIBILITY_ADDENDUM.md commit:
-41cd51f33f115fa7eaee94191a87e5967008ee7a
+STAGE9_STAGE10_COMPATIBILITY_ADDENDUM.md blob:
+737b058cefd08a1d0a08526436098a3455a8168f
 
 Gameplay Authority repo:
 lxy2005051020-commits/sgs-state-mechanics-research
@@ -42,7 +42,7 @@ canonical authoritative HEAD: a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe
 
 ## 0.1 Authority synchronization status: PASS
 
-Following Stage10 R2-A3 local provenance recovery and R2-A4 formal promotion, Gameplay Authority `main` at HEAD `a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe` now contains:
+Following Stage10 R2-A3 local provenance recovery and R2-A4 formal promotion, Gameplay Authority `main` at HEAD `a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe` contains:
 
 ```text
 1. commit 4661f4ffa1074045ce17d9158499dc03a8dfbec3:
@@ -207,29 +207,27 @@ target / owner defeat
 → remaining owner-state resolution is aborted
 ```
 
-## 4.1 System Responsibilities & Boundaries (S10-R2-M02)
+## 4.1 System Responsibilities, Boundaries & Typed Interface (S10-R2-M02, S10-R3-M02)
 
-To eliminate ownership ambiguity between decision, dispatch, and execution, responsibilities are partitioned strictly:
+To eliminate ownership ambiguity between decision, dispatch, and execution, and to prevent reflection or duck-typing over heterogeneous intents, responsibilities are partitioned strictly:
 
 ```text
 1. Decision Owner: ExecutionRightSystem
    - Authoritative decision maker for intent/effect admissibility.
-   - Evaluates evaluate_rule_intent(intent, context).
-   - Validates live unit status, suppression, and defeat state.
-   - Returns typed ExecutionRightDecision:
-     * ALLOW
-     * REJECT_CURRENT
-     * ABORT_OWNER_STATE_REMAINDER
-     * ABORT_HOOK
+   - Evaluates evaluate_rule_intent(descriptor, context).
+   - Validates live unit status, suppression, and defeat state using typed descriptor.
+   - Performs ZERO troop mutations, ZERO state mutations, ZERO dispatch, ZERO control-flow events.
+   - Returns typed ExecutionRightDecision with explicit reason and scope.
 
 2. Dispatch Owner: RuleHookSystem
    - Manages hook registration, batch iteration, and loop control.
-   - Dispatches each collected intent/effect to ExecutionRightSystem prior to execution.
-   - Enforces abort scope actions (e.g. discarding remaining intents for the defeated owner or halting the hook batch).
+   - Dispatches each collected intent to ExecutionRightSystem via intent.execution_descriptor prior to execution.
+   - Enforces abort scope actions (e.g. discarding only current intent on REJECT_CURRENT, discarding remaining intents for the defeated owner on ABORT_OWNER_STATE_REMAINDER, or halting the hook batch on ABORT_HOOK).
+   - Performs NO independent gameplay permission or alive checks.
 
 3. Execution Router: EffectExecutor
    - Pure execution worker.
-   - Executes already-admitted Effect objects through domain handlers (Damage, Recovery, State).
+   - Executes already-admitted Effect objects through domain handlers (DamageInstanceCoordinator, StateLifecycleSystem, RecoverySystem).
    - Performs NO secondary gameplay permission, suppression, or defeat arbitration.
 
 4. Cleanup Port: DefeatCleanupPort
@@ -242,59 +240,168 @@ To eliminate ownership ambiguity between decision, dispatch, and execution, resp
    - Strictly observational; no gameplay control flow or side-effects.
 ```
 
-Already-generated tail Effects are immutable historical intent. They are not rebound, retried, or executed after the hard boundary; they receive typed aborted outcomes.
+### 4.1.1 Typed Descriptor Specification (S10-R3-M02)
 
-## 4.2 Typed Abort Scopes
+Every `RuleIntent` (`Effect` and `RecoveryOpportunity`) must immutably carry an explicit typed descriptor populated at creation time by `TriggerSystem` (or factory):
+
+```python
+@dataclass(frozen=True, slots=True)
+class RuleIntentExecutionDescriptor:
+    intent_kind: RuleIntentKind           # EFFECT | RECOVERY_OPPORTUNITY
+    intent_owner_id: str                  # Hook actor / submitter of the intent batch
+    state_owner_id: str | None            # Unit to which state is physically attached (if state-driven)
+    target_id: str | None                 # Primary target unit id (or None for untargeted effects)
+    source_ref: DamageSourceRef | None    # Historical / live source ref
+    state_instance_id: str | None         # Physical state instance id (if state-driven)
+    state_generation_id: StateApplicationGenerationId | None # Immutable generation id
+    execution_domain: str                 # "STATE_RESOLUTION", "ACTION", "AFTERMATH", etc.
+```
+
+**Disambiguation of Actor, Owner, and Target**:
+- `intent_owner_id`: The unit acting or initiating the hook batch (e.g. hook actor).
+- `state_owner_id`: The physical bearer of the persistent state (i.e. `state.owner_id`). When this unit dies, all remaining state-resolution intents for this state terminate. For persistent state resolution at `UNIT_ACTION_START`, `state_owner_id == intent_owner_id`.
+- `target_id`: The recipient/victim of the effect (e.g. the unit being damaged or healed). For multi-target effects, each resolved `RuleIntent` carries its specific single `target_id`.
+- Untargeted intents (e.g. field aura or global state update) set `target_id = None`.
+
+**Normative Method Signature**:
+```python
+ExecutionRightSystem.evaluate_rule_intent(
+    descriptor: RuleIntentExecutionDescriptor,
+    context: BattleContext,
+) -> ExecutionRightDecision
+```
+
+`ExecutionRightSystem` reads only typed fields from `RuleIntentExecutionDescriptor` and `BattleContext`. It is strictly forbidden from using `hasattr`, `isinstance`, or reflection to probe heterogeneous intent objects.
+
+## 4.2 Orthogonal ExecutionRight Decisions & Decision Matrix (S10-R3-B01)
+
+To strictly prevent conflation between **Target Defeat** and **State Owner Defeat**, the decision model is partitioned orthogonally into distinct typed outcomes:
+
+```python
+class ExecutionRightDecisionKind(str, Enum):
+    ALLOW = "ALLOW"
+    REJECT_CURRENT = "REJECT_CURRENT"
+    ABORT_OWNER_STATE_REMAINDER = "ABORT_OWNER_STATE_REMAINDER"
+    ABORT_HOOK = "ABORT_HOOK"
+
+class ExecutionRightReason(str, Enum):
+    TARGET_DEFEATED = "TARGET_DEFEATED"
+    OWNER_DEFEATED = "OWNER_DEFEATED"
+    STATE_NOT_FOUND = "STATE_NOT_FOUND"
+    SUPPRESSED = "SUPPRESSED"
+    BATTLE_FINALIZED = "BATTLE_FINALIZED"
+    INVALID_TARGET = "INVALID_TARGET"
+```
 
 ```text
 ALLOW
-→ Effect is admitted and forwarded to EffectExecutor. Batch continues normally.
+→ Intent is admitted and forwarded to EffectExecutor or RecoveryOpportunitySystem. Batch continues normally.
 
-REJECT_CURRENT
-→ Current Effect is rejected with typed status (e.g. TARGET_DEFEATED, SUPPRESSED).
-→ Subsequent unrelated intents/effects in the batch continue evaluation.
+REJECT_CURRENT(reason = TARGET_DEFEATED | SUPPRESSED | ...)
+→ ONLY the current intent is rejected.
+→ Reason TARGET_DEFEATED means descriptor.target_id is dead (target.is_alive == False).
+→ This rejection is strictly local to the dead target.
+→ Subsequent unrelated intents in the batch (including intents by the same owner targeting other living units) CONTINUE evaluation!
 
-ABORT_OWNER_STATE_REMAINDER
-→ Current Effect is aborted because state owner is defeated/invalidated.
-→ All remaining intents/effects in the current batch belonging to the same state/owner are discarded.
-→ Effects belonging to other living units in the same batch proceed.
+ABORT_OWNER_STATE_REMAINDER(reason = OWNER_DEFEATED)
+→ The state-resolution owner is defeated (descriptor.state_owner_id is dead).
+→ Current intent is aborted.
+→ All remaining intents in the current batch belonging to the same state_owner_id are discarded.
+→ Intents belonging to other living owners in the same batch CONTINUE evaluation!
 
-ABORT_HOOK
+ABORT_HOOK(reason = BATTLE_FINALIZED | ...)
 → Critical execution boundary violation. Entire hook batch terminates immediately.
 ```
 
-## 4.3 Effect A / B / C Execution Timeline
+### 4.2.1 Normative Decision Matrix (S10-R3-B01)
 
-Consider an action or hook producing multiple effects across units:
-- Effect A: State tick dealing damage to Unit X (reduces Unit X troops to 0).
-- Effect B: Secondary state effect or subsequent tick on Unit X.
-- Effect C: Independent effect or state tick on Unit Y.
+| Condition | Decision Kind | Reason | Action Taken by RuleHookSystem |
+|---|---|---|---|
+| Target alive (`is_alive == True`), state owner alive | `ALLOW` | `None` | Forward intent to executor; batch continues |
+| Target defeated (`is_alive == False`), state owner alive | `REJECT_CURRENT` | `TARGET_DEFEATED` | Record rejected result for current intent; **continue batch for subsequent intents** |
+| State owner defeated (`is_alive == False`) | `ABORT_OWNER_STATE_REMAINDER` | `OWNER_DEFEATED` | Record abort for current intent; **discard all remaining intents with same `state_owner_id`**; continue other owners |
+| Physical state not found / expired | `REJECT_CURRENT` | `STATE_NOT_FOUND` | Record rejected result for current intent; subsequent intents evaluated individually |
+| Action suppressed by control state (Stun/Amnesia) | `REJECT_CURRENT` | `SUPPRESSED` | Record rejected result for current intent; opportunity window consumed; clock continues |
+| Battle finalized / victory latched | `ABORT_HOOK` | `BATTLE_FINALIZED` | Admitted work drains per Stage9 Addendum; halt all remaining batch execution |
+
+## 4.3 Normative Timelines: Target Death vs Owner Death (S10-R3-B01)
+
+### 4.3.1 Target Death Timeline (A / B / C / D Sequence)
+
+Consider a hook producing multiple effects across units:
+- **Intent A**: State owner $P_1$, target $P_2$. Deals damage to $P_2$ (reduces $P_2$ troops to 0).
+- **Intent B**: State owner $P_1$, target $P_2$. Secondary effect on $P_2$.
+- **Intent C**: State owner $P_1$, target $P_3$. Independent effect on living unit $P_3$.
+- **Intent D**: State owner $P_4$, target $P_3$. Independent effect from different living owner $P_4$ on living unit $P_3$.
 
 ```text
-1. Effect A evaluation:
+1. Intent A evaluation:
    - RuleHookSystem requests evaluation from ExecutionRightSystem.
-   - Unit X is alive → ExecutionRightSystem returns ALLOW.
-   - RuleHookSystem passes Effect A to EffectExecutor.
-   - Damage settlement resolves; Unit X is defeated.
-   - Synchronous call to DefeatCleanupPort:
-     * StateLifecycleSystem removes Unit X states with reason OWNER_DEFEATED.
-     * Defeat is latched in UnitRegistry / BattleContext.
+   - P1 alive, P2 alive → ExecutionRightSystem returns ALLOW.
+   - RuleHookSystem forwards Intent A to EffectExecutor.
+   - Damage settlement resolves; P2 troops reach 0 (P2 defeated).
+   - Synchronous call to DefeatCleanupPort.commit_defeat(P2):
+     * StateLifecycleSystem cleanses P2 states with reason OWNER_DEFEATED.
+     * P2 is latched dead in UnitRegistry / BattleContext.
 
-2. Effect B evaluation:
-   - RuleHookSystem requests evaluation from ExecutionRightSystem for Effect B (target/owner Unit X).
-   - ExecutionRightSystem detects Unit X is defeated.
-   - ExecutionRightSystem returns ABORT_OWNER_STATE_REMAINDER.
-   - RuleHookSystem records typed abort for Effect B and skips any remaining intents targeting Unit X.
-   - Effect B is NEVER dispatched to EffectExecutor.
+2. Intent B evaluation:
+   - RuleHookSystem requests evaluation for Intent B (state_owner_id = P1, target_id = P2).
+   - ExecutionRightSystem checks target P2: P2 is dead (target.is_alive == False).
+   - State owner P1 is alive.
+   - ExecutionRightSystem returns REJECT_CURRENT(reason = TARGET_DEFEATED).
+   - RuleHookSystem records AbortedRuleIntentResult(reason = TARGET_DEFEATED) for Intent B.
+   - Intent B is NEVER dispatched to EffectExecutor.
+   - CRITICAL: P1's remaining intents are NOT aborted because P1 is alive!
 
-3. Effect C evaluation:
-   - RuleHookSystem evaluates next intent/effect (Unit Y).
-   - Unit Y is alive and valid → ExecutionRightSystem returns ALLOW.
-   - RuleHookSystem forwards Effect C to EffectExecutor.
-   - Effect C executes normally.
+3. Intent C evaluation:
+   - RuleHookSystem requests evaluation for Intent C (state_owner_id = P1, target_id = P3).
+   - State owner P1 is alive. Target P3 is alive.
+   - ExecutionRightSystem returns ALLOW.
+   - RuleHookSystem forwards Intent C to EffectExecutor.
+   - Intent C executes normally!
+
+4. Intent D evaluation:
+   - RuleHookSystem requests evaluation for Intent D (state_owner_id = P4, target_id = P3).
+   - State owner P4 is alive. Target P3 is alive.
+   - ExecutionRightSystem returns ALLOW.
+   - RuleHookSystem forwards Intent D to EffectExecutor.
+   - Intent D executes normally!
 ```
 
-Non-state Effect domains are not silently cancelled merely because a different unit died. Each Effect/domain uses its own execution-right rule. The Stage10 hard batch abort applies to the defeated owner's remaining state-resolution domain.
+**Deterministic Observable Behavior**: $A \text{ executes} \to B \text{ rejected (TARGET\_DEFEATED)} \to C \text{ executes} \to D \text{ executes}$.
+
+### 4.3.2 Owner Death Timeline
+
+Consider a hook where an intent causes the state-resolution owner to die:
+- **Intent A**: State owner $P_1$, target $P_1$ (e.g. self-inflicted DOT tick reducing $P_1$ troops to 0).
+- **Intent B**: State owner $P_1$, target $P_2$. Secondary effect belonging to $P_1$'s state.
+- **Intent D**: State owner $P_4$, target $P_3$. Independent effect belonging to living owner $P_4$.
+
+```text
+1. Intent A evaluation:
+   - P1 is alive → ExecutionRightSystem returns ALLOW.
+   - Intent A resolves; P1 troops reach 0 (P1 defeated).
+   - Synchronous call to DefeatCleanupPort.commit_defeat(P1):
+     * StateLifecycleSystem cleanses P1 attached states with reason OWNER_DEFEATED.
+     * P1 is latched dead in UnitRegistry / BattleContext.
+
+2. Intent B evaluation:
+   - RuleHookSystem requests evaluation for Intent B (state_owner_id = P1, target_id = P2).
+   - ExecutionRightSystem detects state_owner_id P1 is dead.
+   - ExecutionRightSystem returns ABORT_OWNER_STATE_REMAINDER(reason = OWNER_DEFEATED).
+   - RuleHookSystem records AbortedRuleIntentResult(reason = OWNER_DEFEATED) for Intent B.
+   - RuleHookSystem discards all remaining intents in batch where state_owner_id == P1.
+
+3. Intent D evaluation:
+   - RuleHookSystem evaluates Intent D (state_owner_id = P4, target_id = P3).
+   - State owner P4 is alive. Target P3 is alive.
+   - Intent D does NOT belong to defeated owner P1.
+   - ExecutionRightSystem returns ALLOW.
+   - RuleHookSystem forwards Intent D to EffectExecutor.
+   - Intent D executes normally!
+```
+
+**Deterministic Observable Behavior**: $A \text{ executes (P1 dies)} \to B \text{ aborted (OWNER\_DEFEATED)} \to \text{remaining P1 discarded} \to D \text{ executes}$.
 
 ---
 
@@ -1186,30 +1293,53 @@ including probability 0.0 and 1.0,
 and regardless of current recoverable_gap.
 ```
 
-## 18.1 Normalized Pre-RNG Admission Gate Sequence (S10-R2-N02)
+## 18.0 Native RandomSystem Implementation Invariant (S10-R3-N01)
 
-To ensure trace and failure-reason determinism across the codebase, the exact sequence of checks before an opportunity is admitted to consume an RNG roll is frozen:
+The existing production implementation in `sgs_v2/battle_core/random_system.py`:
+
+```python
+def chance(self, probability: float) -> bool:
+    if not 0.0 <= probability <= 1.0:
+        raise ValueError("probability must be in [0.0, 1.0]")
+    return self.random() < probability
+```
+
+already evaluates `self.random() < probability` unconditionally, with zero short-circuit shortcuts for `probability == 0.0` or `probability == 1.0`. Thus, every call to `chance()` consumes exactly one underlying float from `self._rng`.
+
+Therefore, Stage10's engineering determinism policy requires:
+- **NO Stage2 / RandomSystem compatibility reopen.**
+- **NO production modifications to RandomSystem.**
+
+Official hidden PRNG behavior remains classified as `UNKNOWN / UNOBSERVABLE` per Gameplay Authority; the one-draw invariant is strictly a **Simulator Engineering Determinism Policy**.
+
+## 18.1 Normalized Pre-RNG Admission Gate Sequence (S10-R2-N02, S10-R3-M01)
+
+To ensure trace and failure-reason determinism across the codebase, admission before consuming an RNG draw is partitioned strictly by `RecoveryOpportunityKind`:
 
 ```text
-1. Target Validity & Alive Gate:
+1. Target Validity & Alive Gate (Shared):
    - Target unit exists and target.is_alive() == True.
    - If dead or None: reject opportunity (TARGET_DEFEATED / INVALID_TARGET); NO RNG call.
 
-2. Hit Topology & Reaction Permission Gate:
-   - hit_topology == DamageHitTopology.RESOLVED_HIT.
-   - ReactionPermissionPolicy.can_trigger_recovery(source_type) == True.
-   - If not resolved hit (e.g. EVASION) or source ineligible (e.g. CHAIN_TRUE_FEEDBACK): reject; NO RNG call.
+2. Hit Topology & Reaction Permission Gate (Kind-Specific):
+   - For FIRST_AID_AFTER_DAMAGE:
+       * DamageAftermathFact.hit_topology == DamageHitTopology.RESOLVED_HIT.
+       * ReactionPermissionPolicy.can_trigger_recovery(source_type) == True.
+       * If not resolved hit (e.g. EVASION) or source ineligible (e.g. CHAIN_TRUE_FEEDBACK): reject; NO RNG call.
+   - For RECUPERATION_ACTION_START:
+       * NOT_APPLICABLE (Gate 2 is skipped entirely; RECUPERATION is an action-start opportunity with no damage event).
 
-3. Opportunity Lifecycle Window Gate:
+3. Opportunity Lifecycle Window Gate (Shared):
    - current_combat_round >= state.first_eligible_round and current_combat_round <= state.last_eligible_round.
    - If outside lifecycle window: reject; NO RNG call.
 
-4. Source Skill Enablement Gate:
+4. Source Skill Enablement Gate (Shared):
    - PersistentSourceSkillGate evaluates source skill status.
-   - If mode == QUERY_SKILL_RUNTIME and SkillRuntime.enabled == False: suppress opportunity; NO RNG call.
+   - If mode == QUERY_SKILL_RUNTIME and SkillRuntime.enabled == False: suppress opportunity; NO RNG call. Clock continues.
 
-5. ADMITTED -> Exactly One RNG Draw:
+5. ADMITTED -> Exactly One RNG Draw (Shared Engine Tail):
    - All pre-conditions satisfied.
+   - Opportunity becomes ADMITTED.
    - Consume exactly one context.random.chance(probability) call.
    - (recoverable_gap == 0 does NOT suppress this draw; full troops proceed to draw).
 ```
@@ -1353,37 +1483,63 @@ publish EventBus facts as control flow
 
 ---
 
-# 22. RecoveryOpportunitySystem ownership
+# 22. RecoveryOpportunitySystem ownership (S10-R3-M01)
 
-Unique responsibilities:
+`RecoveryOpportunitySystem` is the single, unified recovery opportunity engine for both after-damage reactions (`FIRST_AID`) and turn-based action-start recovery (`RECUPERATION`). To eliminate damage-event dependencies on non-damage opportunities, the system operates on typed opportunity kinds.
+
+### 22.1 RecoveryOpportunityKind Specification
+
+```python
+class RecoveryOpportunityKind(str, Enum):
+    FIRST_AID_AFTER_DAMAGE = "FIRST_AID_AFTER_DAMAGE"
+    RECUPERATION_ACTION_START = "RECUPERATION_ACTION_START"
+```
+
+Every `RecoveryOpportunity` object immutably carries `opportunity_kind: RecoveryOpportunityKind`.
+
+### 22.2 Admission Gate Matrix (S10-R3-M01)
+
+| Gate | FIRST_AID_AFTER_DAMAGE | RECUPERATION_ACTION_START | Failure Action |
+|---|---|---|---|
+| **1. Target Validity & Alive Gate** | **REQUIRED** (`target.is_alive == True`) | **REQUIRED** (`target.is_alive == True`) | Reject with `TARGET_DEFEATED` or `INVALID_TARGET`; zero RNG draws |
+| **2. Hit Topology & Reaction Permission** | **REQUIRED** (`RESOLVED_HIT` + `can_trigger_recovery(source_type) == True`) | **NOT_APPLICABLE** (Skipped entirely) | If FIRST_AID fails: reject with `INELIGIBLE_HIT_OR_SOURCE`; zero RNG draws |
+| **3. Opportunity Lifecycle Window Gate** | **REQUIRED** (`first_eligible <= round <= last_eligible`) | **REQUIRED** (`first_eligible <= round <= last_eligible`) | Reject with `LIFECYCLE_WINDOW_EXPIRED`; zero RNG draws |
+| **4. Source Skill Enablement Gate** | **REQUIRED** (`PersistentSourceSkillGate`) | **REQUIRED** (`PersistentSourceSkillGate`) | If disabled: suppress with `SKILL_TEMPORARILY_DISABLED`; clock continues; zero RNG draws |
+| **5. Simulator RNG Probability Draw** | **REQUIRED** (`context.random.chance(prob)`) | **REQUIRED** (`context.random.chance(prob)`) | If roll fails: return `OpportunityFailed(PROBABILITY_FAILED)` |
+| Full Troops (`recoverable_gap == 0`) | **NOT A GATE** (proceeds to draw) | **NOT A GATE** (proceeds to draw) | Continues to nominal calculation and RecoverySystem |
+| Zero Loss (`ActualTargetTroopLoss == 0`) | **NOT A REJECTION** (proceeds if resolved hit) | **NOT_APPLICABLE** | Treatment model may recover >0; ratio model nominal 0 |
+
+### 22.3 Normalized Admission Sequence before RNG Draw
 
 ```text
-Normalized Admission Sequence before RNG Draw (S10-R2-N02):
-1. Target Validity & Alive Gate:
+1. Target Validity & Alive Gate (Shared):
    - Validate target unit exists and target.is_alive() == True.
-   - If dead/None: abort opportunity with TARGET_DEFEATED / INVALID_TARGET; NO RNG draw.
+   - If dead or None: abort opportunity with TARGET_DEFEATED / INVALID_TARGET; NO RNG draw.
 
-2. Hit Topology & Reaction Permission Gate:
-   - Validate DamageAftermathFact.hit_topology == DamageHitTopology.RESOLVED_HIT.
-   - Validate ReactionPermissionPolicy.can_trigger_recovery(source_type) == True.
-   - (Includes NORMAL_ATTACK, ACTIVE_SKILL, PERIODIC_DAMAGE, CLEAVE, COUNTER, and ASSAULT).
-   - If not resolved hit or source ineligible: abort opportunity; NO RNG draw.
+2. Hit Topology & Reaction Permission Gate (Kind-Specific):
+   - For FIRST_AID_AFTER_DAMAGE:
+       * Validate DamageAftermathFact exists and DamageAftermathFact.hit_topology == DamageHitTopology.RESOLVED_HIT.
+       * Validate ReactionPermissionPolicy.can_trigger_recovery(source_type) == True.
+       * If not resolved hit (e.g. EVASION) or source ineligible (e.g. CHAIN_TRUE_FEEDBACK): abort opportunity; NO RNG draw.
+   - For RECUPERATION_ACTION_START:
+       * NOT_APPLICABLE: Gate 2 is skipped completely. RECUPERATION never queries ReactionPermissionPolicy and never requires DamageAftermathFact.
 
-3. Opportunity Lifecycle Window Gate:
+3. Opportunity Lifecycle Window Gate (Shared):
    - Validate current combat round is within [first_eligible_round, last_eligible_round].
    - If outside window: abort opportunity; NO RNG draw.
 
-4. Source Skill Enablement Gate:
+4. Source Skill Enablement Gate (Shared):
    - Query PersistentSourceSkillGate.
    - When mode == QUERY_SKILL_RUNTIME: query SkillRuntimeRegistry.lookup(owner_id, slot).enabled.
    - If disabled: suppress opportunity (SKILL_TEMPORARILY_DISABLED); NO RNG draw. Clock continues.
 
-5. Simulator RNG Probability Draw:
+5. Simulator RNG Probability Draw (Shared Engine Tail):
+   - Opportunity becomes ADMITTED.
    - Consume exactly one context.random.chance(probability) call.
    - (recoverable_gap == 0 does NOT suppress this draw; full troops proceed to draw).
    - If roll fails: return OpportunityFailed(PROBABILITY_FAILED).
 
-6. Potency Calculation & RecoveryRequest:
+6. Potency Calculation & RecoveryRequest (Shared Engine Tail):
    - Resolve frozen recovery potency from generation snapshot.
    - For damage-ratio model: read typed ActualTargetTroopLoss from aftermath snapshot.
    - Create RecoveryRequest carrying source_generation_id.
@@ -1926,9 +2082,9 @@ Shared aftermath topology does not erase Stage9 source identity.
 
 ---
 
-# 34. Mandatory regression plan V3
+# 34. Mandatory regression plan V4
 
-No tests are written in R2-B, but the implementation build/audit must include at least:
+No tests are written in R3-B, but the implementation build/audit must include at least:
 
 ```text
 LIFECYCLE
@@ -1965,26 +2121,34 @@ FIRST_AID AFTERMATH
 - zero-loss + ratio model → opportunity exists, nominal ratio amount 0
 - zero-loss + full troops → opportunity executes; successful recovery resolves actual 0
 - ASSAULT pursuit/counterattack hit → opportunity YES (S10-R2-B02)
+- DamageAftermathFact REQUIRED for admission (S10-R3-M01)
 
-RECUPERATION
+RECUPERATION (S10-R3-M01)
+- admitted at UNIT_ACTION_START with DamageAftermathFact = None (Gate 2 NOT_APPLICABLE)
 - full troops → opportunity not skipped
 - source-skill inactive → opportunity suppressed without pausing finite lifecycle
 
-RNG & ADMISSION GATES (S10-R2-N02)
+RNG & ADMISSION GATES (S10-R2-N02, S10-R3-N01)
 - normalized gate order: target alive -> hit topology & permission -> lifecycle window -> source skill gate -> RNG draw
-- probability == 1.0 → exactly one simulator probability draw per admitted opportunity
-- probability == 0.0 → exactly one simulator probability draw per admitted opportunity
+- probability == 1.0 → exactly one simulator probability draw per admitted opportunity (native RandomSystem.chance)
+- probability == 0.0 → exactly one simulator probability draw per admitted opportunity (native RandomSystem.chance)
+- zero RNG calls if target dead or skill disabled before RNG gate
 - recoverable_gap == 0 → does not suppress admitted opportunity draw
-- dead target or disabled skill → opportunity aborted/suppressed before RNG draw (zero RNG calls)
 - ineligible aftermath → zero recovery probability draws
+- zero Stage 2 reopen / zero RandomSystem code modification (S10-R3-N01)
 
-DEATH & EXECUTION RIGHT (S10-R2-M02)
-- owner dies during hook batch → synchronous cleanup via DefeatCleanupPort
-- ExecutionRightSystem returns ABORT_OWNER_STATE_REMAINDER for remaining owner intents
-- unrelated unit intents in same hook batch continue (Effect C)
-- future state application to dead owner rejected
-- source dies before DOT tick → existing target state survives and later tick executes
-- Chain/direct/Cleave death paths all call one defeat cleanup port
+DEATH & EXECUTION RIGHT (S10-R2-M02, S10-R3-B01, S10-R3-M02)
+- ExecutionRightSystem.evaluate_rule_intent consumes typed RuleIntentExecutionDescriptor (zero duck-typing)
+- Target Death (Timeline A/B/C/D):
+  * P1 targets Unit 2 (dies in A) -> B evaluated with target dead -> REJECT_CURRENT(TARGET_DEFEATED)
+  * P1 (Unit 1, still alive) targets Unit 3 in C -> ALLOW -> executes!
+  * P2 targets Unit 4 in D -> ALLOW -> executes!
+- Owner Death (Timeline A/B/C/D):
+  * P1 owner (Unit 1) dies in A -> B evaluated with owner dead -> ABORT_OWNER_STATE_REMAINDER(OWNER_DEFEATED)
+  * All remaining intents belonging to Unit 1 in the hook batch are discarded
+  * P2 (Unit 2, alive) targets Unit 3 in D -> ALLOW -> executes!
+- unrelated unit intents in same hook batch are NOT discarded when another unit dies
+- DefeatCleanupPort invoked synchronously once on troop reduction to 0 across all death paths
 
 STAGE8
 - LIVE_RUNTIME exact golden regression unchanged
@@ -2054,7 +2218,7 @@ LIVE_RUNTIME exact golden suite
 | S10-A-H04 dependency/static architecture tests | HARDENING | explicit DAG + forbidden edges | `ACCEPTED FOR BUILD` |
 | S10-A-H05 LIVE_RUNTIME golden | HARDENING | exact backward-regression obligation | `ACCEPTED FOR BUILD` |
 
-### Round 2 Findings (Repaired in Draft V3)
+### Round 2 Findings (Preserved from Draft V3)
 
 | Audit Finding | Severity | R2-B Repair / Resolution | Status |
 |---|---|---|---|
@@ -2071,25 +2235,36 @@ LIVE_RUNTIME exact golden suite
 | S10-R2-H01 Exactly-once defeat-cleanup conformance spy | HARDENING | Added conformance spy requirement across every destructive route to §34 | `ACCEPTED FOR BUILD` |
 | S10-R2-H02 Frozen-lane zero live formula read instrumentation | HARDENING | Added frozen-lane instrumentation test requirement to §34 | `ACCEPTED FOR BUILD` |
 
+### Round 3 Findings (Repaired in Draft V4)
+
+| Audit Finding | Severity | R3-B Repair / Resolution | Status |
+|---|---|---|---|
+| S10-R3-B01 Target Defeat vs Owner Defeat conflated in ExecutionRight abort scope | BLOCKER | Split into `REJECT_CURRENT(reason=TARGET_DEFEATED)` (only cancels the intent targeting dead unit; does not cancel other intents of living owner) and `ABORT_OWNER_STATE_REMAINDER(reason=OWNER_DEFEATED)` (cancels all remaining intents of dead owner, but unrelated units proceed). Formalized Decision Matrix and exact A/B/C/D timeline in §4.2, §4.3, §4.4. | `REPAIR CLAIMED` |
+| S10-R3-M01 RecoveryOpportunitySystem Gate 2 incorrectly requires DamageAftermathFact for RECUPERATION | MAJOR | Introduced `RecoveryOpportunityKind` enum (`FIRST_AID_AFTER_DAMAGE` vs `RECUPERATION_ACTION_START`). In §18.1 and §22, defined Gate 2 as REQUIRED for FIRST_AID but NOT_APPLICABLE for RECUPERATION. RECUPERATION is admitted at `UNIT_ACTION_START` with `aftermath_fact=None`. | `REPAIR CLAIMED` |
+| S10-R3-M02 ExecutionRightSystem.evaluate_rule_intent typed interface and descriptor underdefined | MAJOR | Defined explicit `RuleIntentExecutionDescriptor` dataclass in §4.1, carried directly by `RuleIntent`, constructed by `TriggerSystem`. Standardized signature `ExecutionRightSystem.evaluate_rule_intent(descriptor, context) -> ExecutionRightDecision`. Zero duck-typing or attribute probing. | `REPAIR CLAIMED` |
+| S10-R3-N01 RandomSystem.chance native one-draw invariant ($p=0, p=1$) insufficiently documented | MINOR | Documented in §18.0 that native `sgs_v2` implementation (`self.random() < probability`) draws exactly one float for all $p \in [0.0, 1.0]$ without shortcutting. Formally confirmed NO Stage 2 reopen and zero `RandomSystem` code modification. | `REPAIR CLAIMED` |
+
 Summary:
 
 ```text
 Round 1 findings: 7 BLOCKER, 6 MAJOR, 4 MINOR, 5 HARDENING (retained repaired)
-Round 2 findings: 2 BLOCKER, 5 MAJOR, 3 MINOR, 2 HARDENING (all repaired/promoted)
+Round 2 findings: 2 BLOCKER, 5 MAJOR, 3 MINOR, 2 HARDENING (retained repaired/promoted)
+Round 3 findings: 1 BLOCKER, 2 MAJOR, 1 MINOR, 0 HARDENING (all repaired)
 
-Independent acceptance = PENDING RE-AUDIT ROUND 3
+Independent acceptance = PENDING FINAL INDEPENDENT FREEZE-GATE AUDIT
 ```
 
 ---
 
 # 36. Author self-audit scenarios
 
-R2-B author self-audit requires two independent implementers reading this Draft V3 to produce the same observable contract for:
+R3-B author self-audit requires two independent implementers reading this Draft V4 to produce the same observable contract for:
 
 ```text
 PRE_BATTLE N=1
 source dies before DOT tick
 target dies mid-hook (Effect A/B/C)
+owner dies mid-hook (Effect A/B/C)
 same-name refresh before pending effect executes
 weakness-zero FIRST_AID
 barrier-zero FIRST_AID
@@ -2098,6 +2273,7 @@ ASSAULT FIRST_AID
 full-troop FIRST_AID
 full-troop RECUPERATION
 probability=100%
+probability=0%
 Share
 Distribution
 Cleave
@@ -2108,14 +2284,36 @@ victory latched during current DamageInstance
 Author conclusion:
 
 ```text
+Scenario A: Target Defeat mid-batch
+→ Effect A kills Target 1.
+→ Effect B (also targeting Target 1 from living Owner 1) evaluates evaluate_rule_intent:
+  Target 1 is dead -> returns REJECT_CURRENT(TARGET_DEFEATED). Effect B is skipped.
+→ Effect C (targeting living Target 2 from Owner 1) evaluates evaluate_rule_intent:
+  Owner 1 alive, Target 2 alive -> returns ALLOW. Effect C executes normally!
+→ Effect D (from living Owner 2) evaluates evaluate_rule_intent:
+  returns ALLOW. Effect D executes normally!
+
+Scenario B: Owner Defeat mid-batch
+→ Effect A kills Owner 1.
+→ Effect B (from dead Owner 1) evaluates evaluate_rule_intent:
+  Owner 1 is dead -> returns ABORT_OWNER_STATE_REMAINDER(OWNER_DEFEATED).
+→ RuleHookSystem discards all remaining intents belonging to Owner 1 in this batch.
+→ Effect D (from living Owner 2) evaluates evaluate_rule_intent:
+  Owner 2 is alive, Target alive -> returns ALLOW. Effect D executes normally!
+
+Scenario C: Recuperation vs First Aid Gate 2 Admission
+→ RECUPERATION at UNIT_ACTION_START:
+  Opportunity kind is RECUPERATION_ACTION_START. Gate 2 is NOT_APPLICABLE.
+  admitted with aftermath_fact = None; evaluates lifecycle window, skill gate, then draws RNG.
+→ FIRST_AID at DAMAGE_RESOLVED:
+  Opportunity kind is FIRST_AID_AFTER_DAMAGE. Gate 2 is REQUIRED.
+  Checks DamageAftermathFact (is_hit, non-evaded, allowed source type); rejects if absent/invalid.
+
 PRE_BATTLE N=1
 → Round1 exactly one opportunity, then physical expiry at end of ActionStart window
 
 source dies before DOT tick
 → state persists; frozen source basis executes; dead source live validation not required
-
-target dies mid-hook (Effect A/B/C)
-→ synchronous cleanup via DefeatCleanupPort; ExecutionRightSystem denies remaining owner intents (ABORT_OWNER_STATE_REMAINDER); unrelated unit intents (Effect C) proceed
 
 refresh before pending effect executes
 → pending effect remains bound to old generation snapshot
@@ -2135,8 +2333,8 @@ ASSAULT hit
 full-troop FIRST_AID / RECUPERATION
 → opportunity not skipped; simulator probability policy still applies; successful RecoverySystem resolution may actual=0
 
-probability=100%
-→ exactly one simulator RNG chance draw per admitted opportunity; ENGINEERING ONLY
+probability=100% / probability=0%
+→ exactly one simulator RNG chance draw per admitted opportunity via native RandomSystem.chance; zero Stage 2 reopen; ENGINEERING ONLY
 
 Share
 → target settlement → if target alive: commit sharer direct loss → target DamageAftermathPort (reconciled checkpoint)
@@ -2158,37 +2356,35 @@ No remaining item above is intentionally delegated to “implementation decides�
 
 ---
 
-# 37. R2-B completion claim
+# 37. R3-B completion claim
 
 ```text
-1. 2 Round 2 BLOCKER explicit repair              YES
-2. 5 Round 2 MAJOR explicit repair                YES
-3. 3 Round 2 MINOR explicit repair                YES
-4. 2 Round 2 HARDENING accepted                   YES
-5. Stage9 compatibility addendum committed        YES (41cd51f)
-6. Gameplay Authority sync PASS                   YES (a9a05cef)
-7. Cleave vs FIRST_AID ordering preserved         YES
-8. ASSAULT recovery permission authorized         YES
-9. ExecutionRight decision vs dispatch owner set  YES
-10. Typed abort scopes defined                    YES
-11. PersistentSourceSkillGate table normative     YES
-12. Generation ID end-to-end propagation matrix   YES
-13. Battle-end teardown semantics defined         YES
-14. ActionProgressTracker exact order frozen      YES
-15. Recovery pre-RNG admission gate normalized    YES
-16. Production code modified by R2-B              NO
-17. Document remains DESIGN DRAFT                 YES
+1. 1 Round 3 BLOCKER explicit repair (S10-R3-B01)   YES
+2. 2 Round 3 MAJOR explicit repair (S10-R3-M01/M02)  YES
+3. 1 Round 3 MINOR explicit repair (S10-R3-N01)      YES
+4. Target vs Owner Defeat scope cleanly separated    YES
+5. Normative A/B/C/D execution timelines documented YES
+6. RuleIntentExecutionDescriptor strongly typed      YES
+7. RecoveryOpportunityKind & Gate 2 bifurcation      YES
+8. Native RandomSystem.chance one-draw confirmed     YES
+9. Zero Stage 2 reopen / zero core code modified     YES
+10. Stage7/8/9 compatibility addenda preserved       YES
+11. Gameplay Authority sync PASS (a9a05cef)          YES
+12. Production code modified by R3-B                 NO
+13. Test code modified by R3-B                       NO
+14. Document remains DESIGN DRAFT                    YES
 ```
 
 Final authoring status:
 
 ```text
-R2-B ARCHITECTURE REPAIR COMPLETE
-STATUS: ARCHITECTURE DESIGN DRAFT V3
-READY FOR INDEPENDENT DESIGN RE-AUDIT ROUND 3
+R3-B ARCHITECTURE REPAIR COMPLETE
+STATUS: ARCHITECTURE DESIGN DRAFT V4
+READY FOR FINAL INDEPENDENT DESIGN FREEZE-GATE AUDIT
 
 DESIGN PASS                  = NOT CLAIMED
 DESIGN FROZEN                = NO
 PRODUCTION IMPLEMENTATION    = NOT AUTHORIZED
-NEXT STEP                    = Stage10 Independent Design Re-Audit Round 3
+NEXT STEP                    = Final Stage10 Independent Design Freeze-Gate Audit
 ```
+

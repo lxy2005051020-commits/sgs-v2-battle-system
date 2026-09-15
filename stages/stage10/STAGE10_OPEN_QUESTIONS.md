@@ -1,10 +1,10 @@
 # Stage10 · Persistent State Runtime Integration · Question Closure Ledger
 
-> Status: `R1-C CORE DESIGN QUESTIONS CLOSED / EXTERNAL BOUNDARIES REMAIN`  
+> Status: `R3-B CONTRACT CLOSURE COMPLETE / ALL AUDIT FINDINGS REPAIRED`  
 > Production implementation: `NOT AUTHORIZED`  
-> Normative architecture: `STAGE10.md` Draft V2
+> Normative architecture: `STAGE10.md` Draft V4
 
-This file was originally the Stage10 open-question list. R1-C keeps it as a closure ledger so historical design blockers are not accidentally re-opened by an implementation author.
+This file was originally the Stage10 open-question list. It serves as a closure ledger so historical design blockers are not accidentally re-opened by an implementation author.
 
 ---
 
@@ -23,7 +23,31 @@ This file was originally the Stage10 open-question list. R1-C keeps it as a clos
 | S10-M05 snapshot schema | typed damage/recovery basis, no UnitRuntime/callback/untyped dict | `CLOSED / REPAIR CLAIMED` |
 | S10-M06 official state tags / promotion boundary | Stage10 definitions use new typed params; unrelated Stage8 DEFER bindings remain deferred | `CLOSED FOR DESIGN / BUILD MUST IMPLEMENT GATE` |
 
-Independent Design Re-Audit Round 2 still decides whether these closures are accepted.
+---
+
+## 1.1 Design questions closed by R2-B
+
+| Finding | R2-B answer | Status |
+|---|---|---|
+| S10-R2-B01 Stage9 Cleave vs FIRST_AID | Stage9 Addendum created; preserved frozen ordering: target settlement -> share direct loss -> aftermath -> recovery -> callbacks | `CLOSED / REPAIR CLAIMED` |
+| S10-R2-B02 ASSAULT recovery permission | Formally authorized in Stage9 Addendum and ReactionPermissionPolicy | `CLOSED / REPAIR CLAIMED` |
+| S10-R2-M01 Authority Sync | Targeted research formally promoted to Authority `main` @ `a9a05cef` | `PROMOTED & PASS` |
+| S10-R2-M02 ExecutionRight ownership | Split into Decision Owner (ExecutionRightSystem), Dispatch Owner (RuleHookSystem), Router (EffectExecutor) | `CLOSED / REPAIR CLAIMED` |
+| S10-R2-M03 PersistentSourceSkillGate | Normative family mapping table added; EXTERNAL_LIFECYCLE unified | `CLOSED / REPAIR CLAIMED` |
+| S10-R2-M04 Generation ID propagation | End-to-end propagation matrix added across all DTOs and events | `CLOSED / REPAIR CLAIMED` |
+| S10-R2-M05 Battle-end state cleanup | StateLifecycleSystem.clear_all_on_battle_end formally defined | `CLOSED / REPAIR CLAIMED` |
+
+---
+
+## 1.2 Design questions closed by R3-B
+
+| Finding | R3-B answer | Status |
+|---|---|---|
+| S10-R3-B01 Target Defeat vs Owner Defeat scope | Disentangled `REJECT_CURRENT(TARGET_DEFEATED)` (only rejects current intent, living owner continues) and `ABORT_OWNER_STATE_REMAINDER(OWNER_DEFEATED)` (cancels remaining dead owner intents, other units continue). Formalized Timeline A/B/C/D. | `CLOSED / REPAIR CLAIMED` |
+| S10-R3-M01 Recuperation Gate 2 DamageAftermathFact requirement | Introduced `RecoveryOpportunityKind` (`FIRST_AID_AFTER_DAMAGE` vs `RECUPERATION_ACTION_START`). Gate 2 is REQUIRED for FIRST_AID, NOT_APPLICABLE for RECUPERATION. RECUPERATION admitted at UNIT_ACTION_START with aftermath_fact=None. | `CLOSED / REPAIR CLAIMED` |
+| S10-R3-M02 ExecutionRightSystem evaluate_rule_intent typed interface | Defined typed `RuleIntentExecutionDescriptor` dataclass carried by `RuleIntent`, consumed by `evaluate_rule_intent(descriptor, context) -> ExecutionRightDecision`. Zero duck typing. | `CLOSED / REPAIR CLAIMED` |
+| S10-R3-N01 RandomSystem.chance native one-draw invariant ($p=0, p=1$) | Confirmed native `sgs_v2` implementation draws exactly one float for all $p \in [0.0, 1.0]$. Documented NO Stage 2 reopen and zero RandomSystem changes. | `CLOSED / REPAIR CLAIMED` |
+
 
 ---
 
@@ -173,11 +197,12 @@ A: NO. Runtime RNG remains context.random.
 The next authorized gate is no longer “author architecture”. It is:
 
 ```text
-Stage10 Draft V2
+Stage10 Draft V4
 + Stage7 compatibility addendum
 + Stage8 compatibility addendum
++ Stage9 compatibility addendum
 ↓
-Stage10 Independent Design Re-Audit Round 2
+Stage10 Final Independent Design Freeze-Gate Audit
 ```
 
 Until that audit returns PASS:
@@ -187,3 +212,4 @@ DESIGN FROZEN             = NO
 BUILD PROMPT AUTHORIZED   = NO
 PRODUCTION IMPLEMENTATION = NO
 ```
+
