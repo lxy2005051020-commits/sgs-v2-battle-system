@@ -1,54 +1,62 @@
-# Stage10 · Persistent State Runtime Integration · Runtime Mapping
+# Stage10 · Persistent State Runtime Integration · Runtime Mapping R1-C
 
-> Status: `RESEARCH COMPLETE / ARCHITECTURE MAPPING COMPLETE`
->
+> Status: `RUNTIME MAPPING REPAIRED FOR DRAFT V2`  
 > Production implementation: `NOT AUTHORIZED`
 
-## 1. Mapping objective
+This document maps the repaired Stage10 contracts onto the current Stage7 / Stage8 / Stage9 runtime. Normative design is `STAGE10.md`; compatibility reopen details are in the Stage7 and Stage8 addenda.
 
-This document maps the eight frozen persistent-state contracts onto the current Stage7 / Stage8 / Stage9 runtime without silently changing those frozen contracts.
+---
 
-The core rule is:
+## 1. Current frozen owners retained
+
+| Concern | Existing owner | Stage10 V2 rule |
+|---|---|---|
+| battle state storage | `BattleContext.states / StateRegistry` | no duplicate state store |
+| state mutation | `StateLifecycleSystem` | apply/refresh/remove/expire/defeat-clear remain here |
+| trigger collection | `TriggerSystem` | pure typed intent collection only |
+| hook orchestration | `RuleHookSystem` | deterministic routing + owner-state defeat abort |
+| theoretical normal damage | Stage8 `DamageSystem` | remains unique owner; receives limited frozen-input lane |
+| formula policy | `DamageFormulaPolicySystem` | REBELLION reuses typed ignore-defense policy |
+| standard destructive settlement | `DamageResolutionSystem` | target troop mutation coordination + defeat checkpoint |
+| DamageInstance orchestration | `DamageInstanceCoordinator` | remains standard target/partition coordinator |
+| partition | `DamagePartitionCoordinator` | Share/Distribution arithmetic unchanged |
+| direct partition loss | `DirectTroopLossResolver` | remains DirectTroopLoss; gains common defeat checkpoint |
+| recovery policy | `RecoverySystem` | target/healing-ban/recovery-result owner unchanged |
+| troop mutation | `TroopSystem` | unique actual troop mutation/cap owner |
+| victory/finalization | `BattleFinalizationCoordinator` | admitted work vs future admission unchanged |
+| RNG | `BattleContext.random` | only battle RNG source |
+| events | `EventBus` | facts only, never gameplay control flow |
+
+---
+
+## 2. New Stage10 typed owners
 
 ```text
-reuse frozen owners where semantics already fit
-+
-add only explicit backward-compatible extension seams where a legitimate Stage10 consumer now exists
-+
-STOP when current runtime semantics would produce an officially wrong result
+ActionProgressTracker
+SkillRuntimeRegistry
+ContinuousDamageBasisProducer
+DefeatCleanupPort
+DamageAftermathSystem / DamageAftermathPort
+RecoveryOpportunitySystem
+StateApplicationGenerationId / StateGenerationSnapshot contracts
 ```
 
-## 2. Current runtime owners
+None of these is allowed to duplicate an existing mutation owner.
 
-| Concern | Frozen owner | Stage10 rule |
-|---|---|---|
-| State physical storage | `BattleContext.states / StateRegistry` | no duplicate store |
-| State mutation | `StateLifecycleSystem` | all apply/refresh/remove/expire changes remain here |
-| Explicit lifecycle hook | Stage7 `RuleHookSystem / TriggerSystem` | extend only with typed consumers; EventBus remains observation-only |
-| Recovery rule gate | `RecoverySystem` | keep target-death/healing-ban gate here |
-| Troop mutation | `TroopSystem` | no direct troop write |
-| Theoretical standard damage | Stage8 `DamageSystem` | do not bypass with ad-hoc troop loss for DOT |
-| Defense-ignore formula policy | Stage8 `DamageFormulaPolicySystem` | reuse for REBELLION |
-| Runtime RNG | `BattleContext.random / RandomSystem` | FIRST_AID probability consumes only this source |
-| Damage operation identity | Stage9 `DamageInstanceCoordinator` | periodic damage remains authoritative `SourceType.PERIODIC_DAMAGE` |
-| Partition / share / split | Stage9 damage orchestration | periodic damage enters normal Stage9 damage transaction unless authority explicitly says otherwise |
-| Finalization / victory barrier | Stage9 finalization owner | Stage10 reactions may not bypass finalization/admission policy |
+---
 
 ## 3. Stage7 mapping
 
-### 3.1 Existing compatible seam: UNIT_ACTION_START
-
-Current Stage7 already has:
+Current Stage7 path:
 
 ```text
 UnitActionStartHook
 → TriggerSystem.collect
-→ ordered Effect(s)
 → RuleHookSystem
 → EffectExecutor
 ```
 
-This is the correct high-level trigger seam for:
+Stage10 keeps that seam for:
 
 ```text
 BURN
@@ -60,486 +68,520 @@ REBELLION
 RECUPERATION
 ```
 
-No new per-state battle loop is permitted.
+Two limited extensions are required.
 
-### 3.2 Required Stage7 extension: AFTER_DAMAGE
+### 3.1 Death hard boundary
 
-FIRST_AID is not a periodic action-start state. Its contract requires:
+Current code executes the collected Effect tuple with no per-effect owner-death abort. Stage10 compatibility addendum changes only that boundary:
 
 ```text
-one eligible settled damage event
-→ one independent probability check
-→ optional recovery
+owner-state Effect causes owner death
+→ DefeatCleanupPort clears owner states synchronously
+→ ExecutionRightSystem denies remaining owner-state execution
+→ RuleHookSystem marks tail aborted
 ```
 
-Stage7 design explicitly deferred `AFTER_DAMAGE` until a legitimate consumer existed. Stage10 now provides that consumer.
+Trigger collection remains one-shot/deterministic.
 
-Required design direction:
+### 3.2 RecoveryOpportunity as sibling intent
+
+R1-C does not force probability-bearing recovery into a generic `RecoverEffect` before probability resolution.
 
 ```text
-AfterDamageHook (typed)
+TriggerSystem
+→ RuleIntent batch
+   - ordinary Effect
+   - RecoveryOpportunity
+
+RuleHookSystem
+→ EffectExecutor for Effect
+→ RecoveryOpportunitySystem for RecoveryOpportunity
 ```
 
-must carry enough immutable facts to evaluate FIRST_AID without reading EventBus history. At minimum the design must decide how to expose:
+TriggerSystem consumes no RNG.
+
+---
+
+## 4. Stage8 mapping
+
+Current LIVE path is verified from production code as:
 
 ```text
-damage_instance_id / lineage when Stage9-originated
-source and target identity
-damage type / source family
-Stage8 prevented flag
-assigned target damage
-actual target troop loss
-target defeated state
-source state provenance for periodic damage
+participant validation
+→ rule provider
+→ prevention
+→ hit resolution
+→ formula policy
+→ Weapon/Strategy base formula
+→ coefficient
+→ modifier system
+→ finalization
+→ DamageResult + DamagePipelineTrace
 ```
 
-The hook must be emitted by explicit orchestration after destructive target settlement has produced the authoritative damage-resolution result. It must **not** be implemented as:
+The base formula currently reads live source/target facts and consumes formula RNG. Probabilistic modifier contributions may consume RNG in `DamageModifierSystem`.
+
+### 4.1 LIVE_RUNTIME
+
+No Stage10 change is permitted:
 
 ```text
-EventBus DAMAGE_DEALT subscriber
-→ TriggerSystem
+source exists and is alive
+current source/target facts
+current provider collection
+current formula RNG
+current modifier probability behavior
+current trace semantics
 ```
 
-because Stage7 freezes EventBus as fact publication, not rule control flow.
+Exact golden regression is mandatory.
 
-### 3.3 TriggerSystem cannot own formula work
+### 4.2 FROZEN_APPLICATION
 
-Stage7 remains pure trigger intent generation. It may read frozen state runtime parameters and typed hook data, perform the state-specific probability check through `context.random` only if design explicitly assigns RNG ownership there, then produce typed Effects.
+The new lane is restricted to authoritative periodic continuous damage.
 
-It may not:
+Application/refresh producer captures:
 
 ```text
-recalculate base damage formulas
-mutate troops
-mutate state registry
-publish gameplay facts as control flow
+historical source provenance
+application generation
+route
+source-side formula facts
+formula-policy result
+coefficient/potency input
+application-resolved ordinary modifier plan
+application-resolved crit context when authorized
 ```
 
-## 4. StateRuntimeParams mapping
-
-Current Stage7 params are intentionally synthetic/minimal:
+Tick consumer:
 
 ```text
-PeriodicDamageStateParams
-- damage_type
-- coefficient
-
-PeriodicRecoveryStateParams
-- amount
+validates historical roster source identity
+DOES NOT require source alive
+validates target alive
+runs dynamic Prevention
+runs dynamic Hit Resolution
+reuses frozen FormulaPolicy result
+runs same base-formula arithmetic with frozen source facts + current target formula facts
+uses existing base-formula tick RNG
+uses frozen coefficient
+applies frozen modifier plan without rediscovery/reroll
+finalizes one DamageResult
 ```
 
-They are insufficient as the official Stage10 runtime contract.
+This replaces Draft V1's `nominal_damage` shortcut.
 
-Stage10 design needs official typed runtime params that preserve application-time frozen context. Conceptually:
+### 4.3 Trace
+
+Chosen representation:
 
 ```text
-ContinuousDamageStateParams
-- resolved route / DamageType
-- source-side application snapshot needed for potency
-- source troops/attribute snapshot inputs required by the frozen mechanism contract
-- locked ordinary modifier context
-- locked crit-family context
-- source skill potency parameters
-- state-specific flags (e.g. REBELLION defense policy)
-- lifecycle metadata required for eligible tick counting
-- temporary-active gate metadata where applicable
-
-FirstAidStateParams
-- probability snapshot
-- recovery model kind
-- locked source attribute context
-- locked treatment rate OR damage-ratio parameters
-- locked recovery modifier context
-- source-skill lifecycle category / active gate reference
-
-RecuperationStateParams
-- recovery potency model
-- locked source attributes
-- locked recovery modifiers
-- finite-vs-battle-long lifecycle model
-- source-skill lifecycle category / active gate reference
+DamagePipelineTrace.frozen_application_trace
 ```
 
-These names are design placeholders, not yet frozen class names.
+Tick-time stages that did not execute remain truthfully `NOT_EVALUATED`; the typed frozen trace records the reused application-generation inputs/results.
 
-Critical invariant:
+---
+
+## 5. REBELLION mapping
+
+Application/refresh:
 
 ```text
-StateRuntimeParams store mechanism inputs / frozen context
-≠ executable mini-engine
+route = WEAPON or STRATEGY
+route locked
+formula policy = IGNORE_RELEVANT_TARGET_DEFENSE
+matching modifier/crit context locked
 ```
 
-## 5. StateLifecycleSystem mapping
-
-### 5.1 Reapplication
-
-Current `StateRegistry` permits multiple instances. Therefore Stage10 same-name uniqueness must be enforced by `StateLifecycleSystem`, not by relying on registry accident.
-
-Required behavior for the eight states:
+Tick:
 
 ```text
-incoming same-name persistent state on same owner
-→ identify current effective same-name instance
-→ terminally replace it under StateLifecycleSystem ownership
-→ new instance receives new source/source skill/source slot
-→ new runtime snapshot
-→ duration reset from incoming source contract
+same locked route
+same formula-policy result
+Stage8 base formula actually consumes ignore-defense policy
 ```
 
-Do not generalize this into a universal stacking rule for all 40 official states.
+No true-damage/direct-loss bypass is created.
 
-### 5.2 Expiration gap
+---
 
-Current generic state expiration accepts only:
+## 6. Persistent lifecycle mapping
 
-```text
-ROUND_START
-ROUND_END
-```
+Current generic Stage7 expiry is not sufficient for owner-relative Stage10 windows.
 
-The Stage10 contracts require owner-relative action-start lifecycle semantics.
-
-Therefore Stage10 needs an explicit lifecycle extension that can guarantee:
+Stage10 maps lifecycle through:
 
 ```text
-eligible action-start opportunity count
+BattleContext.action_progress: ActionProgressTracker
 +
-no N+1 tick
+PersistentLifecycleWindow
+```
+
+Time domain:
+
+```text
+PRE_BATTLE
+ROUND 1
+ROUND 2
+...
+```
+
+Rules:
+
+```text
+PRE_BATTLE + N=1 → first=1 last=1
+PRE_BATTLE + N=2 → first=1 last=2
+round R before owner ActionStart → first=R
+round R after owner ActionStart  → first=R+1
+last = first + N - 1
+```
+
+Physical expiry occurs at completion of the owner's last eligible `UNIT_ACTION_START` resolution window, not at some later owner action.
+
+Therefore expired persistent states are absent from all gameplay queries immediately after that window.
+
+---
+
+## 7. Refresh mapping
+
+Current `StateRegistry` may hold multiple instances, so official Stage10 same-name uniqueness must be enforced in `StateLifecycleSystem`.
+
+R1-C model:
+
+```text
+one physical StateInstance container
 +
-application-before-action same-round eligibility
-+
-application-after-action no catch-up
+new StateApplicationGenerationId on every successful apply/refresh
 ```
 
-A fake conversion from all contracts to global `ROUND_START` expiry is forbidden because it changes observable same-round behavior.
-
-### 5.3 Death cleanup
-
-Owner death must hard-terminate all attached persistent state execution.
-
-The runtime design must verify one authoritative cleanup point rather than adding eight source-specific death listeners.
-
-Source death must **not** invoke generic sourced-state deletion.
-
-## 6. Stage8 mapping
-
-### 6.1 What can be reused directly
-
-The following Stage8 seams are already structurally correct for Stage10:
-
-```text
-DamagePreventionSystem
-HitResolutionSystem
-DamageFormulaPolicySystem
-DamageModifierSystem
-DamagePipelineTrace
-DamageResult
-```
-
-REBELLION can reuse the already frozen formula policy:
-
-```text
-DamageDefensePolicy.IGNORE_RELEVANT_TARGET_DEFENSE
-```
-
-This is preferable to a special “true damage” route because the mechanism contract still allows applicable percentage damage modifiers.
-
-### 6.2 Critical incompatibility: live-source formula path
-
-Current `DamageSystem.calculate()` validates that:
-
-```text
-source exists
-source.troops > 0
-```
-
-and then calculates base damage from the **current** source/target runtime through the frozen base formula.
-
-That is not equivalent to Stage10 continuous-damage authority, which freezes:
-
-```text
-potency/application context at state application or refresh
-source death does not cancel existing state
-runtime source attribute changes do not recalculate existing potency
-```
-
-Therefore this current path is **not an authorized official DOT implementation**:
-
-```text
-PeriodicDamageStateParams(coefficient)
-→ DamageEffect
-→ DamageSystem.calculate(current live source)
-```
-
-It would incorrectly:
-
-```text
-1. reject a valid persistent tick after the original source dies
-2. recalculate damage from runtime source state instead of application snapshot
-3. risk re-reading runtime modifiers that the contract locks at application
-```
-
-This is the primary Stage10 architecture design issue.
-
-### 6.3 Required design seam: snapshot-backed continuous damage
-
-Stage10 design must introduce one explicit Stage8-compatible input model for continuous damage that preserves all four requirements simultaneously:
-
-```text
-A. Stage8 prevention / hit / formula-policy / modifier semantics remain observable
-B. base formula topology is not duplicated or silently rewritten
-C. application-time potency context is authoritative
-D. dead historical source may still receive provenance credit without pretending to be an alive attacker
-```
-
-Acceptable solution families to evaluate in Stage10 design include:
-
-```text
-1. typed formula-input snapshot consumed by the existing DamageSystem pipeline
-2. typed precomputed continuous-damage baseline that enters the Stage8 pipeline at an explicitly frozen seam
-3. another single-pipeline design proven equivalent by independent audit
-```
-
-Not acceptable:
-
-```text
-clone DamageSystem into PersistentDamageSystem
-write target.troops directly
-route official DOT through DirectTroopLossSystem
-temporarily resurrect source unit
-mutate source attributes back to snapshot values
-skip Stage8 to avoid source-death validation
-```
-
-Whether option 1 or 2 is selected is a Stage10 **design decision**, not a research question.
-
-### 6.4 Dynamic gates vs locked context
-
-Stage10 must keep this boundary explicit:
-
-```text
-LOCKED AT APPLICATION
-- source potency inputs
-- ordinary modifier context specified by contract
-- route/crit family context
-
-DYNAMIC AT TICK
-- owner alive
-- weakness prevention
-- evasion / barrier when officially integrated
-- battle finalization eligibility
-```
-
-A single generic “snapshot everything” flag is too coarse and would freeze things that are contractually dynamic.
-
-## 7. Stage9 mapping
-
-### 7.1 Periodic damage ingress
-
-Current production already recognizes:
-
-```text
-SourceType.PERIODIC_DAMAGE
-↔ DamageSourceType.CONTINUOUS
-```
-
-and requires state provenance IDs on production periodic `DamageEffect`.
-
-This is the correct operation identity for the six DOT states and must be retained.
-
-Required provenance:
+Refresh atomically replaces:
 
 ```text
 source unit
 source skill
-source skill slot when applicable
-source state id
-source state instance id
-SourceType.PERIODIC_DAMAGE
-DamageInstanceId generated by Stage9 coordinator
+source slot
+runtime params
+frozen damage/recovery basis
+lifecycle window
+generation id
 ```
 
-### 7.2 Share / distribution / chain / finalization
+Generated work carries `StateGenerationSnapshot`, so refresh cannot alter already-created intent.
 
-A Stage10 periodic damage tick is still a real damage operation. Unless a frozen state contract explicitly excludes a Stage9 cross-mechanism family, it must enter the same orchestration seams rather than manually applying troops.
+---
 
-Research classification:
+## 8. Death cleanup mapping
+
+Current production code has several destructive paths:
 
 ```text
-Damage Share / Distribution
-→ runtime orchestration responsibility, not persistent-state-owned arithmetic
-
-Chain / other admitted secondary work
-→ Stage9 policy owns eligibility and future work
-
-Battle finalization
-→ Stage10 may not create new work after Stage9 has denied admission / finalized battle
+DamageResolutionSystem
+DirectTroopLossResolver
+CleaveDerivedDamageResolver
+ChainSystem restricted feedback
 ```
 
-Stage10 does not reinterpret Stage9’s six existing `FutureBranchKind` values. If FIRST_AID recovery is synchronous completion-local work rather than a new global future branch, design must explicitly prove that it can complete inside the current DamageInstance/finalization boundary. If it requires new future work after settlement, Stage10 must explicitly audit whether a new future-admission branch kind is required.
+and each can observe a death edge independently.
 
-This is a design item, not permission to bypass `FutureAdmissionGate`.
-
-### 7.3 FIRST_AID placement
-
-FIRST_AID must observe the authoritative damage settlement result because damage-ratio recovery sources need the actual triggering damage input and fatal damage must hard-stop recovery.
-
-Proposed design checkpoint to audit:
+Stage10 requires one synchronous port:
 
 ```text
-Stage8 calculate Dtotal
-→ Stage9 partition / assigned target amount
-→ TroopSystem settlement
-→ authoritative DamageResolutionResult
-→ fatal-target check
-→ typed AFTER_DAMAGE hook
-→ FIRST_AID chance / optional RecoverEffect
+DefeatCleanupPort
+```
+
+Every destructive owner calls it on alive→dead before returning control to later aftermath/reaction work.
+
+The port delegates physical state deletion to `StateLifecycleSystem.clear_owner_on_defeat` and does not use EventBus subscribers.
+
+Required death-capable routes:
+
+```text
+standard target settlement
+PERIODIC_DAMAGE
+Counter
+Share direct loss
+Distribution direct loss
+Cleave target/direct partition loss
+Chain restricted feedback
+future troop-loss resolvers
+```
+
+Source death and owner death remain distinct: cleanup affects states attached to the defeated owner, not all states historically sourced by that unit.
+
+---
+
+## 9. SkillRuntime mapping
+
+Current `SkillRuntime` already has:
+
+```text
+owner_id
+skill_slot
+enabled
+```
+
+but current BattleContext lacks an authoritative owner/slot lookup.
+
+Stage10 adds:
+
+```text
+SkillRuntimeRegistry
+key = (owner_id, SkillSlot)
+```
+
+Registration occurs before PRE_BATTLE state application.
+
+Lookup validates expected `skill_id` against the stored runtime definition.
+
+Source death does not remove the registry entry and does not implicitly set `enabled=false`.
+
+Gate mapping:
+
+```text
+ALWAYS_ACTIVE
+→ no dynamic skill lookup
+
+QUERY_SKILL_RUNTIME
+→ read only current explicit skill enabled/disabled fact
+
+EXTERNAL_LIFECYCLE
+→ external owner removes state through StateLifecycleSystem
+→ no dynamic callback query
+```
+
+---
+
+## 10. FIRST_AID DamageAftermath mapping
+
+Current Stage9 facts already separate:
+
+```text
+Dtotal
+assigned target damage
+ActualTargetTroopLoss
+target defeated
+SourceType / lineage
+```
+
+but Draft V1's `prevented + actual_loss` pair is not expressive enough.
+
+Stage10 adds typed `DamageAftermathFact` with at least:
+
+```text
+resolved-hit topology
+no-hit evasion/miss topology
+weakness-zero cause
+barrier-zero cause
+assigned target damage
+actual target loss
+target defeated
+lineage/source family
+```
+
+FIRST_AID exact eligibility:
+
+```text
+effective FIRST_AID generation
++
+source-skill gate operational
++
+relevant source/event family
++
+resolved-hit topology
++
+target survived
+→ opportunity
+```
+
+No `ActualTargetTroopLoss > 0` requirement exists.
+
+---
+
+## 11. Stage9 standard settlement mapping
+
+### 11.1 NoPartition
+
+```text
+DamageSystem
+→ target settlement
+→ defeat cleanup if fatal
+→ Stage9 death observation if fatal
+→ DamageAftermathPort
+→ local FIRST_AID recovery when eligible
+→ existing resolved-damage callbacks
+→ reaction admission
+→ complete DamageInstance
+```
+
+### 11.2 Share
+
+```text
+target settlement Dtarget
+→ cleanup/death check
+→ if target dies: discard pending sharer loss, no FIRST_AID
+→ if target survives: target DamageAftermathPort / FIRST_AID
+→ Share DirectTroopLoss to sharer
+→ sharer cleanup/death observation if required
+→ existing target resolved-damage callbacks
+→ complete
+```
+
+Share direct loss itself never creates FIRST_AID.
+
+### 11.3 Distribution
+
+Current Stage9 participant-first plan remains:
+
+```text
+participant DirectTroopLoss commits
+→ cleanup/death observations
+→ target settlement Dtarget
+→ cleanup/death observation
+→ target DamageAftermathPort
+→ existing callbacks
+→ complete current admitted DamageInstance
+```
+
+If a participant death latches victory before target settlement, the already-admitted Distribution transaction and its target-local aftermath still drain. New future branches remain blocked.
+
+---
+
+## 12. Cleave mapping
+
+Current code has a separate `cleave_first_aid` callback. Stage10 removes that production seam.
+
+Repaired mapping:
+
+```text
+Cleave derived hit/partition logic
+→ target settlement
+→ DefeatCleanupPort
+→ shared DamageAftermathPort
+→ FIRST_AID when permitted
+→ Share direct loss after surviving target aftermath when applicable
+→ attacker recovery contract
+→ existing damage callbacks
+```
+
+Distribution participant direct losses remain before Cleave target settlement according to Stage9 partition contract.
+
+Cleave still does not re-enter standard base formula/modifier/crit stages.
+
+---
+
+## 13. Chain / Counter mapping
+
+Counter standard damage already flows through `DamageInstanceCoordinator`, so it reaches the shared aftermath port through the standard route.
+
+`CHAIN_TRUE_FEEDBACK` is a restricted Stage9 settlement identity. Stage10 may classify it through the common aftermath fact model for consistency/audit, but Stage9 permission remains:
+
+```text
+FIRST_AID = NOT PERMITTED
+```
+
+Stage10 does not widen restricted Chain feedback merely for code uniformity.
+
+---
+
+## 14. Recovery mapping
+
+`RecoveryOpportunitySystem` is the only Stage10 opportunity executor.
+
+It owns:
+
+```text
+opportunity validation
+skill-active gate
+simulator probability draw
+frozen potency resolution
+RecoveryRequest creation
+RecoverySystem call
+```
+
+`RecoverySystem` still owns:
+
+```text
+target defeated permission
+healing ban
+recovery result semantics
+```
+
+`TroopSystem` still owns actual restore/cap.
+
+Full troops do not short-circuit opportunity admission.
+
+---
+
+## 15. Simulator RNG mapping
+
+Official hidden draw consumption is unknown.
+
+R1-C simulator policy:
+
+```text
+one context.random.chance(probability)
+per admitted RecoveryOpportunity
+including p=0 / p=1 and zero recoverable gap
+```
+
+This is `ENGINEERING DETERMINISM`, not a Gameplay Authority rule.
+
+---
+
+## 16. Composition / cycle boundary
+
+Safe dependency chain:
+
+```text
+DamageInstanceCoordinator
+→ DamageAftermathSystem
+→ TriggerSystem
+→ RecoveryOpportunitySystem
 → RecoverySystem
-→ continue Stage9 reaction/finalization boundary
+→ TroopSystem
 ```
 
-The final Stage10 design must prove exact placement relative to:
+There is no edge from aftermath back through EffectExecutor to DamageInstanceCoordinator.
+
+AfterDamage Trigger collection is restricted to `RecoveryOpportunity` intent.
+
+The existing Stage9 one-time typed `DamageResolutionSystem.bind_coordinator()` permit-validation binding is retained; Stage10 adds no new service locator or lambda cycle.
+
+---
+
+## 17. Migration boundary
 
 ```text
-partition direct losses
-counter/cleave/chain child work
-victory latch
-finalization drain
+PeriodicDamageStateParams
+→ TEST-ONLY LEGACY SYNTHETIC after Stage10 build
+
+PeriodicRecoveryStateParams
+→ TEST-ONLY LEGACY SYNTHETIC after Stage10 build
+
+cleave_first_aid
+→ DELETE FROM PRODUCTION COMPOSITION
 ```
 
-No placement is frozen merely by this research document.
+Official Stage10 state definitions use new typed persistent params/generation snapshots only.
 
-## 8. Recovery mapping
+---
 
-### 8.1 Existing RecoverySystem is the correct terminal gate
-
-Current RecoverySystem already correctly centralizes:
+## 18. Mapping verdict
 
 ```text
-target defeated prevention
-healing-ban prevention
-TroopSystem.restore
-recovery event publication
-```
+Stage7 death conflict              = explicit compatibility reopen
+Stage8 live-source incompatibility = explicit frozen-input compatibility lane
+PRE_BATTLE lifecycle gap           = closed
+physical expiry ambiguity          = closed
+fatal cleanup ownership            = closed
+SkillRuntime lookup gap            = closed
+FIRST_AID zero-loss mapping        = corrected
+full-troop opportunity mapping     = corrected
+RNG hidden-authority ambiguity     = isolated as engineering policy
+Cleave aftermath duplication       = closed by shared port
+constructor/runtime dependency DAG = explicitly bounded
 
-`TroopSystem.restore` correctly clamps recovery to current missing troops.
-
-Therefore Stage10 should **not** rewrite recovery mutation.
-
-### 8.2 What must happen before RecoverySystem
-
-Stage10 must resolve the nominal recovery amount before constructing the final recovery request:
-
-```text
-FIRST_AID probability
-FIRST_AID model selection
-triggering actual-damage ratio when applicable
-RECUPERATION application snapshot potency
-source-skill temporary-active gate
-locked recovery modifiers
-```
-
-Then:
-
-```text
-nominal amount
-→ RecoverEffect / RecoveryRequest
-→ RecoverySystem dynamic target-death + healing-ban gate
-→ TroopSystem.restore cap
-```
-
-Current `RecoverEffect` / `RecoveryRequest` provenance is less complete than Stage10’s desired provenance because it does not carry `source_skill_slot`, typed operation lineage, or source-ref identity. Stage10 design must decide whether recovery becomes an operation-identified effect or whether state provenance is sufficient and operation lineage remains attached to the surrounding hook result.
-
-## 9. RNG mapping
-
-FIRST_AID consumes one independent probability check per eligible damage event.
-
-RNG owner remains:
-
-```text
-BattleContext.random
-```
-
-No Stage10 state may:
-
-```text
-import random
-instantiate its own RNG
-derive probability from instance_id hash
-consume RNG for ineligible or already-fatal events
-```
-
-Design must freeze the exact “eligibility checks before RNG” order so deterministic replay does not drift.
-
-## 10. External dependencies that must remain external
-
-The following are interactions, not ownership transfers into persistent-state runtime:
-
-```text
-positive dispel
-negative cleanse skill targeting logic
-command aura source-death lifecycle
-source skill temporary deactivation (伪报 / 军心动摇)
-Elephant Soldiers Flood-delay behavior
-skills that observe Burn/Flood/Poison/etc as predicates
-critical/evasion/barrier official state application mechanics
-```
-
-Stage10 may expose typed seams for them, but must not silently implement their entire source systems.
-
-## 11. Architecture verdict
-
-### Reuse without reopen
-
-```text
-StateRegistry                         YES
-StateLifecycleSystem ownership       YES
-Stage7 UnitActionStart hook path      YES
-RecoverySystem / TroopSystem          YES
-Stage8 defense-ignore policy          YES
-Stage9 PERIODIC_DAMAGE identity       YES
-Stage9 partition/finalization owners  YES
-RandomSystem                          YES
-```
-
-### Backward-compatible extension required
-
-```text
-Stage7 typed AFTER_DAMAGE hook                    REQUIRED
-persistent official StateRuntimeParams            REQUIRED
-same-name refresh arbitration for Stage10 family  REQUIRED
-action-start lifecycle/expiry semantics           REQUIRED
-recovery provenance / context extension           REQUIRED
-source-skill inactive gate seam                    REQUIRED
-```
-
-### Explicit design decision required before build
-
-```text
-snapshot-backed continuous-damage pipeline seam   P0
-source-dead persistent-damage execution model     P0
-FIRST_AID exact Stage9 settlement/finalization placement P0
-```
-
-### Forbidden shortcut
-
-```text
-“existing synthetic PeriodicDamageStateParams already runs, therefore official DOT is integrated”
-```
-
-That statement is false under the frozen mechanism contracts.
-
-## 12. Mapping verdict
-
-```text
-Stage7 mapping    = COMPLETE, extensions identified
-Stage8 mapping    = COMPLETE, one central P0 design incompatibility identified
-Stage9 mapping    = COMPLETE, FIRST_AID placement requires design freeze
-Lifecycle mapping = COMPLETE, action-start expiry extension identified
-Recovery mapping  = COMPLETE
-RNG mapping       = COMPLETE
-Provenance mapping= COMPLETE, recovery extension required
-
-RUNTIME MAPPING RESEARCH = COMPLETE
-PRODUCTION BUILD          = BLOCKED UNTIL STAGE10 DESIGN DECISIONS CLOSE
+Production code change in R1-C = NONE
+Next gate                      = Independent Design Re-Audit Round 2
 ```
