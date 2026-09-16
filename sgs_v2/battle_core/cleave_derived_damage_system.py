@@ -209,25 +209,25 @@ class CleaveDerivedDamageResolver:
         recovery = CleaveRecoveryFact(fact, plan.kind,
             None if isinstance(plan, DistributionTransactionPlan) else assigned,
             "690094/690095" if isinstance(plan, DistributionTransactionPlan) else None)
-        if ReactionPermissionPolicy.can_trigger_recovery(request.source_type):
-            aftermath_port = (
-                self._damage_aftermath_port
-                or getattr(getattr(context, "systems", None), "damage_aftermath_port", None)
+        aftermath_port = (
+            self._damage_aftermath_port
+            or getattr(getattr(context, "systems", None), "damage_aftermath_port", None)
+        )
+        if aftermath_port is not None:
+            aftermath_fact = create_damage_aftermath_fact(
+                damage_instance_id=request.damage_instance_id,
+                target_id=target.unit_id,
+                source_type=request.source_type,
+                damage_type=request.damage_type,
+                assigned_target_damage=assigned,
+                actual_target_troop_loss=actual,
+                target_troops_after=target.troops,
+                target_defeated=death,
+                hit_topology=DamageHitTopology.RESOLVED_HIT,
+                zero_loss_cause=DamageZeroLossCause.SETTLED_ZERO if actual == 0 else None,
             )
-            if aftermath_port is not None:
-                aftermath_fact = create_damage_aftermath_fact(
-                    damage_instance_id=request.damage_instance_id,
-                    target_id=target.unit_id,
-                    source_type=request.source_type,
-                    damage_type=request.damage_type,
-                    assigned_target_damage=assigned,
-                    actual_target_troop_loss=actual,
-                    target_troops_after=target.troops,
-                    target_defeated=death,
-                    hit_topology=DamageHitTopology.RESOLVED_HIT,
-                    zero_loss_cause=DamageZeroLossCause.SETTLED_ZERO if actual == 0 else None,
-                )
-                aftermath_port.commit_aftermath(context, aftermath_fact)
+            aftermath_port.commit_aftermath(context, aftermath_fact)
+        if ReactionPermissionPolicy.can_trigger_recovery(request.source_type):
             if self._first_aid is not None:
                 self._first_aid(context, fact)  # its own contract; not attacker recovery basis
             if self._attacker_recovery is not None:

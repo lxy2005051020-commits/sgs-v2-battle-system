@@ -195,32 +195,6 @@ class DamageAftermathSystem:
                 f"aftermath_fact must be DamageAftermathFact, got {type(aftermath_fact)}"
             )
 
-        # Fatal damage exclusion (STAGE10.md §15.2, §24.1): target defeated -> no recovery opportunity
-        if aftermath_fact.target_defeated:
-            return AftermathResult(
-                aftermath_fact=aftermath_fact,
-                opportunity_results=(),
-                executed=False,
-            )
-
-        # Source type permission exclusion (STAGE10.md §15, §23): direct loss & chain feedback blocked
-        from .reaction_permission_policy import ReactionPermissionPolicy
-
-        if not ReactionPermissionPolicy.can_trigger_recovery(aftermath_fact.source_type):
-            return AftermathResult(
-                aftermath_fact=aftermath_fact,
-                opportunity_results=(),
-                executed=False,
-            )
-
-        # Evasion / Miss exclusion (STAGE10.md §15.2): no resolved hit -> no recovery opportunity
-        if aftermath_fact.hit_topology != DamageHitTopology.RESOLVED_HIT:
-            return AftermathResult(
-                aftermath_fact=aftermath_fact,
-                opportunity_results=(),
-                executed=False,
-            )
-
         trigger = (
             self._trigger
             or getattr(getattr(context, "systems", None), "trigger_system", None)

@@ -614,11 +614,6 @@ class DamageInstanceCoordinator:
         damage_result: DamageResult,
         damage_instance_id: DamageInstanceId,
     ) -> Any:
-        from .reaction_permission_policy import ReactionPermissionPolicy
-
-        if not ReactionPermissionPolicy.can_trigger_recovery(lineage.source_type):
-            return None
-
         aftermath_port = (
             self._damage_aftermath_port
             or getattr(getattr(context, "systems", None), "damage_aftermath_port", None)

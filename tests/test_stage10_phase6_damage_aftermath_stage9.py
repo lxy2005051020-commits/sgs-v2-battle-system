@@ -31,6 +31,7 @@ from sgs_v2.battle_core import (
     EventType,
     ExactRatio,
     FirstAidStateParams,
+    FutureBranchKind,
     HitPreventionCategory,
     HitRuleContribution,
     HitRuleKind,
@@ -55,6 +56,7 @@ from sgs_v2.battle_core import (
     UnitRuntime,
     register_official_state_definitions,
 )
+from sgs_v2.battle_core.chain_system import ResolvedDamageFact
 from sgs_v2.battle_core.cleave_derived_damage_system import (
     CleaveDerivedDamageRequest,
     CleaveDerivedDamageResolver,
@@ -63,7 +65,12 @@ from sgs_v2.battle_core.damage_instance_coordinator import DamageInstanceCoordin
 from sgs_v2.battle_core.effects import EffectSourceRef
 from sgs_v2.battle_core.operation_identity import CleaveEffectId
 from sgs_v2.battle_core.rule_intent import AbortedRuleIntentResult
-from sgs_v2.battle_core.stage9_state_params import CounterStateParams, DamageShareStateParams
+from sgs_v2.battle_core.stage9_state_params import (
+    ChainStateParams,
+    CounterStateParams,
+    DamageShareStateParams,
+    DistributionStateParams,
+)
 
 
 class SpyDefeatCleanupPort:
@@ -615,6 +622,19 @@ class TestDistributionDirectLossExclusion:
     def test_distribution_direct_loss_never_enters_aftermath(self) -> None:
         context, systems = create_test_context()
 
+        systems.state_lifecycle_system.apply(
+            context,
+            state_id=OfficialStateId.FIRST_AID.value,
+            owner_id="b2",
+            source_id="b2",
+            duration_rounds=2,
+            runtime_params=FirstAidStateParams(
+                probability=1.0,
+                recovery_model_kind=RecoveryModelKind.TREATMENT_AMOUNT,
+                recovery_potency_context=RecoveryPotencyContext(treatment_amount=100),
+            ),
+        )
+
         fact = create_damage_aftermath_fact(
             damage_instance_id="dmg_dist_1",
             target_id="b2",
@@ -629,8 +649,66 @@ class TestDistributionDirectLossExclusion:
 
         res = systems.damage_aftermath_port.commit_aftermath(context, fact)
         assert isinstance(res, AftermathResult)
-        assert len(res.opportunity_results) == 0
+        assert len(res.opportunity_results) == 1
         assert not res.executed
+        assert res.opportunity_results[0].reason == "INELIGIBLE_HIT_OR_SOURCE"
+
+    def test_real_distribution_direct_loss_never_enters_aftermath(self) -> None:
+        """Real runtime test: participant in Distribution settlement never calls DamageAftermathPort."""
+        context, systems = create_test_context()
+
+        # Distribution state applied on b1
+        systems.state_lifecycle_system.apply(
+            context,
+            state_id="damage_split",
+            owner_id="b1",
+            source_id="b1",
+            duration_rounds=2,
+            runtime_params=DistributionStateParams(ratio=ExactRatio(1, 2)),
+        )
+
+        # FIRST_AID state applied on b2 (participant in team_b)
+        systems.state_lifecycle_system.apply(
+            context,
+            state_id=OfficialStateId.FIRST_AID.value,
+            owner_id="b2",
+            source_id="b2",
+            duration_rounds=2,
+            runtime_params=FirstAidStateParams(
+                probability=1.0,
+                recovery_model_kind=RecoveryModelKind.TREATMENT_AMOUNT,
+                recovery_potency_context=RecoveryPotencyContext(treatment_amount=100),
+            ),
+        )
+
+        aftermath_facts = []
+        original_commit = systems.damage_aftermath_port.commit_aftermath
+
+        def spy_commit(ctx, fact):
+            aftermath_facts.append(fact)
+            return original_commit(ctx, fact)
+
+        systems.damage_aftermath_port.commit_aftermath = spy_commit
+
+        recovery_events = []
+        context.event_bus.subscribe(
+            EventType.TROOPS_RECOVERED,
+            lambda event: recovery_events.append(event),
+        )
+
+        # Normal attack on b1 triggers Distribution transaction
+        systems.normal_attack_system.execute(context, context.units["a1"])
+
+        # Real participant b2 suffered real DirectTroopLoss
+        assert context.units["b2"].troops < 1000
+        # Participant b2 NEVER had aftermath called
+        b2_aftermath = [f for f in aftermath_facts if f.target_id == "b2"]
+        assert len(b2_aftermath) == 0
+        # No distribution direct loss fact ever enters aftermath
+        assert all(f.source_type != SourceType.DISTRIBUTION_DIRECT_LOSS for f in aftermath_facts)
+        # b2 never recovered
+        b2_recoveries = [e for e in recovery_events if e.target_id == "b2"]
+        assert len(b2_recoveries) == 0
 
 
 class TestChainTrueFeedbackExclusion:
@@ -638,6 +716,19 @@ class TestChainTrueFeedbackExclusion:
         assert not ReactionPermissionPolicy.can_trigger_recovery(SourceType.CHAIN_TRUE_FEEDBACK)
 
         context, systems = create_test_context()
+
+        systems.state_lifecycle_system.apply(
+            context,
+            state_id=OfficialStateId.FIRST_AID.value,
+            owner_id="b2",
+            source_id="b2",
+            duration_rounds=2,
+            runtime_params=FirstAidStateParams(
+                probability=1.0,
+                recovery_model_kind=RecoveryModelKind.TREATMENT_AMOUNT,
+                recovery_potency_context=RecoveryPotencyContext(treatment_amount=100),
+            ),
+        )
 
         fact = create_damage_aftermath_fact(
             damage_instance_id="dmg_chain_1",
@@ -653,8 +744,93 @@ class TestChainTrueFeedbackExclusion:
 
         res = systems.damage_aftermath_port.commit_aftermath(context, fact)
         assert isinstance(res, AftermathResult)
-        assert len(res.opportunity_results) == 0
+        assert len(res.opportunity_results) == 1
         assert not res.executed
+        assert res.opportunity_results[0].reason == "INELIGIBLE_HIT_OR_SOURCE"
+
+    def test_real_chain_true_feedback_never_enters_aftermath(self) -> None:
+        """Real runtime test: victim in Chain true feedback never calls DamageAftermathPort."""
+        context, systems = create_test_context()
+
+        # Link b1 and b2
+        systems.state_lifecycle_system.apply(
+            context,
+            state_id=OfficialStateId.CHAIN_LINK.value,
+            owner_id="b1",
+            source_id="a1",
+            duration_rounds=2,
+            runtime_params=ChainStateParams(ratio=ExactRatio(1, 2)),
+        )
+        systems.state_lifecycle_system.apply(
+            context,
+            state_id=OfficialStateId.CHAIN_LINK.value,
+            owner_id="b2",
+            source_id="a1",
+            duration_rounds=2,
+            runtime_params=ChainStateParams(ratio=ExactRatio(1, 2)),
+        )
+
+        # FIRST_AID state applied on b2
+        systems.state_lifecycle_system.apply(
+            context,
+            state_id=OfficialStateId.FIRST_AID.value,
+            owner_id="b2",
+            source_id="b2",
+            duration_rounds=2,
+            runtime_params=FirstAidStateParams(
+                probability=1.0,
+                recovery_model_kind=RecoveryModelKind.TREATMENT_AMOUNT,
+                recovery_potency_context=RecoveryPotencyContext(treatment_amount=100),
+            ),
+        )
+
+        aftermath_facts = []
+        original_commit = systems.damage_aftermath_port.commit_aftermath
+
+        def spy_commit(ctx, fact):
+            aftermath_facts.append(fact)
+            return original_commit(ctx, fact)
+
+        systems.damage_aftermath_port.commit_aftermath = spy_commit
+
+        recovery_events = []
+        context.event_bus.subscribe(
+            EventType.TROOPS_RECOVERED,
+            lambda event: recovery_events.append(event),
+        )
+
+        # Execute Chain traversal on trigger b1 -> candidate b2
+        fact = ResolvedDamageFact(
+            damage_instance_id=context.id_allocator.allocate_damage_instance_id(),
+            target_id="b1",
+            lineage=OperationLineage(
+                root_action_id=None,
+                parent_normal_attack_id=None,
+                parent_damage_instance_id=None,
+                source_type=SourceType.NORMAL_ATTACK,
+                physical_attacker="a1",
+                physical_skill=None,
+                credit_owner="a1",
+            ),
+            damage_type=DamageType.WEAPON,
+            assigned_target_damage=200,
+            actual_target_troop_loss=200,
+        )
+        permit = systems.future_admission_gate.request_admission(
+            FutureBranchKind.CHAIN_TRAVERSAL, str(fact.damage_instance_id)
+        )
+        assert permit is not None
+        traversal = systems.chain_system.create_traversal(context, fact, permit=permit)
+        results = systems.chain_system.execute(context, traversal)
+
+        assert len(results) == 1
+        assert results[0].actual_troop_loss > 0
+        assert context.units["b2"].troops < 1000
+        # b2 chain feedback NEVER invoked aftermath
+        b2_aftermath = [f for f in aftermath_facts if f.target_id == "b2"]
+        assert len(b2_aftermath) == 0
+        b2_recoveries = [e for e in recovery_events if e.target_id == "b2"]
+        assert len(b2_recoveries) == 0
 
 
 class TestCleaveOrderingTrace:
@@ -743,7 +919,8 @@ class TestCleaveOrderingTrace:
 
 
 class TestMultiHitAftermath:
-    def test_multi_hit_damage_per_event_opportunity_respects_rate_limit(self) -> None:
+    def test_multi_hit_three_surviving_hits_produce_three_independent_recoveries(self) -> None:
+        """Section 8: 3 resolved hits produce 3 independent FIRST_AID opportunities and executions."""
         context, systems = create_test_context()
 
         systems.state_lifecycle_system.apply(
@@ -769,55 +946,173 @@ class TestMultiHitAftermath:
 
         systems.damage_aftermath_port.commit_aftermath = spy_commit
 
+        chance_calls = 0
+        orig_chance = context.random.chance
+
+        def spy_chance(prob):
+            nonlocal chance_calls
+            chance_calls += 1
+            return orig_chance(prob)
+
+        context.random.chance = spy_chance
+
+        recovery_events = []
+        context.event_bus.subscribe(
+            EventType.TROOPS_RECOVERED,
+            lambda event: recovery_events.append(event),
+        )
+
         dmg_source_ref = EffectSourceRef(
             stage9_source_type=SourceType.ACTIVE_SKILL,
             source_unit_id="a1",
             source_skill_id="sk_multihit",
         )
 
-        desc1 = RuleIntentExecutionDescriptor(
-            intent_kind=RuleIntentKind.EFFECT,
-            intent_owner_id="a1",
-            state_owner_id="a1",
-            target_id="b1",
-            source_ref=dmg_source_ref,
-        )
-        dmg1 = DamageEffect(
-            source_id="a1",
-            target_id="b1",
-            damage_type=DamageType.WEAPON,
-            source_type=DamageSourceType.SKILL,
-            source_skill_id="sk_multihit",
-            coefficient=1.0,
-            source_ref=dmg_source_ref,
-            execution_descriptor=desc1,
-        )
-        systems.effect_executor.execute(context, dmg1)
+        # Execute 3 separate DamageEffect hits
+        for i in range(1, 4):
+            desc = RuleIntentExecutionDescriptor(
+                intent_kind=RuleIntentKind.EFFECT,
+                intent_owner_id="a1",
+                state_owner_id="a1",
+                target_id="b1",
+                source_ref=dmg_source_ref,
+            )
+            dmg = DamageEffect(
+                source_id="a1",
+                target_id="b1",
+                damage_type=DamageType.WEAPON,
+                source_type=DamageSourceType.SKILL,
+                source_skill_id="sk_multihit",
+                coefficient=0.8,
+                source_ref=dmg_source_ref,
+                execution_descriptor=desc,
+            )
+            systems.effect_executor.execute(context, dmg)
+            assert context.units["b1"].is_alive
 
-        desc2 = RuleIntentExecutionDescriptor(
-            intent_kind=RuleIntentKind.EFFECT,
-            intent_owner_id="a1",
-            state_owner_id="a1",
-            target_id="b1",
-            source_ref=dmg_source_ref,
-        )
-        dmg2 = DamageEffect(
-            source_id="a1",
-            target_id="b1",
-            damage_type=DamageType.WEAPON,
-            source_type=DamageSourceType.SKILL,
-            source_skill_id="sk_multihit",
-            coefficient=1.0,
-            source_ref=dmg_source_ref,
-            execution_descriptor=desc2,
-        )
-        systems.effect_executor.execute(context, dmg2)
+        # Formal assertions per Section 8
+        assert len(aftermath_results) == 3, "DamageAftermathPort calls must equal 3"
+        for idx, res in enumerate(aftermath_results):
+            assert len(res.opportunity_results) == 1, f"Hit {idx+1} must produce 1 FIRST_AID opportunity"
+            assert res.opportunity_results[0].executed is True, f"Hit {idx+1} opportunity must be admitted and executed"
+        assert chance_calls == 3, "RandomSystem.chance calls must equal 3 (one draw per admitted opportunity)"
+        assert len(recovery_events) == 3, "Recovery executions must equal 3"
+        for event in recovery_events:
+            assert event.payload["actual_recovery"] == 50
 
-        assert len(aftermath_results) == 2
-        assert len(aftermath_results[0].opportunity_results) == 1
-        assert aftermath_results[0].opportunity_results[0].executed
-        assert len(aftermath_results[1].opportunity_results) == 1
-        assert aftermath_results[1].opportunity_results[0].executed
+    def test_multi_hit_zero_loss_second_hit_still_triggers_independent_first_aid(self) -> None:
+        """Section 9: Hit 2 with actual loss = 0 still produces an independent FIRST_AID opportunity."""
+        context, systems = create_test_context()
+
+        systems.state_lifecycle_system.apply(
+            context,
+            state_id=OfficialStateId.FIRST_AID.value,
+            owner_id="b1",
+            source_id="b1",
+            duration_rounds=2,
+            runtime_params=FirstAidStateParams(
+                probability=1.0,
+                recovery_model_kind=RecoveryModelKind.TREATMENT_AMOUNT,
+                recovery_potency_context=RecoveryPotencyContext(treatment_amount=50),
+            ),
+        )
+        context.units["b1"].troops = 800
+
+        aftermath_results = []
+        original_commit = systems.damage_aftermath_port.commit_aftermath
+
+        def spy_commit(ctx, fact):
+            res = original_commit(ctx, fact)
+            aftermath_results.append(res)
+            return res
+
+        systems.damage_aftermath_port.commit_aftermath = spy_commit
+
+        # Hit 1: Positive loss
+        fact1 = create_damage_aftermath_fact(
+            damage_instance_id="dmg_multi_1",
+            target_id="b1",
+            source_type=SourceType.ACTIVE_SKILL,
+            damage_type=DamageType.WEAPON,
+            assigned_target_damage=100,
+            actual_target_troop_loss=100,
+            target_troops_after=700,
+            target_defeated=False,
+            hit_topology=DamageHitTopology.RESOLVED_HIT,
+        )
+        systems.damage_aftermath_port.commit_aftermath(context, fact1)
+
+        # Hit 2: Zero loss (settled zero)
+        fact2 = create_damage_aftermath_fact(
+            damage_instance_id="dmg_multi_2",
+            target_id="b1",
+            source_type=SourceType.ACTIVE_SKILL,
+            damage_type=DamageType.WEAPON,
+            assigned_target_damage=0,
+            actual_target_troop_loss=0,
+            target_troops_after=750,
+            target_defeated=False,
+            hit_topology=DamageHitTopology.RESOLVED_HIT,
+            zero_loss_cause=DamageZeroLossCause.SETTLED_ZERO,
+        )
+        systems.damage_aftermath_port.commit_aftermath(context, fact2)
+
+        # Hit 3: Positive loss
+        fact3 = create_damage_aftermath_fact(
+            damage_instance_id="dmg_multi_3",
+            target_id="b1",
+            source_type=SourceType.ACTIVE_SKILL,
+            damage_type=DamageType.WEAPON,
+            assigned_target_damage=100,
+            actual_target_troop_loss=100,
+            target_troops_after=700,
+            target_defeated=False,
+            hit_topology=DamageHitTopology.RESOLVED_HIT,
+        )
+        systems.damage_aftermath_port.commit_aftermath(context, fact3)
+
+        assert len(aftermath_results) == 3
+        # Every hit, including zero loss hit 2, gets an admitted and executed FIRST_AID opportunity
+        for idx, res in enumerate(aftermath_results):
+            assert len(res.opportunity_results) == 1, f"Hit {idx+1} must produce 1 opportunity"
+            assert res.opportunity_results[0].executed is True, f"Hit {idx+1} must execute recovery"
+
+
+class TestAdmissionOwnershipSingleTruth:
+    def test_reaction_permission_policy_queried_solely_by_recovery_opportunity_system(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """Section 15: ReactionPermissionPolicy is queried exactly once per opportunity by RecoveryOpportunitySystem."""
+        context, systems = create_test_context()
+
+        systems.state_lifecycle_system.apply(
+            context,
+            state_id=OfficialStateId.FIRST_AID.value,
+            owner_id="b1",
+            source_id="b1",
+            duration_rounds=2,
+            runtime_params=FirstAidStateParams(
+                probability=1.0,
+                recovery_model_kind=RecoveryModelKind.TREATMENT_AMOUNT,
+                recovery_potency_context=RecoveryPotencyContext(treatment_amount=50),
+            ),
+        )
+
+        orig_can_trigger = ReactionPermissionPolicy.can_trigger_recovery
+        query_log: list[SourceType] = []
+
+        def spy_can_trigger(source_type: SourceType) -> bool:
+            query_log.append(source_type)
+            return orig_can_trigger(source_type)
+
+        monkeypatch.setattr(ReactionPermissionPolicy, "can_trigger_recovery", staticmethod(spy_can_trigger))
+
+        # Single normal attack damage event
+        systems.normal_attack_system.execute(context, context.units["a1"])
+
+        # Exactly ONE call across the entire aftermath + recovery pipeline
+        assert len(query_log) == 1
+        assert query_log[0] == SourceType.NORMAL_ATTACK
 
 
 class TestExactlyOnceAftermathInvocation:
@@ -841,7 +1136,7 @@ class TestExactlyOnceAftermathInvocation:
 
 class TestDefeatCleanupConformanceSpy:
     def test_defeat_cleanup_committed_exactly_once_on_unit_death(self) -> None:
-        # Standard damage
+        # 1. Standard damage fatal
         spy1 = SpyDefeatCleanupPort(StateLifecycleSystem())
         c1, s1 = create_test_context(cleanup_port=spy1)
         c1.units["b1"].troops = 10
@@ -849,7 +1144,7 @@ class TestDefeatCleanupConformanceSpy:
         assert spy1.call_count == 1
         assert spy1.calls[0][0] == "b1"
 
-        # Periodic DOT
+        # 2. Periodic DOT fatal
         spy2 = SpyDefeatCleanupPort(StateLifecycleSystem())
         c2, s2 = create_test_context(cleanup_port=spy2)
         s2.state_lifecycle_system.apply(c2, state_id=OfficialStateId.BURN.value, owner_id="b1", source_id="a1", duration_rounds=1)
@@ -861,7 +1156,7 @@ class TestDefeatCleanupConformanceSpy:
         assert spy2.call_count == 1
         assert spy2.calls[0][0] == "b1"
 
-        # Cleave target
+        # 3. Cleave target fatal
         spy3 = SpyDefeatCleanupPort(StateLifecycleSystem())
         c3, s3 = create_test_context(cleanup_port=spy3)
         c3.units["b2"].troops = 10
@@ -878,6 +1173,23 @@ class TestDefeatCleanupConformanceSpy:
         s3.cleave_derived_damage_resolver._resolve(c3, None, req)
         assert spy3.call_count == 1
         assert spy3.calls[0][0] == "b2"
+
+        # 4. Distribution participant fatal
+        spy4 = SpyDefeatCleanupPort(StateLifecycleSystem())
+        c4, s4 = create_test_context(cleanup_port=spy4)
+        s4.state_lifecycle_system.apply(
+            c4,
+            state_id="damage_split",
+            owner_id="b1",
+            source_id="b1",
+            duration_rounds=2,
+            runtime_params=DistributionStateParams(ratio=ExactRatio(1, 2)),
+        )
+        c4.units["b2"].troops = 5  # dies from direct loss
+        s4.normal_attack_system.execute(c4, c4.units["a1"])
+        assert not c4.units["b2"].is_alive
+        b2_calls = [call for call in spy4.calls if call[0] == "b2"]
+        assert len(b2_calls) == 1, "Distribution participant death must commit DefeatCleanup exactly once"
 
 
 class TestFullTroopAftermath:
