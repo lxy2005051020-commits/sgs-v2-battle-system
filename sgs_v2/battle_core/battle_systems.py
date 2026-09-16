@@ -10,6 +10,7 @@ from .battle_finalization_coordinator import BattleFinalizationCoordinator
 from .chain_system import ChainSystem, DamageCallbackAdmissionPoint
 from .cleave_system import CleaveSystem
 from .cleave_derived_damage_system import CleaveDerivedDamageResolver
+from .continuous_damage_basis_producer import ContinuousDamageBasisProducer
 from .counter_system import CounterSystem
 from .hit_resolution_system import HitResolutionSystem
 from .damage_rule_provider import StateDamageRuleProvider
@@ -88,6 +89,7 @@ class BattleSystems:
     cleave_derived_damage_resolver: CleaveDerivedDamageResolver = field(init=False)
     cleave_system: CleaveSystem = field(init=False)
     counter_system: CounterSystem = field(init=False)
+    continuous_damage_basis_producer: ContinuousDamageBasisProducer = field(init=False)
 
     def __post_init__(self) -> None:
         self.action_order_system = ActionOrderSystem(self.attribute_system)
@@ -177,7 +179,12 @@ class BattleSystems:
             self.recovery_system,
         )
         self.skill_resolver = SkillResolver(self.target_system)
-        self.trigger_system = TriggerSystem()
+        self.continuous_damage_basis_producer = ContinuousDamageBasisProducer(
+            self.attribute_system,
+            rule_provider=self.damage_rule_provider,
+        )
+        self.state_lifecycle_system._basis_producer = self.continuous_damage_basis_producer
+        self.trigger_system = TriggerSystem(self.state_lifecycle_system)
         self.rule_hook_system = RuleHookSystem(
             self.trigger_system,
             self.effect_executor,

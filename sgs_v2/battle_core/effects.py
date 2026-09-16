@@ -4,11 +4,13 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from .damage_system import DamageRequest
-from .enums import DamageSourceType, DamageType
+from .enums import DamageCalculationBasis, DamageSourceType, DamageType
 from .numeric_validation import validate_nonnegative_finite
 from .operation_identity import SourceType
 from .recovery_system import RecoveryRequest
 from .skill_runtime import SkillSlot
+from .stage10_state_params import FrozenContinuousDamageBasis
+from .state_generation import StateApplicationGenerationId
 from .state_runtime_params import EmptyStateRuntimeParams, StateRuntimeParams
 
 if TYPE_CHECKING:
@@ -84,6 +86,9 @@ class DamageEffect:
     execution_descriptor: RuleIntentExecutionDescriptor | None = field(
         default=None, compare=False
     )
+    calculation_basis: DamageCalculationBasis = DamageCalculationBasis.LIVE_RUNTIME
+    frozen_basis: FrozenContinuousDamageBasis | None = None
+    source_generation_id: StateApplicationGenerationId | None = None
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -105,6 +110,22 @@ class DamageEffect:
             self.source_state_id,
             self.source_state_instance_id,
         )
+        if not isinstance(self.calculation_basis, DamageCalculationBasis):
+            raise TypeError("calculation_basis must be a DamageCalculationBasis")
+        if self.calculation_basis is DamageCalculationBasis.FROZEN_APPLICATION:
+            if self.source_type is not DamageSourceType.CONTINUOUS:
+                raise ValueError("FROZEN_APPLICATION is only authorized for CONTINUOUS damage")
+            if self.frozen_basis is None:
+                raise ValueError("frozen_basis is required for FROZEN_APPLICATION")
+            if not isinstance(self.frozen_basis, FrozenContinuousDamageBasis):
+                raise TypeError("frozen_basis must be a FrozenContinuousDamageBasis")
+            if self.source_generation_id is None:
+                raise ValueError("source_generation_id is required for FROZEN_APPLICATION")
+            if not isinstance(self.source_generation_id, StateApplicationGenerationId):
+                raise TypeError("source_generation_id must be a StateApplicationGenerationId")
+        else:
+            if self.frozen_basis is not None:
+                raise ValueError("frozen_basis must be None for LIVE_RUNTIME")
         if self.source_ref is not None:
             if not isinstance(self.source_ref, EffectSourceRef):
                 raise TypeError("source_ref must be an EffectSourceRef or None")
@@ -129,6 +150,9 @@ class DamageEffect:
             source_skill_id=self.source_skill_id,
             source_state_id=self.source_state_id,
             source_state_instance_id=self.source_state_instance_id,
+            calculation_basis=self.calculation_basis,
+            frozen_basis=self.frozen_basis,
+            source_generation_id=self.source_generation_id,
         )
 
 

@@ -127,7 +127,16 @@ OFFICIAL_STATE_CATALOG: tuple[OfficialStateEntry, ...] = (
 )
 
 
+from .stage10_state_params import ContinuousDamageStateParams
+
+
 _OFFICIAL_STATE_RUNTIME_PARAMS_TYPES: dict[OfficialStateId, type[StateRuntimeParams]] = {
+    OfficialStateId.BURN: ContinuousDamageStateParams,
+    OfficialStateId.FLOOD: ContinuousDamageStateParams,
+    OfficialStateId.POISON: ContinuousDamageStateParams,
+    OfficialStateId.ROUT: ContinuousDamageStateParams,
+    OfficialStateId.SANDSTORM: ContinuousDamageStateParams,
+    OfficialStateId.REBELLION: ContinuousDamageStateParams,
     OfficialStateId.CLEAVE: CleaveStateParams,
     OfficialStateId.CHAIN_LINK: ChainStateParams,
     OfficialStateId.COUNTERATTACK: CounterStateParams,

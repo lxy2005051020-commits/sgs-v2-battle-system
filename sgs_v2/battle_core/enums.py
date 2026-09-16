@@ -57,3 +57,14 @@ class DamageSourceType(str, Enum):
     SKILL = "SKILL"
     CONTINUOUS = "CONTINUOUS"
     COUNTER = "COUNTER"
+
+
+class DamageCalculationBasis(str, Enum):
+    """伤害计算基础 (STAGE8_ADDENDUM §4, STAGE10.md §5)."""
+
+    LIVE_RUNTIME = "LIVE_RUNTIME"
+    FROZEN_APPLICATION = "FROZEN_APPLICATION"
+
+
+CalculationBasis = DamageCalculationBasis
+

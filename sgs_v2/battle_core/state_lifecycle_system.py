@@ -93,8 +93,13 @@ def _is_stage10_persistent_state(
 class StateLifecycleSystem:
     """状态加入、显式移除与自然到期的唯一正式写入口。"""
 
-    def __init__(self, allocator: StateGenerationAllocator | None = None) -> None:
+    def __init__(
+        self,
+        allocator: StateGenerationAllocator | None = None,
+        basis_producer: object | None = None,
+    ) -> None:
         self._allocator = allocator or StateGenerationAllocator()
+        self._basis_producer = basis_producer
 
     def calculate_lifecycle_window(
         self,
@@ -309,20 +314,42 @@ class StateLifecycleSystem:
                     application_generation_id=gen_id,
                     lifecycle_window=actual_window,
                 )
-                if (
-                    isinstance(actual_runtime_params, ContinuousDamageStateParams)
-                    and actual_runtime_params.frozen_damage_basis is not None
-                ):
-                    updated_basis = dataclasses.replace(
-                        actual_runtime_params.frozen_damage_basis,
-                        application_generation_id=gen_id,
-                        physical_state_instance_id=inst_id,
-                        source_unit_id=source_id or actual_runtime_params.frozen_damage_basis.source_unit_id,
-                    )
-                    actual_runtime_params = dataclasses.replace(
-                        actual_runtime_params,
-                        frozen_damage_basis=updated_basis,
-                    )
+                if isinstance(actual_runtime_params, ContinuousDamageStateParams):
+                    if actual_runtime_params.frozen_damage_basis is not None:
+                        updated_basis = dataclasses.replace(
+                            actual_runtime_params.frozen_damage_basis,
+                            application_generation_id=gen_id,
+                            physical_state_instance_id=inst_id,
+                            source_unit_id=source_id or actual_runtime_params.frozen_damage_basis.source_unit_id,
+                        )
+                        actual_runtime_params = dataclasses.replace(
+                            actual_runtime_params,
+                            frozen_damage_basis=updated_basis,
+                        )
+                    elif source_id is not None:
+                        from .continuous_damage_basis_producer import (
+                            ContinuousDamageApplicationRequest,
+                            ContinuousDamageBasisProducer,
+                        )
+                        producer = self._basis_producer or getattr(context, "continuous_damage_basis_producer", None)
+                        if producer is None:
+                            producer = ContinuousDamageBasisProducer()
+                        captured_basis = producer.capture(
+                            context,
+                            ContinuousDamageApplicationRequest(
+                                source_id=source_id,
+                                target_id=owner_id,
+                                state_id=state_id,
+                                application_generation_id=gen_id,
+                                source_skill_id=source_skill_id,
+                                source_skill_slot=source_skill_slot,
+                                physical_state_instance_id=inst_id,
+                            ),
+                        )
+                        actual_runtime_params = dataclasses.replace(
+                            actual_runtime_params,
+                            frozen_damage_basis=captured_basis,
+                        )
 
             instance = StateInstance(
                 instance_id=inst_id,
@@ -573,20 +600,48 @@ class StateLifecycleSystem:
                 application_generation_id=new_gen_id,
                 lifecycle_window=new_window,
             )
-            if (
-                isinstance(new_params, ContinuousDamageStateParams)
-                and new_params.frozen_damage_basis is not None
-            ):
-                updated_basis = dataclasses.replace(
-                    new_params.frozen_damage_basis,
-                    application_generation_id=new_gen_id,
-                    physical_state_instance_id=existing.instance_id,
-                    source_unit_id=new_source_id or new_params.frozen_damage_basis.source_unit_id,
-                )
-                new_params = dataclasses.replace(
-                    new_params,
-                    frozen_damage_basis=updated_basis,
-                )
+            if isinstance(new_params, ContinuousDamageStateParams):
+                if runtime_params is not None and runtime_params.frozen_damage_basis is not None:
+                    updated_basis = dataclasses.replace(
+                        runtime_params.frozen_damage_basis,
+                        application_generation_id=new_gen_id,
+                        physical_state_instance_id=existing.instance_id,
+                        source_unit_id=new_source_id or runtime_params.frozen_damage_basis.source_unit_id,
+                    )
+                    new_params = dataclasses.replace(
+                        new_params,
+                        frozen_damage_basis=updated_basis,
+                    )
+                elif new_source_id is not None:
+                    coef = 1.0
+                    if existing.runtime_params and getattr(existing.runtime_params, "frozen_damage_basis", None):
+                        old_b = existing.runtime_params.frozen_damage_basis
+                        if old_b is not None:
+                            coef = old_b.coefficient
+                    from .continuous_damage_basis_producer import (
+                        ContinuousDamageApplicationRequest,
+                        ContinuousDamageBasisProducer,
+                    )
+                    producer = self._basis_producer or getattr(context, "continuous_damage_basis_producer", None)
+                    if producer is None:
+                        producer = ContinuousDamageBasisProducer()
+                    captured_basis = producer.capture(
+                        context,
+                        ContinuousDamageApplicationRequest(
+                            source_id=new_source_id,
+                            target_id=existing.owner_id,
+                            state_id=existing.state_id,
+                            application_generation_id=new_gen_id,
+                            coefficient=coef,
+                            source_skill_id=new_source_skill_id,
+                            source_skill_slot=new_source_skill_slot,
+                            physical_state_instance_id=existing.instance_id,
+                        ),
+                    )
+                    new_params = dataclasses.replace(
+                        new_params,
+                        frozen_damage_basis=captured_basis,
+                    )
 
         updated = dataclasses.replace(
             existing,

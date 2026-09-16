@@ -3,6 +3,7 @@ from .engine import BattleEngine
 from .enums import (
     BattlePhase,
     BattleEndReason,
+    DamageCalculationBasis,
     DamageSourceType,
     DamageType,
     LineupPosition,
@@ -285,6 +286,7 @@ __all__ = [
     "BattleEngine",
     "BattlePhase",
     "BattleEndReason",
+    "DamageCalculationBasis",
     "DamageSourceType",
     "DamageType",
     "LineupPosition",
