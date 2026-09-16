@@ -12,15 +12,19 @@ from .stage7_state_params import (
 )
 from .stage10_state_params import (
     ContinuousDamageStateParams,
+    FirstAidStateParams,
     RecuperationStateParams,
 )
+from .damage_aftermath_port import DamageAftermathFact
 from .recovery_opportunity_system import RecoveryOpportunitySystem
 from .rule_intent import (
+    RecoveryOpportunity,
     RuleIntent,
     RuleIntentExecutionDescriptor,
     RuleIntentKind,
 )
 from .state_instance import StateInstance
+
 
 
 ROUND_START_TRIGGER_TAG = "RULE_HOOK:ROUND_START"
@@ -86,8 +90,39 @@ class TriggerSystem:
             intents.extend(self._intents_for_state(instance))
         return tuple(intents)
 
+    def collect_after_damage(
+        self,
+        context: BattleContext,
+        target_id: str,
+        aftermath_fact: DamageAftermathFact,
+    ) -> tuple[RecoveryOpportunity, ...]:
+        """Collect FIRST_AID recovery opportunities after settled damage (STAGE10.md §15, §23)."""
+        if not target_id or target_id not in context.units:
+            return ()
+
+        matched: list[StateInstance] = []
+        for instance in context.states.find(owner_id=target_id):
+            if (
+                instance.state_id == OfficialStateId.FIRST_AID.value
+                or isinstance(instance.runtime_params, FirstAidStateParams)
+            ):
+                if instance.lifecycle_window is not None and not instance.lifecycle_window.is_round_eligible(
+                    context.current_round
+                ):
+                    continue
+                matched.append(instance)
+
+        matched.sort(key=lambda item: item.instance_id)
+        opportunities: list[RecoveryOpportunity] = []
+        for instance in matched:
+            opportunities.append(
+                RecoveryOpportunitySystem.make_first_aid_opportunity(instance, aftermath_fact)
+            )
+        return tuple(opportunities)
+
     @classmethod
     def _effects_for_state(cls, instance: StateInstance) -> tuple[RuleIntent, ...]:
+
         return cls._intents_for_state(instance)
 
     @staticmethod

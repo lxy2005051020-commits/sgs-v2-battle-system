@@ -977,14 +977,15 @@ class TestActionStartRecuperationIntegration:
 # 9. Phase Boundary Audit: No Silent Phase 6 Aftermath Integration
 # ==============================================================================
 
-class TestNoSilentPhase6AftermathIntegration:
-    def test_stage9_damage_paths_do_not_auto_trigger_first_aid(self) -> None:
+class TestPhase6AftermathIntegrationReadiness:
+    def test_stage9_damage_paths_trigger_first_aid_in_phase6(self) -> None:
         """
         Verify that Stage 9 damage pipelines (damage_instance_coordinator, etc.)
-        do not silently instantiate DamageAftermathPort or trigger FIRST_AID opportunities yet.
-        Wiring DamageAftermathPort into Stage 9 damage resolution belongs strictly to Phase 6.
+        now correctly instantiate DamageAftermathPort and trigger FIRST_AID opportunities in Phase 6.
         """
         context, systems = create_test_context()
+        context.current_round = 1
+        context.current_phase = BattlePhase.UNIT_ACTION.value
 
         # Apply FIRST_AID to b1
         systems.state_lifecycle_system.apply(
@@ -1032,8 +1033,6 @@ class TestNoSilentPhase6AftermathIntegration:
 
         systems.effect_executor.execute(context, dmg)
 
-        # b1 suffered damage (less than 1000)
-        assert context.units["b1"].troops < 1000
-        # Phase 5 boundary check: NO auto-recovery occurred via Stage 9 damage pipeline!
-        assert len(captured_recovery_events) == 0
+        # Phase 6 integration check: Damage aftermath was invoked and FIRST_AID triggered!
+        assert len(captured_recovery_events) == 1
 

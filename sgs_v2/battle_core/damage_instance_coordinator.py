@@ -7,6 +7,7 @@ from typing import Any, Callable, TYPE_CHECKING
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
 from .context import BattleContext
 from .chain_system import ResolvedDamageFact
+from .damage_aftermath_port import create_damage_aftermath_fact
 from .damage_partition_system import (
     DamagePartitionCoordinator,
     DamagePartitionPlan,
@@ -107,6 +108,8 @@ class DamageInstanceCoordinator:
         finalization_coordinator: BattleFinalizationCoordinator | None = None,
         id_allocator: OperationIdAllocator | None = None,
         resolved_damage_callback=None,
+        damage_aftermath_port: Any = None,
+        defeat_cleanup_port: Any = None,
     ) -> None:
         if not isinstance(damage_system, DamageSystem):
             raise TypeError(
@@ -135,9 +138,12 @@ class DamageInstanceCoordinator:
         self._finalization = finalization_coordinator
         self._id_allocator = id_allocator
         self._resolved_damage_callback = resolved_damage_callback
+        self._damage_aftermath_port = damage_aftermath_port
+        self._defeat_cleanup = defeat_cleanup_port
         self._active_instances: dict[tuple[int, DamageInstanceId], _ActiveDamageInstanceRecord] = {}
         self._permits: dict[tuple[int, str], _PermitRecord] = {}
         self._damage_resolution.bind_coordinator(self)
+
 
     @property
     def damage_system(self) -> DamageSystem:
@@ -471,6 +477,7 @@ class DamageInstanceCoordinator:
                 )
                 if on_target_settled is not None:
                     on_target_settled(context, resolution, damage_result)
+                self._commit_aftermath(context, lineage, resolution, damage_result, damage_instance_id)
                 return finish(DamageInstanceExecution(
                     damage_instance_id=damage_instance_id,
                     damage_result=damage_result,
@@ -497,6 +504,7 @@ class DamageInstanceCoordinator:
                     on_target_settled(context, resolution, damage_result)
                 self._observe_target_death(context, damage_instance_id, resolution)
                 if resolution.target_defeated:
+                    self._commit_aftermath(context, lineage, resolution, damage_result, damage_instance_id)
                     return finish(DamageInstanceExecution(
                         damage_instance_id=damage_instance_id,
                         damage_result=damage_result,
@@ -521,6 +529,7 @@ class DamageInstanceCoordinator:
                         self._finalization.observe_damage_instance_death(
                             context, damage_instance_id
                         )
+                self._commit_aftermath(context, lineage, resolution, damage_result, damage_instance_id)
                 return finish(DamageInstanceExecution(
                     damage_instance_id=damage_instance_id,
                     damage_result=damage_result,
@@ -561,6 +570,7 @@ class DamageInstanceCoordinator:
                 if on_target_settled is not None:
                     on_target_settled(context, resolution, damage_result)
                 self._observe_target_death(context, damage_instance_id, resolution)
+                self._commit_aftermath(context, lineage, resolution, damage_result, damage_instance_id)
                 return finish(DamageInstanceExecution(
                     damage_instance_id=damage_instance_id,
                     damage_result=damage_result,
@@ -582,6 +592,7 @@ class DamageInstanceCoordinator:
             if on_target_settled is not None:
                 on_target_settled(context, resolution, damage_result)
             self._observe_target_death(context, damage_instance_id, resolution)
+            self._commit_aftermath(context, lineage, resolution, damage_result, damage_instance_id)
             return finish(DamageInstanceExecution(
                 damage_instance_id=damage_instance_id,
                 damage_result=damage_result,
@@ -594,6 +605,41 @@ class DamageInstanceCoordinator:
             self.close_damage_instance(damage_instance_id, context)
             if finalization_admitted:
                 self._finalization.complete_damage_instance(context, damage_instance_id)
+
+    def _commit_aftermath(
+        self,
+        context: BattleContext,
+        lineage: OperationLineage,
+        resolution: DamageResolutionResult,
+        damage_result: DamageResult,
+        damage_instance_id: DamageInstanceId,
+    ) -> Any:
+        from .reaction_permission_policy import ReactionPermissionPolicy
+
+        if not ReactionPermissionPolicy.can_trigger_recovery(lineage.source_type):
+            return None
+
+        aftermath_port = (
+            self._damage_aftermath_port
+            or getattr(getattr(context, "systems", None), "damage_aftermath_port", None)
+        )
+        if aftermath_port is None:
+            return None
+
+        from .damage_aftermath_port import create_damage_aftermath_fact
+
+        fact = create_damage_aftermath_fact(
+            damage_instance_id=resolution.damage_instance_id or damage_instance_id,
+            target_id=damage_result.target_id,
+            source_type=lineage.source_type,
+            damage_type=damage_result.damage_type,
+            assigned_target_damage=resolution.assigned_target_damage,
+            actual_target_troop_loss=resolution.actual_target_troop_loss,
+            target_troops_after=resolution.target_troops_after,
+            target_defeated=resolution.target_defeated,
+            damage_result=damage_result,
+        )
+        return aftermath_port.commit_aftermath(context, fact)
 
     def _settle_target(
         self,

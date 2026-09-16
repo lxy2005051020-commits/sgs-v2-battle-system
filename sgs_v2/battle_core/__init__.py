@@ -280,10 +280,13 @@ from .defeat_cleanup_port import (
     DefeatRemovalReason,
 )
 from .damage_aftermath_port import (
+    AftermathResult,
     DamageAftermathFact,
     DamageAftermathPort,
+    DamageAftermathSystem,
     DamageHitTopology,
     DamageZeroLossCause,
+    create_damage_aftermath_fact,
 )
 from .recovery_opportunity_system import RecoveryOpportunitySystem
 
@@ -529,6 +532,9 @@ __all__ = [
     "DefeatRemovalReason",
     "DamageAftermathFact",
     "DamageAftermathPort",
+    "DamageAftermathSystem",
+    "AftermathResult",
+    "create_damage_aftermath_fact",
     "DamageHitTopology",
     "DamageZeroLossCause",
     "RecoveryOpportunitySystem",

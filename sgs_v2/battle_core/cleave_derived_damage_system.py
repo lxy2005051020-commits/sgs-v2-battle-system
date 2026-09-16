@@ -11,8 +11,14 @@ from .enums import DamageType
 from .events import EventType
 from .hit_resolution_system import HitPreventedResult, HitAllowedResult
 from .operation_identity import CleaveEffectId, DamageInstanceId, OperationLineage, SourceType
+from .damage_aftermath_port import (
+    DamageHitTopology,
+    DamageZeroLossCause,
+    create_damage_aftermath_fact,
+)
 from .reaction_permission_policy import ReactionPermissionPolicy
 from .stage9_integerization import ExactRatio, floor_product_int_ratio
+
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,7 +94,7 @@ class CleaveDerivedDamageResolver:
 
     def __init__(self, *, troops, partition, direct_loss, finalization, hit_resolution,
                  hit_rules, damage_callbacks, first_aid=None, attacker_recovery=None,
-                 consume_hit_prevention=None):
+                 consume_hit_prevention=None, damage_aftermath_port=None, defeat_cleanup_port=None):
         self._troops = troops
         self._partition = partition
         self._direct_loss = direct_loss
@@ -99,7 +105,10 @@ class CleaveDerivedDamageResolver:
         self._first_aid = first_aid
         self._attacker_recovery = attacker_recovery
         self._consume_hit_prevention = consume_hit_prevention
+        self._damage_aftermath_port = damage_aftermath_port
+        self._defeat_cleanup = defeat_cleanup_port
         self._requests = {}
+
 
     def _issue_request(self, context, effect, target_id):
         self._finalization.validate_reaction(context, effect.effect_id, effect, executing=True)
@@ -182,17 +191,43 @@ class CleaveDerivedDamageResolver:
         death = was_alive and not target.is_alive
         if death:
             self._event(context, EventType.UNIT_DEFEATED, request, {"target_name": target.name})
+            defeat_cleanup = (
+                self._defeat_cleanup
+                or getattr(getattr(context, "systems", None), "defeat_cleanup_port", None)
+            )
+            if defeat_cleanup is not None:
+                defeat_cleanup.commit_defeat(context, target.unit_id, defeat_source_ref=request.source_id)
             self._finalization.observe_damage_instance_death(context, request.damage_instance_id)
+
         if isinstance(plan, DamageShareTransactionPlan) and not death:
             sharer = context.units.get(plan.sharer_id)
             if sharer is not None and sharer.is_alive:
                 direct(plan.sharer_id, plan.dsharer_theoretical, SourceType.SHARE_DIRECT_LOSS)
+
         fact = ResolvedDamageFact(request.damage_instance_id, target.unit_id, request.lineage,
                                   request.damage_type, assigned, actual)
         recovery = CleaveRecoveryFact(fact, plan.kind,
             None if isinstance(plan, DistributionTransactionPlan) else assigned,
             "690094/690095" if isinstance(plan, DistributionTransactionPlan) else None)
         if ReactionPermissionPolicy.can_trigger_recovery(request.source_type):
+            aftermath_port = (
+                self._damage_aftermath_port
+                or getattr(getattr(context, "systems", None), "damage_aftermath_port", None)
+            )
+            if aftermath_port is not None:
+                aftermath_fact = create_damage_aftermath_fact(
+                    damage_instance_id=request.damage_instance_id,
+                    target_id=target.unit_id,
+                    source_type=request.source_type,
+                    damage_type=request.damage_type,
+                    assigned_target_damage=assigned,
+                    actual_target_troop_loss=actual,
+                    target_troops_after=target.troops,
+                    target_defeated=death,
+                    hit_topology=DamageHitTopology.RESOLVED_HIT,
+                    zero_loss_cause=DamageZeroLossCause.SETTLED_ZERO if actual == 0 else None,
+                )
+                aftermath_port.commit_aftermath(context, aftermath_fact)
             if self._first_aid is not None:
                 self._first_aid(context, fact)  # its own contract; not attacker recovery basis
             if self._attacker_recovery is not None:
@@ -200,6 +235,7 @@ class CleaveDerivedDamageResolver:
         self._callbacks.accept(context, fact)
         return CleaveDerivedDamageResult(request, amount, assigned, actual, before,
             before - actual, False, plan, tuple(losses), recovery)
+
 
     @staticmethod
     def _event(context, event, request, payload):

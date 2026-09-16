@@ -307,13 +307,15 @@ class RecoveryOpportunitySystem:
 
         source_unit_id = getattr(state_source, "source_id", None)
         source_skill_id = getattr(state_source, "source_skill_id", None)
-        source_skill_slot = getattr(state_source, "source_skill_slot", None)
-
-        source_ref = EffectSourceRef(
-            stage9_source_type=aftermath_fact.source_type,
-            source_unit_id=source_unit_id,
-            source_skill_id=source_skill_id,
-            source_skill_slot=source_skill_slot,
+        source_ref = (
+            EffectSourceRef(
+                stage9_source_type=SourceType.ACTIVE_SKILL,
+                source_unit_id=source_unit_id,
+                source_skill_id=source_skill_id,
+                source_skill_slot=source_skill_slot,
+            )
+            if source_unit_id and source_skill_id
+            else None
         )
 
         desc = RuleIntentExecutionDescriptor(

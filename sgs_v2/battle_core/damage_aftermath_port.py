@@ -99,3 +99,167 @@ class DamageAftermathPort(Protocol):
 
     def commit_aftermath(self, context: Any, aftermath_fact: DamageAftermathFact) -> Any:
         ...
+
+
+@dataclass(frozen=True, slots=True)
+class AftermathResult:
+    """Synchronous outcome of a DamageAftermathPort commitment."""
+
+    aftermath_fact: DamageAftermathFact
+    opportunity_results: tuple[Any, ...]
+    executed: bool = False
+
+
+def create_damage_aftermath_fact(
+    *,
+    damage_instance_id: Any,
+    target_id: str,
+    source_type: SourceType,
+    damage_type: DamageType,
+    assigned_target_damage: int,
+    actual_target_troop_loss: int,
+    target_troops_after: int,
+    target_defeated: bool,
+    damage_result: Any = None,
+    hit_topology: DamageHitTopology | None = None,
+    zero_loss_cause: DamageZeroLossCause | None = None,
+    source_state_generation: StateApplicationGenerationId | None = None,
+) -> DamageAftermathFact:
+    """
+    Authoritative factory deriving a typed DamageAftermathFact from settled damage.
+    Resolves hit topology, zero-loss cause, and generation provenance per STAGE10.md §15.
+    """
+    d_id = str(damage_instance_id)
+
+    if hit_topology is None:
+        if damage_result is not None and getattr(damage_result, "prevented", False):
+            prevented_by = getattr(damage_result, "prevented_by_state_id", None)
+            if prevented_by == "weakness":
+                hit_topology = DamageHitTopology.RESOLVED_HIT
+                zero_loss_cause = zero_loss_cause or DamageZeroLossCause.WEAKNESS_ZERO
+            elif prevented_by == "barrier":
+                hit_topology = DamageHitTopology.RESOLVED_HIT
+                zero_loss_cause = zero_loss_cause or DamageZeroLossCause.BARRIER_ZERO
+            else:
+                hit_topology = DamageHitTopology.NO_RESOLVED_HIT_EVASION_OR_MISS
+                zero_loss_cause = None
+        else:
+            hit_topology = DamageHitTopology.RESOLVED_HIT
+
+    if hit_topology == DamageHitTopology.RESOLVED_HIT and actual_target_troop_loss == 0:
+        if zero_loss_cause is None:
+            zero_loss_cause = DamageZeroLossCause.SETTLED_ZERO
+    elif hit_topology != DamageHitTopology.RESOLVED_HIT:
+        zero_loss_cause = None
+
+    if source_state_generation is None and damage_result is not None:
+        source_state_generation = getattr(damage_result, "source_generation_id", None)
+
+    return DamageAftermathFact(
+        damage_instance_id=d_id,
+        target_id=target_id,
+        source_type=source_type,
+        damage_type=damage_type,
+        assigned_target_damage=assigned_target_damage,
+        actual_target_troop_loss=actual_target_troop_loss,
+        target_troops_after=target_troops_after,
+        target_defeated=target_defeated,
+        hit_topology=hit_topology,
+        zero_loss_cause=zero_loss_cause,
+        source_state_generation=source_state_generation,
+    )
+
+
+class DamageAftermathSystem:
+    """
+    Authoritative concrete implementation of DamageAftermathPort (STAGE10.md §15, §23).
+    Bridges settled damage checkpoints across standard, DOT, counter, assault, and cleave
+    to RecoveryOpportunitySystem for FIRST_AID.
+    """
+
+    def __init__(
+        self,
+        trigger_system: Any = None,
+        recovery_opportunity_system: Any = None,
+    ) -> None:
+        self._trigger = trigger_system
+        self._recovery = recovery_opportunity_system
+
+    def commit_aftermath(
+        self,
+        context: Any,
+        aftermath_fact: DamageAftermathFact,
+    ) -> AftermathResult:
+        if not isinstance(aftermath_fact, DamageAftermathFact):
+            raise TypeError(
+                f"aftermath_fact must be DamageAftermathFact, got {type(aftermath_fact)}"
+            )
+
+        # Fatal damage exclusion (STAGE10.md §15.2, §24.1): target defeated -> no recovery opportunity
+        if aftermath_fact.target_defeated:
+            return AftermathResult(
+                aftermath_fact=aftermath_fact,
+                opportunity_results=(),
+                executed=False,
+            )
+
+        # Source type permission exclusion (STAGE10.md §15, §23): direct loss & chain feedback blocked
+        from .reaction_permission_policy import ReactionPermissionPolicy
+
+        if not ReactionPermissionPolicy.can_trigger_recovery(aftermath_fact.source_type):
+            return AftermathResult(
+                aftermath_fact=aftermath_fact,
+                opportunity_results=(),
+                executed=False,
+            )
+
+        # Evasion / Miss exclusion (STAGE10.md §15.2): no resolved hit -> no recovery opportunity
+        if aftermath_fact.hit_topology != DamageHitTopology.RESOLVED_HIT:
+            return AftermathResult(
+                aftermath_fact=aftermath_fact,
+                opportunity_results=(),
+                executed=False,
+            )
+
+        trigger = (
+            self._trigger
+            or getattr(getattr(context, "systems", None), "trigger_system", None)
+        )
+        if trigger is None:
+            return AftermathResult(
+                aftermath_fact=aftermath_fact,
+                opportunity_results=(),
+                executed=False,
+            )
+
+        recovery_sys = (
+            self._recovery
+            or getattr(
+                getattr(context, "systems", None),
+                "recovery_opportunity_system",
+                None,
+            )
+        )
+        if recovery_sys is None:
+            return AftermathResult(
+                aftermath_fact=aftermath_fact,
+                opportunity_results=(),
+                executed=False,
+            )
+
+        opportunities = trigger.collect_after_damage(
+            context, aftermath_fact.target_id, aftermath_fact
+        )
+        results = []
+        for opp in opportunities:
+            res = recovery_sys.evaluate_and_resolve(
+                context, opp, aftermath_fact=aftermath_fact
+            )
+            results.append(res)
+
+        return AftermathResult(
+            aftermath_fact=aftermath_fact,
+            opportunity_results=tuple(results),
+            executed=any(r.executed for r in results),
+        )
+
