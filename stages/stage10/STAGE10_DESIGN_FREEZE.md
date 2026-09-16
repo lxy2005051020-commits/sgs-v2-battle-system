@@ -1,4 +1,4 @@
-﻿# Stage 10 · Persistent State Runtime Integration · Design Freeze Record
+# Stage 10 · Persistent State Runtime Integration · Design Freeze Record
 
 > Project: 三国志战略版战斗模拟器 V2  
 > Document Type: Formal Design Freeze Record  
@@ -29,17 +29,25 @@ Final Audit Findings:             BLOCKER = 0, MAJOR = 0, MINOR = 0, HARDENING =
 
 ## 2. Frozen Audited Artifacts (Battle Repo)
 
-The following exact file blobs were audited by the Final Independent Design Freeze-Gate Audit (`STAGE10_FINAL_DESIGN_FREEZE_GATE_AUDIT.md`) and are hereby permanently frozen:
+The following exact file blobs were audited by the Final Independent Design Freeze-Gate Audit (`STAGE10_FINAL_DESIGN_FREEZE_GATE_AUDIT.md`) and are hereby permanently frozen.
 
-| Frozen Artifact | Repository Path | Frozen Audited Blob SHA |
-|---|---|---|
-| **Stage10 Architecture Design** | `stages/stage10/STAGE10.md` | `b87dc4c40abe13373e25cf4028ea27a08b413076` |
-| **Stage7 Compatibility Addendum** | `stages/stage7/STAGE7_STAGE10_COMPATIBILITY_ADDENDUM.md` | `64cdb7d86c8bda5b9123b49afcb924db7e1fd485` |
-| **Stage8 Compatibility Addendum** | `stages/stage8/STAGE8_STAGE10_COMPATIBILITY_ADDENDUM.md` | `4c1e22eda97bdc0ef74ab6175a28672845771ddc` |
-| **Stage9 Compatibility Addendum** | `stages/stage9/STAGE9_STAGE10_COMPATIBILITY_ADDENDUM.md` | `737b058cefd08a1d0a08526436098a3455a8168f` |
-| **Final Freeze-Gate Audit Report** | `stages/stage10/STAGE10_FINAL_DESIGN_FREEZE_GATE_AUDIT.md` | `e32bef16453bc24ae7117e1e7d89ef8c95d4f0ad` |
+### 2.1 Two-Layer Integrity Specification for STAGE10.md
+- **Audited Technical Provenance Pin**:
+  `b87dc4c40abe13373e25cf4028ea27a08b413076`
+  *(The exact technical body evaluated by the final independent design audit).*
+- **Current Frozen Artifact Pin**:
+  `50fe8c151968b74c4292cf14a84aa25382610c21`
+  *(The post-freeze document including updated freeze status banner and governance metadata; identical technical body byte-for-byte).*
 
-> *Note on Post-Freeze Header Metadata*: The freeze commit modifies only top-level governance metadata (status banner) in `STAGE10.md`. The technical architecture and normative contracts within `STAGE10.md` are identical byte-for-byte to the audited blob `b87dc4c40abe13373e25cf4028ea27a08b413076`.
+| Frozen Artifact | Repository Path | Frozen Audited Blob SHA | Current Frozen Blob SHA |
+|---|---|---|---|
+| **Stage10 Architecture Design (Audited)** | `stages/stage10/STAGE10.md` | `b87dc4c40abe13373e25cf4028ea27a08b413076` | `50fe8c151968b74c4292cf14a84aa25382610c21` |
+| **Stage7 Compatibility Addendum** | `stages/stage7/STAGE7_STAGE10_COMPATIBILITY_ADDENDUM.md` | `64cdb7d86c8bda5b9123b49afcb924db7e1fd485` | `64cdb7d86c8bda5b9123b49afcb924db7e1fd485` |
+| **Stage8 Compatibility Addendum** | `stages/stage8/STAGE8_STAGE10_COMPATIBILITY_ADDENDUM.md` | `4c1e22eda97bdc0ef74ab6175a28672845771ddc` | `4c1e22eda97bdc0ef74ab6175a28672845771ddc` |
+| **Stage9 Compatibility Addendum** | `stages/stage9/STAGE9_STAGE10_COMPATIBILITY_ADDENDUM.md` | `737b058cefd08a1d0a08526436098a3455a8168f` | `737b058cefd08a1d0a08526436098a3455a8168f` |
+| **Final Freeze-Gate Audit Report** | `stages/stage10/STAGE10_FINAL_DESIGN_FREEZE_GATE_AUDIT.md` | `e32bef16453bc24ae7117e1e7d89ef8c95d4f0ad` | `e32bef16453bc24ae7117e1e7d89ef8c95d4f0ad` |
+
+> *Note on Post-Freeze Header Metadata*: The freeze commit modifies only top-level governance metadata (status banner) and closing block in `STAGE10.md` (`b87dc4...` → `50fe8c...`). The technical architecture and normative contracts within `STAGE10.md` are identical byte-for-byte to the audited blob `b87dc4c40abe13373e25cf4028ea27a08b413076`.
 
 ---
 
@@ -95,15 +103,21 @@ The following 27 architectural contracts are frozen as immutable implementation 
 Stage10 formally freezes runtime integration for exactly eight persistent states:
 
 ```text
-1. 690072 BURN (灼烧)         - Continuous elemental damage
-2. 690073 FLOOD (水攻)        - Continuous elemental damage
-3. 690074 POISON (中毒)       - Continuous elemental damage
-4. 690075 ROUT (溃逃)         - Continuous physical damage
-5. 690076 SANDSTORM (沙暴)    - Continuous elemental damage
-6. 690077 REBELLION (叛逃)    - Continuous true/direct damage
+1. 690072 BURN (灼烧)         - Continuous elemental damage (STRATEGY)
+2. 690073 FLOOD (水攻)        - Continuous elemental damage (STRATEGY)
+3. 690074 POISON (中毒)       - Continuous elemental damage (STRATEGY)
+4. 690075 ROUT (溃逃)         - Continuous physical damage (WEAPON)
+5. 690076 SANDSTORM (沙暴)    - Continuous elemental damage (STRATEGY)
+6. 690077 REBELLION (叛逃)    - Persistent periodic resolved damage (defense-bypass via DamageDefensePolicy)
 7. 690078 FIRST_AID (急救)    - After-damage reaction recovery
 8. 690079 RECUPERATION (休整) - Action-start periodic recovery
 ```
+
+> **Normative Contract for 690077 REBELLION (叛逃)**:
+> - **Nature**: Persistent periodic resolved damage (executed strictly through `DamageSystem` via `FROZEN_APPLICATION` lane).
+> - **At application / refresh**: Compare source effective ATK vs INT; select `DamageType.WEAPON` or `DamageType.STRATEGY`; lock selected route to that application generation snapshot.
+> - **At tick**: Resolve through normal `DamageSystem`; bypass relevant target defense using `DamageDefensePolicy.IGNORE_RELEVANT_TARGET_DEFENSE`.
+> - **Explicit Negative Guarantees**: REBELLION is **NOT** generic true damage, **NOT** `DirectTroopLoss`, and **NOT** direct troop mutation.
 
 ---
 
@@ -242,9 +256,10 @@ Implementers are permitted to adjust internal details that do not alter the froz
 Future audits, build steps, and CI checks can verify freeze integrity using Git plumbing commands:
 
 ```bash
-# Verify Stage10 Architecture Design blob
+# Verify Stage10 Architecture Design blob at current frozen HEAD
 git rev-parse HEAD:stages/stage10/STAGE10.md
-# Expected: b87dc4c40abe13373e25cf4028ea27a08b413076 (audited)
+# Expected: 50fe8c151968b74c4292cf14a84aa25382610c21 (post-freeze frozen artifact)
+# Note: Audited Technical Body Provenance Pin is b87dc4c40abe13373e25cf4028ea27a08b413076
 
 # Verify Stage7 Compatibility Addendum blob
 git rev-parse HEAD:stages/stage7/STAGE7_STAGE10_COMPATIBILITY_ADDENDUM.md

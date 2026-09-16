@@ -59,7 +59,7 @@ Integrate full persistent state runtime execution for exactly the eight authoriz
 3. `690074 POISON` (中毒) - Continuous elemental damage
 4. `690075 ROUT` (溃逃) - Continuous physical damage
 5. `690076 SANDSTORM` (沙暴) - Continuous elemental damage
-6. `690077 REBELLION` (叛逃) - Continuous true/direct damage (defense-bypass)
+6. `690077 REBELLION` (叛逃) - Persistent periodic resolved damage (defense-bypass via DamageDefensePolicy, NOT DirectTroopLoss/true damage)
 7. `690078 FIRST_AID` (急救) - After-damage reaction recovery
 8. `690079 RECUPERATION` (休整) - Action-start periodic recovery
 
