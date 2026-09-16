@@ -279,6 +279,13 @@ from .defeat_cleanup_port import (
     DefeatCleanupResult,
     DefeatRemovalReason,
 )
+from .damage_aftermath_port import (
+    DamageAftermathFact,
+    DamageAftermathPort,
+    DamageHitTopology,
+    DamageZeroLossCause,
+)
+from .recovery_opportunity_system import RecoveryOpportunitySystem
 
 __all__ = [
     "BattleContext",
@@ -520,4 +527,9 @@ __all__ = [
     "DefeatCleanupPort",
     "DefeatCleanupResult",
     "DefeatRemovalReason",
+    "DamageAftermathFact",
+    "DamageAftermathPort",
+    "DamageHitTopology",
+    "DamageZeroLossCause",
+    "RecoveryOpportunitySystem",
 ]

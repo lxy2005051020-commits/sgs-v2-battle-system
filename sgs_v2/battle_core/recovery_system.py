@@ -6,6 +6,7 @@ from enum import Enum
 from .context import BattleContext
 from .events import EventType
 from .official_state_catalog import OfficialStateId
+from .state_generation import StateApplicationGenerationId
 from .troop_system import TroopChangeResult, TroopSystem
 
 
@@ -40,6 +41,7 @@ class RecoveryRequest:
     source_skill_id: str | None = None
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
+    source_generation_id: StateApplicationGenerationId | None = None
 
     def __post_init__(self) -> None:
         _validate_optional_id(self.source_id, "source_id")
@@ -54,6 +56,10 @@ class RecoveryRequest:
             self.source_state_id,
             self.source_state_instance_id,
         )
+        if self.source_generation_id is not None and not isinstance(
+            self.source_generation_id, StateApplicationGenerationId
+        ):
+            raise TypeError("source_generation_id must be a StateApplicationGenerationId or None")
         if isinstance(self.amount, bool) or not isinstance(self.amount, int):
             raise TypeError("amount must be an int")
         if self.amount < 0:
@@ -69,12 +75,21 @@ class RecoveryPreventionReason(str, Enum):
 class RecoveryResolvedResult:
     request: RecoveryRequest
     troop_change: TroopChangeResult
+    source_generation_id: StateApplicationGenerationId | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.request, RecoveryRequest):
             raise TypeError("request must be a RecoveryRequest")
         if not isinstance(self.troop_change, TroopChangeResult):
             raise TypeError("troop_change must be a TroopChangeResult")
+        if self.source_generation_id is not None and not isinstance(
+            self.source_generation_id, StateApplicationGenerationId
+        ):
+            raise TypeError("source_generation_id must be a StateApplicationGenerationId or None")
+
+    @property
+    def actual_recovery(self) -> int:
+        return self.troop_change.actual_change
 
 
 @dataclass(frozen=True, slots=True)
@@ -82,12 +97,17 @@ class RecoveryPreventedResult:
     request: RecoveryRequest
     reason: RecoveryPreventionReason
     reason_state_id: str | None
+    source_generation_id: StateApplicationGenerationId | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.request, RecoveryRequest):
             raise TypeError("request must be a RecoveryRequest")
         if not isinstance(self.reason, RecoveryPreventionReason):
             raise TypeError("reason must be a RecoveryPreventionReason")
+        if self.source_generation_id is not None and not isinstance(
+            self.source_generation_id, StateApplicationGenerationId
+        ):
+            raise TypeError("source_generation_id must be a StateApplicationGenerationId or None")
 
         healing_ban_id = OfficialStateId.HEALING_BAN.value
         if self.reason is RecoveryPreventionReason.HEALING_BAN:
@@ -142,6 +162,7 @@ class RecoverySystem:
         result = RecoveryResolvedResult(
             request=request,
             troop_change=troop_change,
+            source_generation_id=request.source_generation_id,
         )
 
         if troop_change.actual_change > 0:
@@ -156,6 +177,11 @@ class RecoverySystem:
                     "source_skill_id": request.source_skill_id,
                     "source_state_id": request.source_state_id,
                     "source_state_instance_id": request.source_state_instance_id,
+                    "source_generation_id": (
+                        str(request.source_generation_id)
+                        if request.source_generation_id
+                        else None
+                    ),
                     "target_id": request.target_id,
                     "requested_recovery": request.amount,
                     "actual_recovery": troop_change.actual_change,
@@ -177,6 +203,7 @@ class RecoverySystem:
             request=request,
             reason=reason,
             reason_state_id=reason_state_id,
+            source_generation_id=request.source_generation_id,
         )
         context.event_bus.publish(
             event_type=EventType.RECOVERY_PREVENTED,
@@ -189,6 +216,11 @@ class RecoverySystem:
                 "source_skill_id": request.source_skill_id,
                 "source_state_id": request.source_state_id,
                 "source_state_instance_id": request.source_state_instance_id,
+                "source_generation_id": (
+                    str(request.source_generation_id)
+                    if request.source_generation_id
+                    else None
+                ),
                 "target_id": request.target_id,
                 "requested_recovery": request.amount,
                 "reason": reason.value,

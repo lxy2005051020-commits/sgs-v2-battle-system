@@ -4,11 +4,12 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, TYPE_CHECKING
 
+from .damage_aftermath_port import DamageAftermathFact
 from .effects import Effect, EffectSourceRef
 from .recovery_system import RecoveryResult
 from .skill_runtime_registry import PersistentSourceSkillGate
 from .stage10_state_params import RecoveryModelKind, RecoveryPotencyContext
-from .state_generation import StateApplicationGenerationId
+from .state_generation import PersistentLifecycleWindow, StateApplicationGenerationId
 
 if TYPE_CHECKING:
     from .effect_result import EffectExecutionResult
@@ -163,6 +164,8 @@ class RecoveryOpportunity:
     source_skill_gate: PersistentSourceSkillGate = field(
         default_factory=PersistentSourceSkillGate.always_active
     )
+    lifecycle_window: PersistentLifecycleWindow | None = None
+    aftermath_fact: DamageAftermathFact | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.opportunity_kind, RecoveryOpportunityKind):
@@ -173,14 +176,45 @@ class RecoveryOpportunity:
             raise TypeError(
                 f"execution_descriptor must be a RuleIntentExecutionDescriptor, got {type(self.execution_descriptor)}"
             )
+        if isinstance(self.probability, bool) or not isinstance(self.probability, (int, float)):
+            raise TypeError(f"probability must be a float, got {type(self.probability)}")
+        if not (0.0 <= float(self.probability) <= 1.0):
+            raise ValueError(f"probability must be in [0.0, 1.0], got {self.probability}")
+        object.__setattr__(self, "probability", float(self.probability))
+
         if not isinstance(self.recovery_model_kind, RecoveryModelKind):
             raise TypeError(
                 f"recovery_model_kind must be a RecoveryModelKind, got {type(self.recovery_model_kind)}"
+            )
+        if self.recovery_potency_context is not None and not isinstance(
+            self.recovery_potency_context, RecoveryPotencyContext
+        ):
+            raise TypeError(
+                f"recovery_potency_context must be a RecoveryPotencyContext or None, got {type(self.recovery_potency_context)}"
             )
         if not isinstance(self.source_skill_gate, PersistentSourceSkillGate):
             raise TypeError(
                 f"source_skill_gate must be a PersistentSourceSkillGate, got {type(self.source_skill_gate)}"
             )
+        if self.lifecycle_window is not None and not isinstance(
+            self.lifecycle_window, PersistentLifecycleWindow
+        ):
+            raise TypeError(
+                f"lifecycle_window must be a PersistentLifecycleWindow or None, got {type(self.lifecycle_window)}"
+            )
+        if self.aftermath_fact is not None and not isinstance(
+            self.aftermath_fact, DamageAftermathFact
+        ):
+            raise TypeError(
+                f"aftermath_fact must be a DamageAftermathFact or None, got {type(self.aftermath_fact)}"
+            )
+
+        # S10-FG-H02 invariant check:
+        if self.opportunity_kind == RecoveryOpportunityKind.RECUPERATION_ACTION_START:
+            if self.aftermath_fact is not None:
+                raise ValueError(
+                    "S10-FG-H02 invariant violation: DamageAftermathFact must be None for RECUPERATION_ACTION_START"
+                )
 
 
 @dataclass(frozen=True, slots=True)
@@ -191,6 +225,12 @@ class RecoveryOpportunityResult:
     resolution: RecoveryResult | None = None
     executed: bool = False
     reason: str | None = None
+
+    @property
+    def source_generation_id(self) -> StateApplicationGenerationId | None:
+        if self.resolution is not None:
+            return self.resolution.source_generation_id
+        return self.opportunity.execution_descriptor.state_generation_id
 
 
 @dataclass(frozen=True, slots=True)

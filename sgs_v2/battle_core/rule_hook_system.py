@@ -109,6 +109,7 @@ class RuleHookSystem:
         self._trigger = trigger_system
         self._executor = effect_executor
         self._execution_right = ExecutionRightSystem()
+        self._recovery_opportunity_system: object | None = None
         self._recovery_opportunity_handler: (
             Callable[[BattleContext, RecoveryOpportunity], RecoveryOpportunityResult] | None
         ) = None
@@ -122,6 +123,14 @@ class RuleHookSystem:
         if not isinstance(system, ExecutionRightSystem):
             raise TypeError("execution_right_system must be an ExecutionRightSystem")
         self._execution_right = system
+
+    @property
+    def recovery_opportunity_system(self) -> object | None:
+        return self._recovery_opportunity_system
+
+    @recovery_opportunity_system.setter
+    def recovery_opportunity_system(self, system: object | None) -> None:
+        self._recovery_opportunity_system = system
 
     @property
     def recovery_opportunity_handler(
@@ -190,8 +199,18 @@ class RuleHookSystem:
                     result = self._executor.execute(context, intent)
                     intent_results.append(result)
                 elif isinstance(intent, RecoveryOpportunity):
-                    if self._recovery_opportunity_handler is not None:
-                        res = self._recovery_opportunity_handler(context, intent)
+                    handler = (
+                        self._recovery_opportunity_handler
+                        or self._recovery_opportunity_system
+                        or getattr(context, "recovery_opportunity_system", None)
+                    )
+                    if handler is not None:
+                        if hasattr(handler, "evaluate_and_resolve"):
+                            res = handler.evaluate_and_resolve(context, intent)
+                        elif callable(handler):
+                            res = handler(context, intent)
+                        else:
+                            raise TypeError("Invalid recovery opportunity handler")
                     else:
                         res = RecoveryOpportunityResult(
                             opportunity=intent,

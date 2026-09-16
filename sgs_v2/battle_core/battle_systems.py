@@ -26,6 +26,7 @@ from .execution_right_system import (
     LegacyActionDispatchAdapter,
 )
 from .normal_attack_system import NormalAttackSystem
+from .recovery_opportunity_system import RecoveryOpportunitySystem
 from .recovery_system import RecoverySystem
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
@@ -74,6 +75,7 @@ class BattleSystems:
     normal_attack_system: NormalAttackSystem = field(init=False)
     action_system: ActionSystem = field(init=False)
     recovery_system: RecoverySystem = field(init=False)
+    recovery_opportunity_system: RecoveryOpportunitySystem = field(init=False)
     effect_executor: EffectExecutor = field(init=False)
     skill_resolver: SkillResolver = field(init=False)
     trigger_system: TriggerSystem = field(init=False)
@@ -173,6 +175,7 @@ class BattleSystems:
             gate=self.future_admission_gate,
         )
         self.recovery_system = RecoverySystem(self.troop_system)
+        self.recovery_opportunity_system = RecoveryOpportunitySystem(self.recovery_system)
         self.effect_executor = EffectExecutor(
             self.damage_instance_coordinator,
             self.state_lifecycle_system,
@@ -188,4 +191,8 @@ class BattleSystems:
         self.rule_hook_system = RuleHookSystem(
             self.trigger_system,
             self.effect_executor,
+        )
+        self.rule_hook_system.recovery_opportunity_system = self.recovery_opportunity_system
+        self.rule_hook_system.recovery_opportunity_handler = (
+            self.recovery_opportunity_system.evaluate_and_resolve
         )

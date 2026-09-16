@@ -326,8 +326,8 @@ class FirstAidStateParams(StateRuntimeParams):
     Evaluated as an after-damage reaction recovery opportunity.
     """
 
-    probability: float
-    recovery_model_kind: RecoveryModelKind
+    probability: float = 1.0
+    recovery_model_kind: RecoveryModelKind = RecoveryModelKind.TREATMENT_AMOUNT
     application_generation_id: StateApplicationGenerationId | None = None
     lifecycle_window: PersistentLifecycleWindow | None = None
     recovery_potency_context: RecoveryPotencyContext | None = None
@@ -373,7 +373,7 @@ class RecuperationStateParams(StateRuntimeParams):
     Evaluated as a turn-based action-start recovery opportunity.
     """
 
-    probability: float
+    probability: float = 1.0
     application_generation_id: StateApplicationGenerationId | None = None
     lifecycle_window: PersistentLifecycleWindow | None = None
     recovery_potency_context: RecoveryPotencyContext | None = None

@@ -10,7 +10,11 @@ from .stage7_state_params import (
     PeriodicDamageStateParams,
     PeriodicRecoveryStateParams,
 )
-from .stage10_state_params import ContinuousDamageStateParams
+from .stage10_state_params import (
+    ContinuousDamageStateParams,
+    RecuperationStateParams,
+)
+from .recovery_opportunity_system import RecoveryOpportunitySystem
 from .rule_intent import (
     RuleIntent,
     RuleIntentExecutionDescriptor,
@@ -42,7 +46,7 @@ class TriggerSystem:
         self,
         context: BattleContext,
         hook: RuleHook,
-    ) -> tuple[Effect, ...]:
+    ) -> tuple[RuleIntent, ...]:
         if not isinstance(hook, (RoundStartHook, UnitActionStartHook)):
             raise TypeError("hook must be a RuleHook")
 
@@ -56,6 +60,8 @@ class TriggerSystem:
             if isinstance(hook, UnitActionStartHook) and (
                 instance.state_id in _STAGE10_DOT_STATE_IDS
                 or isinstance(instance.runtime_params, ContinuousDamageStateParams)
+                or instance.state_id == OfficialStateId.RECUPERATION.value
+                or isinstance(instance.runtime_params, RecuperationStateParams)
             ):
                 eligible = False
                 if lifecycle is not None and hasattr(lifecycle, "is_state_eligible_at_action_start"):
@@ -75,14 +81,23 @@ class TriggerSystem:
             if required_tag in definition.tags:
                 matched.append(instance)
 
-        effects: list[Effect] = []
+        intents: list[RuleIntent] = []
         for instance in sorted(matched, key=lambda item: item.instance_id):
-            effects.extend(self._effects_for_state(instance))
-        return tuple(effects)
+            intents.extend(self._intents_for_state(instance))
+        return tuple(intents)
+
+    @classmethod
+    def _effects_for_state(cls, instance: StateInstance) -> tuple[RuleIntent, ...]:
+        return cls._intents_for_state(instance)
 
     @staticmethod
-    def _effects_for_state(instance: StateInstance) -> tuple[Effect, ...]:
+    def _intents_for_state(instance: StateInstance) -> tuple[RuleIntent, ...]:
         params = instance.runtime_params
+
+        if instance.state_id == OfficialStateId.RECUPERATION.value or isinstance(params, RecuperationStateParams):
+            return (
+                RecoveryOpportunitySystem.make_recuperation_opportunity(instance),
+            )
 
         if isinstance(params, PeriodicRecoveryStateParams):
             desc = RuleIntentExecutionDescriptor(
