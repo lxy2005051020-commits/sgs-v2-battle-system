@@ -1,61 +1,87 @@
 # 三国志战略版 V2 战斗系统
 
-- [当前项目状态](PROJECT_STATUS.md)
-- [Post-Stage9 当前研究与接入路线](POST_STAGE9_RESEARCH_AND_INTEGRATION_ROADMAP.md)
-- [Stage10 Research Scope](stages/stage10/STAGE10_RESEARCH_SCOPE.md)
-- [各 Stage 文件夹与材料索引](stages/README.md)
-- [历史项目路线图](PROJECT_ROADMAP.md)
-- [跨阶段状态研究](research/README.md)
-- [Stage 9 authority 导航](stages/stage9/README.md)
-- [Stage 9 Final Audit](stages/stage9/STAGE9_FINAL_AUDIT.md)
-- [Stage 9 Freeze Record](stages/stage9/STAGE9_FREEZE_RECORD.md)
+## 当前导航
 
-## 当前边界
+- [当前项目状态](PROJECT_STATUS.md)
+- [第十阶段后 · 官方状态补全与战法接入总路线](POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md)
+- [演示场景套件升级规划](DEMO_SCENARIO_SUITE_ROADMAP.md)
+- [各阶段文件夹与材料索引](stages/README.md)
+- [第十一阶段规划](stages/stage11/STAGE11_PLANNING.md)
+- [第十二阶段规划](stages/stage12/STAGE12_PLANNING.md)
+- [跨阶段状态研究](research/README.md)
+
+历史路线：
+
+- [第九阶段后旧研究与接入路线](POST_STAGE9_RESEARCH_AND_INTEGRATION_ROADMAP.md)
+- [更早期项目路线快照](PROJECT_ROADMAP.md)
+
+## 当前工程边界
 
 ```text
-Stage 8 = FROZEN
-Formal Stage8 Reopen = NO
+第八阶段：已冻结
+第九阶段：已冻结
+第十阶段：已冻结并正式合入主分支
 
-Stage 9 = FROZEN
-Stage9 Implementation = COMPLETE
-Stage9 Final Freeze = COMPLETE
-
-Stage 10 = RESEARCH / DESIGN
-Stage10 Production Implementation = NOT AUTHORIZED
+第十一阶段：规划 / 研究准备
+第十二阶段：规划 / 研究准备
 ```
+
+第十阶段正式主分支合入提交：
+
+`30f623f9efed20b5a82044b51519db1af6da86d3`
+
+后续主分支允许继续增加规划文档，但不得无正式重开流程修改第十阶段冻结语义。
 
 ## 官方状态完成度
 
 当前采用严格完成口径：
 
 ```text
-Research FROZEN
+机制研究冻结
 +
-Runtime FROZEN TO CONTRACT
+运行时冻结到合同
 ```
 
-官方具体状态共 40 个，当前严格完成 8 个，剩余 32 个进入 Post-Stage9 状态完善计划。
+官方具体状态共 40 个。
 
-Stage10 首批目标为已经研究冻结的 8 个持续性状态：
+第十阶段完成后，当前严格完成：
 
 ```text
+16 / 40
+```
+
+已严格完成：
+
+```text
+连击 / 群攻 / 反击 / 分担
+铁索连环 / 援护 / 混乱 / 嘲讽
 灼烧 / 水攻 / 中毒 / 溃逃
 沙暴 / 叛逃 / 急救 / 休整
 ```
 
-状态研究主 authority 位于独立仓库：
+剩余 24 个状态优先安排在第十一、十二阶段补齐。
 
-`lxy2005051020-commits/sgs-state-mechanics-research`
-
-重点文件：
+## 后续主线
 
 ```text
-RESEARCH_ROADMAP_V2.md
-STATE_COMPLETION_MATRIX.md
-STATE_MECHANICS_INDEX.md
+第十一阶段：先补伤害 / 命中 / 恢复 / 行动类状态
+↓
+第十二阶段：补复杂控制与技能权限相关状态，并做 40 / 40 总收口
+↓
+第十三阶段：突击战法
+↓
+第十四阶段：普通主动战法
+↓
+第十五阶段：准备战法
+↓
+后续：被动 / 指挥 / 阵法 / 兵种战法等
 ```
 
-Stage 9 的冻结运行时语义仍以 `stages/stage9/STAGE9_FREEZE_RECORD.md` 为最终 post-implementation authority；新路线不得静默修改已冻结语义。
+## 演示程序
+
+当前 `demo.py` 仍可作为基础入口，但后续将升级为多个固定场景组成的演示套件，用于直观展示已经冻结的战斗能力。
+
+演示不代替正式测试，也不定义机制真相。
 
 从仓库根目录运行：
 
@@ -63,3 +89,7 @@ Stage 9 的冻结运行时语义仍以 `stages/stage9/STAGE9_FREEZE_RECORD.md` �
 python -m pytest -q
 python demo.py
 ```
+
+状态研究主权威仓库：
+
+`lxy2005051020-commits/sgs-state-mechanics-research`
