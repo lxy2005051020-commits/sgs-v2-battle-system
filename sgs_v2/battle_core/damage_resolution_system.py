@@ -281,6 +281,11 @@ class DamageResolutionSystem:
             "source_skill_id": damage.source_skill_id,
             "source_state_id": damage.source_state_id,
             "source_state_instance_id": damage.source_state_instance_id,
+            "source_generation_id": (
+                str(damage.source_generation_id)
+                if damage.source_generation_id is not None
+                else None
+            ),
         }
 
         if damage.prevented:
@@ -426,6 +431,11 @@ class DamageResolutionSystem:
             "source_skill_id": damage.source_skill_id,
             "source_state_id": damage.source_state_id,
             "source_state_instance_id": damage.source_state_instance_id,
+            "source_generation_id": (
+                str(damage.source_generation_id)
+                if damage.source_generation_id is not None
+                else None
+            ),
         }
 
         if damage.prevented:

@@ -662,6 +662,10 @@ class StateLifecycleSystem:
             "owner_id": existing.owner_id,
             "old_application_generation_id": str(existing.current_generation_id),
             "new_application_generation_id": str(new_gen_id),
+            "old_source_generation_id": str(existing.current_generation_id),
+            "new_source_generation_id": str(new_gen_id),
+            "application_generation_id": str(new_gen_id),
+            "source_generation_id": str(new_gen_id),
             "old_source_id": existing.source_id,
             "new_source_id": new_source_id,
             "old_source_skill_id": existing.source_skill_id,
@@ -832,6 +836,62 @@ class StateLifecycleSystem:
             removed.append(inst)
         return removed
 
+    def clear_all_on_battle_end(
+        self,
+        context: BattleContext,
+    ) -> list[StateInstance]:
+        """
+        Cleanses all remaining persistent, temporary, and external state instances across all units
+        strictly upon battle completion/finalization (STAGE10.md §8.1).
+
+        Guarantees:
+        1. Unique Authoritative Owner: StateLifecycleSystem is the single owner of battle teardown.
+        2. Deterministic Ordering: Clears states sorted by instance_id ascending.
+        3. Mutation Safety: Snapshots active instances before iterative removal.
+        4. Idempotency: Multiple invocations cleanly return empty list with zero duplicate events.
+        5. Zero State Leakage: context.states._instances is completely empty afterward.
+        6. Observation Purity: Emits STATE_CLEARED_ON_BATTLE_END (observation-only, non-gameplay).
+        7. Provenance Preservation: Preserves instance_id, state_id, owner_id, current_generation_id,
+           historical source provenance, round, phase, and reason="BATTLE_END".
+        """
+        active_instances = sorted(
+            context.states.find(),
+            key=lambda inst: inst.instance_id,
+        )
+        if not active_instances:
+            return []
+
+        cleared: list[StateInstance] = []
+        for inst in active_instances:
+            if inst.instance_id not in context.states:
+                continue
+            context.states.remove(inst.instance_id)
+            payload = self._event_payload(inst)
+            gen_str = str(inst.current_generation_id) if inst.current_generation_id is not None else None
+            payload["current_generation_id"] = gen_str
+            payload["application_generation_id"] = gen_str
+            payload["source_generation_id"] = gen_str
+            payload["state_instance_id"] = inst.instance_id
+            payload["state_id"] = inst.state_id
+            payload["state_owner_id"] = inst.owner_id
+            payload["round"] = context.current_round
+            payload["phase"] = context.current_phase
+            payload["clear_reason"] = "BATTLE_END"
+            payload["reason"] = "BATTLE_END"
+            payload["removal_reason"] = "BATTLE_END"
+
+            context.event_bus.publish(
+                event_type=EventType.STATE_CLEARED_ON_BATTLE_END,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=inst.source_id,
+                target_id=inst.owner_id,
+                payload=payload,
+            )
+            cleared.append(inst)
+
+        return cleared
+
     def remove(
         self,
         context: BattleContext,
@@ -947,7 +1007,9 @@ class StateLifecycleSystem:
             payload["source_skill_slot"] = instance.source_skill_slot
         if instance.lifecycle_window is not None:
             if instance.current_generation_id is not None:
-                payload["application_generation_id"] = str(instance.current_generation_id)
+                gen_str = str(instance.current_generation_id)
+                payload["application_generation_id"] = gen_str
+                payload["source_generation_id"] = gen_str
             payload["first_eligible_round"] = instance.lifecycle_window.first_eligible_round
             payload["last_eligible_round"] = instance.lifecycle_window.last_eligible_round
         return payload

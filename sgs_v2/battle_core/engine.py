@@ -221,6 +221,7 @@ class BattleEngine:
         self,
         result: FinalizationResult,
     ) -> BattleResult:
+        self.systems.state_lifecycle_system.clear_all_on_battle_end(self.context)
         legacy_result = BattleResult(
             winner_team_id=result.winner_team_id,
             reason=result.reason,
