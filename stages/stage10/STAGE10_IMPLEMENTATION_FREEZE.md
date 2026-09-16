@@ -7,6 +7,7 @@
 > **Target Branch**: `stage10-persistent-state-research`  
 > **Date**: `2026-09-16`  
 > **Governance Authority**: Technical Architecture & Governance Board  
+> **Record Status**: `POST-FREEZE ACCURACY CORRECTION COMPLETE`  
 
 ---
 
@@ -15,6 +16,7 @@
 ```text
 ================================================================================
 STAGE10 IMPLEMENTATION STATUS:  FROZEN
+FREEZE RECORD STATUS:           POST-FREEZE ACCURACY CORRECTION
 DESIGN REOPEN:                  NO
 IMPLEMENTATION REPAIR REQUIRED: NO
 GAMEPLAY RESEARCH BLOCKER:      NO
@@ -24,7 +26,7 @@ FINAL VERDICT:                  PASS / FORMAL IMPLEMENTATION FREEZE COMPLETE
 
 This document establishes the authoritative, unambiguous, and reproducible Implementation Freeze Record for the Stage 10 Persistent State Runtime Integration (`sgs-v2-battle-system`).
 
-Stage 10 has completed all implementation phases (Phase 1 through Phase 8), passed all two-implementer and hardening gates, underwent independent implementation conformance auditing (`PASS / IMPLEMENTATION FREEZE ELIGIBLE`), and satisfied pre-freeze governance verification (`PASS / FORMAL IMPLEMENTATION FREEZE AUTHORIZED`).
+Stage 10 has completed all implementation phases (Phase 1 through Phase 8), passed all two-implementer and hardening gates, underwent independent implementation conformance auditing (`PASS / IMPLEMENTATION FREEZE ELIGIBLE`), satisfied pre-freeze governance verification (`PASS / FORMAL IMPLEMENTATION FREEZE AUTHORIZED`), and finalized post-freeze documentation accuracy closure.
 
 ---
 
@@ -33,26 +35,30 @@ Stage 10 has completed all implementation phases (Phase 1 through Phase 8), pass
 The Stage 10 frozen runtime implementation scope encompasses:
 
 - **Persistent State Identity & Generation System**:
-  - `PersistentStateInstanceId`, `StateGenerationKey`, `GenerationSnapshot`
+  - Physical state identity: `StateInstance.instance_id`
+  - Application / refresh generation identity: `StateApplicationGenerationId`
+  - Invariant: `physical instance identity != application generation identity`
+  - `StateGenerationSnapshot`, `StateGenerationAllocator`, `PersistentLifecycleWindow`
   - Generation identity increment, source fact capture, and refresh preservation
 - **Lifecycle Windows & Timing Architecture**:
   - `ActionProgressTracker` state tracking across round and turn boundaries
-  - `LifecyclePhase`, `LifecycleTrigger`, and event window ordering
+  - `PersistentLifecycleWindow` and event window ordering
 - **RuleIntent & ExecutionRight Framework**:
   - `RuleIntent`, `RuleIntentExecutionDescriptor`
-  - `ExecutionRightDecision` (`ADMIT`, `REJECT_CURRENT`, `ABORT_OWNER_STATE_REMAINDER`, `ABORT_HOOK`)
+  - `ExecutionRightDecisionKind` (`ALLOW`, `REJECT_CURRENT`, `ABORT_OWNER_STATE_REMAINDER`, `ABORT_HOOK`)
+  - `ExecutionRightDecision`, `ExecutionRightReason`
   - Target defeated and owner defeated resolution semantics
 - **Continuous Persistent Damage Lane**:
-  - `ContinuousDamageBasisProducer`, `ContinuousDamageResolutionPort`
+  - `ContinuousDamageBasisProducer` -> typed damage request / frozen basis -> authoritative `DamageSystem` / `DamageResolutionSystem` path
   - `FROZEN_APPLICATION` lane semantics (Frozen Input Replay Model)
   - Frozen continuous damage states: `BURN`, `FLOOD`, `POISON`, `ROUT`, `SANDSTORM`, `REBELLION`
 - **Recovery Opportunity System**:
-  - `RecoveryOpportunitySystem`, `RecoveryAdjudicationPort`
-  - `RecoveryOpportunity` lifecycle and execution
+  - `RecoveryOpportunitySystem`
+  - `RecoveryOpportunity`, `RecoveryOpportunityKind` (`FIRST_AID_AFTER_DAMAGE`, `RECUPERATION_ACTION_START`)
   - Frozen persistent recovery states: `FIRST_AID` (damage aftermath), `RECUPERATION` (action start)
 - **Engine Subsystem Integrations**:
   - `DamageAftermathPort` integration with Stage 9 damage pipeline
-  - `DefeatCleanupSystem` integration with active state lifecycle
+  - `DefeatCleanupPort` integration with active state lifecycle
   - `BattleFinalizationCoordinator` and `StateLifecycleSystem.clear_all_on_battle_end` teardown ownership
   - Generation-level provenance and event projection
 
@@ -149,14 +155,14 @@ The eight official persistent states integrated in Stage 10 are formalized as:
 
 | State Code | State Name | Category | Primary Trigger Phase | Settlement Mechanism |
 |---|---|---|---|---|
-| `690072` | `BURN` (灼烧) | Continuous Damage | `ROUND_ACTION_START` / `TURN_START` | Strategy Damage (`FROZEN_APPLICATION`) |
-| `690073` | `FLOOD` (水攻) | Continuous Damage | `ROUND_ACTION_START` / `TURN_START` | Strategy Damage (`FROZEN_APPLICATION`) |
-| `690074` | `POISON` (中毒) | Continuous Damage | `ROUND_ACTION_START` / `TURN_START` | Strategy Damage (`FROZEN_APPLICATION`) |
-| `690075` | `ROUT` (溃逃) | Continuous Damage | `ROUND_ACTION_START` / `TURN_START` | Weapon Damage (`FROZEN_APPLICATION`) |
-| `690076` | `SANDSTORM` (沙暴) | Continuous Damage | `ROUND_ACTION_START` / `TURN_START` | Strategy Damage (`FROZEN_APPLICATION`) |
-| `690077` | `REBELLION` (叛逃) | Continuous Damage | `ROUND_ACTION_START` / `TURN_START` | Dynamic Route Weapon/Strategy Damage (`FROZEN_APPLICATION`, defense bypass) |
+| `690072` | `BURN` (灼烧) | Continuous Damage | `TARGET_ACTION_START` | Strategy Damage (`FROZEN_APPLICATION`) |
+| `690073` | `FLOOD` (水攻) | Continuous Damage | `TARGET_ACTION_START` | Strategy Damage (`FROZEN_APPLICATION`) |
+| `690074` | `POISON` (中毒) | Continuous Damage | `TARGET_ACTION_START` | Strategy Damage (`FROZEN_APPLICATION`) |
+| `690075` | `ROUT` (溃逃) | Continuous Damage | `TARGET_ACTION_START` | Weapon Damage (`FROZEN_APPLICATION`) |
+| `690076` | `SANDSTORM` (沙暴) | Continuous Damage | `TARGET_ACTION_START` | Strategy Damage (`FROZEN_APPLICATION`) |
+| `690077` | `REBELLION` (叛逃) | Continuous Damage | `TARGET_ACTION_START` | Dynamic Route Weapon/Strategy Damage (`FROZEN_APPLICATION`, defense bypass) |
 | `690078` | `FIRST_AID` (急救) | Persistent Recovery | `AFTER_DAMAGE_EVENT` (Stage 9 aftermath) | Recovery Opportunity (per resolved damage hit) |
-| `690079` | `RECUPERATION` (休整) | Persistent Recovery | `TARGET_ACTION_START` (Turn start) | Recovery Opportunity (max once per round) |
+| `690079` | `RECUPERATION` (休整) | Persistent Recovery | `TARGET_ACTION_START` | Recovery Opportunity (max once per round) |
 
 ---
 
@@ -204,7 +210,9 @@ The following core gameplay contracts are frozen with immutable semantics:
   - If ATK >= INT: select `DamageType.WEAPON`.
   - If INT > ATK: select `DamageType.STRATEGY`.
   - Selected route is locked to the specific state generation snapshot.
-- **Defense Bypass**: Relevant target defense is bypassed using `DamageDefensePolicy.IGNORE_RELEVANT_TARGET_DEFENSE` (target defense or intellect set to 0 in effective defense formula).
+- **Defense Bypass**:
+  - Relevant defense term is bypassed by `DamageDefensePolicy.IGNORE_RELEVANT_TARGET_DEFENSE`.
+  - The target's runtime defense/intelligence attributes are **NOT** mutated.
 - **Negative Invariants**:
   - REBELLION is **NOT** generic 'true damage'.
   - REBELLION is **NOT** `DirectTroopLoss`.
@@ -228,16 +236,17 @@ The following core gameplay contracts are frozen with immutable semantics:
 
 ### 11.4 RECUPERATION (休整, 690079)
 - **Trigger**: `TARGET_ACTION_START` (evaluated when the state owner begins action).
-- **Opportunity Frequency**: Exactly one legal recovery opportunity per state owner per combat round.
+- **Opportunity Frequency**: Exactly one legal Stage 10 ActionStart opportunity per state owner per combat round.
 - **DamageAftermathFact**: `NOT APPLICABLE` (RECUPERATION does not respond to damage aftermath).
 - **ReactionPermissionPolicy**: `NOT APPLICABLE` (RECUPERATION is not an aftermath reaction).
 - **Inactive Source Handling**: If the source tactic/buff becomes temporarily inactive at trigger time, the opportunity for that round is consumed/lost; duration continues to decrement without catch-up ticks.
 
 ### 11.5 ExecutionRight & Lifecycle Adjudication
-- **Target Defeated**: `TARGET_DEFEATED` evaluates to `ExecutionRightDecision.REJECT_CURRENT`.
-- **Owner Defeated**: `OWNER_DEFEATED` evaluates to `ExecutionRightDecision.ABORT_OWNER_STATE_REMAINDER`.
+- **Decision Kinds**: `ExecutionRightDecisionKind.ALLOW`, `ExecutionRightDecisionKind.REJECT_CURRENT`, `ExecutionRightDecisionKind.ABORT_OWNER_STATE_REMAINDER`, `ExecutionRightDecisionKind.ABORT_HOOK`.
+- **Target Defeated**: `TARGET_DEFEATED` evaluates to `ExecutionRightDecisionKind.REJECT_CURRENT`.
+- **Owner Defeated**: `OWNER_DEFEATED` evaluates to `ExecutionRightDecisionKind.ABORT_OWNER_STATE_REMAINDER`.
 - **Owner-Tail Identity Key**: Uses `state_owner_id` to cleanly abort subsequent states belonging to a fallen unit while allowing other units' pending states to proceed.
-- **Battle Finalization**: `BATTLE_FINALIZED` evaluates to `ExecutionRightDecision.ABORT_HOOK`.
+- **Battle Finalization**: `BATTLE_FINALIZED` evaluates to `ExecutionRightDecisionKind.ABORT_HOOK`.
 - **Decoupled Owners**: Scenarios where `intent_owner_id != state_owner_id` (e.g. delegated triggers, persistent buffs on allies) are strictly legal and properly adjudicated.
 
 ### 11.6 Stage 9 Aftermath Integration & Ordering
@@ -307,16 +316,20 @@ The following core gameplay contracts are frozen with immutable semantics:
 
 The Stage 10 implementation freeze baseline is established with the following test verification metrics:
 
-- **Stage 10 Targeted Tests**: `145 passed`
-  - `tests/test_stage10_phase1_primitives.py`: 18 tests
-  - `tests/test_stage10_phase2_lifecycle_generation.py`: 18 tests
-  - `tests/test_stage10_phase3_rule_intent_execution_right.py`: 21 tests
-  - `tests/test_stage10_phase4_continuous_damage_frozen_lane.py`: 17 tests
-  - `tests/test_stage10_phase5_recovery_opportunity_system.py`: 31 tests
-  - `tests/test_stage10_phase6_damage_aftermath_stage9.py`: 24 tests
-  - `tests/test_stage10_phase7_teardown_provenance.py`: 16 tests
-- **Stage 7/8/9 Regression Suites**: `562 passed`
-- **Full Pytest Suite**: `898 passed` in 2.07s
+- **Stage 10 Targeted Tests**: `145 passed in 0.96s`
+  - `tests/test_stage10_phase1_primitives.py`: 28 passed
+  - `tests/test_stage10_phase2_lifecycle_generation.py`: 20 passed
+  - `tests/test_stage10_phase3_rule_intent_execution_right.py`: 17 passed
+  - `tests/test_stage10_phase4_continuous_damage_frozen_lane.py`: 16 passed
+  - `tests/test_stage10_phase5_recovery_opportunity_system.py`: 27 passed
+  - `tests/test_stage10_phase6_damage_aftermath_stage9.py`: 22 passed
+  - `tests/test_stage10_phase7_teardown_provenance.py`: 15 passed
+- **Pre-Stage10 Compatibility Regression**: `562 passed in 1.51s`
+  - Stage 7 Regression (`test_stage7_*.py`): 35 passed
+  - Stage 8 Regression (`test_stage8_*.py`): 120 passed
+  - Stage 9 Regression (`test_stage9_*.py`): 407 passed
+- **Full Pytest Suite**: `898 passed in 1.95s`
+  - Failed: 0, Errors: 0, Skipped: 0
 - **Full Engine Demo (`demo.py`)**: `PASS`
 - **Package Import Sanity (`import sgs_v2`)**: `PASS`
 
@@ -326,26 +339,31 @@ The Stage 10 implementation freeze baseline is established with the following te
 
 ## 15. Change-Control Rules
 
-Effective immediately upon freezing Stage 10:
+### 15.1 Semantic Freeze (Reopen Required)
+Without a formal, authorized `STAGE10 IMPLEMENTATION REOPEN`, no modifications are permitted that alter:
+- Gameplay semantics or rules.
+- Persistent state lifecycle phases, windows, or transitions.
+- Observable execution timing or trigger phases.
+- `ExecutionRight` scope, decision kinds (`ALLOW`, `REJECT_CURRENT`, `ABORT_OWNER_STATE_REMAINDER`, `ABORT_HOOK`), or defeat abort behaviors.
+- Continuous damage tick phases (frozen at `TARGET_ACTION_START`).
+- `FROZEN_APPLICATION` semantics from the Frozen Input Replay Model.
+- `REBELLION` route selection rules, defense bypass policy, or non-mutation guarantees.
+- `FIRST_AID` eligibility rules, per-event granularity, or aftermath integration.
+- `RECUPERATION` `TARGET_ACTION_START` timing or round opportunity cap (max 1 per owner per round).
+- Recovery RNG consumption and deterministic draw policies.
+- Stage 9 aftermath resolution ordering.
+- Battle teardown timing, coordinator checkpointing, or lifecycle ownership.
+- State generation identity hashing, allocation, or provenance models.
 
-1. **Strict Immutability**: No component in `sgs_v2/` or `tests/` covering Stage 10 may be modified without an authorized `STAGE10 IMPLEMENTATION REOPEN`.
-2. **Prohibited Unreopened Changes**:
-   - Modifying persistent state lifecycle phases, windows, or transitions.
-   - Altering `ExecutionRight` scope, decision outcomes, or defeat abort behavior.
-   - Shifting continuous damage tick phases or timing.
-   - Altering `FROZEN_APPLICATION` semantics from the Frozen Input Replay Model.
-   - Modifying `REBELLION` route selection rules or defense bypass policy.
-   - Modifying `FIRST_AID` eligibility rules, granularity, or aftermath integration.
-   - Modifying `RECUPERATION` action-start timing or round opportunity caps.
-   - Modifying Recovery RNG draw policies.
-   - Changing Stage 9 aftermath resolution ordering.
-   - Altering battle teardown ownership or finalization checkpoints.
-   - Modifying generation identity hashing or provenance models.
-3. **Permitted Changes Without Reopen**:
-   - Integration of future Stages (Stage 11+) implementing new game features outside Stage 10 scope.
-   - Addition of new, distinct state classes not belonging to the frozen Stage 10 persistent set.
-   - Internal pure performance optimizations that preserve 100% identical external observables.
-   - Pure documentation typography corrections.
+### 15.2 Non-Semantic Changes Allowed (No Reopen Required)
+Providing that Stage 10 observable behavior remains 100% invariant and all conformance regression tests pass, the following non-semantic engineering changes are permitted without a Stage 10 reopen:
+- Addition of new regression tests expanding coverage.
+- Pure performance optimizations with identical runtime observables.
+- Non-semantic refactoring preserving all contracts and interfaces.
+- Typographical corrections and documentation accuracy improvements.
+- Integration of future Stages (Stage 11+) operating strictly outside frozen Stage 10 scope.
+
+**Strict Prohibition**: Under no circumstances may existing frozen tests be deleted, disabled, weakened, or altered to mask a regression. Any requirement to change expected frozen behavior mandates a formal `STAGE10 IMPLEMENTATION REOPEN`.
 
 ---
 
@@ -367,38 +385,41 @@ A reopen requires a formal Stage 10 Reopen Charter, architecture review, and sub
 - **Origin URL**: `https://github.com/lxy2005051020-commits/sgs-v2-battle-system.git`
 - **Target Branch**: `stage10-persistent-state-research`
 - **Pre-Freeze Synchronization**: Remote HEAD and local HEAD verified identical at `af347116567c43ec90e1e002eae31477bed76ae2`.
-- **Post-Freeze Synchronization**: The implementation freeze commit is pushed directly to `origin/stage10-persistent-state-research`.
+- **Implementation Freeze Commit**: `5e716f9a08b30614f97250fb95f15989286d1a7d`.
+- **Post-Freeze Synchronization**: The accuracy-corrected implementation freeze record is pushed directly to `origin/stage10-persistent-state-research`.
 - **Branch Strategy**: Branch retention policy applies. No merges into `main`, rebase actions, or tag deletions are permitted as part of this freeze step.
 
 ---
 
 ## 18. Final Freeze Verdict
 
-All 19 prerequisite governance criteria have been completely satisfied:
+All 20 prerequisite governance criteria have been completely satisfied:
 
-1. Freeze input HEAD is verified at `af347116567c43ec90e1e002eae31477bed76ae2`.
-2. Remote HEAD and local working tree verified identical and clean prior to freeze.
-3. Baseline tests pass: `898 passed`.
-4. Engine demo passes: `demo.py PASS`.
-5. Package import passes: `IMPORT PASS`.
-6. Production tree pinned: `05511f7576b10efc9664e4e70d9dad88d364966a`.
-7. Tests tree pinned: `122ffd68f1aac06ce353572fd3568aa54d19b5dd`.
-8. Current runtime and test trees proven identical to production pins.
-9. Final implementation conformance audit verified: `PASS / IMPLEMENTATION FREEZE ELIGIBLE`.
-10. Pre-freeze governance correction verified: `PASS / FORMAL IMPLEMENTATION FREEZE AUTHORIZED`.
-11. Gameplay Authority pinned to `a9a05ceffa2a9489cdc1e0a000a4c27bac81a5fe`.
-12. Stages 7, 8, and 9 Compatibility Addenda pinned.
-13. REBELLION semantics accurately formalized as normal damage with defense bypass.
-14. Production code modified: `0 diff`.
-15. Tests modified: `0 diff`.
-16. Only freeze record added: `stages/stage10/STAGE10_IMPLEMENTATION_FREEZE.md`.
-17. Freeze commit generated and recorded.
-18. Post-commit tests and validations pass.
-19. Remote repository synchronized with freeze commit.
+1. Six DOT triggers verified and formalized as `TARGET_ACTION_START`.
+2. `RECUPERATION` verified and formalized as `TARGET_ACTION_START` (max once per owner per round).
+3. Generation symbol names match production (`StateApplicationGenerationId`, `StateGenerationSnapshot`, `StateGenerationAllocator`).
+4. Physical identity terminology matches `StateInstance.instance_id` (`physical instance identity != application generation identity`).
+5. `ExecutionRight` verified to use `ALLOW` (`ExecutionRightDecisionKind.ALLOW`), eliminating non-production `ADMIT`.
+6. Non-existent production symbols removed (`ContinuousDamageResolutionPort`, `RecoveryAdjudicationPort`, `LifecyclePhase`, `LifecycleTrigger`).
+7. `DefeatCleanupPort` named correctly as the authoritative defeat boundary.
+8. `RecoveryOpportunitySystem` named correctly as the authoritative recovery engine.
+9. Test breakdown regenerated and verified against real pytest outputs (28, 20, 17, 16, 27, 22, 15 = 145).
+10. Final Implementation Audit and Freeze Record test breakdown verified in 100% agreement.
+11. Change-control internal contradiction resolved (semantic freeze vs allowed non-semantic changes).
+12. REBELLION wording tightened to guarantee target runtime defense/intelligence attributes are not mutated.
+13. Production code modified: `0 diff` across `sgs_v2/`.
+14. Tests modified: `0 diff` across `tests/`.
+15. Other frozen docs modified: `0 diff` across `stages/`.
+16. Pytest regression suite: `898 passed`.
+17. Full engine demo: `demo.py PASS`.
+18. Package import sanity: `IMPORT PASS`.
+19. Accuracy correction committed with independent governance commit.
+20. Local and remote branches synchronized cleanly.
 
 ```text
 ================================================================================
 FINAL VERDICT:
 STAGE10 IMPLEMENTATION = FROZEN
+STAGE10 IMPLEMENTATION FREEZE RECORD = CLEAN
 ================================================================================
 ```
