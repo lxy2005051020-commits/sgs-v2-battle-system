@@ -16,6 +16,7 @@ from .victory_system import VictorySystem
 
 if TYPE_CHECKING:
     from .context import BattleContext, BattleResult
+    from .state_lifecycle_system import StateLifecycleSystem
 
 
 @dataclass(frozen=True, slots=True, order=False)
@@ -155,6 +156,7 @@ class BattleFinalizationCoordinator:
         self,
         victory_system: VictorySystem,
         id_allocator: OperationIdAllocator | None = None,
+        state_lifecycle_system: StateLifecycleSystem | None = None,
     ) -> None:
         if not isinstance(victory_system, VictorySystem):
             raise TypeError(
@@ -162,6 +164,7 @@ class BattleFinalizationCoordinator:
             )
         self._victory_system = victory_system
         self._id_allocator = id_allocator
+        self._state_lifecycle_system = state_lifecycle_system
         self._owning_context: BattleContext | None = None
         self._termination_state: BattleTerminationState = BattleTerminationState.RUNNING
         self._termination_generation: int = 0
@@ -175,6 +178,10 @@ class BattleFinalizationCoordinator:
         self._action_scope_records: dict[ActionId, ActionScopeAdmissionRecord] = {}
         self._latched_winner_team_id: str | None = None
         self._latched_reason: BattleEndReason | None = None
+
+    @property
+    def state_lifecycle_system(self) -> StateLifecycleSystem | None:
+        return self._state_lifecycle_system
 
     @property
     def owning_context(self) -> BattleContext | None:
@@ -700,3 +707,9 @@ class BattleFinalizationCoordinator:
                 "FinalizationProjectionPermit has already been consumed"
             )
         self._projection_consumed = True
+
+        lifecycle = self._state_lifecycle_system
+        if lifecycle is None and self._owning_context is not None and hasattr(self._owning_context, "systems"):
+            lifecycle = getattr(self._owning_context.systems, "state_lifecycle_system", None)
+        if lifecycle is not None and self._owning_context is not None:
+            lifecycle.clear_all_on_battle_end(self._owning_context)

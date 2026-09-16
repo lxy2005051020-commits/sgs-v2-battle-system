@@ -59,6 +59,12 @@ class StateRegistry:
         except KeyError as exc:
             raise KeyError(f"unknown state instance: {instance_id}") from exc
 
+    def __contains__(self, instance_id: str) -> bool:
+        return instance_id in self._instances
+
+    def has_instance(self, instance_id: str) -> bool:
+        return instance_id in self._instances
+
     def has(self, *, owner_id: str, state_id: str) -> bool:
         return any(
             instance.owner_id == owner_id and instance.state_id == state_id

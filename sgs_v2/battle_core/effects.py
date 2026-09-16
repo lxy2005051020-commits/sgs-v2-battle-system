@@ -1,14 +1,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import TYPE_CHECKING
 
 from .damage_system import DamageRequest
-from .enums import DamageSourceType, DamageType
+from .enums import DamageCalculationBasis, DamageSourceType, DamageType
 from .numeric_validation import validate_nonnegative_finite
 from .operation_identity import SourceType
 from .recovery_system import RecoveryRequest
 from .skill_runtime import SkillSlot
+from .stage10_state_params import FrozenContinuousDamageBasis
+from .state_generation import StateApplicationGenerationId
 from .state_runtime_params import EmptyStateRuntimeParams, StateRuntimeParams
+
+if TYPE_CHECKING:
+    from .rule_intent import RuleIntentExecutionDescriptor
 
 
 def _validate_optional_id(value: str | None, field_name: str) -> None:
@@ -27,6 +33,15 @@ def _validate_state_provenance_pair(
     if (source_state_id is None) != (source_state_instance_id is None):
         raise ValueError(
             "source_state_id and source_state_instance_id must both be set or both be None"
+        )
+
+
+def _validate_execution_descriptor(descriptor: object) -> None:
+    if descriptor is None:
+        return
+    if type(descriptor).__name__ != "RuleIntentExecutionDescriptor":
+        raise TypeError(
+            f"execution_descriptor must be a RuleIntentExecutionDescriptor or None, got {type(descriptor)}"
         )
 
 
@@ -68,6 +83,12 @@ class DamageEffect:
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
     source_ref: EffectSourceRef | None = None
+    execution_descriptor: RuleIntentExecutionDescriptor | None = field(
+        default=None, compare=False
+    )
+    calculation_basis: DamageCalculationBasis = DamageCalculationBasis.LIVE_RUNTIME
+    frozen_basis: FrozenContinuousDamageBasis | None = None
+    source_generation_id: StateApplicationGenerationId | None = None
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -89,6 +110,22 @@ class DamageEffect:
             self.source_state_id,
             self.source_state_instance_id,
         )
+        if not isinstance(self.calculation_basis, DamageCalculationBasis):
+            raise TypeError("calculation_basis must be a DamageCalculationBasis")
+        if self.calculation_basis is DamageCalculationBasis.FROZEN_APPLICATION:
+            if self.source_type is not DamageSourceType.CONTINUOUS:
+                raise ValueError("FROZEN_APPLICATION is only authorized for CONTINUOUS damage")
+            if self.frozen_basis is None:
+                raise ValueError("frozen_basis is required for FROZEN_APPLICATION")
+            if not isinstance(self.frozen_basis, FrozenContinuousDamageBasis):
+                raise TypeError("frozen_basis must be a FrozenContinuousDamageBasis")
+            if self.source_generation_id is None:
+                raise ValueError("source_generation_id is required for FROZEN_APPLICATION")
+            if not isinstance(self.source_generation_id, StateApplicationGenerationId):
+                raise TypeError("source_generation_id must be a StateApplicationGenerationId")
+        else:
+            if self.frozen_basis is not None:
+                raise ValueError("frozen_basis must be None for LIVE_RUNTIME")
         if self.source_ref is not None:
             if not isinstance(self.source_ref, EffectSourceRef):
                 raise TypeError("source_ref must be an EffectSourceRef or None")
@@ -101,6 +138,7 @@ class DamageEffect:
                     raise ValueError(
                         f"source_ref.source_skill_id '{self.source_ref.source_skill_id}' does not match source_skill_id '{self.source_skill_id}'"
                     )
+        _validate_execution_descriptor(self.execution_descriptor)
 
     def to_request(self) -> DamageRequest:
         return DamageRequest(
@@ -112,6 +150,9 @@ class DamageEffect:
             source_skill_id=self.source_skill_id,
             source_state_id=self.source_state_id,
             source_state_instance_id=self.source_state_instance_id,
+            calculation_basis=self.calculation_basis,
+            frozen_basis=self.frozen_basis,
+            source_generation_id=self.source_generation_id,
         )
 
 
@@ -127,6 +168,9 @@ class ApplyStateEffect:
         default_factory=EmptyStateRuntimeParams
     )
     source_ref: EffectSourceRef | None = None
+    execution_descriptor: RuleIntentExecutionDescriptor | None = field(
+        default=None, compare=False
+    )
 
     def __post_init__(self) -> None:
         if not self.state_id:
@@ -150,15 +194,20 @@ class ApplyStateEffect:
                     raise ValueError(
                         f"source_ref.source_skill_id '{self.source_ref.source_skill_id}' does not match source_skill_id '{self.source_skill_id}'"
                     )
+        _validate_execution_descriptor(self.execution_descriptor)
 
 
 @dataclass(frozen=True, slots=True)
 class RemoveStateEffect:
     instance_id: str
+    execution_descriptor: RuleIntentExecutionDescriptor | None = field(
+        default=None, compare=False
+    )
 
     def __post_init__(self) -> None:
         if not self.instance_id:
             raise ValueError("instance_id cannot be empty")
+        _validate_execution_descriptor(self.execution_descriptor)
 
 
 @dataclass(frozen=True, slots=True)
@@ -171,6 +220,9 @@ class RecoverEffect:
     source_skill_id: str | None = None
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
+    execution_descriptor: RuleIntentExecutionDescriptor | None = field(
+        default=None, compare=False
+    )
 
     def __post_init__(self) -> None:
         _validate_optional_id(self.source_id, "source_id")
@@ -192,6 +244,7 @@ class RecoverEffect:
             raise TypeError("amount must be an int")
         if self.amount < 0:
             raise ValueError("amount must be >= 0")
+        _validate_execution_descriptor(self.execution_descriptor)
 
     def to_request(self) -> RecoveryRequest:
         return RecoveryRequest(

@@ -206,10 +206,13 @@ class DamageResolutionSystem:
         troop_system: TroopSystem,
         *,
         coordinator: DamageInstanceCoordinator | None = None,
+        defeat_cleanup_port: Any = None,
     ) -> None:
         self._damage = damage_system
         self._troops = troop_system
         self._coordinator = coordinator
+        self._defeat_cleanup = defeat_cleanup_port
+
 
     def bind_coordinator(self, coordinator: DamageInstanceCoordinator) -> None:
         self._coordinator = coordinator
@@ -278,6 +281,11 @@ class DamageResolutionSystem:
             "source_skill_id": damage.source_skill_id,
             "source_state_id": damage.source_state_id,
             "source_state_instance_id": damage.source_state_instance_id,
+            "source_generation_id": (
+                str(damage.source_generation_id)
+                if damage.source_generation_id is not None
+                else None
+            ),
         }
 
         if damage.prevented:
@@ -345,6 +353,17 @@ class DamageResolutionSystem:
                 target_id=damage.target_id,
                 payload={"target_name": target.name},
             )
+            defeat_cleanup = (
+                self._defeat_cleanup
+                or getattr(getattr(context, "systems", None), "defeat_cleanup_port", None)
+            )
+            if defeat_cleanup is not None:
+                defeat_cleanup.commit_defeat(
+                    context,
+                    defeated_unit_id=target.unit_id,
+                    defeat_source_ref=damage.source_id,
+                )
+
 
         return DamageResolutionResult(
             damage=damage,
@@ -412,6 +431,11 @@ class DamageResolutionSystem:
             "source_skill_id": damage.source_skill_id,
             "source_state_id": damage.source_state_id,
             "source_state_instance_id": damage.source_state_instance_id,
+            "source_generation_id": (
+                str(damage.source_generation_id)
+                if damage.source_generation_id is not None
+                else None
+            ),
         }
 
         if damage.prevented:
@@ -480,6 +504,17 @@ class DamageResolutionSystem:
                 target_id=damage.target_id,
                 payload={"target_name": target.name},
             )
+            defeat_cleanup = (
+                self._defeat_cleanup
+                or getattr(getattr(context, "systems", None), "defeat_cleanup_port", None)
+            )
+            if defeat_cleanup is not None:
+                defeat_cleanup.commit_defeat(
+                    context,
+                    defeated_unit_id=target.unit_id,
+                    defeat_source_ref=damage.source_id,
+                )
+
 
         return DamageResolutionResult(
             damage=damage,

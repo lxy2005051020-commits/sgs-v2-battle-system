@@ -5,7 +5,10 @@ from typing import TYPE_CHECKING
 
 from .enums import BattlePhase
 from .events import EventType
-from .official_state_catalog import OfficialStateId
+from .official_state_catalog import (
+    OfficialStateId,
+    get_stage10_persistent_params_type,
+)
 from .skill_runtime import SkillSlot
 from .stage9_state_params import (
     ComboStateParams,
@@ -13,6 +16,16 @@ from .stage9_state_params import (
     DistributionStateParams,
     GuardStateParams,
     TauntStateParams,
+)
+from .stage10_state_params import (
+    ContinuousDamageStateParams,
+    FirstAidStateParams,
+    RecuperationStateParams,
+)
+from .state_generation import (
+    PersistentLifecycleWindow,
+    StateApplicationGenerationId,
+    StateGenerationAllocator,
 )
 from .state_instance import StateInstance
 from .state_runtime_params import (
@@ -45,8 +58,89 @@ _PHASE_ORDER = {
 }
 
 
+_STAGE10_PERSISTENT_STATE_IDS = frozenset(
+    {
+        OfficialStateId.BURN.value,
+        OfficialStateId.FLOOD.value,
+        OfficialStateId.POISON.value,
+        OfficialStateId.ROUT.value,
+        OfficialStateId.SANDSTORM.value,
+        OfficialStateId.REBELLION.value,
+        OfficialStateId.FIRST_AID.value,
+        OfficialStateId.RECUPERATION.value,
+    }
+)
+
+
+def _is_stage10_persistent_state(
+    state_id: str,
+    runtime_params: StateRuntimeParams | None = None,
+    duration_rounds: int | None = None,
+    lifecycle_window: PersistentLifecycleWindow | None = None,
+) -> bool:
+    if state_id in _STAGE10_PERSISTENT_STATE_IDS:
+        return True
+    if isinstance(
+        runtime_params,
+        (ContinuousDamageStateParams, FirstAidStateParams, RecuperationStateParams),
+    ):
+        return True
+    if duration_rounds is not None or lifecycle_window is not None:
+        return True
+    return False
+
+
 class StateLifecycleSystem:
     """状态加入、显式移除与自然到期的唯一正式写入口。"""
+
+    def __init__(
+        self,
+        allocator: StateGenerationAllocator | None = None,
+        basis_producer: object | None = None,
+    ) -> None:
+        self._allocator = allocator or StateGenerationAllocator()
+        self._basis_producer = basis_producer
+
+    def calculate_lifecycle_window(
+        self,
+        context: BattleContext,
+        *,
+        owner_id: str,
+        duration_rounds: int,
+    ) -> PersistentLifecycleWindow:
+        if not isinstance(duration_rounds, int) or isinstance(duration_rounds, bool):
+            raise TypeError("duration_rounds must be an int")
+        if duration_rounds < 1:
+            raise ValueError("duration_rounds must be >= 1")
+
+        if (
+            context.current_round == 0
+            or context.current_phase == BattlePhase.PRE_BATTLE.value
+        ):
+            return PersistentLifecycleWindow(
+                application_phase=BattlePhase.PRE_BATTLE.value,
+                application_round=0,
+                first_eligible_round=1,
+                last_eligible_round=duration_rounds,
+                max_opportunities_per_owner_round=1,
+            )
+
+        app_round = context.current_round
+        app_phase = context.current_phase
+        if context.action_progress.has_acted_in_round(owner_id, app_round):
+            first_eligible = app_round + 1
+            last_eligible = app_round + duration_rounds
+        else:
+            first_eligible = app_round
+            last_eligible = app_round + duration_rounds - 1
+
+        return PersistentLifecycleWindow(
+            application_phase=app_phase,
+            application_round=app_round,
+            first_eligible_round=first_eligible,
+            last_eligible_round=last_eligible,
+            max_opportunities_per_owner_round=1,
+        )
 
     def apply(
         self,
@@ -60,6 +154,8 @@ class StateLifecycleSystem:
         expires_round: int | None = None,
         expires_phase: str | None = None,
         runtime_params: StateRuntimeParams | None = None,
+        duration_rounds: int | None = None,
+        lifecycle_window: PersistentLifecycleWindow | None = None,
     ) -> StateInstance:
         definition = context.states.get_definition(state_id)
         context.get_unit(owner_id)
@@ -91,6 +187,13 @@ class StateLifecycleSystem:
             expires_phase=expires_phase,
         )
 
+        is_stage10_persistent = _is_stage10_persistent_state(
+            state_id=state_id,
+            runtime_params=runtime_params,
+            duration_rounds=duration_rounds,
+            lifecycle_window=lifecycle_window,
+        )
+
         if runtime_params is None:
             if definition.runtime_params_type is EmptyStateRuntimeParams:
                 actual_runtime_params = EmptyStateRuntimeParams()
@@ -103,11 +206,20 @@ class StateLifecycleSystem:
             actual_runtime_params = runtime_params
 
         if not isinstance(actual_runtime_params, definition.runtime_params_type):
-            raise TypeError(
-                "runtime_params type mismatch for state "
-                f"{state_id}: expected {definition.runtime_params_type.__name__}, "
-                f"got {type(actual_runtime_params).__name__}"
-            )
+            if is_stage10_persistent:
+                expected_stage10_type = get_stage10_persistent_params_type(state_id)
+                if not isinstance(actual_runtime_params, expected_stage10_type):
+                    raise TypeError(
+                        "runtime_params type mismatch for state "
+                        f"{state_id}: expected {expected_stage10_type.__name__}, "
+                        f"got {type(actual_runtime_params).__name__}"
+                    )
+            else:
+                raise TypeError(
+                    "runtime_params type mismatch for state "
+                    f"{state_id}: expected {definition.runtime_params_type.__name__}, "
+                    f"got {type(actual_runtime_params).__name__}"
+                )
 
         if state_id == OfficialStateId.COMBO.value:
             existing_combo = context.states.find(
@@ -156,6 +268,118 @@ class StateLifecycleSystem:
                 ):
                     self.remove(context, existing.instance_id)
 
+        is_stage10_persistent = _is_stage10_persistent_state(
+            state_id=state_id,
+            runtime_params=actual_runtime_params,
+            duration_rounds=duration_rounds,
+            lifecycle_window=lifecycle_window,
+        )
+
+        if is_stage10_persistent:
+            existing_states = context.states.find(owner_id=owner_id, state_id=state_id)
+            if existing_states:
+                existing = existing_states[0]
+                return self.refresh(
+                    context,
+                    instance_id=existing.instance_id,
+                    source_id=source_id,
+                    source_skill_id=source_skill_id,
+                    source_skill_slot=source_skill_slot,
+                    duration_rounds=duration_rounds,
+                    lifecycle_window=lifecycle_window,
+                    runtime_params=actual_runtime_params,
+                )
+
+            if lifecycle_window is not None:
+                actual_window = lifecycle_window
+            elif duration_rounds is not None:
+                actual_window = self.calculate_lifecycle_window(
+                    context, owner_id=owner_id, duration_rounds=duration_rounds
+                )
+            elif hasattr(actual_runtime_params, "lifecycle_window"):
+                actual_window = getattr(actual_runtime_params, "lifecycle_window", None)
+            else:
+                actual_window = None
+
+            allocator = getattr(context, "generation_allocator", None) or self._allocator
+            gen_id = allocator.allocate()
+            inst_id = context.states.next_instance_id()
+
+            if isinstance(
+                actual_runtime_params,
+                (ContinuousDamageStateParams, FirstAidStateParams, RecuperationStateParams),
+            ):
+                actual_runtime_params = dataclasses.replace(
+                    actual_runtime_params,
+                    application_generation_id=gen_id,
+                    lifecycle_window=actual_window,
+                )
+                if isinstance(actual_runtime_params, ContinuousDamageStateParams):
+                    if actual_runtime_params.frozen_damage_basis is not None:
+                        updated_basis = dataclasses.replace(
+                            actual_runtime_params.frozen_damage_basis,
+                            application_generation_id=gen_id,
+                            physical_state_instance_id=inst_id,
+                            source_unit_id=source_id or actual_runtime_params.frozen_damage_basis.source_unit_id,
+                        )
+                        actual_runtime_params = dataclasses.replace(
+                            actual_runtime_params,
+                            frozen_damage_basis=updated_basis,
+                        )
+                    elif source_id is not None:
+                        from .continuous_damage_basis_producer import (
+                            ContinuousDamageApplicationRequest,
+                            ContinuousDamageBasisProducer,
+                        )
+                        producer = self._basis_producer or getattr(context, "continuous_damage_basis_producer", None)
+                        if producer is None:
+                            producer = ContinuousDamageBasisProducer()
+                        captured_basis = producer.capture(
+                            context,
+                            ContinuousDamageApplicationRequest(
+                                source_id=source_id,
+                                target_id=owner_id,
+                                state_id=state_id,
+                                application_generation_id=gen_id,
+                                source_skill_id=source_skill_id,
+                                source_skill_slot=source_skill_slot,
+                                physical_state_instance_id=inst_id,
+                            ),
+                        )
+                        actual_runtime_params = dataclasses.replace(
+                            actual_runtime_params,
+                            frozen_damage_basis=captured_basis,
+                        )
+
+            instance = StateInstance(
+                instance_id=inst_id,
+                state_id=state_id,
+                owner_id=owner_id,
+                source_id=source_id,
+                source_skill_id=source_skill_id,
+                source_skill_slot=source_skill_slot,
+                applied_round=context.current_round,
+                applied_phase=context.current_phase,
+                expires_round=expires_round,
+                expires_phase=expires_phase,
+                runtime_params=actual_runtime_params,
+                current_generation_id=gen_id,
+                lifecycle_window=actual_window,
+            )
+            context.states.add(instance)
+
+            context.event_bus.publish(
+                event_type=EventType.STATE_APPLIED,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=source_id,
+                target_id=owner_id,
+                payload=self._event_payload(instance),
+            )
+            return instance
+
+        allocator = getattr(context, "generation_allocator", None) or self._allocator
+        gen_id = allocator.allocate()
         instance = StateInstance(
             instance_id=context.states.next_instance_id(),
             state_id=state_id,
@@ -168,6 +392,7 @@ class StateLifecycleSystem:
             expires_round=expires_round,
             expires_phase=expires_phase,
             runtime_params=actual_runtime_params,
+            current_generation_id=gen_id,
         )
         context.states.add(instance)
 
@@ -242,11 +467,20 @@ class StateLifecycleSystem:
 
         definition = context.states.get_definition(instance.state_id)
         if not isinstance(runtime_params, definition.runtime_params_type):
-            raise TypeError(
-                f"runtime_params type mismatch for state {instance.state_id}: "
-                f"expected {definition.runtime_params_type.__name__}, "
-                f"got {type(runtime_params).__name__}"
-            )
+            if self._is_stage10_persistent_state(instance.state_id):
+                expected_stage10_type = get_stage10_persistent_params_type(instance.state_id)
+                if not isinstance(runtime_params, expected_stage10_type):
+                    raise TypeError(
+                        f"runtime_params type mismatch for state {instance.state_id}: "
+                        f"expected {expected_stage10_type.__name__}, "
+                        f"got {type(runtime_params).__name__}"
+                    )
+            else:
+                raise TypeError(
+                    f"runtime_params type mismatch for state {instance.state_id}: "
+                    f"expected {definition.runtime_params_type.__name__}, "
+                    f"got {type(runtime_params).__name__}"
+                )
 
         if instance.state_id == OfficialStateId.GUARD.value:
             assert isinstance(runtime_params, GuardStateParams)
@@ -318,19 +552,365 @@ class StateLifecycleSystem:
                 return self.update_runtime_params(context, instance.instance_id, new_params)
         return instance
 
+    def refresh(
+        self,
+        context: BattleContext,
+        *,
+        instance_id: str,
+        source_id: str | None = None,
+        source_skill_id: str | None = None,
+        source_skill_slot: SkillSlot | None = None,
+        duration_rounds: int | None = None,
+        lifecycle_window: PersistentLifecycleWindow | None = None,
+        runtime_params: StateRuntimeParams | None = None,
+    ) -> StateInstance:
+        existing = context.states.get(instance_id)
+
+        allocator = getattr(context, "generation_allocator", None) or self._allocator
+        new_gen_id = allocator.allocate()
+
+        if lifecycle_window is not None:
+            new_window = lifecycle_window
+        elif duration_rounds is not None:
+            new_window = self.calculate_lifecycle_window(
+                context, owner_id=existing.owner_id, duration_rounds=duration_rounds
+            )
+        else:
+            new_window = (
+                getattr(runtime_params, "lifecycle_window", None)
+                or existing.lifecycle_window
+            )
+
+        new_source_id = source_id if source_id is not None else existing.source_id
+        new_source_skill_id = (
+            source_skill_id if source_skill_id is not None else existing.source_skill_id
+        )
+        new_source_skill_slot = (
+            source_skill_slot if source_skill_slot is not None else existing.source_skill_slot
+        )
+
+        new_params = runtime_params if runtime_params is not None else existing.runtime_params
+
+        if isinstance(
+            new_params,
+            (ContinuousDamageStateParams, FirstAidStateParams, RecuperationStateParams),
+        ):
+            new_params = dataclasses.replace(
+                new_params,
+                application_generation_id=new_gen_id,
+                lifecycle_window=new_window,
+            )
+            if isinstance(new_params, ContinuousDamageStateParams):
+                if runtime_params is not None and runtime_params.frozen_damage_basis is not None:
+                    updated_basis = dataclasses.replace(
+                        runtime_params.frozen_damage_basis,
+                        application_generation_id=new_gen_id,
+                        physical_state_instance_id=existing.instance_id,
+                        source_unit_id=new_source_id or runtime_params.frozen_damage_basis.source_unit_id,
+                    )
+                    new_params = dataclasses.replace(
+                        new_params,
+                        frozen_damage_basis=updated_basis,
+                    )
+                elif new_source_id is not None:
+                    coef = 1.0
+                    if existing.runtime_params and getattr(existing.runtime_params, "frozen_damage_basis", None):
+                        old_b = existing.runtime_params.frozen_damage_basis
+                        if old_b is not None:
+                            coef = old_b.coefficient
+                    from .continuous_damage_basis_producer import (
+                        ContinuousDamageApplicationRequest,
+                        ContinuousDamageBasisProducer,
+                    )
+                    producer = self._basis_producer or getattr(context, "continuous_damage_basis_producer", None)
+                    if producer is None:
+                        producer = ContinuousDamageBasisProducer()
+                    captured_basis = producer.capture(
+                        context,
+                        ContinuousDamageApplicationRequest(
+                            source_id=new_source_id,
+                            target_id=existing.owner_id,
+                            state_id=existing.state_id,
+                            application_generation_id=new_gen_id,
+                            coefficient=coef,
+                            source_skill_id=new_source_skill_id,
+                            source_skill_slot=new_source_skill_slot,
+                            physical_state_instance_id=existing.instance_id,
+                        ),
+                    )
+                    new_params = dataclasses.replace(
+                        new_params,
+                        frozen_damage_basis=captured_basis,
+                    )
+
+        updated = dataclasses.replace(
+            existing,
+            source_id=new_source_id,
+            source_skill_id=new_source_skill_id,
+            source_skill_slot=new_source_skill_slot,
+            applied_round=context.current_round,
+            applied_phase=context.current_phase,
+            runtime_params=new_params,
+            current_generation_id=new_gen_id,
+            lifecycle_window=new_window,
+        )
+        context.states.replace(updated)
+
+        payload = {
+            "physical_instance_id": existing.instance_id,
+            "state_id": existing.state_id,
+            "owner_id": existing.owner_id,
+            "old_application_generation_id": str(existing.current_generation_id),
+            "new_application_generation_id": str(new_gen_id),
+            "old_source_generation_id": str(existing.current_generation_id),
+            "new_source_generation_id": str(new_gen_id),
+            "application_generation_id": str(new_gen_id),
+            "source_generation_id": str(new_gen_id),
+            "old_source_id": existing.source_id,
+            "new_source_id": new_source_id,
+            "old_source_skill_id": existing.source_skill_id,
+            "new_source_skill_id": new_source_skill_id,
+            "old_source_skill_slot": existing.source_skill_slot,
+            "new_source_skill_slot": new_source_skill_slot,
+            "old_first_eligible_round": (
+                existing.lifecycle_window.first_eligible_round
+                if existing.lifecycle_window
+                else None
+            ),
+            "new_first_eligible_round": (
+                new_window.first_eligible_round if new_window else None
+            ),
+            "old_last_eligible_round": (
+                existing.lifecycle_window.last_eligible_round
+                if existing.lifecycle_window
+                else None
+            ),
+            "new_last_eligible_round": (
+                new_window.last_eligible_round if new_window else None
+            ),
+            "old_runtime_params_type": type(existing.runtime_params).__name__,
+            "new_runtime_params_type": type(new_params).__name__,
+        }
+        context.event_bus.publish(
+            event_type=EventType.STATE_REFRESHED,
+            phase=context.current_phase,
+            round_no=context.current_round,
+            actor_id=new_source_id,
+            target_id=existing.owner_id,
+            payload=payload,
+        )
+        return updated
+
+    def is_generation_eligible_at_action_start(
+        self,
+        context: BattleContext,
+        instance: StateInstance,
+        generation_id: StateApplicationGenerationId | None = None,
+    ) -> bool:
+        if instance.lifecycle_window is None:
+            return False
+        if (
+            generation_id is not None
+            and instance.current_generation_id != generation_id
+        ):
+            return False
+        window = instance.lifecycle_window
+        if not window.is_round_eligible(context.current_round):
+            return False
+        if (
+            context.action_progress.current_acting_unit is not None
+            and context.action_progress.current_acting_unit != instance.owner_id
+        ):
+            return False
+        if not context.action_progress.has_consumed_action_start(
+            instance.owner_id, context.current_round
+        ):
+            return False
+        if not context.action_progress.is_action_start_opportunity_eligible(
+            instance.owner_id, context.current_round
+        ):
+            return False
+        return True
+
+    def is_state_eligible_at_action_start(
+        self,
+        context: BattleContext,
+        instance: StateInstance,
+    ) -> bool:
+        return self.is_generation_eligible_at_action_start(
+            context, instance, instance.current_generation_id
+        )
+
+    def expire_state(
+        self,
+        context: BattleContext,
+        instance_id: str,
+        *,
+        expected_generation_id: StateApplicationGenerationId | None = None,
+        reason: str = "DURATION_EXPIRED",
+    ) -> StateInstance | None:
+        if instance_id not in context.states:
+            return None
+        instance = context.states.get(instance_id)
+        if (
+            expected_generation_id is not None
+            and instance.current_generation_id != expected_generation_id
+        ):
+            return None
+
+        context.states.remove(instance_id)
+        payload = self._event_payload(instance)
+        payload["application_generation_id"] = str(instance.current_generation_id)
+        payload["reason"] = reason
+        context.event_bus.publish(
+            event_type=EventType.STATE_EXPIRED,
+            phase=context.current_phase,
+            round_no=context.current_round,
+            actor_id=instance.source_id,
+            target_id=instance.owner_id,
+            payload=payload,
+        )
+        return instance
+
+    def expire_if_current_generation(
+        self,
+        context: BattleContext,
+        instance_id: str,
+        generation_id: StateApplicationGenerationId,
+        *,
+        reason: str = "DURATION_EXPIRED",
+    ) -> StateInstance | None:
+        return self.expire_state(
+            context,
+            instance_id,
+            expected_generation_id=generation_id,
+            reason=reason,
+        )
+
+    def expire_eligible_states(
+        self,
+        context: BattleContext,
+        owner_id: str,
+    ) -> list[StateInstance]:
+        expired: list[StateInstance] = []
+        owner_instances = [
+            inst
+            for inst in context.states.find(owner_id=owner_id)
+            if inst.lifecycle_window is not None
+        ]
+        for inst in owner_instances:
+            if context.current_round >= inst.lifecycle_window.last_eligible_round:
+                res = self.expire_state(
+                    context,
+                    inst.instance_id,
+                    expected_generation_id=inst.current_generation_id,
+                )
+                if res is not None:
+                    expired.append(res)
+        return expired
+
+    def clear_owner_on_defeat(
+        self,
+        context: BattleContext,
+        owner_id: str,
+    ) -> list[StateInstance]:
+        owner_instances = sorted(
+            context.states.find(owner_id=owner_id),
+            key=lambda x: x.instance_id,
+        )
+        removed: list[StateInstance] = []
+        for inst in owner_instances:
+            context.states.remove(inst.instance_id)
+            payload = self._event_payload(inst)
+            payload["application_generation_id"] = str(inst.current_generation_id)
+            payload["removal_reason"] = "OWNER_DEFEATED"
+            payload["reason"] = "OWNER_DEFEATED"
+            context.event_bus.publish(
+                event_type=EventType.STATE_REMOVED,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=inst.source_id,
+                target_id=inst.owner_id,
+                payload=payload,
+            )
+            removed.append(inst)
+        return removed
+
+    def clear_all_on_battle_end(
+        self,
+        context: BattleContext,
+    ) -> list[StateInstance]:
+        """
+        Cleanses all remaining persistent, temporary, and external state instances across all units
+        strictly upon battle completion/finalization (STAGE10.md §8.1).
+
+        Guarantees:
+        1. Unique Authoritative Owner: StateLifecycleSystem is the single owner of battle teardown.
+        2. Deterministic Ordering: Clears states sorted by instance_id ascending.
+        3. Mutation Safety: Snapshots active instances before iterative removal.
+        4. Idempotency: Multiple invocations cleanly return empty list with zero duplicate events.
+        5. Zero State Leakage: context.states._instances is completely empty afterward.
+        6. Observation Purity: Emits STATE_CLEARED_ON_BATTLE_END (observation-only, non-gameplay).
+        7. Provenance Preservation: Preserves instance_id, state_id, owner_id, current_generation_id,
+           historical source provenance, round, phase, and reason="BATTLE_END".
+        """
+        active_instances = sorted(
+            context.states.find(),
+            key=lambda inst: inst.instance_id,
+        )
+        if not active_instances:
+            return []
+
+        cleared: list[StateInstance] = []
+        for inst in active_instances:
+            if inst.instance_id not in context.states:
+                continue
+            context.states.remove(inst.instance_id)
+            payload = self._event_payload(inst)
+            gen_str = str(inst.current_generation_id) if inst.current_generation_id is not None else None
+            payload["current_generation_id"] = gen_str
+            payload["application_generation_id"] = gen_str
+            payload["source_generation_id"] = gen_str
+            payload["state_instance_id"] = inst.instance_id
+            payload["state_id"] = inst.state_id
+            payload["state_owner_id"] = inst.owner_id
+            payload["round"] = context.current_round
+            payload["phase"] = context.current_phase
+            payload["clear_reason"] = "BATTLE_END"
+            payload["reason"] = "BATTLE_END"
+            payload["removal_reason"] = "BATTLE_END"
+
+            context.event_bus.publish(
+                event_type=EventType.STATE_CLEARED_ON_BATTLE_END,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=inst.source_id,
+                target_id=inst.owner_id,
+                payload=payload,
+            )
+            cleared.append(inst)
+
+        return cleared
+
     def remove(
         self,
         context: BattleContext,
         instance_id: str,
+        *,
+        reason: str | None = None,
     ) -> StateInstance:
         instance = context.states.remove(instance_id)
+        payload = self._event_payload(instance)
+        if reason is not None:
+            payload["removal_reason"] = reason
+            payload["reason"] = reason
         context.event_bus.publish(
             event_type=EventType.STATE_REMOVED,
             phase=context.current_phase,
             round_no=context.current_round,
             actor_id=instance.source_id,
             target_id=instance.owner_id,
-            payload=self._event_payload(instance),
+            payload=payload,
         )
         return instance
 
@@ -425,4 +1005,11 @@ class StateLifecycleSystem:
         }
         if instance.source_skill_slot is not None:
             payload["source_skill_slot"] = instance.source_skill_slot
+        if instance.lifecycle_window is not None:
+            if instance.current_generation_id is not None:
+                gen_str = str(instance.current_generation_id)
+                payload["application_generation_id"] = gen_str
+                payload["source_generation_id"] = gen_str
+            payload["first_eligible_round"] = instance.lifecycle_window.first_eligible_round
+            payload["last_eligible_round"] = instance.lifecycle_window.last_eligible_round
         return payload

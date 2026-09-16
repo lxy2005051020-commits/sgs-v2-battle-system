@@ -126,6 +126,7 @@ class ReactionPermissionPolicy:
         return source_type in (
             SourceType.NORMAL_ATTACK,
             SourceType.ACTIVE_SKILL,
+            SourceType.ASSAULT,
             SourceType.PERIODIC_DAMAGE,
             SourceType.CLEAVE,
             SourceType.COUNTER,

@@ -95,11 +95,12 @@ class ChainFeedbackResult:
 class ChainSystem:
     """One admitted traversal, monotonic slot cursor, restricted feedback only."""
 
-    def __init__(self, state_runtime, gate, troops):
+    def __init__(self, state_runtime, gate, troops, defeat_cleanup_port: Any = None):
         self._states = state_runtime
         self._gate = gate
         self._finalization = gate.coordinator
         self._troops = troops
+        self._defeat_cleanup = defeat_cleanup_port
 
     def cancel(self, context, traversal):
         self._finalization.complete_reaction(context, traversal.traversal_id, traversal)
@@ -177,4 +178,10 @@ class ChainSystem:
                 actor_id=lineage.physical_attacker, target_id=target_id,
                 payload={"target_name": target.name, "source_type": SourceType.CHAIN_TRUE_FEEDBACK.value})
             self._finalization.observe_reaction_death(context, traversal.traversal_id, traversal)
+            defeat_cleanup = (
+                self._defeat_cleanup
+                or getattr(getattr(context, "systems", None), "defeat_cleanup_port", None)
+            )
+            if defeat_cleanup is not None:
+                defeat_cleanup.commit_defeat(context, target_id, defeat_source_ref=lineage.physical_attacker)
         return result

@@ -123,10 +123,16 @@ class DirectTroopLossResolver:
     plus explicit attribution, never a second hit.
     """
 
-    def __init__(self, troop_system: TroopSystem) -> None:
+    def __init__(
+        self,
+        troop_system: TroopSystem,
+        defeat_cleanup_port: Any = None,
+    ) -> None:
         if not isinstance(troop_system, TroopSystem):
             raise TypeError(f"troop_system must be TroopSystem, got {type(troop_system)}")
         self._troops = troop_system
+        self._defeat_cleanup = defeat_cleanup_port
+
 
     @property
     def troop_system(self) -> TroopSystem:
@@ -198,6 +204,17 @@ class DirectTroopLossResolver:
                     "direct_loss_id": direct_loss_id.value,
                 },
             )
+            defeat_cleanup = (
+                self._defeat_cleanup
+                or getattr(getattr(context, "systems", None), "defeat_cleanup_port", None)
+            )
+            if defeat_cleanup is not None:
+                defeat_cleanup.commit_defeat(
+                    context,
+                    defeated_unit_id=victim.unit_id,
+                    defeat_source_ref=request.physical_attacker or request.source_type.value,
+                )
+
 
         return DirectTroopLossResolution(
             loss=fact,

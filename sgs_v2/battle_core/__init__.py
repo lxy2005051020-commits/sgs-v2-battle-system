@@ -3,6 +3,7 @@ from .engine import BattleEngine
 from .enums import (
     BattlePhase,
     BattleEndReason,
+    DamageCalculationBasis,
     DamageSourceType,
     DamageType,
     LineupPosition,
@@ -239,6 +240,55 @@ from .trigger_system import (
 from .troop_system import TroopChangeResult, TroopSystem
 from .victory_system import VictorySystem
 from .weapon_damage_formula import WeaponBaseDamageFormula
+from .state_generation import (
+    StateApplicationGenerationId,
+    PersistentLifecycleWindow,
+    StateGenerationAllocator,
+    StateGenerationSnapshot,
+)
+from .stage10_state_params import (
+    RecoveryModelKind,
+    RecoveryPotencyContext,
+    FrozenContinuousDamageBasis,
+    ContinuousDamageStateParams,
+    FirstAidStateParams,
+    RecuperationStateParams,
+)
+from .skill_runtime_registry import (
+    PersistentSourceSkillGateMode,
+    PersistentSourceSkillGate,
+    SkillRuntimeRegistry,
+)
+from .action_progress_tracker import ActionProgressTracker
+from .rule_intent import (
+    RuleIntentKind,
+    RecoveryOpportunityKind,
+    ExecutionRightDecisionKind,
+    ExecutionRightReason,
+    ExecutionRightDecision,
+    RuleIntentExecutionDescriptor,
+    RecoveryOpportunity,
+    RecoveryOpportunityResult,
+    AbortedRuleIntentResult,
+    RuleIntent,
+    RuleIntentResult,
+)
+from .execution_right_system import ExecutionRightSystem
+from .defeat_cleanup_port import (
+    DefeatCleanupPort,
+    DefeatCleanupResult,
+    DefeatRemovalReason,
+)
+from .damage_aftermath_port import (
+    AftermathResult,
+    DamageAftermathFact,
+    DamageAftermathPort,
+    DamageAftermathSystem,
+    DamageHitTopology,
+    DamageZeroLossCause,
+    create_damage_aftermath_fact,
+)
+from .recovery_opportunity_system import RecoveryOpportunitySystem
 
 __all__ = [
     "BattleContext",
@@ -246,6 +296,7 @@ __all__ = [
     "BattleEngine",
     "BattlePhase",
     "BattleEndReason",
+    "DamageCalculationBasis",
     "DamageSourceType",
     "DamageType",
     "LineupPosition",
@@ -449,4 +500,42 @@ __all__ = [
     "DirectTroopLossResolver",
     "DamageInstanceExecution",
     "PartitionExecutionStatus",
+    # Stage10 Phase 1 Primitives
+    "StateApplicationGenerationId",
+    "PersistentLifecycleWindow",
+    "StateGenerationAllocator",
+    "StateGenerationSnapshot",
+    "RecoveryModelKind",
+    "RecoveryPotencyContext",
+    "FrozenContinuousDamageBasis",
+    "ContinuousDamageStateParams",
+    "FirstAidStateParams",
+    "RecuperationStateParams",
+    "PersistentSourceSkillGateMode",
+    "PersistentSourceSkillGate",
+    "SkillRuntimeRegistry",
+    "ActionProgressTracker",
+    "RuleIntentKind",
+    "RecoveryOpportunityKind",
+    "ExecutionRightDecisionKind",
+    "ExecutionRightReason",
+    "ExecutionRightDecision",
+    "ExecutionRightSystem",
+    "RuleIntentExecutionDescriptor",
+    "RecoveryOpportunity",
+    "RecoveryOpportunityResult",
+    "AbortedRuleIntentResult",
+    "RuleIntent",
+    "RuleIntentResult",
+    "DefeatCleanupPort",
+    "DefeatCleanupResult",
+    "DefeatRemovalReason",
+    "DamageAftermathFact",
+    "DamageAftermathPort",
+    "DamageAftermathSystem",
+    "AftermathResult",
+    "create_damage_aftermath_fact",
+    "DamageHitTopology",
+    "DamageZeroLossCause",
+    "RecoveryOpportunitySystem",
 ]

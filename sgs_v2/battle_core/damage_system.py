@@ -8,24 +8,42 @@ from .context import BattleContext
 from .damage_formula_context import DamageDefensePolicy, DamageFormulaContext
 from .damage_formula_policy_system import DamageFormulaPolicySystem
 from .damage_modifier_system import DamageModifierSystem
-from .damage_pipeline_trace import DamagePipelineTrace, StageEvaluationStatus
+from .damage_modifiers import DamageModifierPhase
+from .damage_pipeline_trace import (
+    DamagePipelineTrace,
+    FrozenApplicationTrace,
+    StageEvaluationStatus,
+)
 from .damage_prevention_system import (
     DamageAllowedResult,
     DamagePreventedResult,
     DamagePreventionSystem,
 )
+from .damage_probability import resolve_probability
 from .damage_rule_provider import (
     DamageRuleCollection,
     DamageRuleProvider,
     StateDamageRuleProvider,
 )
 from .damage_state_rule_bindings import DEFAULT_STAGE8_STATE_RULE_BINDINGS
-from .enums import DamageSourceType, DamageType
+from .enums import (
+    CalculationBasis,
+    DamageCalculationBasis,
+    DamageSourceType,
+    DamageType,
+    TroopType,
+)
 from .hit_resolution_system import HitPreventedResult, HitResolutionSystem
 from .numeric_validation import validate_nonnegative_finite
+from .stage10_state_params import (
+    FrozenContinuousDamageBasis,
+    FrozenSourceFormulaFacts,
+)
+from .state_generation import StateApplicationGenerationId
 from .strategy_damage_formula import StrategyBaseDamageFormula
 from .unit import UnitRuntime
 from .weapon_damage_formula import WeaponBaseDamageFormula
+
 
 
 def _validate_optional_state_id(value: str | None, field_name: str) -> None:
@@ -67,6 +85,9 @@ class DamageRequest:
     source_skill_id: str | None = None
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
+    calculation_basis: DamageCalculationBasis = DamageCalculationBasis.LIVE_RUNTIME
+    frozen_basis: FrozenContinuousDamageBasis | None = None
+    source_generation_id: StateApplicationGenerationId | None = None
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -88,6 +109,22 @@ class DamageRequest:
             self.source_state_id,
             self.source_state_instance_id,
         )
+        if not isinstance(self.calculation_basis, DamageCalculationBasis):
+            raise TypeError("calculation_basis must be a DamageCalculationBasis")
+        if self.calculation_basis is DamageCalculationBasis.FROZEN_APPLICATION:
+            if self.source_type is not DamageSourceType.CONTINUOUS:
+                raise ValueError("FROZEN_APPLICATION is only authorized for CONTINUOUS damage")
+            if self.frozen_basis is None:
+                raise ValueError("frozen_basis is required for FROZEN_APPLICATION")
+            if not isinstance(self.frozen_basis, FrozenContinuousDamageBasis):
+                raise TypeError("frozen_basis must be a FrozenContinuousDamageBasis")
+            if self.source_generation_id is None:
+                raise ValueError("source_generation_id is required for FROZEN_APPLICATION")
+            if not isinstance(self.source_generation_id, StateApplicationGenerationId):
+                raise TypeError("source_generation_id must be a StateApplicationGenerationId")
+        else:
+            if self.frozen_basis is not None:
+                raise ValueError("frozen_basis must be None for LIVE_RUNTIME")
 
 
 @dataclass(frozen=True, slots=True)
@@ -105,6 +142,8 @@ class DamageResult:
     prevented_by_state_id: str | None = None
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
+    calculation_basis: DamageCalculationBasis = DamageCalculationBasis.LIVE_RUNTIME
+    source_generation_id: StateApplicationGenerationId | None = None
     pipeline_trace: DamagePipelineTrace | None = None
 
     def __post_init__(self) -> None:
@@ -121,6 +160,12 @@ class DamageResult:
             self.source_state_id,
             self.source_state_instance_id,
         )
+        if not isinstance(self.calculation_basis, DamageCalculationBasis):
+            raise TypeError("calculation_basis must be a DamageCalculationBasis")
+        if self.source_generation_id is not None and not isinstance(
+            self.source_generation_id, StateApplicationGenerationId
+        ):
+            raise TypeError("source_generation_id must be a StateApplicationGenerationId or None")
 
     @property
     def requested_damage(self) -> int:
@@ -202,6 +247,35 @@ class DamageSystem:
 
         prevention_result = self._prevention.resolve(rules)
         if isinstance(prevention_result, DamagePreventedResult):
+            frozen_trace = (
+                FrozenApplicationTrace(
+                    application_generation_id=request.source_generation_id
+                    or request.frozen_basis.application_generation_id,
+                    formula_policy_result=(
+                        request.frozen_basis.formula_policy_result
+                        if request.frozen_basis
+                        else None
+                    ),
+                    source_formula_facts=(
+                        request.frozen_basis.source_formula_facts
+                        if request.frozen_basis
+                        else None
+                    ),
+                    coefficient=request.coefficient,
+                    locked_modifier_plan=(
+                        request.frozen_basis.locked_modifier_plan
+                        if request.frozen_basis
+                        else ()
+                    ),
+                    locked_crit_context=(
+                        request.frozen_basis.locked_crit_context
+                        if request.frozen_basis
+                        else None
+                    ),
+                )
+                if request.calculation_basis is DamageCalculationBasis.FROZEN_APPLICATION
+                else None
+            )
             trace = DamagePipelineTrace(
                 prevention_status=StageEvaluationStatus.EXECUTED,
                 prevention_result=prevention_result,
@@ -211,6 +285,8 @@ class DamageSystem:
                 formula_policy_result=None,
                 modifier_status=StageEvaluationStatus.NOT_EVALUATED,
                 modifier_result=None,
+                calculation_basis=request.calculation_basis,
+                frozen_application_trace=frozen_trace,
             )
             return self._prevented_result(
                 request,
@@ -222,6 +298,35 @@ class DamageSystem:
 
         hit_result = self._hit.resolve(context, request, rules)
         if isinstance(hit_result, HitPreventedResult):
+            frozen_trace = (
+                FrozenApplicationTrace(
+                    application_generation_id=request.source_generation_id
+                    or request.frozen_basis.application_generation_id,
+                    formula_policy_result=(
+                        request.frozen_basis.formula_policy_result
+                        if request.frozen_basis
+                        else None
+                    ),
+                    source_formula_facts=(
+                        request.frozen_basis.source_formula_facts
+                        if request.frozen_basis
+                        else None
+                    ),
+                    coefficient=request.coefficient,
+                    locked_modifier_plan=(
+                        request.frozen_basis.locked_modifier_plan
+                        if request.frozen_basis
+                        else ()
+                    ),
+                    locked_crit_context=(
+                        request.frozen_basis.locked_crit_context
+                        if request.frozen_basis
+                        else None
+                    ),
+                )
+                if request.calculation_basis is DamageCalculationBasis.FROZEN_APPLICATION
+                else None
+            )
             trace = DamagePipelineTrace(
                 prevention_status=StageEvaluationStatus.EXECUTED,
                 prevention_result=prevention_result,
@@ -231,6 +336,8 @@ class DamageSystem:
                 formula_policy_result=None,
                 modifier_status=StageEvaluationStatus.NOT_EVALUATED,
                 modifier_result=None,
+                calculation_basis=request.calculation_basis,
+                frozen_application_trace=frozen_trace,
             )
             prevented_by_state_id = (
                 None
@@ -241,6 +348,86 @@ class DamageSystem:
                 request,
                 trace,
                 prevented_by_state_id,
+            )
+
+        if request.calculation_basis is DamageCalculationBasis.FROZEN_APPLICATION:
+            frozen_basis = request.frozen_basis
+            assert frozen_basis is not None
+            formula_policy_result = frozen_basis.formula_policy_result or DamageFormulaPolicyResult(
+                DamageFormulaContext(), ()
+            )
+            formula_context = formula_policy_result.formula_context
+
+            if frozen_basis.source_formula_facts is None:
+                raise ValueError("FROZEN_APPLICATION requires source_formula_facts in basis")
+
+            base_damage = self._calculate_base_damage_from_frozen_facts(
+                context,
+                frozen_basis.source_formula_facts,
+                target,
+                request.damage_type,
+                formula_context,
+            )
+            scaled_damage = validate_nonnegative_finite(
+                base_damage * request.coefficient,
+                "scaled_damage",
+            )
+
+            current = scaled_damage
+            for mod in frozen_basis.locked_modifier_plan:
+                if mod.admitted:
+                    current = validate_nonnegative_finite(current * mod.operand, "modifier output")
+
+            target_mods = [
+                c
+                for c in rules.modifier_contributions
+                if c.applies_to(request.damage_type, request.source_type)
+                and c.phase in (DamageModifierPhase.INCOMING, DamageModifierPhase.SINGLE_HIT)
+            ]
+            if target_mods:
+                target_mods.sort(key=lambda c: (c.phase_order, c.order_key))
+                for c in target_mods:
+                    if resolve_probability(context, c.probability):
+                        current = validate_nonnegative_finite(current * c.operand, "modifier output")
+
+            final_damage = max(1, int(current))
+
+            frozen_trace = FrozenApplicationTrace(
+                application_generation_id=request.source_generation_id
+                or frozen_basis.application_generation_id,
+                formula_policy_result=formula_policy_result,
+                source_formula_facts=frozen_basis.source_formula_facts,
+                coefficient=request.coefficient,
+                locked_modifier_plan=frozen_basis.locked_modifier_plan,
+                locked_crit_context=frozen_basis.locked_crit_context,
+            )
+            trace = DamagePipelineTrace(
+                prevention_status=StageEvaluationStatus.EXECUTED,
+                prevention_result=prevention_result,
+                hit_status=StageEvaluationStatus.EXECUTED,
+                hit_result=hit_result,
+                formula_policy_status=StageEvaluationStatus.NOT_EVALUATED,
+                formula_policy_result=None,
+                modifier_status=StageEvaluationStatus.NOT_EVALUATED,
+                modifier_result=None,
+                calculation_basis=DamageCalculationBasis.FROZEN_APPLICATION,
+                frozen_application_trace=frozen_trace,
+            )
+            return DamageResult(
+                source_id=request.source_id,
+                target_id=request.target_id,
+                damage_type=request.damage_type,
+                source_type=request.source_type,
+                coefficient=request.coefficient,
+                base_damage=base_damage,
+                scaled_damage=scaled_damage,
+                final_damage=final_damage,
+                source_skill_id=request.source_skill_id,
+                source_state_id=request.source_state_id,
+                source_state_instance_id=request.source_state_instance_id,
+                pipeline_trace=trace,
+                calculation_basis=request.calculation_basis,
+                source_generation_id=request.source_generation_id,
             )
 
         formula_policy_result = self._formula_policy.resolve(request, rules)
@@ -287,6 +474,8 @@ class DamageSystem:
             formula_policy_result=formula_policy_result,
             modifier_status=StageEvaluationStatus.EXECUTED,
             modifier_result=modifier_result,
+            calculation_basis=DamageCalculationBasis.LIVE_RUNTIME,
+            frozen_application_trace=None,
         )
         return DamageResult(
             source_id=request.source_id,
@@ -301,6 +490,8 @@ class DamageSystem:
             source_state_id=request.source_state_id,
             source_state_instance_id=request.source_state_instance_id,
             pipeline_trace=trace,
+            calculation_basis=request.calculation_basis,
+            source_generation_id=request.source_generation_id,
         )
 
     @staticmethod
@@ -320,10 +511,12 @@ class DamageSystem:
             raise InvalidDamageParticipantError(
                 f"damage target does not exist: {request.target_id}"
             ) from exc
-        if source.troops <= 0:
-            raise InvalidDamageParticipantError(
-                f"damage source is dead: {request.source_id}"
-            )
+
+        if request.calculation_basis is DamageCalculationBasis.LIVE_RUNTIME:
+            if source.troops <= 0:
+                raise InvalidDamageParticipantError(
+                    f"damage source is dead: {request.source_id}"
+                )
         if target.troops <= 0:
             raise InvalidDamageParticipantError(
                 f"damage target is dead: {request.target_id}"
@@ -351,7 +544,70 @@ class DamageSystem:
             source_state_id=request.source_state_id,
             source_state_instance_id=request.source_state_instance_id,
             pipeline_trace=trace,
+            calculation_basis=request.calculation_basis,
+            source_generation_id=request.source_generation_id,
         )
+
+    def _calculate_base_damage_from_frozen_facts(
+        self,
+        context: BattleContext,
+        frozen_facts: FrozenSourceFormulaFacts,
+        target: UnitRuntime,
+        damage_type: DamageType,
+        formula_context: DamageFormulaContext,
+    ) -> int:
+        from math import ceil
+
+        troops = frozen_facts.source_troops_at_application
+        offense = frozen_facts.source_combat_attribute_at_application
+        formula = (
+            self._weapon_formula
+            if damage_type is DamageType.WEAPON
+            else self._strategy_formula
+        )
+
+        if formula_context.defense_policy is DamageDefensePolicy.IGNORE_RELEVANT_TARGET_DEFENSE:
+            defense = 0.0
+        else:
+            if damage_type is DamageType.WEAPON:
+                defense = self._attributes.get_defense(context, target)
+            else:
+                if target.intelligence is None:
+                    raise NotImplementedError(
+                        "strategy base damage requires an intelligence value for target"
+                    )
+                defense = self._attributes.get_intelligence(context, target)
+
+        source_level_scale = 0.6 + 0.02 * frozen_facts.source_level_at_application
+        target_level_scale = 0.6 + 0.02 * target.level
+
+        x = (
+            formula.troop_function(troops)
+            + offense * source_level_scale
+            - defense * target_level_scale
+        )
+        troop_floor = min(100, ceil(troops / 50))
+        b0 = ceil(max(x, troop_floor))
+
+        source_type = frozen_facts.source_troop_type_at_application
+        target_type = target.troop_type
+        if source_type is TroopType.SPEAR and target_type is TroopType.CAVALRY:
+            counter_mult = 1.12
+        elif source_type is TroopType.CAVALRY and target_type is TroopType.SPEAR:
+            counter_mult = 0.88
+        else:
+            counter_mult = 1.0
+
+        b1 = ceil(b0 * counter_mult)
+
+        morale_multiplier = 1 - 0.007 * max(0, 100 - frozen_facts.source_morale_at_application)
+        b2 = ceil(b1 * morale_multiplier)
+
+        random_percent = context.random.randint(*formula.random_percent_range)
+        d0 = ceil(b2 * random_percent / 100)
+
+        low_damage_floor = context.random.randint(*formula.low_damage_floor_range)
+        return max(d0, low_damage_floor)
 
     def _calculate_weapon_base_damage(
         self,

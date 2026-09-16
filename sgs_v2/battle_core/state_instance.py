@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 
 from .enums import BattlePhase
 from .skill_runtime import SkillSlot
+from .state_generation import PersistentLifecycleWindow, StateApplicationGenerationId
 from .state_runtime_params import (
     EmptyStateRuntimeParams,
     StateRuntimeParams,
@@ -51,6 +52,8 @@ class StateInstance:
     runtime_params: StateRuntimeParams = field(
         default_factory=EmptyStateRuntimeParams
     )
+    current_generation_id: StateApplicationGenerationId | None = None
+    lifecycle_window: PersistentLifecycleWindow | None = None
 
     def __post_init__(self) -> None:
         if not self.instance_id:
@@ -71,6 +74,24 @@ class StateInstance:
             raise ValueError("applied_round must be >= 0")
         if not self.applied_phase:
             raise ValueError("applied_phase cannot be empty")
+
+        if self.current_generation_id is None:
+            object.__setattr__(
+                self,
+                "current_generation_id",
+                StateApplicationGenerationId(f"gen_{self.instance_id}"),
+            )
+        elif not isinstance(self.current_generation_id, StateApplicationGenerationId):
+            raise TypeError(
+                f"current_generation_id must be a StateApplicationGenerationId, got {type(self.current_generation_id)}"
+            )
+
+        if self.lifecycle_window is not None and not isinstance(
+            self.lifecycle_window, PersistentLifecycleWindow
+        ):
+            raise TypeError(
+                f"lifecycle_window must be a PersistentLifecycleWindow or None, got {type(self.lifecycle_window)}"
+            )
 
         validate_state_runtime_params(self.runtime_params)
 
@@ -108,3 +129,39 @@ class StateInstance:
                 raise ValueError(
                     "expiration anchor must be a future lifecycle node"
                 )
+
+    def create_generation_snapshot(
+        self,
+        *,
+        generation_id: StateApplicationGenerationId | None = None,
+        lifecycle_window: PersistentLifecycleWindow | None = None,
+        frozen_damage_basis: object = None,
+        recovery_potency_context: object = None,
+    ) -> StateGenerationSnapshot:
+        from .state_generation import StateGenerationSnapshot
+
+        effective_basis = (
+            frozen_damage_basis
+            if frozen_damage_basis is not None
+            else getattr(self.runtime_params, "frozen_damage_basis", None)
+        )
+        effective_potency = (
+            recovery_potency_context
+            if recovery_potency_context is not None
+            else getattr(self.runtime_params, "recovery_potency_context", None)
+        )
+
+        return StateGenerationSnapshot(
+            physical_instance_id=self.instance_id,
+            application_generation_id=generation_id or self.current_generation_id,
+            state_id=self.state_id,
+            owner_id=self.owner_id,
+            source_id=self.source_id,
+            source_skill_id=self.source_skill_id,
+            source_skill_slot=self.source_skill_slot,
+            runtime_params=self.runtime_params,
+            lifecycle_window=lifecycle_window or self.lifecycle_window,
+            frozen_damage_basis=effective_basis,  # type: ignore[arg-type]
+            recovery_potency_context=effective_potency,  # type: ignore[arg-type]
+        )
+
