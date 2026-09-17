@@ -62,6 +62,8 @@ Stage 10 Persistent State Runtime Integration ✅ FROZEN / 已合入 main
 24 / 40 尚未严格完成
 ```
 
+其中 `690082 规避 / EVASION` 已于 `2026-09-17` 完成 **Research FROZEN**，但 Runtime 仍为 `NOT_INTEGRATED`，因此严格完成数仍保持 `16 / 40`。
+
 这些状态不再无限拆成零散小阶段，而是集中安排在第十一、十二阶段完成。
 
 ## 3. 当前路线权威
@@ -104,9 +106,14 @@ PROJECT_ROADMAP.md
 当前状态：
 
 ```text
-PLANNING / RESEARCH PREPARATION
+PLANNING / RESEARCH FREEZE IN PROGRESS
+690082 EVASION = RESEARCH FROZEN / RUNTIME NOT_INTEGRATED
 PRODUCTION IMPLEMENTATION = NOT AUTHORIZED
 ```
+
+690082 Battle 侧 authority 桥接：
+
+`stages/stage11/research/690082_EVASION_RESEARCH_AUTHORITY.md`
 
 规划：
 
@@ -176,20 +183,12 @@ Stage 16+ 被动 / 指挥 / 阵法 / 兵种战法等
 
 ## 8. 当前唯一下一动作
 
-当前先做：
+研究侧不再重复研究 690082；其 Runtime Integration 留待 Stage11 正式设计/施工。
+
+下一研究工作从剩余 Stage11 状态中继续推进，并优先选择与已冻结规避存在直接顺序关系、当前仍为最低可用研究的状态。
+
+当前首选：
 
 ```text
-剩余 24 个官方状态完成度与阶段归属矩阵
+690083 抵御 / RESISTANCE
 ```
-
-明确每个状态：
-
-```text
-研究完成度
-运行时完成度
-唯一所有者
-是否需要重新研究
-放入第十一还是第十二阶段
-```
-
-矩阵审计通过后，再进入第十一阶段正式设计。
