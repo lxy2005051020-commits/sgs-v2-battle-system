@@ -1,6 +1,6 @@
 # 第十一阶段规划 · 官方状态补全（一）
 
-> 状态：规划草案  
+> 状态：规划草案 / 研究冻结推进中  
 > 目标：状态补全，不接入正式战法执行链
 
 ## 1. 阶段责任
@@ -34,6 +34,30 @@
 ```
 
 最终范围不得凭这份清单直接冻结，必须先完成状态完成度与所有者矩阵。
+
+### 2.1 当前研究冻结进度
+
+截至 `2026-09-17`：
+
+```text
+690082 规避 / EVASION
+Research = FROZEN
+Evidence Maturity = HIGH_CONFIDENCE
+Runtime = NOT_INTEGRATED
+Strict Completion = NO
+```
+
+Battle 侧只保存研究权威桥接，不复制第二份机制正文：
+
+- `stages/stage11/research/690082_EVASION_RESEARCH_AUTHORITY.md`
+
+正式研究合同：
+
+- repository: `lxy2005051020-commits/sgs-state-mechanics-research`
+- path: `states/functional/evasion/MECHANISM_CONTRACT.md`
+- frozen commit: `32341b548f2ef9f83335a5e47c6a650842d4d093`
+
+690082 后续只进入 Stage11 Runtime Integration，不再重复开展机制研究，除非出现正式 Reopen 证据。
 
 ## 3. 按运行时所有者分组
 
@@ -84,7 +108,7 @@
 
 ## 4. 阶段开始前必须完成的审计
 
-对剩余 24 个状态逐个记录：
+对剩余状态逐个记录：
 
 ```text
 当前研究等级
@@ -97,6 +121,8 @@
 是否放入第十一阶段
 是否放入第十二阶段
 ```
+
+已经研究冻结的状态（当前为 690082 EVASION）不再列入“是否需要重新研究”的开放项，只记录其 Runtime Gap。
 
 ## 5. 实现原则
 
@@ -125,6 +151,8 @@
 ```
 
 禁止因为代码接口已经存在就把“最低可用研究”直接当作冻结真相。
+
+690082 已通过该门槛，后续实现必须消费其 FROZEN research authority。
 
 ## 7. 设计冻结门槛
 
@@ -189,10 +217,12 @@
 
 ## 11. 当前下一步
 
-先产出：
+研究侧继续关闭 Stage11 剩余状态；实现侧仍未授权整体施工。
+
+当前已冻结研究资产：
 
 ```text
-剩余官方状态完成度与阶段归属矩阵
+690082 EVASION
 ```
 
-矩阵通过独立审计后，再编写正式第十一阶段设计文件。
+下一研究状态应从仍为 `MINIMUM_USABLE / NOT_INTEGRATED` 且与已冻结规避机制存在直接交互的状态中优先选择。
