@@ -3,9 +3,9 @@
 当前状态：
 
 ```text
-规划阶段
-尚未开始正式机制冻结
-尚未授权生产实现
+规划 / 研究冻结推进中
+690082 规避：RESEARCH FROZEN
+PRODUCTION IMPLEMENTATION = NOT AUTHORIZED
 ```
 
 第十一阶段目标：
@@ -36,6 +36,23 @@
 
 具体最终清单必须在研究完成度和运行时所有者矩阵审计后冻结。
 
+## 当前已同步研究 authority
+
+### 690082 规避 / EVASION
+
+```text
+Research: FROZEN
+Evidence Maturity: HIGH_CONFIDENCE
+Runtime: NOT_INTEGRATED
+Strict Completion: NO
+```
+
+Battle 仓库桥接记录：
+
+- [690082 EVASION Research Authority](research/690082_EVASION_RESEARCH_AUTHORITY.md)
+
+正式机制正文仍由外部研究仓库维护，Battle 仓库不复制第二份 current authority。
+
 本阶段不做：
 
 ```text
@@ -52,12 +69,13 @@
 规划文件：
 
 - [第十一阶段规划](STAGE11_PLANNING.md)
+- [690082 EVASION 研究权威桥接](research/690082_EVASION_RESEARCH_AUTHORITY.md)
 - [第十阶段后总路线](../../POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md)
 - [演示场景套件规划](../../DEMO_SCENARIO_SUITE_ROADMAP.md)
 
-当前唯一下一步：
+当前研究侧下一步：
 
 ```text
-建立剩余 24 个官方状态的
-研究完成度 + 运行时所有者 + 阶段归属矩阵
+继续关闭 Stage11 剩余状态的机制研究；
+690082 不再重复研究，等待后续 Stage11 Runtime Integration。
 ```
