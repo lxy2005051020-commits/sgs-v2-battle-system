@@ -11,9 +11,18 @@ Date: `2026-09-17`
 
 - Repository: `lxy2005051020-commits/sgs-state-mechanics-research`
 - Contract: `states/functional/evasion/MECHANISM_CONTRACT.md`
+- Research Question Ledger: `states/functional/evasion/RESEARCH_QUESTION_LEDGER.md`
 - Frozen commit: `32341b548f2ef9f83335a5e47c6a650842d4d093`
 - Freeze date: `2026-09-17`
 - Evidence maturity: `HIGH_CONFIDENCE`
+
+问题总账保存本轮完整研究轨迹：
+
+```text
+Q1-Q18 = 18 个主问题
+Q13-B / Q15-B / Q18-B = 3 个补证/修复轮次
+总研究轮次 = 21
+```
 
 ## 2. Current Battle-Repo Status
 
