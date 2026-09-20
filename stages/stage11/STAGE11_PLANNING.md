@@ -37,7 +37,7 @@
 
 ### 2.1 当前研究冻结进度
 
-截至 `2026-09-18`：
+截至 `2026-09-20`：
 
 ```text
 690082 规避 / EVASION
@@ -51,12 +51,19 @@ Research = FROZEN
 Evidence Maturity = HIGH_CONFIDENCE
 Runtime = NOT_INTEGRATED
 Strict Completion = NO
+
+690092 必中 / SURE_HIT
+Research = FROZEN
+Evidence Maturity = HIGH_CONFIDENCE CORE + PROJECT-AUTHORIZED ELIGIBILITY RULE
+Runtime = NOT_INTEGRATED
+Strict Completion = NO
 ```
 
 Battle 侧只保存研究权威桥接，不复制第二份机制正文：
 
 - `stages/stage11/research/690082_EVASION_RESEARCH_AUTHORITY.md`
 - `stages/stage11/research/690083_RESISTANCE_RESEARCH_AUTHORITY.md`
+- `stages/stage11/research/690092_SURE_HIT_RESEARCH_AUTHORITY.md`
 
 正式研究合同：
 
@@ -64,9 +71,11 @@ Battle 侧只保存研究权威桥接，不复制第二份机制正文：
 - EVASION path: `states/functional/evasion/MECHANISM_CONTRACT.md`
 - EVASION frozen commit: `32341b548f2ef9f83335a5e47c6a650842d4d093`
 - RESISTANCE path: `states/functional/resistance/MECHANISM_CONTRACT.md`
-- RESISTANCE frozen research head: `8e5ae9366421cdef956829c6037916461b2ab0a8`
+- RESISTANCE current corrected authority head: `5741751b2723243606d9e83be40c1df5b9395ab2`
+- SURE_HIT path: `states/functional/sure_hit/MECHANISM_CONTRACT.md`
+- SURE_HIT frozen research head: `313f1a71369683ca6eb8213a412c94506aa00372`
 
-690082 / 690083 后续只进入 Stage11 Runtime Integration，不再重复开展机制研究，除非出现正式 Reopen 证据。
+690082 / 690083 / 690092 后续只进入 Stage11 Runtime Integration，不再重复开展机制研究，除非出现正式 Reopen 证据。
 
 ## 3. 按运行时所有者分组
 
@@ -131,7 +140,7 @@ Battle 侧只保存研究权威桥接，不复制第二份机制正文：
 是否放入第十二阶段
 ```
 
-已经研究冻结的状态（当前为 690082 EVASION、690083 RESISTANCE）不再列入“是否需要重新研究”的开放项，只记录其 Runtime Gap。
+已经研究冻结的状态（当前为 690082 EVASION、690083 RESISTANCE、690092 SURE_HIT）不再列入“是否需要重新研究”的开放项，只记录其 Runtime Gap。
 
 ## 5. 实现原则
 
@@ -161,7 +170,7 @@ Battle 侧只保存研究权威桥接，不复制第二份机制正文：
 
 禁止因为代码接口已经存在就把“最低可用研究”直接当作冻结真相。
 
-690082 已通过该门槛，后续实现必须消费其 FROZEN research authority。
+690082、690083、690092 已通过该门槛，后续实现必须消费各自 FROZEN research authority。
 
 ## 7. 设计冻结门槛
 
@@ -233,12 +242,13 @@ Battle 侧只保存研究权威桥接，不复制第二份机制正文：
 ```text
 690082 EVASION
 690083 RESISTANCE
+690092 SURE_HIT
 ```
 
-下一研究状态锁定为：
+690092 已完成研究冻结，不再继续扩张 Sure-Hit 问题。Stage11 下一研究候选转为：
 
 ```text
-690092 SURE_HIT / 必中
+690093 BREAK_FORMATION / 破阵
 ```
 
-理由：必中与已冻结 EVASION / RESISTANCE 均存在直接交互，且 Resistance Q11/Q16 已经产生可复用交叉证据；先冻结必中可以最小化 Stage11 伤害与命中链的后续重构风险。
+进入 690093 前仍需先读取其当前 research authority 并按独立状态流程开展，不得从 Sure-Hit 结论直接猜测破阵机制。
