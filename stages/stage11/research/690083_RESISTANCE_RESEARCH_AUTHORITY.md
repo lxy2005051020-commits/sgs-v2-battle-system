@@ -12,7 +12,7 @@ Battle 仓库不得复制并另行维护第二份 690083 current mechanism autho
 - Repository: lxy2005051020-commits/sgs-state-mechanics-research
 - Contract: states/functional/resistance/MECHANISM_CONTRACT.md
 - Research Question Ledger: states/functional/resistance/RESEARCH_QUESTION_LEDGER.md
-- Frozen research head: 8e5ae9366421cdef956829c6037916461b2ab0a8
+- Current corrected authority head: 5741751b2723243606d9e83be40c1df5b9395ab2
 - Freeze date: 2026-09-18
 - Evidence maturity: HIGH_CONFIDENCE
 
@@ -36,7 +36,7 @@ Production implementation: NOT YET AUTHORIZED BY THIS RECORD
 - 同时具备规避与抵御资格时，EVASION BEFORE RESISTANCE；
 - 规避成功时抵御不执行、不消费；
 - 正常抵御成功使当前兵损归零并消费恰好 1 次；
-- 必中使抵御无法成功防伤，但抵御仍消费恰好 1 次；
+- 必中使抵御不能阻止当前 Damage Instance 继续下游结算，但抵御仍消费恰好 1 次；canonical true set = 22，其中 1 例 downstream 最终兵损为 0；
 - cfg204 暂时失效期间不防伤、不消费，cfg205 已观察到继续生效闭环；
 - 已施加抵御不会因 source death 自动消失；
 - 自然移除稳定锚定 Holder 自身行动开始，具体 duration 由 Source Authority 决定；
