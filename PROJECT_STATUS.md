@@ -62,7 +62,7 @@ Stage 10 Persistent State Runtime Integration ✅ FROZEN / 已合入 main
 24 / 40 尚未严格完成
 ```
 
-其中 `690082 规避 / EVASION` 已于 `2026-09-17` 完成 **Research FROZEN**，但 Runtime 仍为 `NOT_INTEGRATED`，因此严格完成数仍保持 `16 / 40`。
+其中 690082 规避、690083 抵御、690092 必中均已完成 **Research FROZEN**，但 Runtime 均仍为 `NOT_INTEGRATED`，因此严格完成数仍保持 `16 / 40`。
 
 这些状态不再无限拆成零散小阶段，而是集中安排在第十一、十二阶段完成。
 
@@ -108,12 +108,16 @@ PROJECT_ROADMAP.md
 ```text
 PLANNING / RESEARCH FREEZE IN PROGRESS
 690082 EVASION = RESEARCH FROZEN / RUNTIME NOT_INTEGRATED
+690083 RESISTANCE = RESEARCH FROZEN / RUNTIME NOT_INTEGRATED
+690092 SURE_HIT = RESEARCH FROZEN / RUNTIME NOT_INTEGRATED
 PRODUCTION IMPLEMENTATION = NOT AUTHORIZED
 ```
 
-690082 Battle 侧 authority 桥接：
+Stage11 Battle 侧 authority 桥接：
 
-`stages/stage11/research/690082_EVASION_RESEARCH_AUTHORITY.md`
+- stages/stage11/research/690082_EVASION_RESEARCH_AUTHORITY.md
+- stages/stage11/research/690083_RESISTANCE_RESEARCH_AUTHORITY.md
+- stages/stage11/research/690092_SURE_HIT_RESEARCH_AUTHORITY.md
 
 规划：
 
@@ -183,12 +187,12 @@ Stage 16+ 被动 / 指挥 / 阵法 / 兵种战法等
 
 ## 8. 当前唯一下一动作
 
-研究侧不再重复研究 690082；其 Runtime Integration 留待 Stage11 正式设计/施工。
+研究侧不再重复研究 690082 / 690083 / 690092；三者 Runtime Integration 留待 Stage11 正式设计/施工。
 
-下一研究工作从剩余 Stage11 状态中继续推进，并优先选择与已冻结规避存在直接顺序关系、当前仍为最低可用研究的状态。
+下一研究工作从剩余 Stage11 状态中继续推进。
 
-当前首选：
+当前候选：
 
 ```text
-690083 抵御 / RESISTANCE
+690093 破阵 / BREAK_FORMATION
 ```
