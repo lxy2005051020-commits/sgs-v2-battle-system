@@ -6,7 +6,8 @@
 规划 / 研究冻结推进中
 690082 规避：RESEARCH FROZEN
 690083 抵御：RESEARCH FROZEN
-当前下一研究状态：690092 必中 / SURE_HIT
+690092 必中：RESEARCH FROZEN
+当前下一研究候选：690093 破阵 / BREAK_FORMATION
 PRODUCTION IMPLEMENTATION = NOT AUTHORIZED
 ```
 
@@ -70,6 +71,21 @@ Battle 仓库桥接记录：
 
 正式机制正文仍由外部研究仓库维护。旧 minimum_usable skeleton 已在研究仓库标记 SUPERSEDED。
 
+### 690092 必中 / SURE_HIT
+
+~~~text
+Research: FROZEN
+Evidence Maturity: HIGH_CONFIDENCE CORE + PROJECT-AUTHORIZED ELIGIBILITY RULE
+Runtime: NOT_INTEGRATED
+Strict Completion: NO
+~~~
+
+Battle 仓库桥接记录：
+
+- [690092 SURE_HIT Research Authority](research/690092_SURE_HIT_RESEARCH_AUTHORITY.md)
+
+正式机制正文由外部研究仓库维护；项目级总规则为“凡是可以被规避的 Damage Instance 都属于必中可作用对象”。
+
 本阶段不做：
 
 ```text
@@ -88,6 +104,7 @@ Battle 仓库桥接记录：
 - [第十一阶段规划](STAGE11_PLANNING.md)
 - [690082 EVASION 研究权威桥接](research/690082_EVASION_RESEARCH_AUTHORITY.md)
 - [690083 RESISTANCE 研究权威桥接](research/690083_RESISTANCE_RESEARCH_AUTHORITY.md)
+- [690092 SURE_HIT 研究权威桥接](research/690092_SURE_HIT_RESEARCH_AUTHORITY.md)
 - [第十阶段后总路线](../../POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md)
 - [演示场景套件规划](../../DEMO_SCENARIO_SUITE_ROADMAP.md)
 
@@ -95,6 +112,6 @@ Battle 仓库桥接记录：
 
 ```text
 继续关闭 Stage11 剩余状态的机制研究；
-690082 / 690083 不再重复研究，等待后续 Stage11 Runtime Integration；
-下一研究状态锁定为 690092 必中 / SURE_HIT。
+690082 / 690083 / 690092 不再重复研究，等待后续 Stage11 Runtime Integration；
+下一研究候选为 690093 破阵 / BREAK_FORMATION。
 ```
