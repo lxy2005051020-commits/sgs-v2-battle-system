@@ -56,7 +56,7 @@
 
 剩余 24 个状态进入第十一、十二阶段补全计划。
 
-> 进度更新（2026-09-20）：690082 规避、690083 抵御、690092 必中均已完成 Research FROZEN；三者 Runtime 仍为 NOT_INTEGRATED，因此严格完成数仍为 16 / 40。Battle 仓库桥接记录位于 stages/stage11/research/。
+> 进度更新（2026-09-21）：690082 规避、690083 抵御、690092 必中、690093 破阵均已完成 Research FROZEN；四者 Runtime 仍为 NOT_INTEGRATED，因此严格完成数仍为 16 / 40。Battle 仓库桥接记录位于 stages/stage11/research/。
 
 ## 3. 第十一阶段：官方状态补全（一）
 
@@ -98,6 +98,7 @@
 规避 / EVASION   → Research FROZEN, Runtime NOT_INTEGRATED
 抵御 / RESISTANCE → Research FROZEN, Runtime NOT_INTEGRATED
 必中 / SURE_HIT   → Research FROZEN, Runtime NOT_INTEGRATED
+破阵 / BREAK_FORMATION → Research FROZEN, Runtime NOT_INTEGRATED
 ```
 
 其中每个状态最终归真正的运行时所有者负责，例如：
@@ -330,4 +331,4 @@
 
 不要现在开始突击战法施工。
 
-690082 规避、690083 抵御、690092 必中的研究已经关闭；后续只等待 Stage11 Runtime Integration。研究侧继续完成其余 Stage11 状态，下一候选为 690093 破阵 / BREAK_FORMATION。
+690082 规避、690083 抵御、690092 必中、690093 破阵的研究已经关闭；后续只等待 Stage11 Runtime Integration。研究侧继续完成其余 Stage11 状态，下一研究候选需按剩余状态依赖重新审计后确定。
