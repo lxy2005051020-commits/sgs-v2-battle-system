@@ -37,7 +37,7 @@
 
 ### 2.1 当前研究冻结进度
 
-截至 `2026-09-20`：
+截至 `2026-09-21`：
 
 ```text
 690082 规避 / EVASION
@@ -57,6 +57,12 @@ Research = FROZEN
 Evidence Maturity = HIGH_CONFIDENCE CORE + PROJECT-AUTHORIZED ELIGIBILITY RULE
 Runtime = NOT_INTEGRATED
 Strict Completion = NO
+
+690093 破阵 / BREAK_FORMATION
+Research = FROZEN
+Evidence Maturity = HIGH_CONFIDENCE CORE + EXPLICIT ENGINEERING CONTRACT FOR DIRECT STRATEGY
+Runtime = NOT_INTEGRATED
+Strict Completion = NO
 ```
 
 Battle 侧只保存研究权威桥接，不复制第二份机制正文：
@@ -64,6 +70,7 @@ Battle 侧只保存研究权威桥接，不复制第二份机制正文：
 - `stages/stage11/research/690082_EVASION_RESEARCH_AUTHORITY.md`
 - `stages/stage11/research/690083_RESISTANCE_RESEARCH_AUTHORITY.md`
 - `stages/stage11/research/690092_SURE_HIT_RESEARCH_AUTHORITY.md`
+- `stages/stage11/research/690093_BREAK_FORMATION_RESEARCH_AUTHORITY.md`
 
 正式研究合同：
 
@@ -74,8 +81,10 @@ Battle 侧只保存研究权威桥接，不复制第二份机制正文：
 - RESISTANCE current corrected authority head: `5741751b2723243606d9e83be40c1df5b9395ab2`
 - SURE_HIT path: `states/functional/sure_hit/MECHANISM_CONTRACT.md`
 - SURE_HIT frozen research head: `313f1a71369683ca6eb8213a412c94506aa00372`
+- BREAK_FORMATION path: `states/functional/break_formation/MECHANISM_CONTRACT.md`
+- BREAK_FORMATION frozen research head: `65c335688718453dfe264f9796cb14bde17d11a7`
 
-690082 / 690083 / 690092 后续只进入 Stage11 Runtime Integration，不再重复开展机制研究，除非出现正式 Reopen 证据。
+690082 / 690083 / 690092 / 690093 后续只进入 Stage11 Runtime Integration，不再重复开展机制研究，除非出现正式 Reopen 证据。
 
 ## 3. 按运行时所有者分组
 
@@ -140,7 +149,7 @@ Battle 侧只保存研究权威桥接，不复制第二份机制正文：
 是否放入第十二阶段
 ```
 
-已经研究冻结的状态（当前为 690082 EVASION、690083 RESISTANCE、690092 SURE_HIT）不再列入“是否需要重新研究”的开放项，只记录其 Runtime Gap。
+已经研究冻结的状态（当前为 690082 EVASION、690083 RESISTANCE、690092 SURE_HIT、690093 BREAK_FORMATION）不再列入“是否需要重新研究”的开放项，只记录其 Runtime Gap。
 
 ## 5. 实现原则
 
@@ -170,7 +179,7 @@ Battle 侧只保存研究权威桥接，不复制第二份机制正文：
 
 禁止因为代码接口已经存在就把“最低可用研究”直接当作冻结真相。
 
-690082、690083、690092 已通过该门槛，后续实现必须消费各自 FROZEN research authority。
+690082、690083、690092、690093 已通过该门槛，后续实现必须消费各自 FROZEN research authority。
 
 ## 7. 设计冻结门槛
 
@@ -243,12 +252,14 @@ Battle 侧只保存研究权威桥接，不复制第二份机制正文：
 690082 EVASION
 690083 RESISTANCE
 690092 SURE_HIT
+690093 BREAK_FORMATION
 ```
 
-690092 已完成研究冻结，不再继续扩张 Sure-Hit 问题。Stage11 下一研究候选转为：
+690093 已完成研究冻结，不再继续扩张 Break Formation 问题。
 
+下一研究候选：
 ```text
-690093 BREAK_FORMATION / 破阵
+TBD — 按 Stage11 剩余状态依赖重新审计后确定
 ```
 
-进入 690093 前仍需先读取其当前 research authority 并按独立状态流程开展，不得从 Sure-Hit 结论直接猜测破阵机制。
+690093 后续工作只进入 Runtime Integration Design；不得重新扫描战报或用现有 Damage Pipeline 反向改写 FROZEN research contract。
