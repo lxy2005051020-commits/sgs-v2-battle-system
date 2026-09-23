@@ -4,7 +4,7 @@
 >
 > 初始建立：2026-09-16
 >
-> 双仓库路线统一：2026-09-23
+> 双仓库路线统一：2026-09-24
 >
 > Canonical 40-state view: [CANONICAL_STATE_PLANNING_MATRIX.md](CANONICAL_STATE_PLANNING_MATRIX.md)
 
@@ -43,7 +43,7 @@ Stage15 = 准备战法
 官方具体状态：40。
 
 ```text
-Research FROZEN            = 26 / 40
+Research FROZEN            = 27 / 40
 Runtime FROZEN TO CONTRACT = 16 / 40
 Strict Complete            = 16 / 40
 ```
@@ -94,9 +94,9 @@ Canonical Scope = 17：
 当前：
 
 ```text
-Stage11 Research FROZEN = 10
+Stage11 Research FROZEN = 11
 Stage11 Runtime FROZEN  = 0
-Stage11 non-FROZEN/debt = 7
+Stage11 non-FROZEN/debt = 6
 ```
 
 已 Research FROZEN：
@@ -112,9 +112,10 @@ Stage11 non-FROZEN/debt = 7
 690095 攻心 STRATEGY_LIFE_STEAL
 690090 先攻 FIRST_STRIKE
 690091 遇袭 SURPRISE
+690102 缴械 DISARM
 ```
 
-十者均未 Runtime FROZEN；690090 / 690091 保持 `SKELETON_ONLY`，其余既有 Research-FROZEN 状态保持当前 `NOT_INTEGRATED` 记录。
+十一者均未 Runtime FROZEN；690090 / 690091 / 690102 保持 `SKELETON_ONLY`，其余既有 Research-FROZEN 状态保持当前 `NOT_INTEGRATED` 记录。
 
 特殊治理状态：
 
@@ -261,7 +262,7 @@ Research side：
 Runtime side：
 
 ```text
-10 个 Research-FROZEN 状态
+11 个 Research-FROZEN 状态
 → Runtime Integration Design
 → Independent Design Audit
 → Design Freeze
