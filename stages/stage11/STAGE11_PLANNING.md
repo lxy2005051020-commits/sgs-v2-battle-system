@@ -40,8 +40,8 @@ Stage11 负责将下列 17 个官方状态推进到项目可交付状态，同�
 
 ```text
 Stage11 Scope            = 17
-Research FROZEN          = 9
-Research non-FROZEN/debt = 8
+Research FROZEN          = 10
+Research non-FROZEN/debt = 7
 Runtime FROZEN           = 0
 Strict Complete added by Stage11 = 0
 ```
@@ -58,9 +58,10 @@ Strict Complete added by Stage11 = 0
 690094 LIFE_STEAL
 690095 STRATEGY_LIFE_STEAL
 690090 FIRST_STRIKE
+690091 SURPRISE
 ```
 
-这 9 个状态已经通过研究准入门槛，不再重复无新证据的专项问题扩张。下一步统一进入 Runtime Integration Design。690090 当前 Runtime maturity 仍为 `SKELETON_ONLY`，不等于已集成。
+这 10 个状态已经通过研究准入门槛，不再重复无新证据的专项问题扩张。下一步统一进入 Runtime Integration Design。690090 / 690091 当前 Runtime maturity 仍为 `SKELETON_ONLY`，不等于已集成。
 
 Research authority repository：
 
@@ -78,12 +79,12 @@ states/functional/strategy_critical/MECHANISM_CONTRACT.md
 states/functional/life_steal/MECHANISM_CONTRACT.md
 states/functional/strategy_life_steal/MECHANISM_CONTRACT.md
 states/functional/first_strike/MECHANISM_CONTRACT.md
+states/functional/surprise/MECHANISM_CONTRACT.md
 ```
 
 ### 2.2 Ordinary research-open states
 
 ```text
-690091 遇袭    = MINIMUM_USABLE / SKELETON_ONLY
 690102 缴械    = MINIMUM_USABLE / SKELETON_ONLY
 690104 虚弱    = MINIMUM_USABLE / SKELETON_ONLY
 690105 禁疗    = MINIMUM_USABLE / SKELETON_ONLY
@@ -135,9 +136,10 @@ Research Debt    = YES
 ```text
 690069 奇谋
 690095 攻心
+690091 遇袭
 ```
 
-二者已经是正式 FROZEN authority，但冻结依据包含明确 Project Decision 的镜像合同，不伪装成独立同规模战报复跑。
+三者已经是正式 FROZEN authority，但冻结依据包含明确 Project Decision 的镜像合同，不伪装成独立同规模战报复跑。
 
 ### Empirical-Frozen examples
 
@@ -249,7 +251,7 @@ Design Freeze
 Implementation
 ```
 
-9 个已经 Research FROZEN 的状态从 Runtime Integration Design 起步。
+10 个已经 Research FROZEN 的状态从 Runtime Integration Design 起步。
 
 Stage11 整体 production implementation 在 Design Freeze 前仍为 NOT AUTHORIZED。
 
@@ -312,7 +314,7 @@ Stage11 当前不建设：
 Research side：
 
 ```text
-关闭 690091 / 690102 / 690104 / 690105 / 690111
+关闭 690102 / 690104 / 690105 / 690111
 处理 690099 / 690221 evidence blockage
 关闭或正式处置 690086 DSTS9-B02 debt
 ```
@@ -321,7 +323,7 @@ Runtime side：
 
 ```text
 为 690082 / 690083 / 690092 / 690093
-   690070 / 690069 / 690094 / 690095 / 690090
+   690070 / 690069 / 690094 / 690095 / 690090 / 690091
 开展 Stage11 Runtime Integration Design
 ```
 
