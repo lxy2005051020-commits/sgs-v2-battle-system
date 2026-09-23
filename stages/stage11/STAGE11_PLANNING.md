@@ -40,8 +40,8 @@ Stage11 负责将下列 17 个官方状态推进到项目可交付状态，同�
 
 ```text
 Stage11 Scope            = 17
-Research FROZEN          = 10
-Research non-FROZEN/debt = 7
+Research FROZEN          = 11
+Research non-FROZEN/debt = 6
 Runtime FROZEN           = 0
 Strict Complete added by Stage11 = 0
 ```
@@ -59,9 +59,10 @@ Strict Complete added by Stage11 = 0
 690095 STRATEGY_LIFE_STEAL
 690090 FIRST_STRIKE
 690091 SURPRISE
+690102 DISARM
 ```
 
-这 10 个状态已经通过研究准入门槛，不再重复无新证据的专项问题扩张。下一步统一进入 Runtime Integration Design。690090 / 690091 当前 Runtime maturity 仍为 `SKELETON_ONLY`，不等于已集成。
+这 11 个状态已经通过研究准入门槛，不再重复无新证据的专项问题扩张。下一步统一进入 Runtime Integration Design。690090 / 690091 / 690102 当前 Runtime maturity 仍为 `SKELETON_ONLY`，不等于已集成。
 
 Research authority repository：
 
@@ -80,12 +81,12 @@ states/functional/life_steal/MECHANISM_CONTRACT.md
 states/functional/strategy_life_steal/MECHANISM_CONTRACT.md
 states/functional/first_strike/MECHANISM_CONTRACT.md
 states/functional/surprise/MECHANISM_CONTRACT.md
+states/control/disarm/MECHANISM_CONTRACT.md
 ```
 
 ### 2.2 Ordinary research-open states
 
 ```text
-690102 缴械    = MINIMUM_USABLE / SKELETON_ONLY
 690104 虚弱    = MINIMUM_USABLE / SKELETON_ONLY
 690105 禁疗    = MINIMUM_USABLE / SKELETON_ONLY
 690111 震慑    = TODO / SKELETON_ONLY
@@ -314,7 +315,7 @@ Stage11 当前不建设：
 Research side：
 
 ```text
-关闭 690102 / 690104 / 690105 / 690111
+关闭 690104 / 690105 / 690111
 处理 690099 / 690221 evidence blockage
 关闭或正式处置 690086 DSTS9-B02 debt
 ```
@@ -323,7 +324,7 @@ Runtime side：
 
 ```text
 为 690082 / 690083 / 690092 / 690093
-   690070 / 690069 / 690094 / 690095 / 690090 / 690091
+   690070 / 690069 / 690094 / 690095 / 690090 / 690091 / 690102
 开展 Stage11 Runtime Integration Design
 ```
 
