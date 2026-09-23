@@ -1,200 +1,221 @@
 # 三国志战略版战斗模拟器 V2 · 当前项目状态
 
-> 本文件维护当前项目状态与后续主线。历史设计、审计、修复与冻结证据继续保存在各阶段正式文件中，不通过本文件无痕改写。
+> 本文件维护当前项目状态与后续主线。跨仓库 40 状态总表见 [CANONICAL_STATE_PLANNING_MATRIX.md](CANONICAL_STATE_PLANNING_MATRIX.md)。
 
-## 1. 当前已完成阶段
+## 1. 已完成阶段
 
 ```text
-Stage 1 基础运行模型                           ✅ 稳定
-Stage 2 BattleSystem                          ✅ FROZEN
-Stage 3 BattleState                           ✅ 稳定
-Stage 4 官方状态代表接入                       ✅ FROZEN（工程阶段）
-Stage 5 Effect                                ✅ FROZEN
-Stage 6 Skill Runtime                         ✅ FROZEN（基础能力）
-Stage 7 Trigger / Recovery                    ✅ FROZEN
-Stage 8 Damage Pipeline                       ✅ FROZEN
-Stage 9 Cross-Mechanism Runtime Orchestration ✅ FROZEN
-Stage 10 Persistent State Runtime Integration ✅ FROZEN / 已合入 main
+Stage 1  基础运行模型                           ✅
+Stage 2  BattleSystem                          ✅ FROZEN
+Stage 3  BattleState                           ✅
+Stage 4  官方状态代表接入                       ✅ FROZEN（工程阶段）
+Stage 5  Effect                                ✅ FROZEN
+Stage 6  Skill Runtime                         ✅ FROZEN（基础能力）
+Stage 7  Trigger / Recovery                    ✅ FROZEN
+Stage 8  Damage Pipeline                       ✅ FROZEN
+Stage 9  Cross-Mechanism Runtime Orchestration ✅ FROZEN
+Stage 10 Persistent State Runtime Integration ✅ FROZEN / main integrated
 ```
 
-第十阶段正式主分支合入提交：
+Stage10 main integration commit：
 
 `30f623f9efed20b5a82044b51519db1af6da86d3`
 
-第十阶段合入后，生产与测试树保持冻结基线，后续新增仅为规划文档时不得修改已冻结语义。
-
-## 2. 当前官方状态严格完成度
-
-官方具体状态总数：40。
-
-严格完成口径：
+当前 `main` 的生产与测试子树仍等于 Stage10 冻结 pin：
 
 ```text
-机制研究冻结
-+
-运行时冻结到合同
+sgs_v2 = 05511f7576b10efc9664e4e70d9dad88d364966a
+tests  = 122ffd68f1aac06ce353572fd3568aa54d19b5dd
 ```
 
-第十阶段完成后，严格完成状态为 16 / 40：
+## 2. 当前统一完成度
 
 ```text
-连击
-群攻
-反击
-分担
-铁索连环
-援护
-混乱
-嘲讽
-灼烧
-水攻
-中毒
-溃逃
-沙暴
-叛逃
-急救
-休整
+Official States                 = 40
+Research FROZEN                 = 24
+Runtime FROZEN TO CONTRACT      = 16
+Strict Complete                 = 16
 ```
 
-剩余：
+严格完成：
 
 ```text
-24 / 40 尚未严格完成
+Research FROZEN
+AND
+Runtime FROZEN TO CONTRACT
 ```
 
-其中 690082 规避、690083 抵御、690092 必中、690093 破阵均已完成 **Research FROZEN**，但 Runtime 均仍为 `NOT_INTEGRATED`，因此严格完成数仍保持 `16 / 40`。
-
-这些状态不再无限拆成零散小阶段，而是集中安排在第十一、十二阶段完成。
-
-## 3. 当前路线权威
-
-当前路线权威：
-
-`POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md`
-
-演示升级规划：
-
-`DEMO_SCENARIO_SUITE_ROADMAP.md`
-
-旧路线：
+已严格完成 16 个：
 
 ```text
-POST_STAGE9_RESEARCH_AND_INTEGRATION_ROADMAP.md
-PROJECT_ROADMAP.md
+连击 / 群攻 / 反击 / 分担
+铁索连环 / 援护 / 混乱 / 嘲讽
+灼烧 / 水攻 / 中毒 / 溃逃
+沙暴 / 叛逃 / 急救 / 休整
 ```
 
-保留为历史规划，不再作为当前第十一阶段以后的执行 authority。
+## 3. 当前路线 authority
 
-## 4. 第十一阶段当前状态
+Project Stage authority：
 
-第十一阶段定义为：
+- [POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md](POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md)
+- [CANONICAL_STATE_PLANNING_MATRIX.md](CANONICAL_STATE_PLANNING_MATRIX.md)
+
+Research maturity / mechanism authority：
+
+`lxy2005051020-commits/sgs-state-mechanics-research`
+
+Project Stage 与 Research Wave 是两个层次。Research Wave 可以重排，不能静默修改 Project Stage 编号。
+
+## 4. Stage11 · ACTIVE
+
+定义：
 
 ```text
 官方状态补全（一）
+Canonical Scope = 17
 ```
 
-目标是优先完成不依赖完整战法执行系统的剩余状态，主要覆盖：
+范围：
 
 ```text
-伤害类
-命中类
-恢复类
-行动与顺序类
-旧运行时骨架与研究债务
+分摊
+先攻
+遇袭
+缴械
+虚弱
+禁疗
+震慑
+规避
+抵御
+必中
+破阵
+警戒
+会心
+奇谋
+看破
+倒戈
+攻心
 ```
 
-当前状态：
+当前研究状态：
 
 ```text
-PLANNING / RESEARCH FREEZE IN PROGRESS
-690082 EVASION = RESEARCH FROZEN / RUNTIME NOT_INTEGRATED
-690083 RESISTANCE = RESEARCH FROZEN / RUNTIME NOT_INTEGRATED
-690092 SURE_HIT = RESEARCH FROZEN / RUNTIME NOT_INTEGRATED
-690093 BREAK_FORMATION = RESEARCH FROZEN / RUNTIME NOT_INTEGRATED
-PRODUCTION IMPLEMENTATION = NOT AUTHORIZED
+Research FROZEN = 8
+Research non-FROZEN / debt = 9
+Runtime FROZEN = 0
 ```
 
-Stage11 Battle 侧 authority 桥接：
-
-- stages/stage11/research/690082_EVASION_RESEARCH_AUTHORITY.md
-- stages/stage11/research/690083_RESISTANCE_RESEARCH_AUTHORITY.md
-- stages/stage11/research/690092_SURE_HIT_RESEARCH_AUTHORITY.md
-- stages/stage11/research/690093_BREAK_FORMATION_RESEARCH_AUTHORITY.md
-
-规划：
-
-`stages/stage11/STAGE11_PLANNING.md`
-
-## 5. 第十二阶段当前状态
-
-第十二阶段定义为：
+已 Research FROZEN：
 
 ```text
-官方状态补全（二）
+690082 EVASION
+690083 RESISTANCE
+690092 SURE_HIT
+690093 BREAK_FORMATION
+690070 CRITICAL
+690069 STRATEGY_CRITICAL
+690094 LIFE_STEAL
+690095 STRATEGY_LIFE_STEAL
 ```
 
-目标是完成依赖复杂控制、技能类别认识或统一权限判断的剩余状态，并执行官方 40 状态总收口。
+全部 8 个 Runtime 当前仍为 `NOT_INTEGRATED`。
 
-第十二阶段允许建立最小战法类别与权限基础，但不正式接入具体战法执行链。
-
-最终目标：
+特殊项：
 
 ```text
-40 / 40 机制研究完成
-40 / 40 运行时完成
-官方状态体系正式冻结
+690099 警戒 = RESEARCH OPEN / EVIDENCE BLOCKED OR DEFERRED
+690221 看破 = RESEARCH OPEN / EVIDENCE BLOCKED OR DEFERRED
+690086 分摊 = DSTS9-B02 research debt
 ```
 
-当前状态：
+690069 奇谋、690095 攻心保持 **PROJECT-FROZEN MIRROR CONTRACT** 标记，不与独立同规模实证冻结混淆。
+
+### Stage11 当前工程授权边界
+
+允许：
 
 ```text
-PLANNING ONLY
-PRODUCTION IMPLEMENTATION = NOT AUTHORIZED
+Research closure
+Mechanism authority bridge
+Runtime Integration Design
+Independent Design Audit
+Design Freeze
 ```
 
-规划：
-
-`stages/stage12/STAGE12_PLANNING.md`
-
-## 6. 第十三阶段以后
-
-状态体系完成后，再进入正式战法主线：
+尚不授权：
 
 ```text
-Stage 13 突击战法
-Stage 14 普通主动战法
-Stage 15 准备战法
-Stage 16+ 被动 / 指挥 / 阵法 / 兵种战法等
+Overall Stage11 production implementation
+Stage12 activation
+Stage13 skill runtime
 ```
 
-具体后续编号在每阶段开始前仍需重新按依赖审计。
+## 5. Stage12 · PLANNING ONLY
 
-## 7. 演示程序
-
-当前基础 `demo.py` 不足以完整展示已有战斗能力。
-
-从第十一阶段开始，演示程序逐步升级为固定场景套件，至少覆盖：
+Canonical scope = 7：
 
 ```text
-基础战斗
-第九阶段普通攻击反应链
-第十阶段持续状态
-第十一阶段伤害 / 命中 / 恢复 / 行动状态
-第十二阶段复杂控制状态
+690089 洞察
+690101 计穷
+690107 伪报
+690108 挑拨
+690109 破坏
+690110 捕获
+690222 威慑
 ```
 
-第十三阶段以后再加入真实战法场景。
-
-演示只负责可读展示和综合冒烟验证，不替代正式测试。
-
-## 8. 当前唯一下一动作
-
-研究侧不再重复研究 690082 / 690083 / 690092 / 690093；四者 Runtime Integration 留待 Stage11 正式设计/施工。
-
-下一研究工作从剩余 Stage11 状态中继续推进。
-
-当前下一研究候选：
+定位：
 
 ```text
-TBD — 按剩余 Stage11 状态依赖重新审计后确定
+统一控制权限
+战法类别认识
+目标权限
+复合控制
+最小装备权限
 ```
+
+Stage12 仍然不正式执行具体战法。
+
+## 6. Stage13+
+
+```text
+Stage13 = 突击战法运行时
+Stage14 = 普通主动战法
+Stage15 = 准备战法
+Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
+```
+
+Stage13 在 Stage11 / Stage12 状态出口门槛满足前不得启动。
+
+## 7. Research Wave mapping
+
+```text
+Project Stage11
+  Research Wave 2 = 伤害 / 命中 / 恢复
+  Research Wave 3 = 行动 / 顺序 / 控制
+  Research Debt   = 690086 分摊
+
+Project Stage12
+  Research Wave 4 = 技能权限 / 目标控制
+  Research Wave 5 = 装备 / 复合控制
+```
+
+旧 Research 文档把 Wave 3/4/5 写成 Project Stage12/13/14 的做法已被纠正为 ROADMAP DRIFT，不构成正式 Replan。
+
+## 8. 当前下一步
+
+Research side：
+继续关闭 Stage11 未完成研究、证据阻塞与 DSTS9-B02 债务。
+
+Runtime side：
+对 8 个 Research-FROZEN 状态进入：
+
+```text
+Runtime Integration Design
+→ Independent Design Audit
+→ Design Freeze
+→ Implementation
+```
+
+不得跨过设计冻结直接施工。
