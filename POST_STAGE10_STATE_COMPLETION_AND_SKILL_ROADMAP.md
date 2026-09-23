@@ -1,334 +1,302 @@
 # 第十阶段后 · 官方状态补全与战法接入总路线
 
-> 状态：当前项目级路线权威  
-> 日期：2026-09-16  
-> 基线：`main` 已完成第十阶段正式合入  
-> 当前主分支合入提交：`30f623f9efed20b5a82044b51519db1af6da86d3`
+> 状态：**当前项目级路线权威**
+>
+> 初始建立：2026-09-16
+>
+> 双仓库路线统一：2026-09-23
+>
+> Canonical 40-state view: [CANONICAL_STATE_PLANNING_MATRIX.md](CANONICAL_STATE_PLANNING_MATRIX.md)
 
-## 1. 当前总判断
+## 1. Authority Decision
 
-第十阶段结束后，项目已经具备稳定的战斗底盘：行动、普攻、伤害、兵力、状态、恢复、反击、连击、溅射、分担、连锁、目标重定向、持续状态、死亡清理和战斗终结都已经有正式运行时所有者。
-
-接下来的优先级不再是继续扩张底层框架，而是：
+本项目的 **Project Stage** 与研究仓库的 **Research Wave** 是两个不同层次：
 
 ```text
-先把剩余官方状态补齐
-↓
-把演示程序升级成可读的综合场景套件
-↓
-再正式接入战法执行系统
+Project Stage
+= 决定什么时候建设什么产品能力
+= Battle repository authority
+
+Research Wave
+= 决定机制研究按什么依赖顺序推进
+= Research repository authority
 ```
 
-## 2. 官方状态完成口径
+Research Wave 可以重新排序，但不得静默重编号 Project Stage。
 
-官方具体状态总数：40。
-
-严格完成仍采用：
+本次跨仓库审计没有发现正式项目级 Replan 决议批准把原有：
 
 ```text
-机制研究冻结
+Stage11 = 17 states
+Stage12 = 7 states
+Stage13 = 突击战法
+Stage14 = 普通主动
+Stage15 = 准备战法
+```
+
+改成 Research repository 曾出现的 `10 / 6 / 5 / 2 / debt closure` 项目阶段编号。
+
+因此后者统一解释为 Research Wave，原先把它们写成 Project Stage 的部分属于 **ROADMAP DRIFT**。
+
+## 2. 当前统一完成度
+
+官方具体状态：40。
+
+```text
+Research FROZEN            = 24 / 40
+Runtime FROZEN TO CONTRACT = 16 / 40
+Strict Complete            = 16 / 40
+```
+
+严格完成只认：
+
+```text
+Research FROZEN
 +
-运行时实现冻结到合同
+Runtime FROZEN TO CONTRACT
 ```
 
-两项同时满足，才计入“彻底完成”。
+Stage10 的 8 个持续状态已经完成正式 Runtime Integration、独立审计、Implementation Freeze 与 main integration，因此计入严格完成。
 
-截至第十阶段完成并合入主分支，严格完成状态为 16 / 40：
+当前严格完成 16 个：
 
 ```text
-连击
-群攻
-反击
-分担
-铁索连环
-援护
-混乱
-嘲讽
-灼烧
-水攻
-中毒
-溃逃
-沙暴
-叛逃
-急救
-休整
+连击 / 群攻 / 反击 / 分担
+铁索连环 / 援护 / 混乱 / 嘲讽
+灼烧 / 水攻 / 中毒 / 溃逃
+沙暴 / 叛逃 / 急救 / 休整
 ```
 
-剩余 24 个状态进入第十一、十二阶段补全计划。
+## 3. Stage11 · 官方状态补全（一）
 
-> 进度更新（2026-09-21）：690082 规避、690083 抵御、690092 必中、690093 破阵均已完成 Research FROZEN；四者 Runtime 仍为 NOT_INTEGRATED，因此严格完成数仍为 16 / 40。Battle 仓库桥接记录位于 stages/stage11/research/。
-
-## 3. 第十一阶段：官方状态补全（一）
-
-第十一阶段只处理“不依赖完整战法执行系统，也已经有成熟底层所有者可以承接”的状态。
-
-主目标：
+Canonical Scope = 17：
 
 ```text
-把伤害、命中、恢复、行动顺序和已有旧骨架相关状态
-全部从“只有接口 / 只有旧行为 / 只有名字”
-推进到正式机制合同 + 正式运行时 + 回归测试 + 冻结。
+690086 分摊
+690090 先攻
+690091 遇袭
+690102 缴械
+690104 虚弱
+690105 禁疗
+690111 震慑
+690082 规避
+690083 抵御
+690092 必中
+690093 破阵
+690099 警戒
+690070 会心
+690069 奇谋
+690221 看破
+690094 倒戈
+690095 攻心
 ```
 
-候选范围：
+当前：
 
 ```text
-分摊
-先攻
-遇袭
-缴械
-虚弱
-禁疗
-震慑
-规避
-抵御
-必中
-破阵
-警戒
-会心
-奇谋
-看破
-倒戈
-攻心
+Stage11 Research FROZEN = 8
+Stage11 Runtime FROZEN  = 0
+Stage11 non-FROZEN/debt = 9
 ```
 
-当前研究状态补充：
+已 Research FROZEN：
 
 ```text
-规避 / EVASION   → Research FROZEN, Runtime NOT_INTEGRATED
-抵御 / RESISTANCE → Research FROZEN, Runtime NOT_INTEGRATED
-必中 / SURE_HIT   → Research FROZEN, Runtime NOT_INTEGRATED
-破阵 / BREAK_FORMATION → Research FROZEN, Runtime NOT_INTEGRATED
+690082 规避 EVASION
+690083 抵御 RESISTANCE
+690092 必中 SURE_HIT
+690093 破阵 BREAK_FORMATION
+690070 会心 CRITICAL
+690069 奇谋 STRATEGY_CRITICAL
+690094 倒戈 LIFE_STEAL
+690095 攻心 STRATEGY_LIFE_STEAL
 ```
 
-其中每个状态最终归真正的运行时所有者负责，例如：
+八者 Runtime 均仍为 `NOT_INTEGRATED`。
+
+特殊治理状态：
 
 ```text
-规避 / 必中       → 命中判定
-抵御 / 警戒       → 伤害阻止 / 减伤
-破阵 / 看破       → 伤害公式 / 伤害修正
-会心 / 奇谋       → 伤害修正
-倒戈 / 攻心       → 伤害后恢复
-先攻 / 遇袭       → 行动顺序
-缴械 / 震慑       → 行动权限
-虚弱              → 伤害结果
-禁疗              → 恢复权限
-分摊              → 已有分配运行时研究债务闭环
+690099 警戒 = RESEARCH OPEN / EVIDENCE BLOCKED OR DEFERRED
+690221 看破 = RESEARCH OPEN / EVIDENCE BLOCKED OR DEFERRED
+690086 分摊 = DSTS9-B02 empirical debt
 ```
 
-第十一阶段禁止为了实现状态而重写第八、九、十阶段冻结合同。
-
-## 4. 第十二阶段：官方状态补全（二）
-
-第十二阶段处理剩余“需要统一控制权限、战法类别认识或复合权限规则”的状态。
-
-候选范围：
+`DSTS9-B02` 必须继续写成：
 
 ```text
-洞察
-计穷
-伪报
-挑拨
-破坏
-捕获
-威慑
+Empirical Status = OPEN / UNOBSERVED
+Runtime Status   = CLOSED BY EXPLICIT PROJECT RUNTIME DEFAULT
 ```
 
-如第十一阶段存在因研究不足未能冻结的状态，也必须在第十二阶段结束前关闭。
+不得缩写成“研究已关闭”。
 
-第十二阶段允许建立最小、通用的“战法类别与权限判断”基础能力，例如系统至少能正式区分：
+690069 奇谋与 690095 攻心保持 **PROJECT-FROZEN MIRROR CONTRACT** 区分，不伪装成与 690070 会心 / 690094 倒戈相同规模的独立战报实证。
+
+### Stage11 Research Wave
 
 ```text
-主动战法
-突击战法
-被动战法
-指挥战法
-阵法
-兵种战法
+Research Wave 2
+= 伤害 / 命中 / 恢复
+= 690082 / 690083 / 690092 / 690093 / 690099
+  / 690070 / 690069 / 690221 / 690094 / 690095
+
+Research Wave 3
+= 行动 / 顺序 / 控制
+= 690090 / 690091 / 690102 / 690104 / 690105 / 690111
+
+Research Debt Closure
+= 690086
 ```
 
-以及统一回答：
+以上全部仍属于 **Project Stage11**。
+
+## 4. Stage12 · 官方状态补全（二）
+
+Canonical Scope = 7：
 
 ```text
-某类战法当前是否允许尝试发动
-某类战法当前是否允许继续执行
-某个控制状态是否应该阻止该类战法
+690089 洞察
+690101 计穷
+690107 伪报
+690108 挑拨
+690109 破坏
+690110 捕获
+690222 威慑
 ```
 
-但第十二阶段仍然不正式接入具体战法执行链。
-
-## 5. 第十二阶段最终目标
-
-第十二阶段的最终目标是：
+Stage12 定位：
 
 ```text
-40 / 40 官方状态机制研究完成
-40 / 40 官方状态运行时完成
-官方状态体系正式冻结
+统一控制权限
+战法类别认识
+目标权限
+复合控制
+最小装备权限
 ```
 
-如果任何状态仍有关键机制未知，第十二阶段不得伪装完成，必须继续研究直到满足冻结条件。
+Research-side mapping：
 
-## 6. 第十三阶段：突击战法运行时
+```text
+Research Wave 4
+= 690089 / 690101 / 690107 / 690108 / 690222
 
-第十三阶段开始正式进入战法系统。
+Research Wave 5
+= 690109 / 690110
+```
+
+Stage12 允许建立最小、通用的战法类别与权限基础，但 **仍不正式接入具体战法执行链**。
+
+如 Stage11 因证据阻塞存在未冻结状态，必须在项目决议允许的边界内继续关闭；Evidence Blocked 不等于自动改变 Project Stage ownership。
+
+## 5. Stage13 · 突击战法运行时
+
+Stage13 才正式进入具体战法执行。
 
 目标：
 
 ```text
 普通攻击产生突击机会
-→ 判断已装备突击战法
-→ 发动率判定
+→ 已装备突击战法识别
+→ 发动率
 → 目标处理
 → 效果执行
-→ 伤害 / 状态 / 恢复继续走现有正式所有者
+→ 现有 Damage / State / Recovery owner 结算
 → 死亡 / 战斗结束正确中止
 ```
 
-第九阶段已经预留突击执行入口，因此第十三阶段应优先使用现有冻结接口，不另造第二套普通攻击和伤害流程。
+不得因为 Research Wave 曾使用 “Stage13” 字样而提前启动。
 
-## 7. 第十四阶段：普通主动战法
-
-目标：
+## 6. Stage14 · 普通主动战法
 
 ```text
-武将行动时自动发现主动战法
-→ 判定是否可以发动
-→ 发动率判定
+武将行动
+→ 主动战法发现
+→ 权限判定
+→ 发动率
 → 目标选择
 → 效果执行
-→ 与普通攻击形成正式行动顺序
 ```
 
-不包含需要准备一回合的主动战法。
+不包含准备一回合的主动战法。
 
-## 8. 第十五阶段：准备战法
-
-目标：
+## 7. Stage15 · 准备战法
 
 ```text
 开始准备
-→ 准备期存续
+→ 准备生命周期
 → 中断 / 控制 / 死亡处理
 → 下一合法时点正式发动
 → 目标与效果结算
 ```
 
-准备战法必须单独形成生命周期，不应塞进普通主动战法的特殊分支。
+## 8. Stage16+
 
-## 9. 第十六阶段以后
-
-后续按依赖逐步接入：
+后续按依赖进入：
 
 ```text
 被动战法
 指挥战法
 阵法
 兵种战法
-属性增减 / 属性转移
-受伤触发 / 造成伤害触发 / 死亡触发 / 治疗触发
-主将 / 副将特殊机制
-兵种克制
-大规模真实武将与战法内容
+属性增减 / 转移
+更多触发族
+真实武将与战法内容
 ```
 
-具体编号以当时仓库真实依赖关系重新审计，不提前锁死。
+## 9. Stage11 当前工程边界
 
-## 10. 状态系统的后续原则
+当前项目仍处于 Stage11。
 
-第十阶段以后，不再把“所有状态玩法”都塞进状态系统。
-
-状态系统负责：
+Research side：
 
 ```text
-状态是否存在
-状态属于谁
-来源是谁
-什么时候刷新
-什么时候过期
-什么时候移除
+继续关闭 Stage11 未完成研究
+保留 evidence-blocked 标记
+关闭或正式处置 DSTS9-B02 research debt
 ```
 
-真正的玩法效果由对应系统解释：
+Runtime side：
 
 ```text
-伤害类状态      → 伤害系统
-命中类状态      → 命中判定
-恢复类状态      → 恢复系统
-行动类状态      → 行动系统
-顺序类状态      → 行动顺序系统
-技能控制状态    → 战法权限系统
-属性类状态      → 属性修改系统
+8 个 Research-FROZEN 状态
+→ Runtime Integration Design
+→ Independent Design Audit
+→ Design Freeze
+→ Implementation
 ```
 
-## 11. 演示程序升级
+在 Design Freeze 前，不授权整体 Stage11 production implementation。
 
-从第十一阶段开始，演示程序升级为“固定场景套件”，不再只展示最基础普攻。
+## 10. Stage11 Exit Gate
 
-演示程序定位：
+Stage11 结束至少要求：
 
 ```text
-给人看的综合运行展示
+Stage11 范围内研究完成，或存在正式项目级处置决议
 +
-端到端冒烟验证
+Runtime Integration 完成
++
+回归通过
++
+演示覆盖
++
+独立审计
++
+Implementation Freeze
 ```
 
-但演示程序不是正式测试，也不是机制权威来源。
-
-建议场景：
+在该 Gate 满足前：
 
 ```text
-基础战斗
-连击 / 反击 / 群攻 / 分担 / 连锁
-混乱 / 嘲讽 / 援护 / 震慑 / 缴械
-持续伤害
-急救 / 休整 / 禁疗
-规避 / 抵御 / 必中 / 破阵
-会心 / 奇谋
-倒戈 / 攻心
-综合复杂战斗
+Stage12 = NOT ACTIVE
+Stage13 = NOT ACTIVE
 ```
 
-第十三阶段以后继续加入突击、主动、准备等战法展示。
+## 11. 唯一矩阵与跨仓库同步
 
-详细规划见：`DEMO_SCENARIO_SUITE_ROADMAP.md`。
+Battle repository 的 [CANONICAL_STATE_PLANNING_MATRIX.md](CANONICAL_STATE_PLANNING_MATRIX.md) 是 Project Stage / Runtime 的跨仓库 canonical matrix。
 
-## 12. 每阶段统一流程
+Research repository 的 `STATE_COMPLETION_MATRIX.md` 是 research-side mirror，负责 Research Maturity / Mechanism Authority，并镜像 Project Stage 与 Runtime 状态。
 
-```text
-机制研究
-↓
-证据缺口审计
-↓
-机制合同
-↓
-阶段设计
-↓
-独立设计审计
-↓
-设计冻结
-↓
-实现
-↓
-回归测试 + 演示
-↓
-交叉机制审计
-↓
-最终独立审计
-↓
-实施冻结
-↓
-合入主分支
-```
-
-## 13. 当前唯一下一动作
-
-当前仍处于：
-
-```text
-第十一阶段官方状态补全（一）规划与研究准备
-```
-
-不要现在开始突击战法施工。
-
-690082 规避、690083 抵御、690092 必中、690093 破阵的研究已经关闭；后续只等待 Stage11 Runtime Integration。研究侧继续完成其余 Stage11 状态，下一研究候选需按剩余状态依赖重新审计后确定。
+两边不得再独立维护互相冲突的严格完成数或 Project Stage 编号。
