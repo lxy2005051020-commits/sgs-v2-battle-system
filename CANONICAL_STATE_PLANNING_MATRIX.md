@@ -2,7 +2,7 @@
 
 > Status: **CURRENT CROSS-REPO PROJECT AUTHORITY**
 >
-> Reconciled: 2026-09-23
+> Reconciled: 2026-09-24
 >
 > Project Stage and Runtime Maturity authority: this Battle repository.
 >
@@ -12,11 +12,11 @@
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 26
+Research FROZEN                 = 27
 Runtime FROZEN TO CONTRACT      = 16
 Strict Complete                 = 16
 Stage11 Scope                   = 17
-Stage11 Research FROZEN         = 10
+Stage11 Research FROZEN         = 11
 Stage11 Runtime FROZEN          = 0
 Stage12 Scope                   = 7
 Evidence-Blocked / Deferred     = 2
@@ -67,7 +67,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690086 | 分摊 DISTRIBUTION | RUNTIME_READY_WITH_RESEARCH_DEBT | RUNTIME_DEFAULT_WITH_RESEARCH_DEBT | NO | Stage11 | Research Debt Closure | Stage9 distribution freeze record | Close DSTS9-B02 debt | Empirical OPEN / UNOBSERVED; runtime default only |
 | 690090 | 先攻 FIRST_STRIKE | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/functional/first_strike/MECHANISM_CONTRACT.md | Runtime Integration Design | Q1-Q17 CLOSED; Unified Falsification Audit PASSED; true counterexamples 0 |
 | 690091 | 遇袭 SURPRISE | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/functional/surprise/MECHANISM_CONTRACT.md | Runtime Integration Design | PROJECT-FROZEN MIRROR CONTRACT of 690090; opposite priority direction; shared mechanics unchanged |
-| 690102 | 缴械 DISARM | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
+| 690102 | 缴械 DISARM | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/control/disarm/MECHANISM_CONTRACT.md | Runtime Integration Design | Contract v0.4; full-corpus falsification SURVIVED; independent Freeze Readiness PASSED; B01-B05 preserved |
 | 690104 | 虚弱 WEAKNESS | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
 | 690105 | 禁疗 HEALING_BAN | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
 | 690111 | 震慑 STUN | TODO | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | No frozen research authority | Targeted research → contract → freeze | Research OPEN |
