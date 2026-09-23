@@ -1,5 +1,11 @@
 # 第十二阶段规划 · 官方状态补全（二）
 
+> 状态：**CURRENT STAGE12 PLANNING / NOT ACTIVE**  
+> Canonical Scope：**7 states**  
+> Project Stage ownership：Stage12  
+> Research mapping：Wave 4 + Wave 5；研究波次只是执行顺序，不是 Project Stage13/14。  
+> Canonical authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
+
 > 状态：规划草案  
 > 目标：完成剩余复杂控制状态并收口官方 40 状态
 
