@@ -43,7 +43,7 @@ Stage15 = 准备战法
 官方具体状态：40。
 
 ```text
-Research FROZEN            = 24 / 40
+Research FROZEN            = 25 / 40
 Runtime FROZEN TO CONTRACT = 16 / 40
 Strict Complete            = 16 / 40
 ```
@@ -94,9 +94,9 @@ Canonical Scope = 17：
 当前：
 
 ```text
-Stage11 Research FROZEN = 8
+Stage11 Research FROZEN = 9
 Stage11 Runtime FROZEN  = 0
-Stage11 non-FROZEN/debt = 9
+Stage11 non-FROZEN/debt = 8
 ```
 
 已 Research FROZEN：
@@ -110,9 +110,10 @@ Stage11 non-FROZEN/debt = 9
 690069 奇谋 STRATEGY_CRITICAL
 690094 倒戈 LIFE_STEAL
 690095 攻心 STRATEGY_LIFE_STEAL
+690090 先攻 FIRST_STRIKE
 ```
 
-八者 Runtime 均仍为 `NOT_INTEGRATED`。
+九者均未 Runtime FROZEN；690090 保持 `SKELETON_ONLY`，其余既有 Research-FROZEN 状态保持当前 `NOT_INTEGRATED` 记录。
 
 特殊治理状态：
 
@@ -259,7 +260,7 @@ Research side：
 Runtime side：
 
 ```text
-8 个 Research-FROZEN 状态
+9 个 Research-FROZEN 状态
 → Runtime Integration Design
 → Independent Design Audit
 → Design Freeze
