@@ -12,11 +12,11 @@
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 25
+Research FROZEN                 = 26
 Runtime FROZEN TO CONTRACT      = 16
 Strict Complete                 = 16
 Stage11 Scope                   = 17
-Stage11 Research FROZEN         = 9
+Stage11 Research FROZEN         = 10
 Stage11 Runtime FROZEN          = 0
 Stage12 Scope                   = 7
 Evidence-Blocked / Deferred     = 2
@@ -66,7 +66,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690106 | 嘲讽 TAUNT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Stage9 taunt freeze record | Frozen; regression only |  |
 | 690086 | 分摊 DISTRIBUTION | RUNTIME_READY_WITH_RESEARCH_DEBT | RUNTIME_DEFAULT_WITH_RESEARCH_DEBT | NO | Stage11 | Research Debt Closure | Stage9 distribution freeze record | Close DSTS9-B02 debt | Empirical OPEN / UNOBSERVED; runtime default only |
 | 690090 | 先攻 FIRST_STRIKE | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/functional/first_strike/MECHANISM_CONTRACT.md | Runtime Integration Design | Q1-Q17 CLOSED; Unified Falsification Audit PASSED; true counterexamples 0 |
-| 690091 | 遇袭 SURPRISE | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
+| 690091 | 遇袭 SURPRISE | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/functional/surprise/MECHANISM_CONTRACT.md | Runtime Integration Design | PROJECT-FROZEN MIRROR CONTRACT of 690090; opposite priority direction; shared mechanics unchanged |
 | 690102 | 缴械 DISARM | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
 | 690104 | 虚弱 WEAKNESS | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
 | 690105 | 禁疗 HEALING_BAN | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
@@ -124,6 +124,6 @@ Authority:
 - Stage11 remains active until its exit gate is satisfied.
 - Research FROZEN does not imply Runtime FROZEN.
 - Runtime default with research debt does not count as Strict Complete.
-- 690069 and 690095 retain their Project-Frozen Mirror distinction.
+- 690069, 690095 and 690091 retain their Project-Frozen Mirror distinction.
 - 690099 and 690221 remain research-open / evidence-blocked or deferred.
 - No Stage12 or Stage13 activation is authorized by this reconciliation.
