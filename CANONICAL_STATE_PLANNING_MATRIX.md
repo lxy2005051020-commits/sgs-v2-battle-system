@@ -12,11 +12,11 @@
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 24
+Research FROZEN                 = 25
 Runtime FROZEN TO CONTRACT      = 16
 Strict Complete                 = 16
 Stage11 Scope                   = 17
-Stage11 Research FROZEN         = 8
+Stage11 Research FROZEN         = 9
 Stage11 Runtime FROZEN          = 0
 Stage12 Scope                   = 7
 Evidence-Blocked / Deferred     = 2
@@ -65,7 +65,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690103 | 混乱 CONFUSION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Research confusion contract + frozen runtime | Frozen; regression only |  |
 | 690106 | 嘲讽 TAUNT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Stage9 taunt freeze record | Frozen; regression only |  |
 | 690086 | 分摊 DISTRIBUTION | RUNTIME_READY_WITH_RESEARCH_DEBT | RUNTIME_DEFAULT_WITH_RESEARCH_DEBT | NO | Stage11 | Research Debt Closure | Stage9 distribution freeze record | Close DSTS9-B02 debt | Empirical OPEN / UNOBSERVED; runtime default only |
-| 690090 | 先攻 FIRST_STRIKE | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
+| 690090 | 先攻 FIRST_STRIKE | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/functional/first_strike/MECHANISM_CONTRACT.md | Runtime Integration Design | Q1-Q17 CLOSED; Unified Falsification Audit PASSED; true counterexamples 0 |
 | 690091 | 遇袭 SURPRISE | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
 | 690102 | 缴械 DISARM | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
 | 690104 | 虚弱 WEAKNESS | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
