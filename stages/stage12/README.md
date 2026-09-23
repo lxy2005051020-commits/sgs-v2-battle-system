@@ -1,5 +1,10 @@
 # 第十二阶段 · 官方状态补全（二）
 
+> 状态：**PLANNING ONLY / NOT ACTIVE**  
+> Canonical Scope：**7 states**  
+> Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)  
+> Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）；Research Wave 不改变 Project Stage 编号。
+
 当前状态：
 
 ```text
