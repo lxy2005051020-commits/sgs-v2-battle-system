@@ -1,265 +1,329 @@
 # 第十一阶段规划 · 官方状态补全（一）
 
-> 状态：规划草案 / 研究冻结推进中  
-> 目标：状态补全，不接入正式战法执行链
+> 状态：**CURRENT STAGE11 PLANNING**
+>
+> Project Stage: Stage11
+>
+> Canonical Scope: 17 states
+>
+> Current phase: Research Closure + Runtime Integration Design
+>
+> Production implementation: NOT AUTHORIZED until Design Freeze
 
-## 1. 阶段责任
+## 1. Stage responsibility
 
-第十一阶段只负责：
-
-> 把现有底层系统已经能够承接、但官方状态机制尚未严格完成的状态，补到“研究冻结 + 运行时冻结到合同”的正式状态。
-
-## 2. 候选状态
-
-当前候选：
-
-```text
-分摊
-先攻
-遇袭
-缴械
-虚弱
-禁疗
-震慑
-规避
-抵御
-必中
-破阵
-警戒
-会心
-奇谋
-看破
-倒戈
-攻心
-```
-
-最终范围不得凭这份清单直接冻结，必须先完成状态完成度与所有者矩阵。
-
-### 2.1 当前研究冻结进度
-
-截至 `2026-09-21`：
+Stage11 负责将下列 17 个官方状态推进到项目可交付状态，同时保持 Research Maturity 与 Runtime Maturity 分离记录。
 
 ```text
-690082 规避 / EVASION
-Research = FROZEN
-Evidence Maturity = HIGH_CONFIDENCE
-Runtime = NOT_INTEGRATED
-Strict Completion = NO
-
-690083 抵御 / RESISTANCE
-Research = FROZEN
-Evidence Maturity = HIGH_CONFIDENCE
-Runtime = NOT_INTEGRATED
-Strict Completion = NO
-
-690092 必中 / SURE_HIT
-Research = FROZEN
-Evidence Maturity = HIGH_CONFIDENCE CORE + PROJECT-AUTHORIZED ELIGIBILITY RULE
-Runtime = NOT_INTEGRATED
-Strict Completion = NO
-
-690093 破阵 / BREAK_FORMATION
-Research = FROZEN
-Evidence Maturity = HIGH_CONFIDENCE CORE + EXPLICIT ENGINEERING CONTRACT FOR DIRECT STRATEGY
-Runtime = NOT_INTEGRATED
-Strict Completion = NO
+690086 分摊
+690090 先攻
+690091 遇袭
+690102 缴械
+690104 虚弱
+690105 禁疗
+690111 震慑
+690082 规避
+690083 抵御
+690092 必中
+690093 破阵
+690099 警戒
+690070 会心
+690069 奇谋
+690221 看破
+690094 倒戈
+690095 攻心
 ```
 
-Battle 侧只保存研究权威桥接，不复制第二份机制正文：
+本清单是 **Project Stage ownership**，不是 Research Wave。
 
-- `stages/stage11/research/690082_EVASION_RESEARCH_AUTHORITY.md`
-- `stages/stage11/research/690083_RESISTANCE_RESEARCH_AUTHORITY.md`
-- `stages/stage11/research/690092_SURE_HIT_RESEARCH_AUTHORITY.md`
-- `stages/stage11/research/690093_BREAK_FORMATION_RESEARCH_AUTHORITY.md`
-
-正式研究合同：
-
-- repository: `lxy2005051020-commits/sgs-state-mechanics-research`
-- EVASION path: `states/functional/evasion/MECHANISM_CONTRACT.md`
-- EVASION frozen commit: `32341b548f2ef9f83335a5e47c6a650842d4d093`
-- RESISTANCE path: `states/functional/resistance/MECHANISM_CONTRACT.md`
-- RESISTANCE current corrected authority head: `5741751b2723243606d9e83be40c1df5b9395ab2`
-- SURE_HIT path: `states/functional/sure_hit/MECHANISM_CONTRACT.md`
-- SURE_HIT frozen research head: `313f1a71369683ca6eb8213a412c94506aa00372`
-- BREAK_FORMATION path: `states/functional/break_formation/MECHANISM_CONTRACT.md`
-- BREAK_FORMATION frozen research head: `65c335688718453dfe264f9796cb14bde17d11a7`
-
-690082 / 690083 / 690092 / 690093 后续只进入 Stage11 Runtime Integration，不再重复开展机制研究，除非出现正式 Reopen 证据。
-
-## 3. 按运行时所有者分组
-
-### 伤害与命中
+## 2. Current maturity snapshot
 
 ```text
-规避
-抵御
-必中
-破阵
-警戒
-会心
-奇谋
-看破
-虚弱
+Stage11 Scope            = 17
+Research FROZEN          = 8
+Research non-FROZEN/debt = 9
+Runtime FROZEN           = 0
+Strict Complete added by Stage11 = 0
 ```
 
-目标：复用第八阶段伤害流水线已经冻结的扩展点，不改写伤害系统核心所有权。
-
-### 恢复
-
-```text
-禁疗
-倒戈
-攻心
-```
-
-目标：统一由恢复与伤害后处理体系解释，不在状态系统中复制恢复逻辑。
-
-### 行动与顺序
-
-```text
-先攻
-遇袭
-缴械
-震慑
-```
-
-目标：由行动顺序或行动权限系统解释状态事实。
-
-### 旧研究债务
-
-```text
-分摊
-```
-
-目标：关闭现有运行时与机制研究之间的证据债务，使其可以进入严格完成统计。
-
-## 4. 阶段开始前必须完成的审计
-
-对剩余状态逐个记录：
-
-```text
-当前研究等级
-当前运行时等级
-真正运行时所有者
-是否已有正式接口
-是否已有旧骨架
-是否需要重新研究
-是否依赖战法权限
-是否放入第十一阶段
-是否放入第十二阶段
-```
-
-已经研究冻结的状态（当前为 690082 EVASION、690083 RESISTANCE、690092 SURE_HIT、690093 BREAK_FORMATION）不再列入“是否需要重新研究”的开放项，只记录其 Runtime Gap。
-
-## 5. 实现原则
-
-状态系统只负责状态生命周期。
-
-不得出现：
-
-```text
-为了规避状态重写伤害系统
-为了禁疗状态复制恢复逻辑
-为了缴械状态在多个系统里散落专用布尔值
-```
-
-正确方式是把状态事实交给真正的规则所有者解释。
-
-## 6. 研究门槛
-
-每个状态必须先拥有足以支持实现的机制合同。
-
-如果研究不够：
-
-```text
-先研究
-再设计
-再实现
-```
-
-禁止因为代码接口已经存在就把“最低可用研究”直接当作冻结真相。
-
-690082、690083、690092、690093 已通过该门槛，后续实现必须消费各自 FROZEN research authority。
-
-## 7. 设计冻结门槛
-
-第十一阶段正式设计至少必须确定：
-
-```text
-每个状态的唯一运行时所有者
-触发时点
-持续与刷新规则
-冲突与覆盖规则
-权限判定点
-随机数使用边界
-与第七至第十阶段的兼容关系
-```
-
-## 8. 实施退出门槛
-
-第十一阶段结束时：
-
-```text
-阶段内全部状态研究已冻结
-阶段内全部状态运行时实现完成
-交叉机制回归通过
-演示场景已覆盖代表组合
-最终独立审计通过
-实施冻结完成
-```
-
-并且不得破坏第七、八、九、十阶段冻结合同。
-
-## 9. 演示要求
-
-第十一阶段开始同步升级演示场景，至少增加：
-
-```text
-命中与规避
-抵御与必中
-破阵 / 看破
-会心 / 奇谋
-禁疗与恢复
-倒戈 / 攻心
-先攻 / 遇袭
-缴械 / 震慑
-```
-
-演示不代替测试。
-
-## 10. 明确不做
-
-第十一阶段不做：
-
-```text
-突击战法正式运行时
-普通主动战法
-准备战法
-被动战法
-指挥战法
-阵法
-兵种战法
-完整技能调度器
-```
-
-## 11. 当前下一步
-
-研究侧继续关闭 Stage11 剩余状态；实现侧仍未授权整体施工。
-
-当前已冻结研究资产：
+### 2.1 Research FROZEN / Runtime NOT_INTEGRATED
 
 ```text
 690082 EVASION
 690083 RESISTANCE
 690092 SURE_HIT
 690093 BREAK_FORMATION
+690070 CRITICAL
+690069 STRATEGY_CRITICAL
+690094 LIFE_STEAL
+690095 STRATEGY_LIFE_STEAL
 ```
 
-690093 已完成研究冻结，不再继续扩张 Break Formation 问题。
+这 8 个状态已经通过研究准入门槛，不再重复无新证据的专项问题扩张。下一步统一进入 Runtime Integration Design。
 
-下一研究候选：
+Research authority repository：
+
+`lxy2005051020-commits/sgs-state-mechanics-research`
+
+对应合同：
+
 ```text
-TBD — 按 Stage11 剩余状态依赖重新审计后确定
+states/functional/evasion/MECHANISM_CONTRACT.md
+states/functional/resistance/MECHANISM_CONTRACT.md
+states/functional/sure_hit/MECHANISM_CONTRACT.md
+states/functional/break_formation/MECHANISM_CONTRACT.md
+states/functional/critical/MECHANISM_CONTRACT.md
+states/functional/strategy_critical/MECHANISM_CONTRACT.md
+states/functional/life_steal/MECHANISM_CONTRACT.md
+states/functional/strategy_life_steal/MECHANISM_CONTRACT.md
 ```
 
-690093 后续工作只进入 Runtime Integration Design；不得重新扫描战报或用现有 Damage Pipeline 反向改写 FROZEN research contract。
+### 2.2 Ordinary research-open states
+
+```text
+690090 先攻    = MINIMUM_USABLE / SKELETON_ONLY
+690091 遇袭    = MINIMUM_USABLE / SKELETON_ONLY
+690102 缴械    = MINIMUM_USABLE / SKELETON_ONLY
+690104 虚弱    = MINIMUM_USABLE / SKELETON_ONLY
+690105 禁疗    = MINIMUM_USABLE / SKELETON_ONLY
+690111 震慑    = TODO / SKELETON_ONLY
+```
+
+旧 Runtime 骨架不等于完整机制研究，必须先完成 Targeted Research → Contract → Freeze。
+
+### 2.3 Evidence-blocked / deferred states
+
+```text
+690099 警戒 = MINIMUM_USABLE / NOT_INTEGRATED
+690221 看破 = NOT_INDEXED / NOT_INTEGRATED
+```
+
+当前治理标记：
+
+```text
+RESEARCH OPEN
+EVIDENCE BLOCKED / DEFERRED
+```
+
+Evidence Blocked 只描述研究证据状态，不修改 Stage11 ownership。
+
+### 2.4 Research-debt state
+
+```text
+690086 分摊
+Research = RUNTIME_READY_WITH_RESEARCH_DEBT
+Runtime  = RUNTIME_DEFAULT_WITH_RESEARCH_DEBT
+Debt     = DSTS9-B02
+```
+
+必须保留：
+
+```text
+Empirical Status = OPEN / UNOBSERVED
+Runtime Status   = CLOSED BY EXPLICIT PROJECT RUNTIME DEFAULT
+Design Admission = NOT BLOCKING
+Research Debt    = YES
+```
+
+不得把项目工程默认写成“官方机制已经实证关闭”。
+
+## 3. Project-Frozen vs Empirical-Frozen
+
+### Project-Frozen Mirror Contract
+
+```text
+690069 奇谋
+690095 攻心
+```
+
+二者已经是正式 FROZEN authority，但冻结依据包含明确 Project Decision 的镜像合同，不伪装成独立同规模战报复跑。
+
+### Empirical-Frozen examples
+
+```text
+690070 会心
+690094 倒戈
+```
+
+同步文档必须保留这种 evidence provenance 区别。
+
+## 4. Research Wave mapping inside Stage11
+
+```text
+Research Wave 2
+= Damage / Hit / Recovery
+= 690082, 690083, 690092, 690093, 690099,
+  690070, 690069, 690221, 690094, 690095
+
+Research Wave 3
+= Action / Order / Control
+= 690090, 690091, 690102, 690104, 690105, 690111
+
+Research Debt Closure
+= 690086
+```
+
+Research Wave 可以调整，但 Project Stage11 的 17-state ownership 不随之重编号。
+
+## 5. Runtime owner design groups
+
+### Damage / Hit owner group
+
+```text
+规避 / 必中
+抵御 / 警戒
+破阵 / 看破
+会心 / 奇谋
+虚弱
+```
+
+原则：复用 Stage8 Damage Pipeline 冻结边界与正式 extension point；不为单个状态创建第二条伤害流水线。
+
+### Recovery owner group
+
+```text
+禁疗
+倒戈
+攻心
+```
+
+原则：由 Recovery / Damage Aftermath ownership 解释，不在 StateLifecycle 中复制恢复结算。
+
+### Action / Order / Permission owner group
+
+```text
+先攻
+遇袭
+缴械
+震慑
+```
+
+原则：由行动顺序或行动权限 owner 解释状态事实。
+
+### Distribution debt
+
+```text
+分摊
+```
+
+原则：关闭或正式处置 DSTS9-B02，不改变已存在的 runtime-default provenance。
+
+## 6. Runtime Integration Design required outputs
+
+Stage11 正式设计必须对每个进入施工的状态明确：
+
+```text
+Research authority
+Runtime owner
+State lifecycle responsibility
+Trigger / admission point
+Timing
+Eligibility
+Conflict / overwrite / refresh
+RNG boundary
+Damage / Recovery / Action integration point
+Death / BattleFinalized behavior
+Cross-stage compatibility
+Regression obligations
+Demo obligations
+```
+
+不得从当前代码“看起来怎么跑”倒推研究真相。
+
+## 7. Design gate
+
+顺序不可跳过：
+
+```text
+Mechanism Research
+↓
+Mechanism Contract / Freeze
+↓
+Runtime Integration Design
+↓
+Independent Design Audit
+↓
+Design Freeze
+↓
+Implementation
+```
+
+8 个已经 Research FROZEN 的状态从 Runtime Integration Design 起步。
+
+Stage11 整体 production implementation 在 Design Freeze 前仍为 NOT AUTHORIZED。
+
+## 8. Stage11 Exit Gate
+
+Stage11 结束要求：
+
+```text
+Stage11 研究关闭，或存在明确项目级处置决议
++
+Runtime integration complete
++
+Regression PASS
++
+Representative demo coverage
++
+Independent final audit PASS
++
+Implementation Freeze
+```
+
+未满足前：
+
+```text
+Stage12 = PLANNING ONLY
+Stage13 = NOT ACTIVE
+```
+
+## 9. Relationship to Stage12
+
+Stage12 canonical scope 固定为：
+
+```text
+690089 洞察
+690101 计穷
+690107 伪报
+690108 挑拨
+690109 破坏
+690110 捕获
+690222 威慑
+```
+
+Research Wave 4/5 是 Stage12 内部研究顺序，不是新的 Project Stage13/14。
+
+## 10. Explicit exclusions
+
+Stage11 当前不建设：
+
+```text
+正式突击战法运行时
+普通主动战法运行时
+准备战法生命周期
+被动 / 指挥 / 阵法 / 兵种战法调度
+完整装备系统
+大规模具体战法内容
+```
+
+## 11. Current next action
+
+Research side：
+
+```text
+关闭 690090 / 690091 / 690102 / 690104 / 690105 / 690111
+处理 690099 / 690221 evidence blockage
+关闭或正式处置 690086 DSTS9-B02 debt
+```
+
+Runtime side：
+
+```text
+为 690082 / 690083 / 690092 / 690093
+   690070 / 690069 / 690094 / 690095
+开展 Stage11 Runtime Integration Design
+```
+
+跨仓库 canonical matrix：
+
+[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
