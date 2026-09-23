@@ -1,6 +1,8 @@
-# 阶段文件索引
+# Stages / 项目阶段索引
 
 每个阶段的设计、研究、证据、审计、冻结和实施材料统一存放在 `stages/stageN/`。
+
+## 1. 阶段导航
 
 - [Stage 1：基础运行模型](stage1/README.md)
 - [Stage 2：BattleSystem](stage2/README.md)
@@ -11,59 +13,127 @@
 - [Stage 7：Trigger / Recovery](stage7/README.md)
 - [Stage 8：Damage Pipeline — FROZEN](stage8/README.md)
 - [Stage 9：Cross-Mechanism Runtime Orchestration — FROZEN](stage9/README.md)
-- [Stage 10：Persistent State Runtime Integration — FROZEN / 已合入 main](stage10/README.md)
-- [Stage 11：官方状态补全（一）— 规划中](stage11/README.md)
-- [Stage 12：官方状态补全（二）— 规划中](stage12/README.md)
+- [Stage 10：Persistent State Runtime Integration — FROZEN / main integrated](stage10/README.md)
+- [Stage 11：官方状态补全（一）— ACTIVE](stage11/README.md)
+- [Stage 12：官方状态补全（二）— PLANNING ONLY](stage12/README.md)
 
-## 当前边界
+## 2. 当前阶段
 
 ```text
 Stage 8  = FROZEN
 Stage 9  = FROZEN
 Stage 10 = FROZEN / MAIN INTEGRATION COMPLETE
-
-Stage 11 = PLANNING / RESEARCH PREPARATION
+Stage 11 = ACTIVE / RESEARCH CLOSURE + RUNTIME INTEGRATION DESIGN
 Stage 12 = PLANNING ONLY
+Stage 13 = NOT ACTIVE
 ```
 
-第十阶段正式主分支合入提交：
+Stage10 main integration commit：
 
 `30f623f9efed20b5a82044b51519db1af6da86d3`
 
-## 当前路线
-
-当前第十阶段后路线权威：
-
-- [官方状态补全与战法接入总路线](../POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md)
-- [演示场景套件升级规划](../DEMO_SCENARIO_SUITE_ROADMAP.md)
-- [Stage11 规划](stage11/STAGE11_PLANNING.md)
-- [Stage12 规划](stage12/STAGE12_PLANNING.md)
-
-旧的第九阶段后路线保留为历史记录，不再作为 Stage11+ 当前执行路线。
-
-## 官方状态当前完成度
-
-严格完成标准：
+## 3. 当前统一状态数字
 
 ```text
-机制研究冻结
-+
-运行时冻结到合同
+Official States            = 40
+Research FROZEN            = 24
+Runtime FROZEN TO CONTRACT = 16
+Strict Complete            = 16
 ```
 
-当前：
+Stage11：
 
 ```text
-16 / 40 严格完成
-24 / 40 待第十一、十二阶段补齐
+Canonical Scope       = 17
+Research FROZEN       = 8
+Research non-FROZEN/debt = 9
+Runtime FROZEN        = 0
 ```
 
-第十一、十二阶段完成后，目标是正式达到：
+Stage12：
 
 ```text
-40 / 40 官方状态体系冻结
+Canonical Scope = 7
+Status          = PLANNING ONLY
 ```
 
-随后项目主线才进入战法正式接入。
+## 4. 当前路线 Authority
 
-共享源码位于 `sgs_v2/`，正式测试位于 `tests/`。
+项目级路线：
+
+- [第十阶段后官方状态补全与战法接入总路线](../POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md)
+- [Canonical State Planning Matrix](../CANONICAL_STATE_PLANNING_MATRIX.md)
+- [当前项目状态](../PROJECT_STATUS.md)
+
+Stage 规划：
+
+- [Stage11 Planning](stage11/STAGE11_PLANNING.md)
+- [Stage12 Planning](stage12/STAGE12_PLANNING.md)
+
+Research mechanism authority：
+
+`lxy2005051020-commits/sgs-state-mechanics-research`
+
+## 5. Project Stage 与 Research Wave
+
+```text
+Project Stage11
+  Research Wave 2 = 伤害 / 命中 / 恢复
+  Research Wave 3 = 行动 / 顺序 / 控制
+  Research Debt   = 690086 分摊
+
+Project Stage12
+  Research Wave 4 = 技能权限 / 目标控制
+  Research Wave 5 = 装备 / 复合控制
+
+Project Stage13 = 突击战法
+Project Stage14 = 普通主动战法
+Project Stage15 = 准备战法
+```
+
+Research Wave 是研究顺序，不得覆盖项目阶段编号。
+
+## 6. 当前 Stage11 Research FROZEN
+
+```text
+690082 规避
+690083 抵御
+690092 必中
+690093 破阵
+690070 会心
+690069 奇谋
+690094 倒戈
+690095 攻心
+```
+
+八者 Runtime 均仍为 `NOT_INTEGRATED`，因此不增加 Strict Complete。
+
+## 7. Stage11 特殊开放项
+
+```text
+690099 警戒 = EVIDENCE BLOCKED / DEFERRED
+690221 看破 = EVIDENCE BLOCKED / DEFERRED
+690086 分摊 = DSTS9-B02 empirical research debt
+```
+
+Evidence blockage 不等于改变 Project Stage ownership。
+
+## 8. 当前下一动作
+
+```text
+Research closure
+↓
+Mechanism Contract
+↓
+Runtime Integration Design
+↓
+Independent Design Audit
+↓
+Design Freeze
+↓
+Implementation
+```
+
+已经 Research FROZEN 的状态可以进入 Runtime Integration Design，但 Stage11 整体 production implementation 尚未授权。
+
+Stage11 Exit Gate 满足前，不进入 Stage12 Active 或 Stage13 Skill Runtime。
