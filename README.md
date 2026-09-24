@@ -37,7 +37,7 @@ Stage10 正式主分支合入提交：
 官方具体状态共 40 个。
 
 ```text
-Research FROZEN            = 27 / 40
+Research FROZEN            = 28 / 40
 Runtime FROZEN TO CONTRACT = 16 / 40
 Strict Complete            = 16 / 40
 ```
@@ -59,8 +59,8 @@ Stage10 的 8 个持续状态已经正式 Runtime Freeze，因此与此前 8 个
 ```text
 Stage11 = 官方状态补全（一）
 Canonical Scope = 17 states
-Research FROZEN = 11
-Research Open / Debt = 6
+Research FROZEN = 12
+Research Open / Debt = 5
 Runtime FROZEN = 0
 ```
 
@@ -78,9 +78,10 @@ Runtime FROZEN = 0
 690090 先攻
 690091 遇袭
 690102 缴械
+690111 震慑
 ```
 
-这 11 个状态的下一工程动作是 **Runtime Integration Design**，不是直接 Implementation。
+这 12 个状态的下一工程动作是 **Runtime Integration Design**，不是直接 Implementation。
 
 ## Project Stage 与 Research Wave
 

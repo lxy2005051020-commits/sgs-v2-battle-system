@@ -34,8 +34,8 @@
 
 ```text
 Stage11 Scope           = 17
-Research FROZEN         = 8
-Research non-FROZEN/debt = 9
+Research FROZEN         = 12
+Research non-FROZEN/debt = 5
 Runtime FROZEN          = 0
 ```
 
@@ -50,9 +50,13 @@ Runtime FROZEN          = 0
 690069 STRATEGY_CRITICAL
 690094 LIFE_STEAL
 690095 STRATEGY_LIFE_STEAL
+690090 FIRST_STRIKE
+690091 SURPRISE
+690102 DISARM
+690111 STUN
 ```
 
-这 8 个状态的 Runtime 均为 `NOT_INTEGRATED`，下一步是 Runtime Integration Design。
+这 12 个状态均已 Research FROZEN；其中 690090 / 690091 / 690102 / 690111 当前 Runtime 为 `SKELETON_ONLY`，其余保持现有 `NOT_INTEGRATED` 记录。下一步统一是 Runtime Integration Design。
 
 ## 3. Research authority
 
@@ -62,7 +66,7 @@ Runtime FROZEN          = 0
 
 维护。
 
-当前 8 个冻结合同入口：
+当前 12 个冻结合同入口：
 
 ```text
 states/functional/evasion/MECHANISM_CONTRACT.md
@@ -73,6 +77,10 @@ states/functional/critical/MECHANISM_CONTRACT.md
 states/functional/strategy_critical/MECHANISM_CONTRACT.md
 states/functional/life_steal/MECHANISM_CONTRACT.md
 states/functional/strategy_life_steal/MECHANISM_CONTRACT.md
+states/functional/first_strike/MECHANISM_CONTRACT.md
+states/functional/surprise/MECHANISM_CONTRACT.md
+states/control/disarm/MECHANISM_CONTRACT.md
+states/control/stun/MECHANISM_CONTRACT.md
 ```
 
 Battle repository 只维护 Project Stage、Runtime 进度与必要的 research authority bridge，不复制第二份机制语义。
@@ -118,9 +126,10 @@ Runtime Status = CLOSED BY EXPLICIT PROJECT RUNTIME DEFAULT
 ```text
 690069 奇谋 = PROJECT-FROZEN MIRROR CONTRACT
 690095 攻心 = PROJECT-FROZEN MIRROR CONTRACT
+690091 遇袭 = PROJECT-FROZEN MIRROR CONTRACT
 ```
 
-二者已经是正式 Research FROZEN authority，但不应被描述成与 690070 会心、690094 倒戈相同规模的独立实证复跑。
+三者已经是正式 Research FROZEN authority，但不应被描述成与 690070 会心、690094 倒戈相同规模的独立实证复跑。
 
 ## 6. Research Wave mapping
 
@@ -205,7 +214,7 @@ Independent Runtime Audit
 Implementation Freeze
 ```
 
-已 Research FROZEN 的 8 个状态从 Runtime Integration Design 开始，不重复无证据机制研究。
+已 Research FROZEN 的 12 个状态从 Runtime Integration Design 开始，不重复无证据机制研究。
 
 ## 9. 明确不做
 
