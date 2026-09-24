@@ -12,11 +12,11 @@
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 28
+Research FROZEN                 = 29
 Runtime FROZEN TO CONTRACT      = 16
 Strict Complete                 = 16
 Stage11 Scope                   = 17
-Stage11 Research FROZEN         = 12
+Stage11 Research FROZEN         = 13
 Stage11 Runtime FROZEN          = 0
 Stage12 Scope                   = 7
 Evidence-Blocked / Deferred     = 2
@@ -68,7 +68,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690090 | 先攻 FIRST_STRIKE | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/functional/first_strike/MECHANISM_CONTRACT.md | Runtime Integration Design | Q1-Q17 CLOSED; Unified Falsification Audit PASSED; true counterexamples 0 |
 | 690091 | 遇袭 SURPRISE | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/functional/surprise/MECHANISM_CONTRACT.md | Runtime Integration Design | PROJECT-FROZEN MIRROR CONTRACT of 690090; opposite priority direction; shared mechanics unchanged |
 | 690102 | 缴械 DISARM | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/control/disarm/MECHANISM_CONTRACT.md | Runtime Integration Design | Contract v0.4; full-corpus falsification SURVIVED; independent Freeze Readiness PASSED; B01-B05 preserved |
-| 690104 | 虚弱 WEAKNESS | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
+| 690104 | 虚弱 WEAKNESS | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/control/weakness/MECHANISM_CONTRACT.md | Stage11 Runtime Integration Design | Research Freeze Audit PASSED after canonical-ledger / denominator / 690087 / 690078 repair; Runtime unchanged |
 | 690105 | 禁疗 HEALING_BAN | MINIMUM_USABLE | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research minimum_usable authority | Targeted research → contract → freeze |  |
 | 690111 | 震慑 STUN | FROZEN | SKELETON_ONLY | NO | Stage11 | Research Wave 3 | Research states/control/stun/MECHANISM_CONTRACT.md | Runtime Integration Design | Contract v1.2-frozen; Q01-Q23 closed/bounded; 11,970-report adversarial falsification true CE=0; Independent Freeze Audit PASSED; B01-B05 preserved |
 | 690082 | 规避 EVASION | FROZEN | NOT_INTEGRATED | NO | Stage11 | Research Wave 2 | Research evasion contract | Runtime Integration Design |  |
