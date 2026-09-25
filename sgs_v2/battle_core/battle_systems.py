@@ -29,7 +29,7 @@ from .execution_right_system import (
 )
 from .normal_attack_system import NormalAttackSystem
 from .recovery_opportunity_system import RecoveryOpportunitySystem
-from .recovery_system import RecoverySystem
+from .recovery_system import RecoveryModifierProvider, RecoverySystem
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .stage9_state_runtime import Stage9StateRuntime
@@ -71,6 +71,7 @@ class BattleSystems:
     damage_rule_provider: object | None = None
     defeat_cleanup_port: DefeatCleanupPort | None = None
     damage_aftermath_port: DamageAftermathPort | None = None
+    recovery_modifier_provider: RecoveryModifierProvider | None = None
 
     action_order_system: ActionOrderSystem = field(init=False)
     damage_system: DamageSystem = field(init=False)
@@ -108,7 +109,9 @@ class BattleSystems:
             self.attribute_system, self.stage11_state_runtime
         )
         self.recovery_system = RecoverySystem(
-            self.troop_system, self.stage11_state_runtime
+            self.troop_system,
+            self.stage11_state_runtime,
+            recovery_modifier_provider=self.recovery_modifier_provider,
         )
         self.recovery_opportunity_system = RecoveryOpportunitySystem(self.recovery_system)
         self.stage11_attacker_recovery_system = Stage11AttackerRecoverySystem(

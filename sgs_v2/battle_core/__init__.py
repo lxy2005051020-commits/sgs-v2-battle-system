@@ -168,6 +168,8 @@ from .operation_identity import (
 )
 from .reaction_permission_policy import ReactionPermissionPolicy
 from .recovery_system import (
+    RecoveryModifierPolicy,
+    RecoveryModifierProvider,
     RecoveryPreventionReason,
     RecoveryPreventedResult,
     RecoveryRequest,
@@ -393,6 +395,8 @@ __all__ = [
     "OfficialStateId",
     "register_official_state_definitions",
     "RecoveryRequest",
+    "RecoveryModifierPolicy",
+    "RecoveryModifierProvider",
     "RecoveryPreventionReason",
     "RecoveryResolvedResult",
     "RecoveryPreventedResult",

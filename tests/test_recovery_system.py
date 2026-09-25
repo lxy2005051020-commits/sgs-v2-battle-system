@@ -10,6 +10,7 @@ from sgs_v2.battle_core import (
     OfficialStateId,
     RandomSystem,
     RecoverEffect,
+    RecoveryModifierPolicy,
     RecoveryPreventionReason,
     RecoveryPreventedResult,
     RecoveryRequest,
@@ -21,6 +22,7 @@ from sgs_v2.battle_core import (
     UnitRuntime,
     register_official_state_definitions,
 )
+from sgs_v2.battle_core.stage9_integerization import ExactRatio
 
 
 def make_context() -> BattleContext:
@@ -235,3 +237,83 @@ def test_prevented_recovery_does_not_fabricate_troop_change() -> None:
     )
     assert isinstance(result, RecoveryPreventedResult)
     assert not hasattr(result, "troop_change")
+
+
+
+def test_recovery_modifier_owner_applies_exact_second_ceil() -> None:
+    context = make_context()
+    system = RecoverySystem(
+        TroopSystem(),
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(11, 10),
+    )
+
+    result = system.resolve(
+        context,
+        RecoveryRequest(
+            source_id="a1",
+            target_id="b1",
+            amount=11,
+            modifier_policy=RecoveryModifierPolicy.APPLY,
+        ),
+    )
+
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.request.base_amount == 11
+    assert result.modified_recovery == 13
+    assert result.troop_change.requested_change == 13
+    assert result.actual_recovery == 13
+    event = context.event_bus.history[-1]
+    assert event.payload["base_recovery"] == 11
+    assert event.payload["modified_recovery"] == 13
+    assert event.payload["requested_recovery"] == 13
+
+
+def test_recovery_modifier_policy_none_preserves_generic_recovery_and_skips_provider() -> None:
+    context = make_context()
+    calls = 0
+
+    def provider(_context, _request):
+        nonlocal calls
+        calls += 1
+        return ExactRatio(99, 10)
+
+    result = RecoverySystem(
+        TroopSystem(),
+        recovery_modifier_provider=provider,
+    ).resolve(
+        context,
+        RecoveryRequest(source_id="a1", target_id="b1", amount=11),
+    )
+
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.modified_recovery == 11
+    assert result.actual_recovery == 11
+    assert calls == 0
+
+
+def test_zero_recovery_request_does_not_invoke_modifier_provider() -> None:
+    context = make_context()
+    calls = 0
+
+    def provider(_context, _request):
+        nonlocal calls
+        calls += 1
+        return ExactRatio(11, 10)
+
+    result = RecoverySystem(
+        TroopSystem(),
+        recovery_modifier_provider=provider,
+    ).resolve(
+        context,
+        RecoveryRequest(
+            source_id="a1",
+            target_id="b1",
+            amount=0,
+            modifier_policy=RecoveryModifierPolicy.APPLY,
+        ),
+    )
+
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.modified_recovery == 0
+    assert result.actual_recovery == 0
+    assert calls == 0
