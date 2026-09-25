@@ -15,6 +15,12 @@ Canonical Project Scope: **17 states**
 - Share × LifeSteal authority conflict: **RESOLVED**
 - B11-FRZ-001: **CLOSED**
 - Final Runtime Freeze: **FROZEN**
+- Post-Freeze Acceptance: **PASS / CONFIRMED**
+- Post-Freeze Acceptance SHA: `5a0a4164e7624c28eae2c7aa28f66061ef3c9313`
+- Acceptance CI: `36170063365` — **913 passed / demo PASS**
+- Research post-acceptance mirror: `9ad990da544ad87047e74a664cc1984f890bb274`
+- Stage11 Reopen Required: **NO**
+- Stage12 Activation Gate: **CLEARED**
 - Stage12 Readiness: **READY**
 - Stage12 Active: **NO**
 
@@ -30,6 +36,7 @@ Canonical Project Scope: **17 states**
 - [Implementation Ledger](STAGE11_IMPLEMENTATION_LEDGER.md)
 - [Runtime Adversarial Audit](STAGE11_RUNTIME_ADVERSARIAL_AUDIT.md)
 - [Runtime Freeze Record](STAGE11_RUNTIME_FREEZE_RECORD.md)
+- [Post-Freeze Final Acceptance Audit](STAGE11_POST_FREEZE_ACCEPTANCE_AUDIT.md)
 - [Historical Share × LifeSteal Reopen](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md)
 
 ## Authority reconciliation
@@ -61,6 +68,7 @@ Research debt and bounded unknowns remain explicit, including Distribution / DST
 ## Next stage
 
 ```text
+Stage12 Activation Gate: CLEARED
 Stage12 Readiness: READY
 Stage12 Active: NO
 ```
