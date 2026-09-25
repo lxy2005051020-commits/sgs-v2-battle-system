@@ -63,6 +63,24 @@ class DamageShareTransactionPlan:
         if self.dtarget + self.dsharer_theoretical != self.dtotal:
             raise ValueError("Share plan must conserve Dtotal exactly")
 
+    @property
+    def primary_assigned_damage(self) -> int:
+        """Authoritative Share assignment to the original target."""
+        return self.dtarget
+
+    @property
+    def shared_assigned_damage(self) -> int:
+        """Authoritative Share assignment to the receiver before troop-cap commit."""
+        return self.dsharer_theoretical
+
+    @property
+    def attacker_recovery_basis(self) -> int:
+        """Stage11 Share × LifeSteal authority: assignment topology owns the basis."""
+        basis = self.primary_assigned_damage + self.shared_assigned_damage
+        if basis != self.dtotal:
+            raise ValueError("Share attacker recovery basis must conserve Dtotal exactly")
+        return basis
+
     def __lt__(self, other: Any) -> bool:
         _forbid_ordering("DamageShareTransactionPlan", "<")
 
