@@ -1,39 +1,46 @@
 # Stage11 Runtime Implementation Ledger
 
-Design status: **FROZEN**  
-Implementation status: **ACTIVE**
+Date: 2026-09-26  
+Design status: **FROZEN + AMENDED**  
+Implementation status: **COMPLETE EXCEPT B11-FRZ-001**  
+Full regression at audited runtime SHA: **904 passed / 0 failed; demo PASS**  
+Runtime Freeze gate: **BLOCKED**
 
-Runtime Freeze gate: **BLOCKED** by the frozen 690087/Stage9 versus 690094/690095 Share-chain recovery-basis conflict documented in `STAGE11_RUNTIME_ADVERSARIAL_AUDIT.md`. Baseline `pytest -q`: 888 passed, 10 failed on Battle `b79019e5fcc56dbfad2abdd13a4ed592f9b4680c`. No state below is Runtime FROZEN; the per-state implementation/test entries are an older planning snapshot and require a fresh implementation audit before freeze.
+Current cross-cutting blocker: `B11-FRZ-001` — latest 690094/690095 authority requires a canonical recovery-modifier owner that applies `CEIL(BaseRecovery × HealingModifier)` after the per-source base LifeSteal CEIL. That owner/test seam is absent at audited `main`.
 
-2026-09-25 authority audit selected **RESOLUTION-D**: [STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md). Fixed-ratio nonlethal Share reports refute target-only recovery; lethal Share reports refute an unconditional actual-committed sum. Base CEIL is supported. Runtime unblock handoff is withheld.
-
-| State | Research | Runtime Owner | Design | Implementation | Tests | Audit | Runtime |
+| State | Research Status | Runtime Owner | Implementation | Tests | Audit | Runtime Freeze | Remaining Debt |
 |---|---|---|---|---|---|---|---|
-| 690086 分摊 | DEBT-BOUND / runtime admitted | DamagePartitionCoordinator | FROZEN | EXISTING / AUDIT | PENDING | PENDING | NOT_FROZEN |
-| 690090 先攻 | FROZEN | ActionOrder + lifecycle | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690091 遇袭 | FROZEN mirror | ActionOrder + lifecycle | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690102 缴械 | FROZEN | NormalAttack admission | FROZEN | LEGACY_SKELETON_REVIEW | PENDING | PENDING | NOT_FROZEN |
-| 690104 虚弱 | FROZEN | Damage legal-zero gate | FROZEN | LEGACY_SKELETON_REPLACE | PENDING | PENDING | NOT_FROZEN |
-| 690105 禁疗 | FROZEN | RecoverySystem | FROZEN | LEGACY_SKELETON_REVIEW | PENDING | PENDING | NOT_FROZEN |
-| 690111 震慑 | FROZEN | Natural Action admission | FROZEN | LEGACY_SKELETON_REVIEW | PENDING | PENDING | NOT_FROZEN |
-| 690082 规避 | FROZEN | Hit arbitration | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690083 抵御 | FROZEN | Hit arbitration | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690092 必中 | FROZEN | Hit arbitration | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690093 破阵 | FROZEN | Formula policy | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690099 警戒 | FROZEN + explicit debt | Single-hit adjustment | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690070 会心 | FROZEN | CriticalResolution | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690069 奇谋 | FROZEN mirror | CriticalResolution | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690221 看破 | FROZEN | Incoming reduction transform | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690094 倒戈 | FROZEN | AttackerRecovery | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
-| 690095 攻心 | FROZEN mirror | AttackerRecovery | FROZEN | PENDING | PENDING | PENDING | NOT_FROZEN |
+| 690086 DISTRIBUTION | RUNTIME_READY_WITH_RESEARCH_DEBT | DamagePartitionCoordinator | COMPLETE under project default | PASS | PASS | NOT_FROZEN | DSTS9-B02; Distribution × LifeSteal participant loss excluded by PROJECT_RUNTIME_DEFAULT |
+| 690090 FIRST_STRIKE | FROZEN | ActionOrder + lifecycle | COMPLETE | PASS | PASS | NOT_FROZEN | exact tie authority is frozen; legacy metadata fallback is project default |
+| 690091 SURPRISE | FROZEN mirror | ActionOrder + lifecycle | COMPLETE | PASS | PASS | NOT_FROZEN | mirror provenance |
+| 690102 DISARM | FROZEN | NormalAttack admission | COMPLETE | PASS | PASS | NOT_FROZEN | reflected/proxy admission boundary |
+| 690104 WEAKNESS | FROZEN | Damage legal-zero gate | COMPLETE | PASS | PASS | NOT_FROZEN | bounded research unknowns only |
+| 690105 HEALING_BLOCK | FROZEN | RecoverySystem | COMPLETE | PASS | PASS | NOT_FROZEN | bounded unobservable boundaries |
+| 690111 STUN | FROZEN | Natural Action admission | COMPLETE | PASS | PASS | NOT_FROZEN | bounded research boundaries |
+| 690082 EVASION | FROZEN | Stage11 hit arbitration | COMPLETE | PASS | PASS | NOT_FROZEN | none blocking |
+| 690083 RESISTANCE | FROZEN | Stage11 hit arbitration | COMPLETE | PASS | PASS | NOT_FROZEN | none blocking |
+| 690092 SURE_HIT | FROZEN | Stage11 hit arbitration | COMPLETE | PASS | PASS | NOT_FROZEN | none blocking |
+| 690093 BREAK_FORMATION | FROZEN | DamageFormulaPolicy | COMPLETE | PASS | PASS | NOT_FROZEN | persistent/application-bound limits remain explicit |
+| 690099 ALERT | FROZEN + explicit debt | Single-hit adjustment + lifecycle | COMPLETE under defaults | PASS | PASS | NOT_FROZEN | equality 600; generic threshold; rounding; holder death; Share micro-order |
+| 690070 CRITICAL | FROZEN | CriticalResolution / Stage11 damage rules | COMPLETE | PASS | PASS | NOT_FROZEN | exact micro-read / bonus-latch timing |
+| 690069 STRATEGY_CRITICAL | FROZEN mirror | CriticalResolution / lane routing | COMPLETE | PASS | PASS | NOT_FROZEN | mirror provenance; same bounded timing debt |
+| 690221 DAMAGE_REDUCTION_PIERCE | FROZEN | incoming reduction transform | COMPLETE | PASS | PASS | NOT_FROZEN | unsupported damage families remain boundary violations |
+| 690094 LIFE_STEAL | FROZEN | Stage11AttackerRecovery + RecoverySystem | **PARTIAL** | base/Share tests PASS; modifier boundary MISSING | **BLOCKED B11-FRZ-001** | NOT_FROZEN | canonical recovery-modifier owner + second CEIL test |
+| 690095 STRATEGY_LIFE_STEAL | FROZEN mirror | Stage11AttackerRecovery + RecoverySystem | **PARTIAL** | mirror/Share tests PASS; modifier boundary MISSING | **BLOCKED B11-FRZ-001** | NOT_FROZEN | inherits B11-FRZ-001 |
 
-Known explicit debt carried into implementation:
+## Share × LifeSteal authority status
 
-- DSTS9-B02: Distribution commander-participant lethal boundary, existing Project Runtime Default retained.
-- ALERT equality-at-600, positive integerization, non-10k threshold and Share micro-order remain research boundaries; explicit runtime defaults are recorded in the design.
-- 690070/690069 exact micro-read and bonus latch timing remain UNKNOWN; JIT read + outcome-time bonus snapshot are engineering choices.
-- 690102 reflected/proxy admission discriminator remains UNKNOWN.
-- 690221 unsupported damage families must raise a boundary violation.
-- Distribution × lifesteal is kept as a project-runtime debt boundary; participant direct losses are excluded absent contract authority.
+The old Stage9/690087 target-only rule and the old 690094/690095 committed-actual-sum Share rule are superseded for combined Share recovery.
 
-The ledger is updated after each cohesive implementation/test batch.
+```text
+Share RecoveryBasis =
+PrimaryAssignedDamage + SharedAssignedDamage
+```
+
+Target-death interruption and either-side overkill do not shrink the basis. Cleave children use their own partition assignment. Distribution does not inherit this rule.
+
+## Freeze disposition
+
+The 17-state Stage11 implementation cannot be marked Runtime FROZEN while one normative cross-cutting recovery stage has no Runtime owner/test. No failing test is hidden; instead, the missing path itself is the blocker.
+
+Next permitted action is a scoped repair of B11-FRZ-001 followed by full regression, demo smoke, adversarial re-audit and a new freeze candidate.

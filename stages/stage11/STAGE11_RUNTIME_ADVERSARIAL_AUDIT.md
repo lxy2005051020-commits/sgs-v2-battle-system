@@ -1,43 +1,142 @@
-# Stage11 Runtime Adversarial Audit — Authority Conflict
+# Stage11 Runtime Adversarial Audit
 
-Verdict: **BLOCKED / RUNTIME NOT FROZEN**
+Date: 2026-09-26  
+Verdict: **BLOCKED / RUNTIME NOT FROZEN**  
+Blocker: **B11-FRZ-001 — recovery-modifier owner / double-stage CEIL is not implemented**
 
-> **2026-09-25 follow-up:** [Formal authority reopen](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md) records new fixed-ratio raw evidence and selects RESOLUTION-D. The intake classifications below remain their 2026-09-25 baseline; the later evidence additionally challenges an unconditional actual-committed Share basis in lethal cases.
+## 1. Audit Snapshot
 
-Audit baseline: Battle `main` `b79019e5fcc56dbfad2abdd13a4ed592f9b4680c`; Research `main` `d1b6c74b352de373fb46c99b546e970eaaf1f77e`. The latest Battle `main` CI run at intake was [36147076741](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/36147076741), with 888 passed and 10 failed. A clean clone reproduced the same counts. This document records a targeted independent adversarial authority audit; it is not a full Stage11 runtime audit or a freeze record.
+- Battle audited SHA: `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`
+- Research authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
+- GitHub Actions run: `36161289003`
+- Workflow conclusion: `success`
+- pytest: **904 passed / 0 failed**
+- demo smoke: **PASS**
 
-## Blocking counterexample: Cleave secondary Share × Life Steal
+This audit supersedes the earlier 888/10 intake snapshot as the current Stage11 governance result. The earlier authority-conflict document remains provenance only.
 
-Two formally FROZEN research contracts require different recovery bases for the same event:
+## 2. Canonical 17-state scope
 
-1. Research `states/functional/damage_share/MECHANISM_CONTRACT.md` sections 14, 23 and test requirement T12 say attacker 倒戈/攻心 reads the protected target's post-Share `Dtarget` only, excluding the sharer's direct loss. Battle Stage9 `STAGE9_FREEZE_RECORD.md` and `repairs/RF_P06_CLEAVE_DAMAGE_LAYER_AND_RECOVERY_BASIS_REFREEZE.md` repeat this for a Cleave secondary target.
-2. Research `states/functional/life_steal/MECHANISM_CONTRACT.md` (Basis Resolution) says `ShareChainBasis = ActualPrimaryTroopLoss + ActualSharedTroopLoss`, with no second trigger. Its `FREEZE_AUDIT.md` confirms the sum. The frozen 690095 mirror contract carries the same rule into the STRATEGY lane.
+`690086 DISTRIBUTION, 690090 FIRST_STRIKE, 690091 SURPRISE, 690102 DISARM, 690104 WEAKNESS, 690105 HEALING_BLOCK, 690111 STUN, 690082 EVASION, 690083 RESISTANCE, 690092 SURE_HIT, 690093 BREAK_FORMATION, 690099 ALERT, 690070 CRITICAL, 690069 STRATEGY_CRITICAL, 690221 DAMAGE_REDUCTION_PIERCE, 690094 LIFE_STEAL, 690095 STRATEGY_LIFE_STEAL`.
 
-Minimal discriminating event: a WEAPON Cleave secondary DamageInstance assigns 100 damage; Share splits it so the target actually loses 50 and the sharer actually loses 50; both survive; the attacker has one active 10% Life Steal source and at least 10 recoverable capacity. The 690087/Stage9 rule yields basis 50 and heal 5. The 690094 rule yields basis 100 and heal 10. Both cannot hold for that event. No explicit supersession, Design Reopen or cross-contract priority was found in either current `main`. The Stage11 design's choice of the sum does not itself revise the frozen Stage9/690087 authority.
+## 3. Authority reconciliation — PASS
 
-There is a separate integerization conflict in the Stage9 RF-P06 secondary-Share vector: it expects `floor(267 × 0.10) = 26`, whereas frozen 690094 requires `ceil(267 × 0.10) = 27` even before resolving the basis conflict.
+The Share × attacker-recovery authority conflict is resolved by Research `STAGE11_SHARE_LIFESTEAL_AUTHORITY_RESOLUTION.md`.
 
-The existing nonlethal test `test_share_nonlethal_sharer_loss_is_excluded_from_recovery` exposes the basis conflict: actual target loss 267, actual sharer loss 47, runtime basis 314, legacy expected basis 267. Changing that assertion or runtime to make CI green would silently select one frozen authority. The overkill test is a separate stale assertion: target loss 55, pending sharer loss discarded, so neither frozen actual-loss rule supports its expected basis 267.
+Canonical rule:
 
-## Intake failure triage
+```text
+RecoveryBasis =
+PrimaryAssignedDamage
++
+SharedAssignedDamage
+```
 
-| Failing test | Classification | Reason / required disposition |
-|---|---|---|
-| Stage4 exact-tier/speed shuffle | A OUTDATED_TEST_AUTHORITY | Frozen deterministic tie consumes no shuffle RNG. Migrate test. |
-| Stage4 Weakness normal formula bypass | A OUTDATED_TEST_AUTHORITY | Frozen legal-zero requires a resolved hit and permits upstream formula. Migrate test. |
-| Stage4 Weakness strategy formula bypass | A OUTDATED_TEST_AUTHORITY | Same; fixture must supply valid formula inputs. |
-| Stage7 Weakness prevented-event provenance | A OUTDATED_TEST_AUTHORITY | Weakness now emits legal-zero damage, not `DAMAGE_PREVENTED`; preserve provenance in the new topology. |
-| Stage8 default Weakness prevention binding | A OUTDATED_TEST_AUTHORITY | Weakness no longer belongs to the early prevention provider. |
-| Stage8 Weakness formula/RNG short circuit | A OUTDATED_TEST_AUTHORITY | Same legal-zero contract; migrate assertions while checking RNG ownership. |
-| Stage9 finite Combo duration × STUN | E TEST_FIXTURE_INVALID | The fixture expects two blocked natural actions but omits explicit `StunStateParams(remaining_blocks=2)`; frozen N=1 blocks one opportunity. Verify after fixture migration. |
-| Stage9 Cleave Share overkill basis 267 vs 55 | A OUTDATED_TEST_AUTHORITY | Actual target loss is 55; target death discards pending sharer loss. |
-| Stage9 Cleave Distribution basis `None` vs 50 | C RESEARCH_BOUNDARY_EXPOSED | Stage11 design records parent actual target loss 50 as `PROJECT_RUNTIME_DEFAULT`; participant loss remains research debt. Migrate with provenance after authority resolution. |
-| Stage9 Cleave nonlethal Share basis 267 vs 314 | C RESEARCH_BOUNDARY_EXPOSED | Direct collision between frozen 690087/Stage9 and 690094/690095 contracts. Formal authority decision required. |
+For the current conserved Share partition, this equals pre-Share finalized damage. It is not equivalent to committed actual troop loss when death or overkill truncates settlement.
 
-These are classifications, not fixes. No failing test was deleted, skipped, xfailed or weakened. The full suite is not green; demo smoke and the complete 20-point adversarial audit have not passed this gate.
+Battle runtime at the audited SHA reads `DamageShareTransactionPlan.dtarget + dsharer_theoretical` for parent Share and Cleave-child Share. Dedicated tests cover normal nonlethal Share, target-death interruption, sharer/both-side overkill, per-source base CEIL, HealingBlock interception and STRATEGY lane mirroring. Legacy Cleave Share tests were migrated to the same authority.
 
-## Required authority resolution
+Distribution remains separate: participant direct loss is excluded from LifeSteal basis under an explicit `PROJECT_RUNTIME_DEFAULT / RESEARCH_DEBT`.
 
-Research owners must explicitly reconcile 690087 with 690094/690095 for a Share chain, including Cleave secondary DamageInstances, actual-loss versus assigned-damage wording, overkill and target-death interruption, and CEIL versus the Stage9 RF-P06 FLOOR example. Record which clauses are superseded and update both frozen contracts and Stage9 freeze/vector authority through a formal reopen or equivalent project decision. Then update runtime/tests, rerun the full suite and demo, perform the complete independent runtime audit, and only then assess Runtime Freeze.
+## 4. Pipeline ordering audit — PASS
 
-Until that decision: **Stage11 Runtime = BLOCKED; Stage12 = NOT READY**.
+The Stage11 topology remains typed and ordered: critical-family decision, hit arbitration, formula policy, ordinary modifiers/reduction, See-Through transform, Weakness legal-zero, ALERT single-hit adjustment, central damage integerization, Stage9 partition/settlement, then attacker recovery.
+
+No audit evidence was found that restores Weakness as an early-return prevention path, reruns Break base formula on a derived Cleave child, or gives Share direct troop loss a second LifeSteal trigger.
+
+## 5. Action-control audit — PASS
+
+- exact action-order ties are deterministic and consume no shuffle RNG;
+- the approved Design Amendment 001 provides the legacy-context attacker-team fallback without claiming it as empirical game truth;
+- STUN owns natural-action admission rather than generic RuleIntent suppression;
+- DISARM owns standard NormalAttack admission; Counterattack is not routed through that gate;
+- Combo #2 re-enters standard NormalAttack admission.
+
+The legacy tests that contradicted these rules were migrated in the Stage11 implementation series and the full suite is green.
+
+## 6. Recovery audit — **BLOCKED**
+
+PASS:
+- ordinary non-Share basis remains actual target troop loss;
+- Share basis uses partition-assigned damage;
+- target death and overkill do not shrink Share basis;
+- one recovery opportunity per eligible DamageInstance/source;
+- each LifeSteal source independently performs the base CEIL;
+- HealingBlock intercepts the positive request without mutating the basis;
+- target recovery capacity is owned by the canonical RecoverySystem/TroopSystem path.
+
+BLOCKER:
+Research authority now requires, when an applicable recovery modifier exists:
+
+```text
+BaseRecovery     = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
+ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)
+```
+
+At audited Battle `main`:
+- `LifeStealStateParams` contains only the LifeSteal ratio/lifecycle facts;
+- `Stage11AttackerRecoverySystem` computes the first CEIL and immediately emits `RecoveryRequest(amount=BaseRecovery)`;
+- `RecoveryRequest` / `RecoverySystem` expose HealingBlock and troop-cap settlement but no canonical recovery-modifier operand/owner;
+- the dedicated Stage11 Share/LifeSteal test file contains no discriminating double-stage modifier integerization test.
+
+Therefore the latest frozen authority has no executable owner for this required stage. A green suite cannot certify a path that is absent from both runtime and tests.
+
+## 7. Persistent-damage audit — PASS
+
+Stage10 persistent application/tick ownership remains intact. Stage11 does not move tick scheduling, application-bound frozen damage context, source-death handling, or recovery-opportunity ownership into a Stage11 state monolith. Full Stage7-10 regression is green.
+
+## 8. RNG audit — PASS
+
+Gameplay Stage11 randomness routes through `BattleContext.random`. The direct Python `random` implementation remains isolated in `RandomSystem`. Exact action-order ties consume no RNG.
+
+## 9. Mutation-owner audit — PASS
+
+Physical state mutation remains owned by `StateLifecycleSystem`. The Stage9 architecture regression `test_arch_07_ast_scan_state_registry_mutations_only_in_lifecycle_system` is green as part of the 904-test suite. Stage11 runtime façades request lifecycle mutations rather than becoming a second registry owner.
+
+## 10. Integerization audit — **BLOCKED**
+
+PASS:
+- damage uses existing central finalization;
+- LifeSteal base uses exact integer-safe CEIL;
+- ALERT performs no local rounding under its explicit runtime default;
+- See-Through performs no local rounding.
+
+BLOCKED:
+- required recovery-modifier second-stage CEIL has no canonical Runtime owner/test seam (B11-FRZ-001).
+
+## 11. Zero-damage topology audit — PASS
+
+Weakness is a resolved legal-zero damage result, not restored as Stage8 early prevention. Zero remains visible to the downstream topology required by Stage9/Stage10 while ALERT does not consume on the zero result.
+
+## 12. Derived-damage audit — PASS
+
+Cleave child DamageInstances retain independent partition assignment. Share-child recovery uses child assigned facts. The Share authority migration does not authorize critical rerolls or Break base-formula reruns.
+
+## 13. Research-debt preservation audit — PASS
+
+The audit preserves, rather than launders into “official truth”:
+- 690086 Distribution / DSTS9-B02 research debt;
+- Distribution × LifeSteal participant-loss exclusion as PROJECT_RUNTIME_DEFAULT;
+- ALERT threshold equality, generic threshold origin, positive integerization, holder-death and Share micro-order boundaries;
+- Critical/StrategyCritical exact micro-read / bonus-latch timing boundary;
+- DISARM reflected/proxy admission boundary;
+- See-Through unsupported damage families.
+
+## 14. Stage7-10 regression audit — PASS
+
+Run `36161289003` checked out `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`, completed **904 passed / 0 failed**, and completed the demo smoke successfully.
+
+## 15. Stage12 scope-leak audit — PASS
+
+No Stage12 runtime implementation is authorized or performed by this governance round.
+
+## 16. Final verdict
+
+```text
+Stage11 Runtime: BLOCKED
+Stage12 Readiness: NOT READY
+```
+
+Reason: **B11-FRZ-001** must be implemented and covered by a discriminating double-stage CEIL test before the Runtime Freeze gate can be re-run.
+
+The prior Share × LifeSteal authority conflict is no longer the blocker.

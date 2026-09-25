@@ -1,30 +1,67 @@
 # Stage11 — State Runtime Integration
 
-Status: **DESIGN FROZEN / IMPLEMENTATION ACTIVE**
+Status: **DESIGN FROZEN / IMPLEMENTATION SUBSTANTIALLY COMPLETE / RUNTIME FREEZE BLOCKED**
 
 Canonical Project Scope: **17 states**
 
-Research authority snapshot used for Design Freeze:
+## Current snapshot
 
-- Battle input HEAD: `fa94a92374ac69af00f54397806df04ebcef535a`
-- Research input HEAD: `d1b6c74b352de373fb46c99b546e970eaaf1f77e`
-- Research FROZEN: **16 / 17**
-- Explicit research debt admitted to runtime: **690086 DISTRIBUTION / DSTS9-B02**
-- Runtime FROZEN at design entry: **0 / 17**
+- Battle audited runtime SHA: `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`
+- Research authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
+- CI run: `36161289003` — success
+- pytest: **904 passed / 0 failed**
+- demo smoke: **PASS**
+- Share × LifeSteal authority conflict: **RESOLVED**
+- Final Runtime Freeze: **BLOCKED by B11-FRZ-001**
+- Stage12 Readiness: **NOT READY**
 
-Canonical Stage11 states:
+## Scope
 
 `690086, 690090, 690091, 690102, 690104, 690105, 690111, 690082, 690083, 690092, 690093, 690099, 690070, 690069, 690221, 690094, 690095`.
 
-The earlier README snapshot that described 690099 as OPEN is superseded. 690099 ALERT is Research FROZEN with explicit non-blocking boundaries; 690086 remains the only Stage11 research-debt state.
+## Governance navigation
 
-Runtime work is controlled by:
+- [Design Freeze Record](STAGE11_DESIGN_FREEZE_RECORD.md)
+- [Design Amendment 001](STAGE11_DESIGN_AMENDMENT_001.md)
+- [Runtime Integration Design](STAGE11_RUNTIME_INTEGRATION_DESIGN.md)
+- [Implementation Ledger](STAGE11_IMPLEMENTATION_LEDGER.md)
+- [Runtime Adversarial Audit](STAGE11_RUNTIME_ADVERSARIAL_AUDIT.md)
+- [Runtime Freeze Record](STAGE11_RUNTIME_FREEZE_RECORD.md)
+- [Historical Share × LifeSteal Reopen](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md)
+- Research authority: `sgs-state-mechanics-research/STAGE11_SHARE_LIFESTEAL_AUTHORITY_RESOLUTION.md`
 
-- `STAGE11_RUNTIME_INTEGRATION_DESIGN.md`
-- `STAGE11_IMPLEMENTATION_LEDGER.md`
-- `STAGE11_DESIGN_AUDIT.md`
-- `STAGE11_DESIGN_FREEZE_RECORD.md`
+## Authority reconciliation
 
-Research contracts remain authoritative in `sgs-state-mechanics-research`. This repository stores runtime mappings and authority pointers, not duplicate mechanism contracts.
+Current Share recovery rule:
 
-Stage7-10 gameplay semantics remain protected. Stage11 may add typed seams/providers/policies and replace legacy Stage11 skeleton behavior that contradicts a frozen Stage11 contract; it must not silently rewrite frozen Stage7-10 semantics.
+```text
+RecoveryBasis =
+PrimaryAssignedDamage
++
+SharedAssignedDamage
+```
+
+Actual troop loss is not the Share recovery basis. Target death and overkill may reduce committed loss without reducing RecoveryBasis. Cleave child Share follows the same assignment-owned rule. Distribution remains separate research debt / project runtime default.
+
+## Regression result
+
+The audited runtime is fully green at 904 tests and demo smoke. That is necessary but not sufficient for Runtime Freeze.
+
+## Final audit blocker
+
+**B11-FRZ-001:** Research requires recovery modifiers to apply after base LifeSteal CEIL:
+
+```text
+BaseRecovery     = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
+ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)
+```
+
+Current Runtime has the first CEIL, HealingBlock and capacity ownership, but no canonical recovery-modifier owner/seam and no discriminating test for the second CEIL. The final audit therefore rejected the freeze candidate.
+
+## Remaining debt
+
+Research debt and bounded unknowns remain explicit, including Distribution/DSTS9-B02, ALERT boundaries, Critical timing, DISARM proxy/reflection admission and See-Through unsupported families. Runtime Freeze would not erase them.
+
+## Next stage
+
+Stage12 is **not activated**. Stage12 Readiness remains **NOT READY** until B11-FRZ-001 is repaired and Stage11 Runtime Freeze is re-audited successfully.

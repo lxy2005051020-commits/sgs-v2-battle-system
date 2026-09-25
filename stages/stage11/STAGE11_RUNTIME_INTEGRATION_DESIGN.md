@@ -1,6 +1,12 @@
+> **2026-09-26 Final Governance Amendment / Supersession Note**
+>
+> The 2026-09-25 Share × LifeSteal reopen has been resolved by Research authority at `80c4a9dd435b7ec1ed1baed1a957310159c1232a`, specifically `STAGE11_SHARE_LIFESTEAL_AUTHORITY_RESOLUTION.md`. For Share, the current canonical recovery basis is `PrimaryAssignedDamage + SharedAssignedDamage`, not committed actual troop loss. Target death and either-side overkill do not shrink that basis. Cleave children use their own partition assignment facts.
+>
+> Final governance audit also found a separate Runtime conformance blocker: the current Battle runtime has per-source base LifeSteal CEIL, HealingBlock interception and capacity ownership, but no canonical recovery-modifier owner/seam that can enforce the authority-required second-stage `CEIL(BaseRecovery × HealingModifier)`, and no discriminating Runtime test for that boundary. Sections 11 and 14 below are amended accordingly. This is **B11-FRZ-001** and blocks Runtime Freeze; it does not reopen the assigned-damage Share rule.
+
 # Stage11 Runtime Integration Design
 
-> **2026-09-25 combined-authority reopen:** Section 11's Share `actual primary + actual shared` is a historical design choice pending [formal Share × Life Steal resolution](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md). Clean nonlethal evidence supports its observable arithmetic, while lethal Share counterexamples block a universal committed-loss rule. No Runtime edit is authorized by this addendum.
+> **2026-09-25 historical note:** the original combined-authority reopen is preserved in `STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md`. It has since been resolved by the Research authority named in the 2026-09-26 amendment above.
 
 Status: **DESIGN FROZEN**  
 Design input Battle HEAD: `fa94a92374ac69af00f54397806df04ebcef535a`  
@@ -166,13 +172,36 @@ Research boundaries become explicit runtime defaults, never “official facts”
 
 ## 11. Attacker recovery
 
-After the parent DamageInstance has committed actual troop loss, attacker recovery runs once per eligible active source.
+After one eligible DamageInstance settles its partition assignment, attacker recovery runs once per eligible active source.
 
 WEAPON → 690094. STRATEGY → 690095.
 
-Direct/assault/counter and multi-hit instances use that instance's actual target troop loss. Share uses `actual primary loss + actual shared loss` and the share direct loss does not create a second recovery trigger. Each source computes `ceil(basis * ratio)` independently, then RecoverySystem owns healing-block and target capacity.
+For ordinary non-Share eligible damage, the frozen basis remains the instance's actual target troop loss. For DAMAGE_SHARE, the superseding combined authority is:
 
-For DISTRIBUTION, no 690094/690095 authority explicitly expands the Share-chain exception. Runtime therefore uses only the parent's actual target loss and does not add Distribution participant direct losses. This is an explicit **PROJECT_RUNTIME_DEFAULT / RESEARCH-DEBT BOUNDARY**, chosen as the minimum semantic extension and kept isolated for future reopen.
+```text
+RecoveryBasis =
+PrimaryAssignedDamage
++
+SharedAssignedDamage
+```
+
+Under the current conserved Stage9 Share partition this is equivalent to the pre-Share finalized damage because `Dtarget + Dsharer_theoretical = Dtotal`. The semantic owner is still the partition plan. Committed actual troop loss must not be used to reconstruct the Share basis, and target death / overkill must not shrink it. A Share direct-loss commit does not create a second attacker-recovery trigger.
+
+Each active 690094 / 690095 source independently computes:
+
+```text
+BaseRecovery = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
+```
+
+If an applicable recovery modifier exists, current Research authority additionally requires:
+
+```text
+ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)
+```
+
+That second stage must be owned by one canonical recovery-modifier seam rather than duplicated inside attacker recovery. **Current Runtime does not yet expose that seam; B11-FRZ-001 blocks Stage11 Runtime Freeze until it is implemented and tested.**
+
+For DISTRIBUTION, no 690094/690095 authority expands the Share exception. Runtime uses only the parent's actual target loss and excludes Distribution participant direct losses. This remains an explicit **PROJECT_RUNTIME_DEFAULT / RESEARCH_DEBT BOUNDARY**.
 
 ## 12. Healing Block
 
@@ -193,11 +222,13 @@ No direct `random.*` calls are allowed outside RandomSystem.
 
 ## 14. Integerization
 
-Stage11 does not introduce a second damage integerization utility. Existing central damage finalization remains authoritative except where a frozen contract explicitly calls CEIL for lifesteal.
+Stage11 does not introduce a second damage integerization utility. Existing central damage finalization remains authoritative.
 
-Lifesteal uses integer actual troop loss and Python-independent mathematical CEIL via integer-safe helper semantics.
+LifeSteal / StrategyLifeSteal base recovery uses Python-independent mathematical CEIL per source. The basis is ordinary actual target troop loss for non-Share eligible damage and assigned partition damage for Share.
 
-690221 never rounds. 690099 never rounds locally under its explicit runtime default.
+When a recovery modifier applies, authority requires a distinct second CEIL after the base LifeSteal CEIL. The current Runtime lacks the canonical recovery-modifier owner/seam for this second stage; this is **B11-FRZ-001** and is a Freeze blocker.
+
+690221 never rounds locally. 690099 never rounds locally under its explicit project runtime default.
 
 ## 15. Stage7-10 compatibility
 

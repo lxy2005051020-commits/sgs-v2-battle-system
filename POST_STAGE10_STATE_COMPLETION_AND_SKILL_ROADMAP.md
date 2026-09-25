@@ -2,308 +2,99 @@
 
 > 状态：**当前项目级路线权威**
 >
-> 初始建立：2026-09-16
+> Governance refresh: 2026-09-26
 >
-> 双仓库路线统一：2026-09-24
->
-> Canonical 40-state view: [CANONICAL_STATE_PLANNING_MATRIX.md](CANONICAL_STATE_PLANNING_MATRIX.md)
+> Project Stage remains distinct from Research Wave.
 
-## 1. Authority Decision
-
-本项目的 **Project Stage** 与研究仓库的 **Research Wave** 是两个不同层次：
+## 1. Project Stage authority
 
 ```text
-Project Stage
-= 决定什么时候建设什么产品能力
-= Battle repository authority
-
-Research Wave
-= 决定机制研究按什么依赖顺序推进
-= Research repository authority
-```
-
-Research Wave 可以重新排序，但不得静默重编号 Project Stage。
-
-本次跨仓库审计没有发现正式项目级 Replan 决议批准把原有：
-
-```text
-Stage11 = 17 states
-Stage12 = 7 states
-Stage13 = 突击战法
-Stage14 = 普通主动
+Stage11 = 官方状态补全（一） / 17 states
+Stage12 = 官方状态补全（二） / 7 states
+Stage13 = 突击战法运行时
+Stage14 = 普通主动战法
 Stage15 = 准备战法
+Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
 ```
 
-改成 Research repository 曾出现的 `10 / 6 / 5 / 2 / debt closure` 项目阶段编号。
+Research Wave may reorder research work but may not renumber Project Stage.
 
-因此后者统一解释为 Research Wave，原先把它们写成 Project Stage 的部分属于 **ROADMAP DRIFT**。
-
-## 2. 当前统一完成度
-
-官方具体状态：40。
+## 2. Current completion baseline
 
 ```text
-Research FROZEN            = 32 / 40
-Runtime FROZEN TO CONTRACT = 16 / 40
-Strict Complete            = 16 / 40
+Official States                 = 40
+Research FROZEN                 = 32
+Runtime FROZEN TO CONTRACT      = 16
+Strict Complete                 = 16
 ```
 
-严格完成只认：
+Stage11 does not enter the Runtime-FROZEN counts because its final Freeze candidate was rejected.
+
+## 3. Stage11
+
+Canonical scope = 17:
+
+`690086, 690090, 690091, 690102, 690104, 690105, 690111, 690082, 690083, 690092, 690093, 690099, 690070, 690069, 690221, 690094, 690095`.
+
+Research side:
+- 16 states are Research FROZEN.
+- 690086 Distribution retains DSTS9-B02 as explicit research debt / project runtime default.
+
+Runtime side:
+- implementation and legacy-test migration are substantially complete;
+- audited runtime `eff9efcff878afcdd3a5c8609ef719d18fc58cdf` is green: 904 passed, demo PASS;
+- Share × LifeSteal assigned-damage authority is migrated;
+- final Runtime Freeze is **BLOCKED by B11-FRZ-001**.
+
+B11-FRZ-001 is a narrow recovery-integerization/ownership gap: the latest 690094/690095 authority requires `ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)` after the base per-source CEIL, but the current Runtime has no canonical recovery-modifier owner/seam or discriminating test for that stage.
+
+### Stage11 exit gate
+
+Stage11 remains open until all of the following are true:
 
 ```text
-Research FROZEN
-+
-Runtime FROZEN TO CONTRACT
+B11-FRZ-001 repaired
++ dedicated double-stage CEIL regression added
++ full pytest green
++ demo smoke green
++ Runtime adversarial re-audit PASS
++ Runtime Freeze Record declares FROZEN
++ Battle/Research governance synchronized
 ```
 
-Stage10 的 8 个持续状态已经完成正式 Runtime Integration、独立审计、Implementation Freeze 与 main integration，因此计入严格完成。
+## 4. Stage12
 
-当前严格完成 16 个：
+Canonical scope = 7:
 
 ```text
-连击 / 群攻 / 反击 / 分担
-铁索连环 / 援护 / 混乱 / 嘲讽
-灼烧 / 水攻 / 中毒 / 溃逃
-沙暴 / 叛逃 / 急救 / 休整
+690089 INSIGHT
+690101 EXHAUSTION
+690107 FALSE_REPORT
+690108 PROVOCATION
+690109 SABOTAGE
+690110 CAPTURE
+690222 INTIMIDATION
 ```
 
-## 3. Stage11 · 官方状态补全（一）
-
-Canonical Scope = 17：
+Current state:
 
 ```text
-690086 分摊
-690090 先攻
-690091 遇袭
-690102 缴械
-690104 虚弱
-690105 禁疗
-690111 震慑
-690082 规避
-690083 抵御
-690092 必中
-690093 破阵
-690099 警戒
-690070 会心
-690069 奇谋
-690221 看破
-690094 倒戈
-690095 攻心
+Stage12 Readiness: NOT READY
+Stage12 Active: NO
 ```
 
-当前：
+No Stage12 gameplay implementation is authorized while Stage11 Runtime Freeze is blocked.
+
+## 5. Stage13-15
 
 ```text
-Stage11 Research FROZEN = 16
-Stage11 Runtime FROZEN  = 0
-Stage11 non-FROZEN/debt = 1
+Stage13 = assault skill runtime
+Stage14 = ordinary active skill runtime
+Stage15 = preparation skill runtime
 ```
 
-已 Research FROZEN：
+They remain downstream of the state-runtime gates.
 
-```text
-690082 规避 EVASION
-690083 抵御 RESISTANCE
-690092 必中 SURE_HIT
-690093 破阵 BREAK_FORMATION
-690099 警戒 ALERT
-690070 会心 CRITICAL
-690069 奇谋 STRATEGY_CRITICAL
-690094 倒戈 LIFE_STEAL
-690095 攻心 STRATEGY_LIFE_STEAL
-690090 先攻 FIRST_STRIKE
-690091 遇袭 SURPRISE
-690102 缴械 DISARM
-690104 虚弱 WEAKNESS
-690105 禁疗 HEALING_BLOCK
-690111 震慑 STUN
-690221 看破 DAMAGE_REDUCTION_PIERCE
-```
+## 6. Governance rule
 
-十六者均未 Runtime FROZEN；690090 / 690091 / 690102 / 690104 / 690105 / 690111 保持 `SKELETON_ONLY`，690221 与其余 Research-FROZEN 状态保持当前 `NOT_INTEGRATED` 记录。
-
-特殊治理状态：
-
-```text
-690099 警戒 = RESEARCH FROZEN / Runtime NOT_INTEGRATED / explicit non-blocking debt
-690221 看破 = RESEARCH FROZEN / Runtime NOT_INTEGRATED
-690086 分摊 = DSTS9-B02 empirical debt
-```
-
-`DSTS9-B02` 必须继续写成：
-
-```text
-Empirical Status = OPEN / UNOBSERVED
-Runtime Status   = CLOSED BY EXPLICIT PROJECT RUNTIME DEFAULT
-```
-
-不得缩写成“研究已关闭”。
-
-690069 奇谋、690095 攻心与 690091 遇袭保持 **PROJECT-FROZEN MIRROR CONTRACT** 区分，不伪装成与 690070 会心 / 690094 倒戈相同规模的独立战报实证。
-
-### Stage11 Research Wave
-
-```text
-Research Wave 2
-= 伤害 / 命中 / 恢复
-= 690082 / 690083 / 690092 / 690093 / 690099
-  / 690070 / 690069 / 690221 / 690094 / 690095
-
-Research Wave 3
-= 行动 / 顺序 / 控制
-= 690090 / 690091 / 690102 / 690104 / 690105 / 690111
-
-Research Debt Closure
-= 690086
-```
-
-以上全部仍属于 **Project Stage11**。
-
-## 4. Stage12 · 官方状态补全（二）
-
-Canonical Scope = 7：
-
-```text
-690089 洞察
-690101 计穷
-690107 伪报
-690108 挑拨
-690109 破坏
-690110 捕获
-690222 威慑
-```
-
-Stage12 定位：
-
-```text
-统一控制权限
-战法类别认识
-目标权限
-复合控制
-最小装备权限
-```
-
-Research-side mapping：
-
-```text
-Research Wave 4
-= 690089 / 690101 / 690107 / 690108 / 690222
-
-Research Wave 5
-= 690109 / 690110
-```
-
-Stage12 允许建立最小、通用的战法类别与权限基础，但 **仍不正式接入具体战法执行链**。
-
-如 Stage11 因证据阻塞存在未冻结状态，必须在项目决议允许的边界内继续关闭；Evidence Blocked 不等于自动改变 Project Stage ownership。
-
-## 5. Stage13 · 突击战法运行时
-
-Stage13 才正式进入具体战法执行。
-
-目标：
-
-```text
-普通攻击产生突击机会
-→ 已装备突击战法识别
-→ 发动率
-→ 目标处理
-→ 效果执行
-→ 现有 Damage / State / Recovery owner 结算
-→ 死亡 / 战斗结束正确中止
-```
-
-不得因为 Research Wave 曾使用 “Stage13” 字样而提前启动。
-
-## 6. Stage14 · 普通主动战法
-
-```text
-武将行动
-→ 主动战法发现
-→ 权限判定
-→ 发动率
-→ 目标选择
-→ 效果执行
-```
-
-不包含准备一回合的主动战法。
-
-## 7. Stage15 · 准备战法
-
-```text
-开始准备
-→ 准备生命周期
-→ 中断 / 控制 / 死亡处理
-→ 下一合法时点正式发动
-→ 目标与效果结算
-```
-
-## 8. Stage16+
-
-后续按依赖进入：
-
-```text
-被动战法
-指挥战法
-阵法
-兵种战法
-属性增减 / 转移
-更多触发族
-真实武将与战法内容
-```
-
-## 9. Stage11 当前工程边界
-
-当前项目仍处于 Stage11。
-
-Research side：
-
-```text
-Stage11 普通 research-open / evidence-blocked 状态已清零
-关闭或正式处置 DSTS9-B02 research debt
-```
-
-Runtime side：
-
-```text
-16 个 Research-FROZEN 状态
-→ Runtime Integration Design
-→ Independent Design Audit
-→ Design Freeze
-→ Implementation
-```
-
-在 Design Freeze 前，不授权整体 Stage11 production implementation。
-
-## 10. Stage11 Exit Gate
-
-Stage11 结束至少要求：
-
-```text
-Stage11 范围内研究完成，或存在正式项目级处置决议
-+
-Runtime Integration 完成
-+
-回归通过
-+
-演示覆盖
-+
-独立审计
-+
-Implementation Freeze
-```
-
-在该 Gate 满足前：
-
-```text
-Stage12 = NOT ACTIVE
-Stage13 = NOT ACTIVE
-```
-
-## 11. 唯一矩阵与跨仓库同步
-
-Battle repository 的 [CANONICAL_STATE_PLANNING_MATRIX.md](CANONICAL_STATE_PLANNING_MATRIX.md) 是 Project Stage / Runtime 的跨仓库 canonical matrix。
-
-Research repository 的 `STATE_COMPLETION_MATRIX.md` 是 research-side mirror，负责 Research Maturity / Mechanism Authority，并镜像 Project Stage 与 Runtime 状态。
-
-两边不得再独立维护互相冲突的严格完成数或 Project Stage 编号。
+A green CI is necessary but does not override a missing normative contract path. Research debt may remain explicit under a project default, but a required Runtime owner cannot be replaced by documentation optimism. Humanity has tried that pattern often enough.
