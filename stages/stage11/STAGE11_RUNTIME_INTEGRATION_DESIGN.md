@@ -2,7 +2,7 @@
 >
 > The 2026-09-25 Share × LifeSteal reopen has been resolved by Research authority at `80c4a9dd435b7ec1ed1baed1a957310159c1232a`, specifically `STAGE11_SHARE_LIFESTEAL_AUTHORITY_RESOLUTION.md`. For Share, the current canonical recovery basis is `PrimaryAssignedDamage + SharedAssignedDamage`, not committed actual troop loss. Target death and either-side overkill do not shrink that basis. Cleave children use their own partition assignment facts.
 >
-> Final governance audit also found a separate Runtime conformance blocker: the current Battle runtime has per-source base LifeSteal CEIL, HealingBlock interception and capacity ownership, but no canonical recovery-modifier owner/seam that can enforce the authority-required second-stage `CEIL(BaseRecovery × HealingModifier)`, and no discriminating Runtime test for that boundary. Sections 11 and 14 below are amended accordingly. This is **B11-FRZ-001** and blocks Runtime Freeze; it does not reopen the assigned-damage Share rule.
+> Final governance repair closed the former Runtime conformance blocker B11-FRZ-001. `Stage11AttackerRecoverySystem` retains RecoveryBasis and per-source base LifeSteal CEIL ownership; `RecoverySystem` now owns typed recovery-modifier eligibility, exact-rational modifier application, the required second-stage `CEIL(BaseRecovery × HealingModifier)`, HealingBlock ordering and downstream capacity settlement. The repair is regression-tested at `a38b5150dec36f50b3aa21587a0c0c70397c17e0` with 917 passing tests and demo smoke PASS.
 
 # Stage11 Runtime Integration Design
 
@@ -199,7 +199,7 @@ If an applicable recovery modifier exists, current Research authority additional
 ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)
 ```
 
-That second stage must be owned by one canonical recovery-modifier seam rather than duplicated inside attacker recovery. **Current Runtime does not yet expose that seam; B11-FRZ-001 blocks Stage11 Runtime Freeze until it is implemented and tested.**
+That second stage is owned by one canonical recovery-modifier seam in `RecoverySystem`, not duplicated inside attacker recovery. `RecoveryRequest.modifier_policy` is the typed eligibility seam: 690094/690095 requests opt in, while generic Stage10 recovery requests remain modifier-ineligible unless explicitly authorized. **B11-FRZ-001 is CLOSED.**
 
 For DISTRIBUTION, no 690094/690095 authority expands the Share exception. Runtime uses only the parent's actual target loss and excludes Distribution participant direct losses. This remains an explicit **PROJECT_RUNTIME_DEFAULT / RESEARCH_DEBT BOUNDARY**.
 
@@ -226,7 +226,7 @@ Stage11 does not introduce a second damage integerization utility. Existing cent
 
 LifeSteal / StrategyLifeSteal base recovery uses Python-independent mathematical CEIL per source. The basis is ordinary actual target troop loss for non-Share eligible damage and assigned partition damage for Share.
 
-When a recovery modifier applies, authority requires a distinct second CEIL after the base LifeSteal CEIL. The current Runtime lacks the canonical recovery-modifier owner/seam for this second stage; this is **B11-FRZ-001** and is a Freeze blocker.
+When a recovery modifier applies, authority requires a distinct second CEIL after the base LifeSteal CEIL. Runtime ownership is now explicit: `Stage11AttackerRecoverySystem` owns the first CEIL and `RecoverySystem` owns the second CEIL. Modifier operands use `ExactRatio`; no float path is introduced. The discriminating 101 × 10% → 11; 11 × 110% → 13 regression prevents collapse into forbidden single-stage rounding.
 
 690221 never rounds locally. 690099 never rounds locally under its explicit project runtime default.
 
