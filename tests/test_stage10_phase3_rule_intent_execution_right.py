@@ -185,7 +185,7 @@ class TestExecutionRightSystemEvaluation:
         assert decision.decision_kind == ExecutionRightDecisionKind.ABORT_HOOK
         assert decision.reason == ExecutionRightReason.BATTLE_FINALIZED
 
-    def test_suppressed_state_owner_rejects_current(self) -> None:
+    def test_official_stun_does_not_suppress_generic_rule_intent(self) -> None:
         context = make_test_context()
         context.states.register_definition(StateDefinition(state_id="stun", name="震慑"))
         StateLifecycleSystem().apply(context, state_id="stun", owner_id="p1")
@@ -198,8 +198,8 @@ class TestExecutionRightSystemEvaluation:
             target_id="p2",
         )
         decision = ers.evaluate_rule_intent(desc, context)
-        assert decision.decision_kind == ExecutionRightDecisionKind.REJECT_CURRENT
-        assert decision.reason == ExecutionRightReason.SUPPRESSED
+        assert decision.decision_kind == ExecutionRightDecisionKind.ALLOW
+        assert decision.reason is None
 
     def test_no_duck_typing_enforcement_raises_on_arbitrary_object(self) -> None:
         context = make_test_context()
