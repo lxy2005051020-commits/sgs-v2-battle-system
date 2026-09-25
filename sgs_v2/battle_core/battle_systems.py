@@ -122,6 +122,7 @@ class BattleSystems:
             strategy_random_percent_range=self.strategy_random_percent_range,
             strategy_low_damage_floor_range=self.strategy_low_damage_floor_range,
             rule_provider=self.damage_rule_provider,
+            stage11_state_runtime=self.stage11_state_runtime,
         )
         self.damage_resolution_system = DamageResolutionSystem(
             self.damage_system,
@@ -161,6 +162,7 @@ class BattleSystems:
         self.continuous_damage_basis_producer = ContinuousDamageBasisProducer(
             self.attribute_system,
             rule_provider=self.damage_rule_provider,
+            stage11_state_runtime=self.stage11_state_runtime,
         )
         self.state_lifecycle_system._basis_producer = self.continuous_damage_basis_producer
         self.trigger_system = TriggerSystem(self.state_lifecycle_system)

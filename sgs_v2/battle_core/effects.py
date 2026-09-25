@@ -10,6 +10,7 @@ from .operation_identity import SourceType
 from .recovery_system import RecoveryRequest
 from .skill_runtime import SkillSlot
 from .stage10_state_params import FrozenContinuousDamageBasis
+from .stage11_state_runtime import Stage11DamageFamily
 from .state_generation import StateApplicationGenerationId
 from .state_runtime_params import EmptyStateRuntimeParams, StateRuntimeParams
 
@@ -89,6 +90,7 @@ class DamageEffect:
     calculation_basis: DamageCalculationBasis = DamageCalculationBasis.LIVE_RUNTIME
     frozen_basis: FrozenContinuousDamageBasis | None = None
     source_generation_id: StateApplicationGenerationId | None = None
+    stage11_family: Stage11DamageFamily | None = None
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -153,6 +155,7 @@ class DamageEffect:
             calculation_basis=self.calculation_basis,
             frozen_basis=self.frozen_basis,
             source_generation_id=self.source_generation_id,
+            stage11_family=self.stage11_family,
         )
 
 

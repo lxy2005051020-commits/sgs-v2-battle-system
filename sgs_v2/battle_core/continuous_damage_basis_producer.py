@@ -68,6 +68,7 @@ class ContinuousDamageBasisProducer:
         rule_provider: DamageRuleProvider | None = None,
         formula_policy_system: DamageFormulaPolicySystem | None = None,
         modifier_system: DamageModifierSystem | None = None,
+        stage11_state_runtime=None,
     ) -> None:
         self._attributes = attribute_system or AttributeSystem()
         self._rule_provider = (
@@ -83,6 +84,7 @@ class ContinuousDamageBasisProducer:
         self._modifiers = (
             DamageModifierSystem() if modifier_system is None else modifier_system
         )
+        self._stage11 = stage11_state_runtime
 
     def capture(
         self,
@@ -122,7 +124,13 @@ class ContinuousDamageBasisProducer:
             damage_type = DamageType.STRATEGY
 
         # 2. Formula policy
-        if state_id_str == OfficialStateId.REBELLION.value:
+        if (
+            state_id_str == OfficialStateId.REBELLION.value
+            or (
+                self._stage11 is not None
+                and self._stage11.break_formation_active(context, request.source_id)
+            )
+        ):
             formula_policy_result = DamageFormulaPolicyResult(
                 formula_context=DamageFormulaContext(
                     defense_policy=DamageDefensePolicy.IGNORE_RELEVANT_TARGET_DEFENSE
@@ -195,6 +203,14 @@ class ContinuousDamageBasisProducer:
                     )
                 )
 
+        locked_crit_context = None
+        if self._stage11 is not None:
+            locked_crit_context = self._stage11.resolve_critical(
+                context,
+                source_id=request.source_id,
+                damage_type=damage_type,
+            )
+
         # 5. Historical source reference
         historical_source = HistoricalDamageSourceRef(
             source_unit_id=request.source_id,
@@ -217,5 +233,6 @@ class ContinuousDamageBasisProducer:
             source_formula_facts=source_formula_facts,
             formula_policy_result=formula_policy_result,
             locked_modifier_plan=tuple(locked_modifier_plan),
+            locked_crit_context=locked_crit_context,
             historical_source=historical_source,
         )
