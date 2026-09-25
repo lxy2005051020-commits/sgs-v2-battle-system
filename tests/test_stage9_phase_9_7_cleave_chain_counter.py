@@ -137,7 +137,7 @@ def test_reg_clv_02_inv_13_16_no_formula_modifier_crit_or_standard_result(monkey
     assert not ReactionPermissionPolicy.has_normal_attack_identity(SourceType.CLEAVE)
 
 
-def test_p97_clv_rec_01_share_overkill_recovery_uses_267_not_55():
+def test_p97_clv_rec_01_share_target_death_recovery_uses_assigned_sum():
     received, first_aid = [], []
     systems = BattleSystems(cleave_attacker_recovery=lambda ctx, fact: received.append(fact),
                             cleave_first_aid=lambda ctx, fact: first_aid.append(fact))
@@ -149,15 +149,16 @@ def test_p97_clv_rec_01_share_overkill_recovery_uses_267_not_55():
     result, = systems.cleave_system.execute(ctx, effect(ctx, systems, main_fact(ctx, amount=314), instance))
     assert result.assigned_target_damage == 267
     assert result.actual_target_troop_loss == 55
-    assert result.recovery.attacker_recovery_basis == 267
-    assert received[0].attacker_recovery_basis == 267
+    assert result.partition_plan.primary_assigned_damage == 267
+    assert result.partition_plan.shared_assigned_damage == 47
+    assert result.recovery.attacker_recovery_basis == 267 + 47
+    assert received[0].attacker_recovery_basis == 267 + 47
     assert first_aid[0].actual_target_troop_loss == 55
-    assert result.partition_plan.dsharer_theoretical == 47
     assert result.direct_losses == ()  # lethal Share target discards pending sharer
     assert ctx.units['b1'].troops == 5000
 
 
-def test_p97_clv_rec_02_distribution_participant_recovery_delegated():
+def test_p97_clv_rec_02_distribution_keeps_explicit_project_default():
     received = []
     ctx, systems = context(), BattleSystems(cleave_attacker_recovery=lambda ctx, fact: received.append(fact))
     instance = cleave(ctx, systems, ratio=ExactRatio(1, 1))
@@ -165,8 +166,8 @@ def test_p97_clv_rec_02_distribution_participant_recovery_delegated():
     result = systems.cleave_system.execute(ctx, effect(ctx, systems, main_fact(ctx, amount=100), instance))[0]
     assert result.assigned_target_damage == 50
     assert sum(loss.actual_loss for loss in result.direct_losses) == 50
-    assert result.recovery.attacker_recovery_basis is None
-    assert received[0].external_participant_authority == '690094/690095'
+    assert result.recovery.attacker_recovery_basis == 50
+    assert received[0].external_participant_authority == 'PROJECT_RUNTIME_DEFAULT: distribution external loss excluded'
     assert received[0].primary_damage.assigned_target_damage == 50
 
 
@@ -442,12 +443,14 @@ def test_positive_counter_real_formula_share_and_chain():
     assert not systems.finalization_coordinator.has_admitted_work
 
 
-def test_share_nonlethal_sharer_loss_is_excluded_from_recovery():
+def test_share_nonlethal_recovery_uses_primary_plus_shared_assignment():
     ctx, systems = context(), BattleSystems()
     instance = cleave(ctx, systems, ratio=ExactRatio(1, 1))
     state(ctx, systems, 'damage_share', 'b0', DamageShareStateParams('b1', ExactRatio(3, 20)))
     result = systems.cleave_system.execute(ctx, effect(ctx, systems, main_fact(ctx, amount=314), instance))[0]
-    assert result.recovery.attacker_recovery_basis == 267
+    assert result.partition_plan.primary_assigned_damage == 267
+    assert result.partition_plan.shared_assigned_damage == 47
+    assert result.recovery.attacker_recovery_basis == 267 + 47
     assert result.actual_target_troop_loss == 267
     assert sum(loss.actual_loss for loss in result.direct_losses) == 47
 
