@@ -18,10 +18,12 @@ class ActionSystem:
         normal_attack_system: NormalAttackSystem,
         stage9_state_runtime: Stage9StateRuntime | None = None,
         state_lifecycle_system: StateLifecycleSystem | None = None,
+        stage11_state_runtime=None,
     ) -> None:
         self._normal_attack = normal_attack_system
         self._stage9_state_runtime = stage9_state_runtime
         self._state_lifecycle_system = state_lifecycle_system
+        self._stage11_state_runtime = stage11_state_runtime
 
     def execute(
         self,
@@ -46,8 +48,11 @@ class ActionSystem:
         if not actor.is_alive:
             return None
 
-        # Phase 9.6 / P96-B02: COMBO holder maintenance runs at ACTION_START before grant creation.
-        # This decrements remaining_actions for finite buffs. STUN does NOT freeze Combo duration.
+        # Holder ACTION_START maintenance happens before natural-action admission.
+        # This is where Stage11 action-start lifetimes advance. Stage10 timeline
+        # hooks have already run before ActionSystem is entered by BattleEngine.
+        if self._stage11_state_runtime is not None:
+            self._stage11_state_runtime.maintain_action_start(context, actor.unit_id)
         if self._state_lifecycle_system is not None:
             self._state_lifecycle_system.process_combo_action_start(
                 context=context,
@@ -77,7 +82,15 @@ class ActionSystem:
                 action_scope.combo_grant = grant
 
         stun_state_id = OfficialStateId.STUN.value
-        if context.states.has(owner_id=actor.unit_id, state_id=stun_state_id):
+        if self._stage11_state_runtime is not None:
+            stun_blocks = self._stage11_state_runtime.consume_stun_natural_action(
+                context, actor.unit_id
+            )
+        else:
+            stun_blocks = context.states.has(
+                owner_id=actor.unit_id, state_id=stun_state_id
+            )
+        if stun_blocks:
             context.event_bus.publish(
                 event_type=EventType.ACTION_BLOCKED,
                 phase=context.current_phase,

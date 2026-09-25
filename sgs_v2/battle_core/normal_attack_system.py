@@ -89,6 +89,7 @@ class NormalAttackSystem:
         chain_system=None,
         counter_system=None,
         damage_callbacks=None,
+        stage11_state_runtime=None,
     ) -> None:
         self._target_resolution_system: TargetResolutionSystem | None = None
         self._damage_instance_coordinator: DamageInstanceCoordinator | None = None
@@ -113,6 +114,7 @@ class NormalAttackSystem:
         self._chain = chain_system
         self._counter = counter_system
         self._damage_callbacks = damage_callbacks
+        self._stage11 = stage11_state_runtime
 
     @property
     def target_system(self) -> TargetSystem | None:
@@ -143,14 +145,16 @@ class NormalAttackSystem:
         return self._state_runtime
 
     def can_normal_attack(self, context: BattleContext, actor: UnitRuntime) -> bool:
-        """Evaluates standard live normal attack permission (alive, no DISARM, no STUN)."""
+        """Evaluate one standard NormalAttack admission."""
         if not actor.is_alive or actor.troops <= 0:
             return False
-        disarm_state_id = OfficialStateId.DISARM.value
-        if context.states.has(owner_id=actor.unit_id, state_id=disarm_state_id):
+        if self._stage11 is not None:
+            if self._stage11.has_effective(context, actor.unit_id, OfficialStateId.STUN):
+                return False
+            return not self._stage11.disarm_blocks(context, actor.unit_id)
+        if context.states.has(owner_id=actor.unit_id, state_id=OfficialStateId.STUN.value):
             return False
-        stun_state_id = OfficialStateId.STUN.value
-        if context.states.has(owner_id=actor.unit_id, state_id=stun_state_id):
+        if context.states.has(owner_id=actor.unit_id, state_id=OfficialStateId.DISARM.value):
             return False
         return True
 
@@ -196,30 +200,34 @@ class NormalAttackSystem:
             return NormalAttackResult(actor.unit_id, None, None, None, normal_attack_id=None)
 
         stun_state_id = OfficialStateId.STUN.value
-        if context.states.has(owner_id=actor.unit_id, state_id=stun_state_id):
+        if self._stage11 is not None:
+            stunned = self._stage11.has_effective(
+                context, actor.unit_id, OfficialStateId.STUN
+            )
+        else:
+            stunned = context.states.has(owner_id=actor.unit_id, state_id=stun_state_id)
+        if stunned:
             context.event_bus.publish(
                 event_type=EventType.ACTION_BLOCKED,
                 phase=context.current_phase,
                 round_no=context.current_round,
                 actor_id=actor.unit_id,
-                payload={
-                    "action_type": "ALL",
-                    "reason_state_id": stun_state_id,
-                },
+                payload={"action_type": "ALL", "reason_state_id": stun_state_id},
             )
             return NormalAttackResult(actor.unit_id, None, None, None, normal_attack_id=None)
 
         disarm_state_id = OfficialStateId.DISARM.value
-        if context.states.has(owner_id=actor.unit_id, state_id=disarm_state_id):
+        if self._stage11 is not None:
+            disarmed = self._stage11.disarm_blocks(context, actor.unit_id)
+        else:
+            disarmed = context.states.has(owner_id=actor.unit_id, state_id=disarm_state_id)
+        if disarmed:
             context.event_bus.publish(
                 event_type=EventType.ACTION_BLOCKED,
                 phase=context.current_phase,
                 round_no=context.current_round,
                 actor_id=actor.unit_id,
-                payload={
-                    "action_type": "NORMAL_ATTACK",
-                    "reason_state_id": disarm_state_id,
-                },
+                payload={"action_type": "NORMAL_ATTACK", "reason_state_id": disarm_state_id},
             )
             return NormalAttackResult(actor.unit_id, None, None, None, normal_attack_id=None)
 
@@ -507,7 +515,13 @@ class NormalAttackSystem:
                 return hit_result
 
             stun_state_id = OfficialStateId.STUN.value
-            if context.states.has(owner_id=actor.unit_id, state_id=stun_state_id):
+            if self._stage11 is not None:
+                stunned = self._stage11.has_effective(
+                    context, actor.unit_id, OfficialStateId.STUN
+                )
+            else:
+                stunned = context.states.has(owner_id=actor.unit_id, state_id=stun_state_id)
+            if stunned:
                 context.event_bus.publish(
                     event_type=EventType.ACTION_BLOCKED,
                     phase=context.current_phase,
@@ -518,7 +532,11 @@ class NormalAttackSystem:
                 return hit_result
 
             disarm_state_id = OfficialStateId.DISARM.value
-            if context.states.has(owner_id=actor.unit_id, state_id=disarm_state_id):
+            if self._stage11 is not None:
+                disarmed = self._stage11.disarm_blocks(context, actor.unit_id)
+            else:
+                disarmed = context.states.has(owner_id=actor.unit_id, state_id=disarm_state_id)
+            if disarmed:
                 context.event_bus.publish(
                     event_type=EventType.ACTION_BLOCKED,
                     phase=context.current_phase,

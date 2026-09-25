@@ -595,16 +595,9 @@ class ExecutionRightSystem:
                     detail=f"State instance '{descriptor.state_instance_id}' not found in registry",
                 )
 
-        # 4. Suppression Check
-        # Check if acting / state-bearing unit is suppressed by control states (e.g. STUN).
-        # Under Frozen Draft V4, suppression scope is REJECT_CURRENT (not owner abort).
-        unit_to_check_suppression = descriptor.state_owner_id or descriptor.intent_owner_id
-        if unit_to_check_suppression is not None:
-            if context.states.has(owner_id=unit_to_check_suppression, state_id="stun"):
-                return ExecutionRightDecision.reject_current(
-                    reason=ExecutionRightReason.SUPPRESSED,
-                    detail=f"Unit '{unit_to_check_suppression}' is suppressed by STUN",
-                )
+        # 4. Official STUN is not a generic RuleIntent suppressor.
+        # Stage11 freezes it at natural-action admission. Stage10 persistent
+        # timeline work (DOT/HoT and already-admitted hooks) must remain reachable.
 
         # 5. Target Defeat Check
         # If target_id is specified:

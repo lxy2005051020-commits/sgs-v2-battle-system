@@ -33,6 +33,7 @@ from .recovery_system import RecoverySystem
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .stage9_state_runtime import Stage9StateRuntime
+from .stage11_state_runtime import Stage11StateRuntime
 from .state_lifecycle_system import StateLifecycleSystem
 from .target_resolution_system import TargetResolutionSystem
 from .target_system import TargetSystem
@@ -90,6 +91,7 @@ class BattleSystems:
     legacy_action_dispatch_adapter: LegacyActionDispatchAdapter = field(init=False)
     assault_dispatch_port: AssaultDispatchPort = field(init=False)
     stage9_state_runtime: Stage9StateRuntime = field(init=False)
+    stage11_state_runtime: Stage11StateRuntime = field(init=False)
     target_resolution_system: TargetResolutionSystem = field(init=False)
     chain_system: ChainSystem = field(init=False)
     damage_callbacks: DamageCallbackAdmissionPoint = field(init=False)
@@ -99,8 +101,13 @@ class BattleSystems:
     continuous_damage_basis_producer: ContinuousDamageBasisProducer = field(init=False)
 
     def __post_init__(self) -> None:
-        self.action_order_system = ActionOrderSystem(self.attribute_system)
-        self.recovery_system = RecoverySystem(self.troop_system)
+        self.stage11_state_runtime = Stage11StateRuntime(self.state_lifecycle_system)
+        self.action_order_system = ActionOrderSystem(
+            self.attribute_system, self.stage11_state_runtime
+        )
+        self.recovery_system = RecoverySystem(
+            self.troop_system, self.stage11_state_runtime
+        )
         self.recovery_opportunity_system = RecoveryOpportunitySystem(self.recovery_system)
 
         if self.defeat_cleanup_port is None:
@@ -135,6 +142,7 @@ class BattleSystems:
         self.finalization_coordinator = BattleFinalizationCoordinator(
             victory_system=self.victory_system,
             state_lifecycle_system=self.state_lifecycle_system,
+            stage11_state_runtime=self.stage11_state_runtime,
         )
         self.future_admission_gate = FutureAdmissionGate(
             coordinator=self.finalization_coordinator,
@@ -211,6 +219,7 @@ class BattleSystems:
             chain_system=self.chain_system,
             counter_system=self.counter_system,
             damage_callbacks=self.damage_callbacks,
+            stage11_state_runtime=self.stage11_state_runtime,
         )
         self.action_system = ActionSystem(
             normal_attack_system=self.normal_attack_system,

@@ -128,8 +128,9 @@ RecoveryResult = RecoveryResolvedResult | RecoveryPreventedResult
 class RecoverySystem:
     """统一恢复规则入口；兵力实际写入仍只由 TroopSystem.restore 完成。"""
 
-    def __init__(self, troop_system: TroopSystem) -> None:
+    def __init__(self, troop_system: TroopSystem, stage11_state_runtime=None) -> None:
         self._troops = troop_system
+        self._stage11 = stage11_state_runtime
 
     def resolve(
         self,
@@ -150,7 +151,17 @@ class RecoverySystem:
             )
 
         healing_ban_id = OfficialStateId.HEALING_BAN.value
-        if context.states.has(owner_id=target.unit_id, state_id=healing_ban_id):
+        if self._stage11 is not None:
+            healing_banned = self._stage11.healing_block_active(
+                context, target.unit_id
+            )
+        else:
+            healing_banned = context.states.has(
+                owner_id=target.unit_id, state_id=healing_ban_id
+            )
+        # 690105 intercepts a positive recovery application. A natural zero
+        # request is not retroactively reclassified as a healing-ban event.
+        if request.amount > 0 and healing_banned:
             return self._prevent(
                 context,
                 request,
