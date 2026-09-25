@@ -21,7 +21,7 @@ This record supersedes the rejected-freeze snapshot that was blocked by B11-FRZ-
 - workflow conclusion: `success`
 - pytest: **917 passed / 0 failed / 0 skipped / 0 xfailed**
 - demo smoke: **PASS**
-- Freeze declaration SHA: **this declaration commit; backfilled by the subsequent governance metadata commit**
+- Freeze Declaration SHA: `809f0c67b323ee2cca3cb30bc70375b33caacc14`
 - Stage12 Active: **NO**
 
 ## B11-FRZ-001 Closure
