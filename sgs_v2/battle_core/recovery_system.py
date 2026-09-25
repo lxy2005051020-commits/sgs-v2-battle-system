@@ -84,11 +84,6 @@ class RecoveryRequest:
 RecoveryModifierProvider = Callable[[BattleContext, RecoveryRequest], ExactRatio]
 
 
-class RecoveryModifierPolicy(str, Enum):
-    NONE = "NONE"
-    VERIFIED_RECOVERY_MODIFIER = "VERIFIED_RECOVERY_MODIFIER"
-
-
 class RecoveryPreventionReason(str, Enum):
     HEALING_BAN = "HEALING_BAN"
     TARGET_DEFEATED = "TARGET_DEFEATED"
@@ -97,7 +92,6 @@ class RecoveryPreventionReason(str, Enum):
 @dataclass(frozen=True, slots=True)
 class RecoveryResolvedResult:
     request: RecoveryRequest
-    modified_amount: int
     troop_change: TroopChangeResult
     source_generation_id: StateApplicationGenerationId | None = None
     modified_recovery: int | None = None
@@ -105,10 +99,6 @@ class RecoveryResolvedResult:
     def __post_init__(self) -> None:
         if not isinstance(self.request, RecoveryRequest):
             raise TypeError("request must be a RecoveryRequest")
-        if isinstance(self.modified_amount, bool) or not isinstance(self.modified_amount, int):
-            raise TypeError("modified_amount must be an int")
-        if self.modified_amount < 0:
-            raise ValueError("modified_amount must be >= 0")
         if not isinstance(self.troop_change, TroopChangeResult):
             raise TypeError("troop_change must be a TroopChangeResult")
         if self.source_generation_id is not None and not isinstance(
@@ -129,7 +119,6 @@ class RecoveryResolvedResult:
 @dataclass(frozen=True, slots=True)
 class RecoveryPreventedResult:
     request: RecoveryRequest
-    modified_amount: int
     reason: RecoveryPreventionReason
     reason_state_id: str | None
     source_generation_id: StateApplicationGenerationId | None = None
@@ -138,10 +127,6 @@ class RecoveryPreventedResult:
     def __post_init__(self) -> None:
         if not isinstance(self.request, RecoveryRequest):
             raise TypeError("request must be a RecoveryRequest")
-        if isinstance(self.modified_amount, bool) or not isinstance(self.modified_amount, int):
-            raise TypeError("modified_amount must be an int")
-        if self.modified_amount < 0:
-            raise ValueError("modified_amount must be >= 0")
         if not isinstance(self.reason, RecoveryPreventionReason):
             raise TypeError("reason must be a RecoveryPreventionReason")
         if self.source_generation_id is not None and not isinstance(
@@ -296,7 +281,6 @@ class RecoverySystem:
     def _prevent(
         context: BattleContext,
         request: RecoveryRequest,
-        modified_amount: int,
         reason: RecoveryPreventionReason,
         *,
         reason_state_id: str | None,
@@ -304,7 +288,6 @@ class RecoverySystem:
     ) -> RecoveryPreventedResult:
         result = RecoveryPreventedResult(
             request=request,
-            modified_amount=modified_amount,
             reason=reason,
             reason_state_id=reason_state_id,
             source_generation_id=request.source_generation_id,
