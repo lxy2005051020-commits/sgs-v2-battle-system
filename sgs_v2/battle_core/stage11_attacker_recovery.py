@@ -18,7 +18,7 @@ class AttackerRecoveryResolution:
 
 
 class Stage11AttackerRecoverySystem:
-    """690094/690095 owner: actual troop-loss basis, per-source CEIL."""
+    """690094/690095 owner: topology-selected recovery basis, per-source CEIL."""
 
     def __init__(
         self,
@@ -53,9 +53,14 @@ class Stage11AttackerRecoverySystem:
         if source is None or not source.is_alive:
             return AttackerRecoveryResolution(0, ())
 
-        basis = int(resolution.actual_target_troop_loss)
+        # Ordinary non-Share damage keeps the frozen actual-loss basis.
+        # Share is the explicit Stage11 exception: its partition assignment owns
+        # RecoveryBasis, so troop-cap settlement and target-death interruption
+        # cannot shrink the basis after the fact.
         if isinstance(partition_plan, DamageShareTransactionPlan):
-            basis += sum(int(item.actual_loss) for item in direct_losses)
+            basis = partition_plan.attacker_recovery_basis
+        else:
+            basis = int(resolution.actual_target_troop_loss)
         # PROJECT_RUNTIME_DEFAULT: Distribution participant direct-loss is excluded
         # until 690094/690095 research explicitly authorizes that extension.
 
@@ -95,9 +100,9 @@ class Stage11AttackerRecoverySystem:
         if source is None or not source.is_alive:
             return AttackerRecoveryResolution(0, ())
 
-        # Cleave resolver supplies an already-settled actual-loss basis. Share
-        # actual loss is included; Distribution external participants are excluded
-        # by the documented project-runtime-default.
+        # Cleave resolver supplies the topology-authoritative basis. Share uses
+        # assigned partition damage; Distribution external participants remain
+        # excluded by the documented project-runtime-default.
         basis_value = recovery_fact.attacker_recovery_basis
         basis = int(fact.actual_target_troop_loss if basis_value is None else basis_value)
         results: list[RecoveryResult] = []
