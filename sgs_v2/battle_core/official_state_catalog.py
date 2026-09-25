@@ -132,6 +132,17 @@ from .stage10_state_params import (
     FirstAidStateParams,
     RecuperationStateParams,
 )
+from .stage11_state_params import (
+    AlertStateParams,
+    CriticalStateParams,
+    DamageReductionPierceStateParams,
+    DisarmStateParams,
+    EvasionStateParams,
+    LifeStealStateParams,
+    ResistanceStateParams,
+    Stage11TimedFlagParams,
+    StunStateParams,
+)
 
 
 _OFFICIAL_STATE_RUNTIME_PARAMS_TYPES: dict[OfficialStateId, type[StateRuntimeParams]] = {
@@ -151,6 +162,22 @@ _OFFICIAL_STATE_RUNTIME_PARAMS_TYPES: dict[OfficialStateId, type[StateRuntimePar
     OfficialStateId.DAMAGE_SHARE: DamageShareStateParams,
     OfficialStateId.DAMAGE_SPLIT: DistributionStateParams,
     OfficialStateId.COMBO: ComboStateParams,
+    OfficialStateId.EVASION: EvasionStateParams,
+    OfficialStateId.BARRIER: ResistanceStateParams,
+    OfficialStateId.FIRST_STRIKE: Stage11TimedFlagParams,
+    OfficialStateId.AMBUSH: Stage11TimedFlagParams,
+    OfficialStateId.SURE_HIT: Stage11TimedFlagParams,
+    OfficialStateId.DEFENSE_PIERCE: Stage11TimedFlagParams,
+    OfficialStateId.WEAPON_LIFESTEAL: LifeStealStateParams,
+    OfficialStateId.STRATEGY_LIFESTEAL: LifeStealStateParams,
+    OfficialStateId.VIGILANCE: AlertStateParams,
+    OfficialStateId.DISARM: DisarmStateParams,
+    OfficialStateId.WEAKNESS: Stage11TimedFlagParams,
+    OfficialStateId.HEALING_BAN: Stage11TimedFlagParams,
+    OfficialStateId.STUN: StunStateParams,
+    OfficialStateId.CRITICAL: CriticalStateParams,
+    OfficialStateId.STRATEGY_CRITICAL: CriticalStateParams,
+    OfficialStateId.DAMAGE_REDUCTION_PIERCE: DamageReductionPierceStateParams,
 }
 
 
