@@ -77,7 +77,7 @@ class RecoveryRequest:
 
     @property
     def base_amount(self) -> int:
-        """Positive recovery quantity before the canonical recovery-modifier stage."""
+        """Recovery quantity before the canonical recovery-modifier stage."""
         return self.amount
 
 
@@ -115,6 +115,10 @@ class RecoveryResolvedResult:
     def actual_recovery(self) -> int:
         return self.troop_change.actual_change
 
+    @property
+    def settled_request_amount(self) -> int:
+        return self.request.amount if self.modified_recovery is None else self.modified_recovery
+
 
 @dataclass(frozen=True, slots=True)
 class RecoveryPreventedResult:
@@ -151,12 +155,16 @@ class RecoveryPreventedResult:
                     "TARGET_DEFEATED prevention cannot include reason_state_id"
                 )
 
+    @property
+    def settled_request_amount(self) -> int:
+        return self.request.amount if self.modified_recovery is None else self.modified_recovery
+
 
 RecoveryResult = RecoveryResolvedResult | RecoveryPreventedResult
 
 
 class RecoverySystem:
-    """统一恢复规则入口；兵力实际写入仍只由 TroopSystem.restore 完成。"""
+    """统一恢复结算入口；Recovery Modifier 的 second CEIL 只在这里发生。"""
 
     def __init__(
         self,
@@ -186,14 +194,14 @@ class RecoverySystem:
         den = ratio.denominator
         return (num + den - 1) // den
 
-    def _modified_recovery(
+    def _apply_recovery_modifier(
         self,
         context: BattleContext,
         request: RecoveryRequest,
     ) -> int:
-        """Canonical recovery-modifier stage and sole owner of its second CEIL."""
         if request.amount == 0 or request.modifier_policy is RecoveryModifierPolicy.NONE:
             return request.amount
+
         ratio = (
             ExactRatio(1, 1)
             if self._recovery_modifier_provider is None
@@ -217,9 +225,10 @@ class RecoverySystem:
                 request,
                 RecoveryPreventionReason.TARGET_DEFEATED,
                 reason_state_id=None,
+                modified_recovery=None,
             )
 
-        modified_recovery = self._modified_recovery(context, request)
+        modified_recovery = self._apply_recovery_modifier(context, request)
 
         healing_ban_id = OfficialStateId.HEALING_BAN.value
         if self._stage11 is not None:
@@ -230,8 +239,7 @@ class RecoverySystem:
             healing_banned = context.states.has(
                 owner_id=target.unit_id, state_id=healing_ban_id
             )
-        # 690105 intercepts a positive recovery application. A natural zero
-        # request is not retroactively reclassified as a healing-ban event.
+
         if modified_recovery > 0 and healing_banned:
             return self._prevent(
                 context,
@@ -284,7 +292,7 @@ class RecoverySystem:
         reason: RecoveryPreventionReason,
         *,
         reason_state_id: str | None,
-        modified_recovery: int | None = None,
+        modified_recovery: int | None,
     ) -> RecoveryPreventedResult:
         result = RecoveryPreventedResult(
             request=request,
@@ -293,6 +301,7 @@ class RecoverySystem:
             source_generation_id=request.source_generation_id,
             modified_recovery=modified_recovery,
         )
+        settled_request = request.amount if modified_recovery is None else modified_recovery
         context.event_bus.publish(
             event_type=EventType.RECOVERY_PREVENTED,
             phase=context.current_phase,
@@ -312,9 +321,7 @@ class RecoverySystem:
                 "target_id": request.target_id,
                 "base_recovery": request.amount,
                 "modified_recovery": modified_recovery,
-                "requested_recovery": (
-                    request.amount if modified_recovery is None else modified_recovery
-                ),
+                "requested_recovery": settled_request,
                 "reason": reason.value,
                 "reason_state_id": reason_state_id,
             },
