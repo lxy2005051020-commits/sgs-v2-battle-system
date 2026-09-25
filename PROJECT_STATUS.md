@@ -32,7 +32,7 @@ tests  = 122ffd68f1aac06ce353572fd3568aa54d19b5dd
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 31
+Research FROZEN                 = 32
 Runtime FROZEN TO CONTRACT      = 16
 Strict Complete                 = 16
 ```
@@ -101,8 +101,8 @@ Canonical Scope = 17
 当前研究状态：
 
 ```text
-Research FROZEN = 15
-Research non-FROZEN / debt = 2
+Research FROZEN = 16
+Research non-FROZEN / debt = 1
 Runtime FROZEN = 0
 ```
 
@@ -113,6 +113,7 @@ Runtime FROZEN = 0
 690083 RESISTANCE
 690092 SURE_HIT
 690093 BREAK_FORMATION
+690099 ALERT
 690070 CRITICAL
 690069 STRATEGY_CRITICAL
 690094 LIFE_STEAL
@@ -126,12 +127,12 @@ Runtime FROZEN = 0
 690221 DAMAGE_REDUCTION_PIERCE
 ```
 
-这 15 个状态均未达到 Runtime FROZEN；690090 / 690091 / 690102 / 690104 / 690105 / 690111 当前仍为 `SKELETON_ONLY`，690221 与其余已冻结状态保持 `NOT_INTEGRATED` 记录。
+这 16 个状态均未达到 Runtime FROZEN；690090 / 690091 / 690102 / 690104 / 690105 / 690111 当前仍为 `SKELETON_ONLY`，690221 与其余已冻结状态保持 `NOT_INTEGRATED` 记录。
 
 特殊项：
 
 ```text
-690099 警戒 = RESEARCH OPEN / EVIDENCE BLOCKED OR DEFERRED
+690099 警戒 = RESEARCH FROZEN / Runtime NOT_INTEGRATED / explicit non-blocking debt
 690221 看破 = RESEARCH FROZEN / Runtime NOT_INTEGRATED
 690086 分摊 = DSTS9-B02 research debt
 ```
@@ -213,10 +214,10 @@ Project Stage12
 ## 8. 当前下一步
 
 Research side：
-继续关闭 Stage11 未完成研究、证据阻塞与 DSTS9-B02 债务。
+Stage11 普通 research-open / evidence-blocked 状态已清零；继续关闭或正式处置 DSTS9-B02 债务。
 
 Runtime side：
-对 15 个 Research-FROZEN 状态进入：
+对 16 个 Research-FROZEN 状态进入：
 
 ```text
 Runtime Integration Design
