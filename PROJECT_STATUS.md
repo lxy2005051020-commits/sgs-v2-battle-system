@@ -15,6 +15,7 @@ Stage 7  Trigger / Recovery                    ✅ FROZEN
 Stage 8  Damage Pipeline                       ✅ FROZEN
 Stage 9  Cross-Mechanism Runtime Orchestration ✅ FROZEN
 Stage10 Persistent State Runtime Integration  ✅ FROZEN
+Stage11 Official State Runtime Completion I   ✅ FROZEN
 ```
 
 ## 2. Cross-repository completion baseline
@@ -22,13 +23,13 @@ Stage10 Persistent State Runtime Integration  ✅ FROZEN
 ```text
 Official States                 = 40
 Research FROZEN                 = 32
-Runtime FROZEN TO CONTRACT      = 16
-Strict Complete                 = 16
+Runtime FROZEN TO CONTRACT      = 33
+Strict Complete                 = 32
 ```
 
-These counts remain unchanged because Stage11 Runtime Freeze was **not** declared.
+Stage11 adds 17 Runtime-frozen states to the previous 16-state Runtime baseline. Sixteen of those Stage11 states are Research FROZEN; 690086 Distribution remains runtime-governed with explicit research debt, so Strict Complete advances to 32 rather than 33.
 
-## 3. Stage11 · FINAL GOVERNANCE AUDIT BLOCKED
+## 3. Stage11 · RUNTIME FROZEN
 
 Canonical scope = 17:
 
@@ -52,47 +53,48 @@ Canonical scope = 17:
 690095 STRATEGY_LIFE_STEAL
 ```
 
-Current verified runtime snapshot:
+Final verified runtime snapshot:
 
 ```text
-Runtime behavior SHA = eff9efcff878afcdd3a5c8609ef719d18fc58cdf
-Battle governance SHA = 14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96
-Research authority = 80c4a9dd435b7ec1ed1baed1a957310159c1232a
-Research sync SHA  = 0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d
-CI run             = 36163229356 / success
-pytest             = 904 passed / 0 failed
-demo smoke         = PASS
+Runtime Tested SHA      = a38b5150dec36f50b3aa21587a0c0c70397c17e0
+Freeze Declaration SHA = 809f0c67b323ee2cca3cb30bc70375b33caacc14
+Research Authority      = 80c4a9dd435b7ec1ed1baed1a957310159c1232a
+CI run                  = 36166249971 / success
+pytest                  = 917 passed / 0 failed / 0 skipped / 0 xfailed
+demo smoke              = PASS
+B11-FRZ-001             = CLOSED
 ```
 
-The former Share × LifeSteal authority conflict is resolved. Runtime correctly uses:
+Share × LifeSteal remains assignment-owned:
 
 ```text
 Share RecoveryBasis =
 PrimaryAssignedDamage + SharedAssignedDamage
 ```
 
-and preserves that basis across target death / overkill.
-
-### B11-FRZ-001
-
-Final governance audit found one normative Runtime gap in 690094/690095:
+Recovery modifier integerization is now executable and uniquely owned:
 
 ```text
-BaseRecovery     = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
-ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)
+RecoveryBasis
+→ per-source LifeSteal ratio
+→ FIRST CEIL
+→ Recovery Modifier
+→ SECOND CEIL
+→ HealingBlock
+→ capacity
+→ ActualRecoveredTroops
 ```
 
-The audited Runtime implements the first CEIL but has no canonical recovery-modifier owner/seam for the second CEIL and no discriminating test for it.
+`Stage11AttackerRecoverySystem` owns the first CEIL. `RecoverySystem` owns typed modifier eligibility and the second CEIL. The discriminating 101 × 10% → 11; 11 × 110% → 13 test prevents forbidden single-stage rounding to 12.
 
 Therefore:
 
 ```text
-Stage11 Runtime: BLOCKED
-Stage11 Runtime Freeze: NOT DECLARED
-Stage12 Readiness: NOT READY
+Stage11 Runtime: FROZEN
+Stage11 Runtime Freeze: DECLARED
+Stage12 Readiness: READY
+Stage12 Active: NO
 ```
-
-No gameplay rule is being re-researched by this governance finding. The required next action is a scoped Runtime repair of B11-FRZ-001 followed by full regression and re-audit.
 
 ## 4. Preserved Stage11 research debt
 
@@ -103,13 +105,20 @@ No gameplay rule is being re-researched by this governance finding. The required
 - DISARM reflected/proxy admission remains bounded.
 - 690221 unsupported damage families remain explicit boundary violations.
 
-## 5. Stage12 · NOT READY
+These are governed residual boundaries and do not block the Stage11 Runtime Freeze.
+
+## 5. Stage12 · READY, NOT ACTIVE
 
 Stage12 canonical scope remains 7 states:
 
 `690089, 690101, 690107, 690108, 690109, 690110, 690222`.
 
-Stage12 is not activated and no Stage12 runtime work is authorized by the current governance round.
+```text
+Stage12 Readiness: READY
+Stage12 Active: NO
+```
+
+A separate Stage12 authorization is still required before gameplay implementation begins.
 
 ## 6. Stage13+
 
@@ -120,4 +129,4 @@ Stage15 = 准备战法
 Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
 ```
 
-These remain gated behind Stage11/Stage12 exits.
+These remain downstream of Stage12.
