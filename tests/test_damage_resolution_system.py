@@ -78,7 +78,7 @@ def test_damage_resolution_routes_actual_damage_through_troop_system() -> None:
     assert context.event_bus.history[-1].event_type is EventType.DAMAGE_DEALT
 
 
-def test_weakness_prevents_resolution_before_troop_system() -> None:
+def test_weakness_settles_legal_zero_through_troop_system() -> None:
     context = make_context(seed=12)
     StateLifecycleSystem().apply(
         context,
@@ -91,12 +91,14 @@ def test_weakness_prevents_resolution_before_troop_system() -> None:
 
     result = systems.damage_resolution_system.resolve(context, request())
 
-    assert result.damage.prevented is True
+    assert result.damage.prevented is False
+    assert result.damage.zeroed_by_state_id == OfficialStateId.WEAKNESS.value
     assert result.damage.final_damage == 0
-    assert result.troop_change is None
-    assert troops.apply_damage_calls == 0
+    assert result.troop_change is not None
+    assert result.troop_change.actual_change == 0
+    assert troops.apply_damage_calls == 1
     assert context.get_unit("b1").troops == before
-    assert context.event_bus.history[-1].event_type is EventType.DAMAGE_PREVENTED
+    assert context.event_bus.history[-1].event_type is EventType.DAMAGE_DEALT
 
 
 def test_damage_resolution_publishes_unit_defeated_after_damage_dealt() -> None:
