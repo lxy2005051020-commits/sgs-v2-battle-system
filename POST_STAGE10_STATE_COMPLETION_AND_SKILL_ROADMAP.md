@@ -24,11 +24,11 @@ Research Wave may reorder research work but may not renumber Project Stage.
 ```text
 Official States                 = 40
 Research FROZEN                 = 32
-Runtime FROZEN TO CONTRACT      = 16
-Strict Complete                 = 16
+Runtime FROZEN TO CONTRACT      = 33
+Strict Complete                 = 32
 ```
 
-Stage11 does not enter the Runtime-FROZEN counts because its final Freeze candidate was rejected.
+Stage11 Runtime Freeze is complete. The one-state difference between Runtime FROZEN TO CONTRACT and Strict Complete is 690086 Distribution, whose Runtime behavior remains governed by explicit project default while DSTS9-B02 stays research debt.
 
 ## 3. Stage11
 
@@ -41,26 +41,49 @@ Research side:
 - 690086 Distribution retains DSTS9-B02 as explicit research debt / project runtime default.
 
 Runtime side:
-- implementation and legacy-test migration are substantially complete;
-- runtime behavior `eff9efcff878afcdd3a5c8609ef719d18fc58cdf` and governance-tested Battle commit `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96` are green: Actions `36163229356`, 904 passed, demo PASS;
-- Share × LifeSteal assigned-damage authority is migrated;
-- final Runtime Freeze is **BLOCKED by B11-FRZ-001**.
+- Runtime Tested SHA: `a38b5150dec36f50b3aa21587a0c0c70397c17e0`;
+- Freeze Declaration SHA: `809f0c67b323ee2cca3cb30bc70375b33caacc14`;
+- Research Authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`;
+- Actions `36166249971`: 917 passed, 0 failed, demo PASS;
+- Share × LifeSteal assigned-damage authority remains intact;
+- B11-FRZ-001 is CLOSED;
+- Stage11 Runtime is **FROZEN**.
 
-B11-FRZ-001 is a narrow recovery-integerization/ownership gap: the latest 690094/690095 authority requires `ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)` after the base per-source CEIL, but the current Runtime has no canonical recovery-modifier owner/seam or discriminating test for that stage.
+The repaired recovery pipeline is:
+
+```text
+RecoveryBasis
+→ per-source LifeSteal / StrategyLifeSteal ratio
+→ FIRST CEIL
+→ Recovery Modifier
+→ SECOND CEIL
+→ HealingBlock
+→ capacity
+→ ActualRecoveredTroops
+```
+
+The 101 × 10% → 11; 11 × 110% → 13 test distinguishes the required double-stage rule from forbidden single-stage rounding to 12.
 
 ### Stage11 exit gate
 
-Stage11 remains open until all of the following are true:
-
 ```text
-B11-FRZ-001 repaired
-+ dedicated double-stage CEIL regression added
-+ full pytest green
-+ demo smoke green
-+ Runtime adversarial re-audit PASS
-+ Runtime Freeze Record declares FROZEN
-+ Battle/Research governance synchronized
+B11-FRZ-001 repaired                    PASS
+double-stage discriminator             PASS
+StrategyLifeSteal mirror               PASS
+multi-source independent CEIL          PASS
+Share regression                       PASS
+Cleave regression                      PASS
+Distribution debt preserved            PASS
+full pytest                            PASS (917)
+demo smoke                             PASS
+RNG audit                              PASS
+mutation-owner audit                   PASS
+integerization audit                   PASS
+recovery adversarial audit             PASS
+Runtime Freeze Record                  FROZEN
 ```
+
+Stage11 exit gate is complete.
 
 ## 4. Stage12
 
@@ -79,11 +102,11 @@ Canonical scope = 7:
 Current state:
 
 ```text
-Stage12 Readiness: NOT READY
+Stage12 Readiness: READY
 Stage12 Active: NO
 ```
 
-No Stage12 gameplay implementation is authorized while Stage11 Runtime Freeze is blocked.
+Stage12 gameplay implementation has not been started by the Stage11 freeze task. A separate Stage12 task remains required.
 
 ## 5. Stage13-15
 
@@ -93,11 +116,8 @@ Stage14 = ordinary active skill runtime
 Stage15 = preparation skill runtime
 ```
 
-They remain downstream of the state-runtime gates.
+They remain downstream of Stage12.
 
 ## 6. Governance rule
 
-A green CI is necessary but does not override a missing normative contract path. Research debt may remain explicit under a project default, but a required Runtime owner cannot be replaced by documentation optimism. Humanity has tried that pattern often enough.
-
-
-Cross-repo blocker mirror: Research `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`.
+Green CI remains necessary but not sufficient. Explicit research debt may remain under a documented project default, while every normative Runtime stage must have a unique owner, observable seam and discriminating regression before Freeze.
