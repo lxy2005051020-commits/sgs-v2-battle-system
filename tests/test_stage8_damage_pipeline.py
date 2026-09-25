@@ -363,7 +363,7 @@ def test_weakness_is_resolved_zero_damage_not_stage8_prevention() -> None:
     trace = result.pipeline_trace
     assert trace.formula_policy_status is StageEvaluationStatus.EXECUTED
     assert trace.modifier_status is StageEvaluationStatus.EXECUTED
-    assert instance.instance_id in {state.instance_id for state in context.states.for_owner("a1")}
+    assert context.states.get(instance.instance_id) is instance
 
 
 def test_synthetic_hit_probability_zero_and_one_do_not_consume_rng() -> None:
