@@ -65,7 +65,7 @@ demo smoke green                            PASS
 Runtime adversarial re-audit                PASS
 Runtime Freeze Record declares FROZEN       PASS
 Battle governance updated                   PASS
-Research governance sync                    follows Battle main freeze merge
+Research governance sync                    PASS — completion matrix / mechanics index / research roadmap updated
 ```
 
 ## 4. Stage12
