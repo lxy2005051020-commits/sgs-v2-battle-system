@@ -2,7 +2,7 @@
 >
 > The 2026-09-25 Share × LifeSteal reopen has been resolved by Research authority at `80c4a9dd435b7ec1ed1baed1a957310159c1232a`, specifically `STAGE11_SHARE_LIFESTEAL_AUTHORITY_RESOLUTION.md`. For Share, the current canonical recovery basis is `PrimaryAssignedDamage + SharedAssignedDamage`, not committed actual troop loss. Target death and either-side overkill do not shrink that basis. Cleave children use their own partition assignment facts.
 >
-> Final governance audit also found a separate Runtime conformance blocker: the current Battle runtime has per-source base LifeSteal CEIL, HealingBlock interception and capacity ownership, but no canonical recovery-modifier owner/seam that can enforce the authority-required second-stage `CEIL(BaseRecovery × HealingModifier)`, and no discriminating Runtime test for that boundary. Sections 11 and 14 below are amended accordingly. This is **B11-FRZ-001** and blocks Runtime Freeze; it does not reopen the assigned-damage Share rule.
+> The former Runtime conformance blocker **B11-FRZ-001 is CLOSED**. Battle Runtime Tested SHA `ce42bc62cfb26f8ca0b448e74b26533604bb0505` establishes the canonical recovery-modifier seam: `Stage11AttackerRecoverySystem` owns RecoveryBasis + per-source first CEIL; `RecoverySystem` owns typed recovery-modifier eligibility + exact-rational second CEIL + HealingBlock settlement, with capacity delegated to `TroopSystem.restore`. CI `36166160197` passed 913 tests with demo smoke PASS. Sections 11 and 14 below record the frozen ownership.
 
 # Stage11 Runtime Integration Design
 
