@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 from enum import Enum
 
 from .context import BattleContext
 from .events import EventType
 from .official_state_catalog import OfficialStateId
+from .stage9_integerization import ExactRatio
 from .state_generation import StateApplicationGenerationId
 from .troop_system import TroopChangeResult, TroopSystem
 
@@ -33,6 +35,11 @@ def _validate_state_provenance_pair(
         )
 
 
+class RecoveryModifierPolicy(str, Enum):
+    NONE = "NONE"
+    APPLY = "APPLY"
+
+
 @dataclass(frozen=True, slots=True)
 class RecoveryRequest:
     source_id: str | None
@@ -42,6 +49,7 @@ class RecoveryRequest:
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
     source_generation_id: StateApplicationGenerationId | None = None
+    modifier_policy: RecoveryModifierPolicy = RecoveryModifierPolicy.NONE
 
     def __post_init__(self) -> None:
         _validate_optional_id(self.source_id, "source_id")
@@ -60,10 +68,20 @@ class RecoveryRequest:
             self.source_generation_id, StateApplicationGenerationId
         ):
             raise TypeError("source_generation_id must be a StateApplicationGenerationId or None")
+        if not isinstance(self.modifier_policy, RecoveryModifierPolicy):
+            raise TypeError("modifier_policy must be a RecoveryModifierPolicy")
         if isinstance(self.amount, bool) or not isinstance(self.amount, int):
             raise TypeError("amount must be an int")
         if self.amount < 0:
             raise ValueError("amount must be >= 0")
+
+    @property
+    def base_amount(self) -> int:
+        """Positive recovery quantity before the canonical recovery-modifier stage."""
+        return self.amount
+
+
+RecoveryModifierProvider = Callable[[BattleContext, RecoveryRequest], ExactRatio]
 
 
 class RecoveryPreventionReason(str, Enum):
@@ -76,6 +94,7 @@ class RecoveryResolvedResult:
     request: RecoveryRequest
     troop_change: TroopChangeResult
     source_generation_id: StateApplicationGenerationId | None = None
+    modified_recovery: int | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.request, RecoveryRequest):
@@ -86,6 +105,11 @@ class RecoveryResolvedResult:
             self.source_generation_id, StateApplicationGenerationId
         ):
             raise TypeError("source_generation_id must be a StateApplicationGenerationId or None")
+        if self.modified_recovery is not None:
+            if isinstance(self.modified_recovery, bool) or not isinstance(self.modified_recovery, int):
+                raise TypeError("modified_recovery must be an int or None")
+            if self.modified_recovery < 0:
+                raise ValueError("modified_recovery must be >= 0")
 
     @property
     def actual_recovery(self) -> int:
@@ -98,6 +122,7 @@ class RecoveryPreventedResult:
     reason: RecoveryPreventionReason
     reason_state_id: str | None
     source_generation_id: StateApplicationGenerationId | None = None
+    modified_recovery: int | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.request, RecoveryRequest):
@@ -108,6 +133,11 @@ class RecoveryPreventedResult:
             self.source_generation_id, StateApplicationGenerationId
         ):
             raise TypeError("source_generation_id must be a StateApplicationGenerationId or None")
+        if self.modified_recovery is not None:
+            if isinstance(self.modified_recovery, bool) or not isinstance(self.modified_recovery, int):
+                raise TypeError("modified_recovery must be an int or None")
+            if self.modified_recovery < 0:
+                raise ValueError("modified_recovery must be >= 0")
 
         healing_ban_id = OfficialStateId.HEALING_BAN.value
         if self.reason is RecoveryPreventionReason.HEALING_BAN:
@@ -128,9 +158,48 @@ RecoveryResult = RecoveryResolvedResult | RecoveryPreventedResult
 class RecoverySystem:
     """统一恢复规则入口；兵力实际写入仍只由 TroopSystem.restore 完成。"""
 
-    def __init__(self, troop_system: TroopSystem, stage11_state_runtime=None) -> None:
+    def __init__(
+        self,
+        troop_system: TroopSystem,
+        stage11_state_runtime=None,
+        recovery_modifier_provider: RecoveryModifierProvider | None = None,
+    ) -> None:
+        if recovery_modifier_provider is not None and not callable(recovery_modifier_provider):
+            raise TypeError("recovery_modifier_provider must be callable or None")
         self._troops = troop_system
         self._stage11 = stage11_state_runtime
+        self._recovery_modifier_provider = recovery_modifier_provider
+
+    @staticmethod
+    def _ceil_ratio(base: int, ratio: ExactRatio) -> int:
+        if isinstance(base, bool) or not isinstance(base, int):
+            raise TypeError("base must be an int")
+        if not isinstance(ratio, ExactRatio):
+            raise TypeError("recovery modifier provider must return ExactRatio")
+        if base < 0:
+            raise ValueError("base must be >= 0")
+        if ratio.numerator < 0:
+            raise ValueError("recovery modifier ratio must be >= 0")
+        if base == 0 or ratio.numerator == 0:
+            return 0
+        num = base * ratio.numerator
+        den = ratio.denominator
+        return (num + den - 1) // den
+
+    def _modified_recovery(
+        self,
+        context: BattleContext,
+        request: RecoveryRequest,
+    ) -> int:
+        """Canonical recovery-modifier stage and sole owner of its second CEIL."""
+        if request.amount == 0 or request.modifier_policy is RecoveryModifierPolicy.NONE:
+            return request.amount
+        ratio = (
+            ExactRatio(1, 1)
+            if self._recovery_modifier_provider is None
+            else self._recovery_modifier_provider(context, request)
+        )
+        return self._ceil_ratio(request.amount, ratio)
 
     def resolve(
         self,
@@ -150,6 +219,8 @@ class RecoverySystem:
                 reason_state_id=None,
             )
 
+        modified_recovery = self._modified_recovery(context, request)
+
         healing_ban_id = OfficialStateId.HEALING_BAN.value
         if self._stage11 is not None:
             healing_banned = self._stage11.healing_block_active(
@@ -161,19 +232,21 @@ class RecoverySystem:
             )
         # 690105 intercepts a positive recovery application. A natural zero
         # request is not retroactively reclassified as a healing-ban event.
-        if request.amount > 0 and healing_banned:
+        if modified_recovery > 0 and healing_banned:
             return self._prevent(
                 context,
                 request,
                 RecoveryPreventionReason.HEALING_BAN,
                 reason_state_id=healing_ban_id,
+                modified_recovery=modified_recovery,
             )
 
-        troop_change = self._troops.restore(target, request.amount)
+        troop_change = self._troops.restore(target, modified_recovery)
         result = RecoveryResolvedResult(
             request=request,
             troop_change=troop_change,
             source_generation_id=request.source_generation_id,
+            modified_recovery=modified_recovery,
         )
 
         if troop_change.actual_change > 0:
@@ -194,7 +267,9 @@ class RecoverySystem:
                         else None
                     ),
                     "target_id": request.target_id,
-                    "requested_recovery": request.amount,
+                    "base_recovery": request.amount,
+                    "modified_recovery": modified_recovery,
+                    "requested_recovery": modified_recovery,
                     "actual_recovery": troop_change.actual_change,
                     "remaining_troops": troop_change.remaining_troops,
                 },
@@ -209,12 +284,14 @@ class RecoverySystem:
         reason: RecoveryPreventionReason,
         *,
         reason_state_id: str | None,
+        modified_recovery: int | None = None,
     ) -> RecoveryPreventedResult:
         result = RecoveryPreventedResult(
             request=request,
             reason=reason,
             reason_state_id=reason_state_id,
             source_generation_id=request.source_generation_id,
+            modified_recovery=modified_recovery,
         )
         context.event_bus.publish(
             event_type=EventType.RECOVERY_PREVENTED,
@@ -233,7 +310,11 @@ class RecoverySystem:
                     else None
                 ),
                 "target_id": request.target_id,
-                "requested_recovery": request.amount,
+                "base_recovery": request.amount,
+                "modified_recovery": modified_recovery,
+                "requested_recovery": (
+                    request.amount if modified_recovery is None else modified_recovery
+                ),
                 "reason": reason.value,
                 "reason_state_id": reason_state_id,
             },
