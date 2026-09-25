@@ -258,8 +258,8 @@ def test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_110pct() ->
     assert isinstance(result, RecoveryResolvedResult)
     assert result.request.amount == 11  # CEIL(101 * 10%)
     assert result.modified_recovery == 13  # CEIL(11 * 110%)
+    assert result.modified_recovery != 12  # forbidden single-stage CEIL(11.11)
     assert result.actual_recovery == 13
-    # A forbidden single-stage CEIL(101 * 10% * 110%) would be 12.
 
 
 def test_recovery_modifier_precedes_healing_block_without_zeroing_calculated_amounts() -> None:
@@ -401,160 +401,11 @@ def test_strategy_lifesteal_uses_same_recovery_modifier_owner_and_second_ceil() 
     assert result.actual_recovery == 13
 
 
-def _modifier_110(_context, _request) -> ExactRatio:
-    return ExactRatio(11, 10)
-
-
-def test_double_stage_ceil_discriminator_is_13_not_single_stage_12() -> None:
-    context, systems = _context(recovery_modifier_provider=_modifier_110)
-    _lifesteal(context, systems, OfficialStateId.WEAPON_LIFESTEAL)
-
-    resolved = _resolve(
-        systems,
-        context,
-        actual_primary=61,
-        actual_shared=40,
-        dtotal=101,
-        dtarget=61,
-    )
-
-    assert resolved.basis == 101
-    result = resolved.results[0]
-    assert isinstance(result, RecoveryResolvedResult)
-    assert result.request.amount == 11  # CEIL(101 * 10%)
-    assert result.modified_recovery == 13  # CEIL(11 * 110%)
-    assert result.modified_recovery != 12  # single-stage would be CEIL(11.11)
-    assert result.actual_recovery == 13
-
-
-def test_double_stage_modifier_precedes_healing_block() -> None:
-    context, systems = _context(recovery_modifier_provider=_modifier_110)
-    _lifesteal(context, systems, OfficialStateId.WEAPON_LIFESTEAL)
-    systems.state_lifecycle_system.apply(
-        context,
-        state_id=OfficialStateId.HEALING_BAN.value,
-        owner_id="a",
-        source_id="b",
-    )
-
-    resolved = _resolve(
-        systems,
-        context,
-        actual_primary=61,
-        actual_shared=40,
-        dtotal=101,
-        dtarget=61,
-    )
-
-    result = resolved.results[0]
-    assert isinstance(result, RecoveryPreventedResult)
-    assert result.request.amount == 11
-    assert result.modified_recovery == 13
-    assert result.settled_request_amount == 13
-    assert context.get_unit("a").troops == 500
-
-
-def test_double_stage_modifier_precedes_recovery_capacity() -> None:
-    context, systems = _context(
-        attacker_troops=993,
-        recovery_modifier_provider=_modifier_110,
-    )
-    _lifesteal(context, systems, OfficialStateId.WEAPON_LIFESTEAL)
-
-    resolved = _resolve(
-        systems,
-        context,
-        actual_primary=61,
-        actual_shared=40,
-        dtotal=101,
-        dtarget=61,
-    )
-
-    result = resolved.results[0]
-    assert isinstance(result, RecoveryResolvedResult)
-    assert result.request.amount == 11
-    assert result.modified_recovery == 13
-    assert result.actual_recovery == 7
-
-
-def test_identity_recovery_modifier_preserves_base_recovery() -> None:
-    context, systems = _context(
-        recovery_modifier_provider=lambda _context, _request: ExactRatio(1, 1)
-    )
-    _lifesteal(context, systems, OfficialStateId.WEAPON_LIFESTEAL)
-
-    resolved = _resolve(
-        systems,
-        context,
-        actual_primary=61,
-        actual_shared=40,
-        dtotal=101,
-        dtarget=61,
-    )
-
-    result = resolved.results[0]
-    assert isinstance(result, RecoveryResolvedResult)
-    assert result.request.amount == 11
-    assert result.modified_recovery == 11
-    assert result.actual_recovery == 11
-
-
-def test_multiple_lifesteal_sources_each_get_independent_double_stage_ceil() -> None:
-    context, systems = _context(recovery_modifier_provider=_modifier_110)
-    _lifesteal(
-        context,
-        systems,
-        OfficialStateId.WEAPON_LIFESTEAL,
-        ratio=ExactRatio(1, 10),
-        source_skill_id="lifesteal-10",
-    )
-    _lifesteal(
-        context,
-        systems,
-        OfficialStateId.WEAPON_LIFESTEAL,
-        ratio=ExactRatio(1, 20),
-        source_skill_id="lifesteal-5",
-    )
-
-    resolved = _resolve(
-        systems,
-        context,
-        actual_primary=61,
-        actual_shared=40,
-        dtotal=101,
-        dtarget=61,
-    )
-
-    assert len(resolved.results) == 2
-    assert sorted(result.request.amount for result in resolved.results) == [6, 11]
-    assert sorted(result.modified_recovery for result in resolved.results) == [7, 13]
-    assert sum(result.actual_recovery for result in resolved.results) == 20
-
-
-def test_strategy_lifesteal_uses_same_double_stage_modifier_owner() -> None:
-    context, systems = _context(recovery_modifier_provider=_modifier_110)
-    _lifesteal(context, systems, OfficialStateId.STRATEGY_LIFESTEAL)
-
-    resolved = _resolve(
-        systems,
-        context,
-        damage_type=DamageType.STRATEGY,
-        actual_primary=61,
-        actual_shared=40,
-        dtotal=101,
-        dtarget=61,
-    )
-
-    result = resolved.results[0]
-    assert isinstance(result, RecoveryResolvedResult)
-    assert result.request.source_state_id == OfficialStateId.STRATEGY_LIFESTEAL.value
-    assert result.request.amount == 11
-    assert result.modified_recovery == 13
-    assert result.actual_recovery == 13
-
 
 def test_cleave_lifesteal_reuses_canonical_recovery_modifier_owner() -> None:
-    context, systems = _context(recovery_modifier_provider=_modifier_110)
+    context, systems = _context(
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(11, 10)
+    )
     _lifesteal(context, systems, OfficialStateId.WEAPON_LIFESTEAL)
 
     recovery_fact = SimpleNamespace(
