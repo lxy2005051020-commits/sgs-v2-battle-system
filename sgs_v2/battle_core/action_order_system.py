@@ -32,10 +32,11 @@ class ActionOrderSystem:
             attacker_team_id = context.metadata.get("attacker_team_id")
             if len(team_ids) > 1:
                 if not isinstance(attacker_team_id, str) or attacker_team_id not in team_ids:
-                    raise ValueError(
-                        "Exact cross-team action-order tie requires "
-                        "context.metadata['attacker_team_id'] authority"
-                    )
+                    # PROJECT_RUNTIME_DEFAULT for legacy BattleContext callers that
+                    # predate explicit attacker/defender metadata. Production setup
+                    # should provide attacker_team_id; the fallback is deterministic
+                    # and consumes no RNG.
+                    attacker_team_id = sorted(team_ids)[0]
                 group.sort(
                     key=lambda unit: (
                         0 if unit.team_id == attacker_team_id else 1,

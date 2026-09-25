@@ -158,11 +158,11 @@ class DamageResult:
     source_state_instance_id: str | None = None
     calculation_basis: DamageCalculationBasis = DamageCalculationBasis.LIVE_RUNTIME
     source_generation_id: StateApplicationGenerationId | None = None
-    pipeline_trace: DamagePipelineTrace | None = None
     critical_triggered: bool = False
     critical_state_id: str | None = None
     zeroed_by_state_id: str | None = None
     alert_consumed_instance_id: str | None = None
+    pipeline_trace: DamagePipelineTrace | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.damage_type, DamageType):

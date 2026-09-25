@@ -19,7 +19,10 @@ from .stage11_state_params import (
     StunStateParams,
 )
 from .state_instance import StateInstance
-from .state_lifecycle_system import StateLifecycleSystem
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .state_lifecycle_system import StateLifecycleSystem
 
 
 class ContractBoundaryViolation(RuntimeError):
@@ -79,9 +82,9 @@ class Stage11StateRuntime:
     typed instances after a gameplay decision.
     """
 
-    def __init__(self, lifecycle: StateLifecycleSystem) -> None:
-        if not isinstance(lifecycle, StateLifecycleSystem):
-            raise TypeError("lifecycle must be a StateLifecycleSystem")
+    def __init__(self, lifecycle: "StateLifecycleSystem") -> None:
+        if not hasattr(lifecycle, "update_runtime_params") or not hasattr(lifecycle, "remove"):
+            raise TypeError("lifecycle must provide StateLifecycleSystem mutation seams")
         self._lifecycle = lifecycle
 
     @staticmethod

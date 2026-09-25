@@ -22,6 +22,11 @@ from .stage10_state_params import (
     FirstAidStateParams,
     RecuperationStateParams,
 )
+from .stage11_application_policy import (
+    enforce_application_conflict,
+    normalize_legacy_empty_params,
+    runtime_params_mutation_authorized,
+)
 from .state_generation import (
     PersistentLifecycleWindow,
     StateApplicationGenerationId,
@@ -205,6 +210,12 @@ class StateLifecycleSystem:
         else:
             actual_runtime_params = runtime_params
 
+        actual_runtime_params = normalize_legacy_empty_params(
+            state_id,
+            definition.runtime_params_type,
+            actual_runtime_params,
+        )
+
         if not isinstance(actual_runtime_params, definition.runtime_params_type):
             if is_stage10_persistent:
                 expected_stage10_type = get_stage10_persistent_params_type(state_id)
@@ -231,43 +242,12 @@ class StateLifecycleSystem:
                     f"COMBO already exists on unit '{owner_id}', cannot stack (First-In-Wins)"
                 )
 
-        # Stage11 observable same-class conflict rules. These states reject an
-        # already-present equal/equivalent instance without refresh. States whose
-        # research explicitly authorizes multi-source contributions or independent
-        # batches are intentionally absent from this set.
-        stage11_nonstacking = {
-            OfficialStateId.BARRIER.value,
-            OfficialStateId.FIRST_STRIKE.value,
-            OfficialStateId.AMBUSH.value,
-            OfficialStateId.SURE_HIT.value,
-            OfficialStateId.DEFENSE_PIERCE.value,
-            OfficialStateId.DISARM.value,
-            OfficialStateId.WEAKNESS.value,
-            OfficialStateId.HEALING_BAN.value,
-            OfficialStateId.STUN.value,
-        }
-        if state_id in stage11_nonstacking:
-            existing_stage11 = context.states.find(
-                owner_id=owner_id,
-                state_id=state_id,
-            )
-            if existing_stage11:
-                if state_id == OfficialStateId.DEFENSE_PIERCE.value:
-                    incoming_strength = float(
-                        getattr(actual_runtime_params, "strength", 1.0)
-                    )
-                    existing_strength = max(
-                        float(getattr(item.runtime_params, "strength", 1.0))
-                        for item in existing_stage11
-                    )
-                    if incoming_strength > existing_strength:
-                        raise ValueError(
-                            "690093 stronger replacement is an unresolved research boundary"
-                        )
-                raise ValueError(
-                    f"Stage11 state '{state_id}' already exists on unit '{owner_id}'; "
-                    "incoming equal/equivalent application is rejected without refresh"
-                )
+        enforce_application_conflict(
+            context,
+            state_id=state_id,
+            owner_id=owner_id,
+            actual_runtime_params=actual_runtime_params,
+        )
 
         if state_id == OfficialStateId.GUARD.value and isinstance(actual_runtime_params, GuardStateParams):
             context.get_unit(actual_runtime_params.protector_id)
@@ -494,31 +474,13 @@ class StateLifecycleSystem:
         """
         instance = context.states.get(instance_id)
 
-        stage11_mutable_runtime_ids = {
-            OfficialStateId.EVASION.value,
-            OfficialStateId.BARRIER.value,
-            OfficialStateId.FIRST_STRIKE.value,
-            OfficialStateId.AMBUSH.value,
-            OfficialStateId.SURE_HIT.value,
-            OfficialStateId.DEFENSE_PIERCE.value,
-            OfficialStateId.WEAPON_LIFESTEAL.value,
-            OfficialStateId.STRATEGY_LIFESTEAL.value,
-            OfficialStateId.VIGILANCE.value,
-            OfficialStateId.DISARM.value,
-            OfficialStateId.WEAKNESS.value,
-            OfficialStateId.HEALING_BAN.value,
-            OfficialStateId.STUN.value,
-            OfficialStateId.CRITICAL.value,
-            OfficialStateId.STRATEGY_CRITICAL.value,
-            OfficialStateId.DAMAGE_REDUCTION_PIERCE.value,
-        }
         if (
             instance.state_id not in (
                 OfficialStateId.GUARD.value,
                 OfficialStateId.TAUNT.value,
                 OfficialStateId.COMBO.value,
             )
-            and instance.state_id not in stage11_mutable_runtime_ids
+            and not runtime_params_mutation_authorized(instance.state_id)
         ):
             raise ValueError(
                 f"Runtime parameter maintenance is not authorized for state '{instance.state_id}'"

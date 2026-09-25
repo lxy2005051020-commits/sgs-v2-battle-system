@@ -132,7 +132,13 @@ def create_damage_aftermath_fact(
     d_id = str(damage_instance_id)
 
     if hit_topology is None:
-        if damage_result is not None and getattr(damage_result, "prevented", False):
+        if (
+            damage_result is not None
+            and getattr(damage_result, "zeroed_by_state_id", None) == "weakness"
+        ):
+            hit_topology = DamageHitTopology.RESOLVED_HIT
+            zero_loss_cause = zero_loss_cause or DamageZeroLossCause.WEAKNESS_ZERO
+        elif damage_result is not None and getattr(damage_result, "prevented", False):
             prevented_by = getattr(damage_result, "prevented_by_state_id", None)
             if prevented_by == "weakness":
                 hit_topology = DamageHitTopology.RESOLVED_HIT
