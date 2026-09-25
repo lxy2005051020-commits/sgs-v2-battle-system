@@ -5,6 +5,8 @@ Implementation status: **ACTIVE**
 
 Runtime Freeze gate: **BLOCKED** by the frozen 690087/Stage9 versus 690094/690095 Share-chain recovery-basis conflict documented in `STAGE11_RUNTIME_ADVERSARIAL_AUDIT.md`. Baseline `pytest -q`: 888 passed, 10 failed on Battle `b79019e5fcc56dbfad2abdd13a4ed592f9b4680c`. No state below is Runtime FROZEN; the per-state implementation/test entries are an older planning snapshot and require a fresh implementation audit before freeze.
 
+2026-09-25 authority audit selected **RESOLUTION-D**: [STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md). Fixed-ratio nonlethal Share reports refute target-only recovery; lethal Share reports refute an unconditional actual-committed sum. Base CEIL is supported. Runtime unblock handoff is withheld.
+
 | State | Research | Runtime Owner | Design | Implementation | Tests | Audit | Runtime |
 |---|---|---|---|---|---|---|---|
 | 690086 分摊 | DEBT-BOUND / runtime admitted | DamagePartitionCoordinator | FROZEN | EXISTING / AUDIT | PENDING | PENDING | NOT_FROZEN |

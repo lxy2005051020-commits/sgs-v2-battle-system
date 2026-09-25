@@ -5,6 +5,8 @@
 > **用途**: 记录 Stage 9 群攻机制逐项确认后的单一事实基线，后续实现与审计不得继续沿用与本文件冲突的旧推论。  
 > **说明**: 本文件记录的是当前项目已经人工确认的游戏机制规则；它不等同于“官方底层实现结构”，也不用于反推官方内部调用栈。
 
+> **2026-09-25 scoped authority reopen:** Section 10.2's secondary-Share recovery basis inherits the disputed 690087 target-only clause. Cleave damage derivation and damage FLOOR remain frozen; no Cleave-secondary Share recovery basis is now frozen. See [Stage11 reopen](../../../stage11/STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md).
+
 ---
 
 ## 1. 群攻伤害基数与伤害层映射（RF-P06 冻结 / CLVS9-B01 关闭）

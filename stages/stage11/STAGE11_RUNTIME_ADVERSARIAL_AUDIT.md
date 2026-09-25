@@ -2,6 +2,8 @@
 
 Verdict: **BLOCKED / RUNTIME NOT FROZEN**
 
+> **2026-09-25 follow-up:** [Formal authority reopen](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md) records new fixed-ratio raw evidence and selects RESOLUTION-D. The intake classifications below remain their 2026-09-25 baseline; the later evidence additionally challenges an unconditional actual-committed Share basis in lethal cases.
+
 Audit baseline: Battle `main` `b79019e5fcc56dbfad2abdd13a4ed592f9b4680c`; Research `main` `d1b6c74b352de373fb46c99b546e970eaaf1f77e`. The latest Battle `main` CI run at intake was [36147076741](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/36147076741), with 888 passed and 10 failed. A clean clone reproduced the same counts. This document records a targeted independent adversarial authority audit; it is not a full Stage11 runtime audit or a freeze record.
 
 ## Blocking counterexample: Cleave secondary Share × Life Steal

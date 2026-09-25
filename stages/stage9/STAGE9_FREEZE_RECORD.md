@@ -1,5 +1,7 @@
 # Stage9 Freeze Record
 
+> **2026-09-25 scoped authority reopen:** The Cleave secondary + Share attacker-recovery clause below is disputed and not current combined Stage11 authority. This does not reopen Cleave damage derivation/integerization or the Stage9 transaction architecture. See [Stage11 reopen](../stage11/STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md).
+
 ## Purpose
 
 `STAGE9_DESIGN_FREEZE.md` is the pre-implementation design freeze. This file is the post-implementation/runtime final freeze authority for **Stage 9 · Cross-Mechanism Runtime Orchestration**.

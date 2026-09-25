@@ -1,5 +1,7 @@
 # RF-P06 Repair Record
 
+> **2026-09-25 scoped authority reopen:** `CLVS9-M01` Share recovery-basis conclusion and Vector 4's recovery FLOOR are historical, disputed claims. Cleave damage-layer mapping and Cleave damage FLOOR are retained. No replacement recovery basis has been frozen; see [Stage11 reopen](../../stage11/STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md).
+
 ## CLEAVE_DAMAGE_LAYER_AND_RECOVERY_BASIS_REFREEZE
 
 ```text

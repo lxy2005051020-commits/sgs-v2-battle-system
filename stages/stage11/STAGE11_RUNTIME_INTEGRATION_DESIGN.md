@@ -1,5 +1,7 @@
 # Stage11 Runtime Integration Design
 
+> **2026-09-25 combined-authority reopen:** Section 11's Share `actual primary + actual shared` is a historical design choice pending [formal Share × Life Steal resolution](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md). Clean nonlethal evidence supports its observable arithmetic, while lethal Share counterexamples block a universal committed-loss rule. No Runtime edit is authorized by this addendum.
+
 Status: **DESIGN FROZEN**  
 Design input Battle HEAD: `fa94a92374ac69af00f54397806df04ebcef535a`  
 Design input Research HEAD: `d1b6c74b352de373fb46c99b546e970eaaf1f77e`

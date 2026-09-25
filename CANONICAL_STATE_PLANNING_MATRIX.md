@@ -8,6 +8,8 @@
 >
 > Research Maturity and Mechanism Authority source: `lxy2005051020-commits/sgs-state-mechanics-research`.
 
+> **2026-09-25 Stage11 cross-contract exception:** Share × 倒戈/攻心 combined authority remains [RESOLUTION-D / blocked](stages/stage11/STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md). Individual state freeze counts do not authorize this combined Runtime behavior; Stage12 remains not ready.
+
 ## 1. Canonical baseline
 
 ```text

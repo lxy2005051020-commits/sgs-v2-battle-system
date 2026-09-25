@@ -7,6 +7,8 @@ Status: `FROZEN`
 
 Freeze Date: `2026-09-11`
 
+> **2026-09-25 scoped authority reopen:** Sections 14/23 and T12's target-only attacker-recovery rule is disputed by fixed-ratio nonlethal Share reports. The historical clause is preserved below; no replacement basis is frozen. Share partition, target-first commit/death interrupt and lineage remain frozen. See [Stage11 reopen](../../../stage11/STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md).
+
 本文件为 `sgs-v2-battle-system` 中 `690087 DAMAGE_SHARE / 分担` 的正式实现依据，同步自独立状态机制研究仓库的冻结结论。冻结的是经战报研究稳定确认的**外部行为合同**，不宣称复原官方源码内部类名、函数名或数据结构。
 
 ---
