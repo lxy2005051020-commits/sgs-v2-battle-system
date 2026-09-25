@@ -45,7 +45,10 @@ def _unit(
     )
 
 
-def _context(attacker_troops: int = 500) -> tuple[BattleContext, BattleSystems]:
+def _context(
+    attacker_troops: int = 500,
+    recovery_modifier_provider=None,
+) -> tuple[BattleContext, BattleSystems]:
     context = BattleContext(
         battle_id="stage11-share-lifesteal-resolution",
         units={
@@ -57,7 +60,9 @@ def _context(attacker_troops: int = 500) -> tuple[BattleContext, BattleSystems]:
         random=RandomSystem(20260926),
     )
     register_official_state_definitions(context.states)
-    return context, BattleSystems()
+    return context, BattleSystems(
+        recovery_modifier_provider=recovery_modifier_provider,
+    )
 
 
 def _lifesteal(
@@ -65,13 +70,15 @@ def _lifesteal(
     systems: BattleSystems,
     state_id: OfficialStateId,
     ratio: ExactRatio = ExactRatio(1, 10),
+    *,
+    source_skill_id: str | None = None,
 ) -> None:
     systems.state_lifecycle_system.apply(
         context,
         state_id=state_id.value,
         owner_id="a",
         source_id="a",
-        source_skill_id=f"{state_id.value}-source",
+        source_skill_id=(source_skill_id or f"{state_id.value}-source"),
         runtime_params=LifeStealStateParams(ratio=ratio),
     )
 
@@ -228,3 +235,167 @@ def test_strategy_lifesteal_mirrors_assigned_share_basis_by_damage_lane() -> Non
     assert isinstance(result, RecoveryResolvedResult)
     assert result.request.source_state_id == OfficialStateId.STRATEGY_LIFESTEAL.value
     assert result.request.amount == 10
+
+
+
+def test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_110pct() -> None:
+    context, systems = _context(
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(11, 10)
+    )
+    _lifesteal(context, systems, OfficialStateId.WEAPON_LIFESTEAL)
+
+    resolved = _resolve(
+        systems,
+        context,
+        actual_primary=61,
+        actual_shared=40,
+        dtotal=101,
+        dtarget=61,
+    )
+
+    result = resolved.results[0]
+    assert resolved.basis == 101
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.request.amount == 11  # CEIL(101 * 10%)
+    assert result.modified_recovery == 13  # CEIL(11 * 110%)
+    assert result.actual_recovery == 13
+    # A forbidden single-stage CEIL(101 * 10% * 110%) would be 12.
+
+
+def test_recovery_modifier_precedes_healing_block_without_zeroing_calculated_amounts() -> None:
+    context, systems = _context(
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(11, 10)
+    )
+    _lifesteal(context, systems, OfficialStateId.WEAPON_LIFESTEAL)
+    systems.state_lifecycle_system.apply(
+        context,
+        state_id=OfficialStateId.HEALING_BAN.value,
+        owner_id="a",
+        source_id="b",
+    )
+
+    before = context.get_unit("a").troops
+    resolved = _resolve(
+        systems,
+        context,
+        actual_primary=61,
+        actual_shared=40,
+        dtotal=101,
+        dtarget=61,
+    )
+
+    result = resolved.results[0]
+    assert resolved.basis == 101
+    assert isinstance(result, RecoveryPreventedResult)
+    assert result.request.amount == 11
+    assert result.modified_recovery == 13
+    assert result.reason_state_id == OfficialStateId.HEALING_BAN.value
+    assert context.get_unit("a").troops == before
+
+
+def test_recovery_modifier_precedes_capacity_clamp() -> None:
+    context, systems = _context(
+        attacker_troops=993,
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(11, 10),
+    )
+    _lifesteal(context, systems, OfficialStateId.WEAPON_LIFESTEAL)
+
+    resolved = _resolve(
+        systems,
+        context,
+        actual_primary=61,
+        actual_shared=40,
+        dtotal=101,
+        dtarget=61,
+    )
+
+    result = resolved.results[0]
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.request.amount == 11
+    assert result.modified_recovery == 13
+    assert result.actual_recovery == 7
+
+
+def test_recovery_modifier_100_percent_does_not_add_one() -> None:
+    context, systems = _context(
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(1, 1)
+    )
+    _lifesteal(context, systems, OfficialStateId.WEAPON_LIFESTEAL)
+
+    resolved = _resolve(
+        systems,
+        context,
+        actual_primary=61,
+        actual_shared=40,
+        dtotal=101,
+        dtarget=61,
+    )
+
+    result = resolved.results[0]
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.request.amount == 11
+    assert result.modified_recovery == 11
+    assert result.actual_recovery == 11
+
+
+def test_multiple_lifesteal_sources_each_own_first_ceil_and_reenter_modifier_stage() -> None:
+    context, systems = _context(
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(11, 10)
+    )
+    _lifesteal(
+        context,
+        systems,
+        OfficialStateId.WEAPON_LIFESTEAL,
+        ExactRatio(1, 10),
+        source_skill_id="lifesteal-a",
+    )
+    _lifesteal(
+        context,
+        systems,
+        OfficialStateId.WEAPON_LIFESTEAL,
+        ExactRatio(1, 5),
+        source_skill_id="lifesteal-b",
+    )
+
+    resolved = _resolve(
+        systems,
+        context,
+        actual_primary=61,
+        actual_shared=40,
+        dtotal=101,
+        dtarget=61,
+    )
+
+    assert resolved.basis == 101
+    assert len(resolved.results) == 2
+    pairs = sorted(
+        (result.request.amount, result.modified_recovery)
+        for result in resolved.results
+        if isinstance(result, RecoveryResolvedResult)
+    )
+    assert pairs == [(11, 13), (21, 24)]
+
+
+def test_strategy_lifesteal_uses_same_recovery_modifier_owner_and_second_ceil() -> None:
+    context, systems = _context(
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(11, 10)
+    )
+    _lifesteal(context, systems, OfficialStateId.STRATEGY_LIFESTEAL)
+
+    resolved = _resolve(
+        systems,
+        context,
+        damage_type=DamageType.STRATEGY,
+        actual_primary=61,
+        actual_shared=40,
+        dtotal=101,
+        dtarget=61,
+    )
+
+    result = resolved.results[0]
+    assert resolved.basis == 101
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.request.source_state_id == OfficialStateId.STRATEGY_LIFESTEAL.value
+    assert result.request.amount == 11
+    assert result.modified_recovery == 13
+    assert result.actual_recovery == 13
