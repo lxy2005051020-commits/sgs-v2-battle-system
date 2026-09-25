@@ -287,8 +287,8 @@ def binding(state_id: str, family: DamageRuleFamily, builder) -> StateRuleBindin
     )
 
 
-def test_default_production_binding_is_only_weakness() -> None:
-    assert default_stage8_official_binding_state_ids() == {OfficialStateId.WEAKNESS.value}
+def test_default_production_binding_excludes_stage11_weakness() -> None:
+    assert default_stage8_official_binding_state_ids() == frozenset()
     assert {b.state_id for b in DEFAULT_STAGE8_STATE_RULE_BINDINGS}.isdisjoint(
         DEFER_STAGE8_STATES
     )
@@ -340,7 +340,7 @@ def test_provider_rejects_duplicate_state_bindings_and_duplicate_adapter_keys() 
         StateDamageRuleProvider((one, one))
 
 
-def test_weakness_migrates_to_prevention_pipeline_and_short_circuits_formula_rng() -> None:
+def test_weakness_is_resolved_zero_damage_not_stage8_prevention() -> None:
     context = make_context(seed=31)
     instance = StateLifecycleSystem().apply(
         context,
@@ -354,19 +354,16 @@ def test_weakness_migrates_to_prevention_pipeline_and_short_circuits_formula_rng
 
     result = systems.damage_system.calculate(context, request())
 
-    assert result.prevented is True
-    assert result.prevented_by_state_id == OfficialStateId.WEAKNESS.value
-    assert result.base_damage == result.scaled_damage == result.final_damage == 0
-    assert context.random.randint_calls == 0
-    assert context.random.chance_calls == 0
+    assert result.prevented is False
+    assert result.prevented_by_state_id is None
+    assert result.final_damage == 0
+    assert result.zeroed_by_state_id == OfficialStateId.WEAKNESS.value
     assert len(context.event_bus.history) == before_events
     assert result.pipeline_trace is not None
     trace = result.pipeline_trace
-    assert trace.prevention_status is StageEvaluationStatus.EXECUTED
-    assert trace.hit_status is StageEvaluationStatus.NOT_EVALUATED
-    assert trace.formula_policy_status is StageEvaluationStatus.NOT_EVALUATED
-    assert trace.modifier_status is StageEvaluationStatus.NOT_EVALUATED
-    assert trace.prevention_result.decisive_source.source_state_instance_id == instance.instance_id
+    assert trace.formula_policy_status is StageEvaluationStatus.EXECUTED
+    assert trace.modifier_status is StageEvaluationStatus.EXECUTED
+    assert instance.instance_id in {state.instance_id for state in context.states.for_owner("a1")}
 
 
 def test_synthetic_hit_probability_zero_and_one_do_not_consume_rng() -> None:

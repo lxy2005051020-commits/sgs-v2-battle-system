@@ -18,7 +18,7 @@ class AttackerRecoveryResolution:
 
 
 class Stage11AttackerRecoverySystem:
-    """690094/690095 owner: actual troop-loss basis, per-source CEIL."""
+    """690094/690095 owner: authoritative recovery basis, per-source CEIL."""
 
     def __init__(
         self,
@@ -53,9 +53,13 @@ class Stage11AttackerRecoverySystem:
         if source is None or not source.is_alive:
             return AttackerRecoveryResolution(0, ())
 
-        basis = int(resolution.actual_target_troop_loss)
+        # Share × LifeSteal authority (2026-09-25): the partition owner supplies
+        # the semantic basis. Actual committed troop loss may be smaller because
+        # of target death or troop-cap overkill and must not shrink this basis.
         if isinstance(partition_plan, DamageShareTransactionPlan):
-            basis += sum(int(item.actual_loss) for item in direct_losses)
+            basis = int(partition_plan.dtarget + partition_plan.dsharer_theoretical)
+        else:
+            basis = int(resolution.actual_target_troop_loss)
         # PROJECT_RUNTIME_DEFAULT: Distribution participant direct-loss is excluded
         # until 690094/690095 research explicitly authorizes that extension.
 

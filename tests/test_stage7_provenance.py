@@ -115,7 +115,7 @@ def test_state_damage_provenance_survives_effect_request_result_and_event() -> N
     assert event.payload["source_state_instance_id"] == state.instance_id
 
 
-def test_prevented_damage_event_keeps_state_provenance() -> None:
+def test_weakness_zero_damage_event_keeps_state_provenance() -> None:
     context = make_context()
     register_damage_state(context)
     state = StateLifecycleSystem().apply(
@@ -138,7 +138,7 @@ def test_prevented_damage_event_keeps_state_provenance() -> None:
 
     event = next(
         event for event in reversed(context.event_bus.history)
-        if event.event_type is EventType.DAMAGE_PREVENTED
+        if event.event_type is EventType.DAMAGE_DEALT
     )
     assert event.payload["source_skill_id"] == "source-skill"
     assert event.payload["source_state_id"] == state.state_id

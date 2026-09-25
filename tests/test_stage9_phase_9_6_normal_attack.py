@@ -58,6 +58,7 @@ from sgs_v2.battle_core.stage9_state_params import (
     GuardStateParams,
     TauntStateParams,
 )
+from sgs_v2.battle_core.stage11_state_params import StunStateParams
 from sgs_v2.battle_core.victory_system import VictorySystem
 
 
@@ -869,6 +870,7 @@ def test_p96_rpr_03_finite_combo_duration_plus_stun_maintenance() -> None:
         source_id="b1",
         source_skill_id="stun_skill",
         source_skill_slot=SkillSlot.INHERENT,
+        runtime_params=StunStateParams(remaining_blocks=2),
     )
     inst = systems.state_lifecycle_system.apply(
         context=context,

@@ -237,19 +237,24 @@ class CleaveDerivedDamageResolver:
 
         fact = ResolvedDamageFact(request.damage_instance_id, target.unit_id, request.lineage,
                                   request.damage_type, assigned, actual)
-        share_actual = (
-            sum(int(item.actual_loss) for item in losses)
-            if isinstance(plan, DamageShareTransactionPlan)
-            else 0
-        )
-        recovery_basis = actual + share_actual
+        if isinstance(plan, DamageShareTransactionPlan):
+            # Share × LifeSteal authority: use assignment facts even when target
+            # death cancels the pending sharer commit or troop caps trim actual loss.
+            recovery_basis = plan.dtarget + plan.dsharer_theoretical
+            external_authority = None
+        elif isinstance(plan, DistributionTransactionPlan):
+            # PROJECT_RUNTIME_DEFAULT: participant direct loss is excluded until
+            # separate Distribution authority resolves this research debt.
+            recovery_basis = actual
+            external_authority = "PROJECT_RUNTIME_DEFAULT: distribution external loss excluded"
+        else:
+            recovery_basis = actual
+            external_authority = None
         recovery = CleaveRecoveryFact(
             fact,
             plan.kind,
             recovery_basis,
-            "PROJECT_RUNTIME_DEFAULT: distribution external loss excluded"
-            if isinstance(plan, DistributionTransactionPlan)
-            else None,
+            external_authority,
         )
         aftermath_port = (
             self._damage_aftermath_port

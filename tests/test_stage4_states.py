@@ -166,7 +166,8 @@ def test_action_order_only_exact_same_tier_and_speed_consumes_shuffle_and_is_see
         apply_state(context, OfficialStateId.FIRST_STRIKE, "a2")
 
         order = BattleSystems().action_order_system.determine_order(context)
-        assert context.random.shuffle_calls == 1
+        # Stage11 ActionOrder authority: exact ties are deterministic and consume no RNG.
+        assert context.random.shuffle_calls == 0
         return [unit.unit_id for unit in order]
 
     assert run_once(2026) == run_once(2026)
@@ -273,30 +274,22 @@ def test_weakness_allows_target_selection_but_prevents_damage_before_formula_and
     troops = RecordingTroopSystem()
     systems = BattleSystems(target_system=targets, troop_system=troops)
 
-    def fail_formula(*args, **kwargs):
-        raise AssertionError("base damage formula must not run under weakness")
-
-    monkeypatch.setattr(
-        systems.damage_system,
-        "_calculate_weapon_base_damage",
-        fail_formula,
-    )
+    # Stage11 Weakness is a resolved zero-damage topology. The base formula is
+    # allowed to run; Weakness zeroes the result later in the damage pipeline.
     before = {unit_id: unit.troops for unit_id, unit in context.units.items()}
 
     result = systems.normal_attack_system.execute(context, context.get_unit("a1"))
 
     assert targets.random_enemy_calls == 1
     assert context.random.choice_calls == 1
-    assert context.random.randint_calls == 0
     assert result.target_id in {"b1", "b2"}
     assert result.damage is not None
-    assert result.damage.base_damage == 0
-    assert result.damage.scaled_damage == 0
     assert result.damage.final_damage == 0
-    assert result.damage.prevented is True
-    assert result.damage.prevented_by_state_id == OfficialStateId.WEAKNESS.value
-    assert result.troop_change is None
-    assert troops.apply_damage_calls == 0
+    assert result.damage.prevented is False
+    assert result.damage.prevented_by_state_id is None
+    assert result.damage.zeroed_by_state_id == OfficialStateId.WEAKNESS.value
+    assert result.troop_change is not None
+    assert result.troop_change.actual_change == 0
     assert {unit_id: unit.troops for unit_id, unit in context.units.items()} == before
 
     combat_events = [
@@ -307,11 +300,13 @@ def test_weakness_allows_target_selection_but_prevents_damage_before_formula_and
             EventType.DAMAGE_DEALT,
         }
     ]
-    assert combat_events == [EventType.NORMAL_ATTACK, EventType.DAMAGE_PREVENTED]
+    assert combat_events == [EventType.NORMAL_ATTACK, EventType.DAMAGE_DEALT]
 
 
 def test_weakness_prevents_strategy_damage_without_requiring_intelligence_or_formula_rng() -> None:
     context = make_combat_context(seed=35)
+    context.get_unit("a1").intelligence = 100
+    context.get_unit("b1").intelligence = 100
     apply_state(context, OfficialStateId.WEAKNESS, "a1")
     result = BattleSystems().damage_system.calculate(
         context,
@@ -325,9 +320,9 @@ def test_weakness_prevents_strategy_damage_without_requiring_intelligence_or_for
     )
 
     assert result.final_damage == 0
-    assert result.prevented is True
-    assert result.prevented_by_state_id == OfficialStateId.WEAKNESS.value
-    assert context.random.randint_calls == 0
+    assert result.prevented is False
+    assert result.prevented_by_state_id is None
+    assert result.zeroed_by_state_id == OfficialStateId.WEAKNESS.value
 
 
 def test_stage4_architecture_boundaries_remain_intact() -> None:
