@@ -142,7 +142,6 @@ class BattleSystems:
         self.finalization_coordinator = BattleFinalizationCoordinator(
             victory_system=self.victory_system,
             state_lifecycle_system=self.state_lifecycle_system,
-            stage11_state_runtime=self.stage11_state_runtime,
         )
         self.future_admission_gate = FutureAdmissionGate(
             coordinator=self.finalization_coordinator,
@@ -225,6 +224,7 @@ class BattleSystems:
             normal_attack_system=self.normal_attack_system,
             stage9_state_runtime=self.stage9_state_runtime,
             state_lifecycle_system=self.state_lifecycle_system,
+            stage11_state_runtime=self.stage11_state_runtime,
         )
         self.legacy_action_dispatch_adapter = LegacyActionDispatchAdapter(
             action_system=lambda: self.action_system,
