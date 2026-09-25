@@ -50,7 +50,7 @@ def test_normal_attack_keeps_stage4_damage_dealt_event_order() -> None:
     assert events == [EventType.NORMAL_ATTACK, EventType.DAMAGE_DEALT]
 
 
-def test_weakness_keeps_stage4_damage_prevented_event_order() -> None:
+def test_weakness_keeps_legal_zero_damage_dealt_event_order() -> None:
     context = make_context(32)
     StateLifecycleSystem().apply(
         context,
@@ -69,4 +69,4 @@ def test_weakness_keeps_stage4_damage_prevented_event_order() -> None:
             EventType.DAMAGE_PREVENTED,
         }
     ]
-    assert events == [EventType.NORMAL_ATTACK, EventType.DAMAGE_PREVENTED]
+    assert events == [EventType.NORMAL_ATTACK, EventType.DAMAGE_DEALT]
