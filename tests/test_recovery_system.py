@@ -11,6 +11,7 @@ from sgs_v2.battle_core import (
     RandomSystem,
     RecoverEffect,
     RecoveryModifierPolicy,
+    RecoveryModifierPolicy,
     RecoveryPreventionReason,
     RecoveryPreventedResult,
     RecoveryRequest,
@@ -20,6 +21,7 @@ from sgs_v2.battle_core import (
     TroopChangeResult,
     TroopSystem,
     UnitRuntime,
+    ExactRatio,
     register_official_state_definitions,
 )
 from sgs_v2.battle_core.stage9_integerization import ExactRatio
@@ -316,4 +318,122 @@ def test_zero_recovery_request_does_not_invoke_modifier_provider() -> None:
     assert isinstance(result, RecoveryResolvedResult)
     assert result.modified_recovery == 0
     assert result.actual_recovery == 0
+    assert calls == 0
+
+
+def test_recovery_modifier_owner_applies_exact_second_ceil() -> None:
+    context = make_context()
+    system = RecoverySystem(
+        TroopSystem(),
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(11, 10),
+    )
+
+    result = system.resolve(
+        context,
+        RecoveryRequest(
+            source_id="a1",
+            target_id="b1",
+            amount=11,
+            modifier_policy=RecoveryModifierPolicy.APPLY,
+        ),
+    )
+
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.request.amount == 11
+    assert result.modified_recovery == 13
+    assert result.troop_change.requested_change == 13
+    assert result.actual_recovery == 13
+
+
+def test_recovery_modifier_identity_does_not_add_one() -> None:
+    context = make_context()
+    system = RecoverySystem(
+        TroopSystem(),
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(1, 1),
+    )
+
+    result = system.resolve(
+        context,
+        RecoveryRequest(
+            source_id="a1",
+            target_id="b1",
+            amount=11,
+            modifier_policy=RecoveryModifierPolicy.APPLY,
+        ),
+    )
+
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.modified_recovery == 11
+    assert result.actual_recovery == 11
+
+
+def test_recovery_modifier_runs_before_healing_block_and_preserves_calculated_amount() -> None:
+    context = make_context()
+    apply_healing_ban(context)
+    system = RecoverySystem(
+        TroopSystem(),
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(11, 10),
+    )
+
+    result = system.resolve(
+        context,
+        RecoveryRequest(
+            source_id="a1",
+            target_id="b1",
+            amount=11,
+            modifier_policy=RecoveryModifierPolicy.APPLY,
+        ),
+    )
+
+    assert isinstance(result, RecoveryPreventedResult)
+    assert result.request.amount == 11
+    assert result.modified_recovery == 13
+    assert result.settled_request_amount == 13
+    assert context.get_unit("b1").troops == 400
+
+
+def test_recovery_modifier_runs_before_capacity_clamp() -> None:
+    context = make_context()
+    context.get_unit("b1").troops = 993
+    system = RecoverySystem(
+        TroopSystem(),
+        recovery_modifier_provider=lambda _context, _request: ExactRatio(11, 10),
+    )
+
+    result = system.resolve(
+        context,
+        RecoveryRequest(
+            source_id="a1",
+            target_id="b1",
+            amount=11,
+            modifier_policy=RecoveryModifierPolicy.APPLY,
+        ),
+    )
+
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.modified_recovery == 13
+    assert result.troop_change.requested_change == 13
+    assert result.actual_recovery == 7
+
+
+def test_generic_recovery_without_typed_eligibility_skips_modifier_provider() -> None:
+    context = make_context()
+    calls = 0
+
+    def provider(_context, _request):
+        nonlocal calls
+        calls += 1
+        raise AssertionError("generic recovery must not enter recovery modifier stage")
+
+    result = RecoverySystem(
+        TroopSystem(),
+        recovery_modifier_provider=provider,
+    ).resolve(
+        context,
+        RecoveryRequest(source_id="a1", target_id="b1", amount=11),
+    )
+
+    assert isinstance(result, RecoveryResolvedResult)
+    assert result.modified_recovery == 11
+    assert result.actual_recovery == 11
     assert calls == 0
