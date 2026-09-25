@@ -40,8 +40,8 @@ Stage11 负责将下列 17 个官方状态推进到项目可交付状态，同�
 
 ```text
 Stage11 Scope            = 17
-Research FROZEN          = 15
-Research non-FROZEN/debt = 2
+Research FROZEN          = 16
+Research non-FROZEN/debt = 1
 Runtime FROZEN           = 0
 Strict Complete added by Stage11 = 0
 ```
@@ -53,6 +53,7 @@ Strict Complete added by Stage11 = 0
 690083 RESISTANCE
 690092 SURE_HIT
 690093 BREAK_FORMATION
+690099 ALERT
 690070 CRITICAL
 690069 STRATEGY_CRITICAL
 690094 LIFE_STEAL
@@ -66,7 +67,7 @@ Strict Complete added by Stage11 = 0
 690221 DAMAGE_REDUCTION_PIERCE
 ```
 
-这 15 个状态已经通过研究准入门槛，不再重复无新证据的专项问题扩张。下一步统一进入 Runtime Integration Design。690090 / 690091 / 690102 / 690104 / 690105 / 690111 当前 Runtime maturity 仍为 `SKELETON_ONLY`；690221 为 `NOT_INTEGRATED`，均不等于已集成。
+这 16 个状态已经通过研究准入门槛，不再重复无新证据的专项问题扩张。下一步统一进入 Runtime Integration Design。690090 / 690091 / 690102 / 690104 / 690105 / 690111 当前 Runtime maturity 仍为 `SKELETON_ONLY`；690221 为 `NOT_INTEGRATED`，均不等于已集成。
 
 Research authority repository：
 
@@ -79,6 +80,7 @@ states/functional/evasion/MECHANISM_CONTRACT.md
 states/functional/resistance/MECHANISM_CONTRACT.md
 states/functional/sure_hit/MECHANISM_CONTRACT.md
 states/functional/break_formation/MECHANISM_CONTRACT.md
+states/functional/alert/MECHANISM_CONTRACT.md
 states/functional/critical/MECHANISM_CONTRACT.md
 states/functional/strategy_critical/MECHANISM_CONTRACT.md
 states/functional/life_steal/MECHANISM_CONTRACT.md
@@ -100,18 +102,9 @@ states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md
 
 ### 2.3 Evidence-blocked / deferred states
 
-```text
-690099 警戒 = MINIMUM_USABLE / NOT_INTEGRATED
-```
+当前 Stage11：**NONE**。
 
-当前治理标记：
-
-```text
-RESEARCH OPEN
-EVIDENCE BLOCKED / DEFERRED
-```
-
-690221 看破已 Research FROZEN，authority 为 Research repository 的 `states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md`；Runtime 仍为 NOT_INTEGRATED。
+690099 警戒已通过 Independent Freeze Audit，Research FROZEN，authority 为 Research repository 的 `states/functional/alert/MECHANISM_CONTRACT.md`；Runtime 仍为 NOT_INTEGRATED。690221 看破同样保持 Research FROZEN / Runtime NOT_INTEGRATED。
 
 ### 2.4 Research-debt state
 
@@ -255,7 +248,7 @@ Design Freeze
 Implementation
 ```
 
-15 个已经 Research FROZEN 的状态从 Runtime Integration Design 起步。
+16 个已经 Research FROZEN 的状态从 Runtime Integration Design 起步.
 
 Stage11 整体 production implementation 在 Design Freeze 前仍为 NOT AUTHORIZED。
 
@@ -318,14 +311,14 @@ Stage11 当前不建设：
 Research side：
 
 ```text
-处理 690099 evidence blockage
+Stage11 普通 research-open / evidence-blocked 状态已清零
 关闭或正式处置 690086 DSTS9-B02 debt
 ```
 
 Runtime side：
 
 ```text
-为 690082 / 690083 / 690092 / 690093
+为 690082 / 690083 / 690092 / 690093 / 690099
    690070 / 690069 / 690221 / 690094 / 690095 / 690090 / 690091 / 690102 / 690104 / 690105 / 690111
 开展 Stage11 Runtime Integration Design
 ```
