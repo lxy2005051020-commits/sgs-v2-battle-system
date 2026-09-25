@@ -25,7 +25,12 @@ from sgs_v2.battle_core.stage9_integerization import ExactRatio
 from sgs_v2.battle_core.stage11_state_params import LifeStealStateParams
 
 
-def _unit(unit_id: str, team: str, troops: int = 1000) -> UnitRuntime:
+def _unit(
+    unit_id: str,
+    team: str,
+    troops: int = 1000,
+    lineup_position: LineupPosition = LineupPosition.COMMANDER,
+) -> UnitRuntime:
     return UnitRuntime(
         unit_id=unit_id,
         name=unit_id,
@@ -36,7 +41,7 @@ def _unit(unit_id: str, team: str, troops: int = 1000) -> UnitRuntime:
         defense=100,
         intelligence=100,
         speed=100,
-        lineup_position=LineupPosition.COMMANDER,
+        lineup_position=lineup_position,
     )
 
 
@@ -46,7 +51,7 @@ def _context(attacker_troops: int = 500) -> tuple[BattleContext, BattleSystems]:
         units={
             "a": _unit("a", "A", attacker_troops),
             "b": _unit("b", "B", 1000),
-            "c": _unit("c", "B", 1000),
+            "c": _unit("c", "B", 1000, LineupPosition.DEPUTY_1),
         },
         event_bus=EventBus(),
         random=RandomSystem(20260926),
