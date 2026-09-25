@@ -66,6 +66,12 @@ Runtime adversarial re-audit                PASS
 Runtime Freeze Record declares FROZEN       PASS
 Battle governance updated                   PASS
 Research governance sync                    PASS — completion matrix / mechanics index / research roadmap updated
+Post-freeze final acceptance                 PASS
+Runtime Freeze confirmation                  PASS
+Stage11 reopen required                      NO
+Acceptance audit commit                      5a0a4164e7624c28eae2c7aa28f66061ef3c9313
+Acceptance CI                                36170063365 / 913 passed / demo PASS
+Research post-acceptance mirror              9ad990da544ad87047e74a664cc1984f890bb274
 ```
 
 ## 4. Stage12
@@ -85,6 +91,7 @@ Canonical scope = 7:
 Current state:
 
 ```text
+Stage12 Activation Gate: CLEARED
 Stage12 Readiness: READY
 Stage12 Active: NO
 ```
