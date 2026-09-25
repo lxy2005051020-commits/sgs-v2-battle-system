@@ -14,13 +14,17 @@ from sgs_v2.battle_core import (
     LineupPosition,
     OfficialStateId,
     RandomSystem,
+    FirstAidStateParams,
+    RecuperationStateParams,
+    RecoveryModelKind,
+    RecoveryPotencyContext,
     UnitActionStartHook,
     UnitRuntime,
     register_official_state_definitions,
 )
 from sgs_v2.battle_core.operation_identity import OperationLineage, SourceType
 from sgs_v2.battle_core.stage9_integerization import ExactRatio
-from sgs_v2.battle_core.stage9_state_params import DamageShareStateParams
+from sgs_v2.battle_core.stage9_state_params import DamageShareStateParams, DistributionStateParams
 from sgs_v2.battle_core.stage11_state_params import (
     AlertStateParams,
     CriticalStateParams,
@@ -272,3 +276,132 @@ def test_continuous_damage_freezes_critical_and_break_context_at_application():
     damage = result.intent_results[0].resolution.damage
     assert damage.critical_triggered is True
     assert damage.calculation_basis.value == "FROZEN_APPLICATION"
+
+
+
+def test_weakness_resolved_zero_still_triggers_first_aid(monkeypatch):
+    ctx, systems = make_context()
+    ctx.current_round = 1
+    fixed_base(monkeypatch, systems)
+    ctx.units["b1"].troops = 4000
+    apply(ctx, systems, OfficialStateId.WEAKNESS, "a1", Stage11TimedFlagParams(), source="b1")
+    systems.state_lifecycle_system.apply(
+        ctx,
+        state_id=OfficialStateId.FIRST_AID.value,
+        owner_id="b1",
+        source_id="b1",
+        duration_rounds=2,
+        runtime_params=FirstAidStateParams(
+            probability=1.0,
+            recovery_model_kind=RecoveryModelKind.TREATMENT_AMOUNT,
+            recovery_potency_context=RecoveryPotencyContext(treatment_amount=50),
+        ),
+    )
+
+    execution = execute_parent(ctx, systems)
+
+    assert execution.damage_result.final_damage == 0
+    assert execution.damage_result.zeroed_by_state_id == OfficialStateId.WEAKNESS.value
+    recovery = [e for e in ctx.event_bus.history if e.event_type is EventType.TROOPS_RECOVERED]
+    assert len(recovery) == 1
+    assert recovery[0].payload["actual_recovery"] == 50
+    assert ctx.units["b1"].troops == 4050
+
+
+def test_healing_block_intercepts_first_aid_request(monkeypatch):
+    ctx, systems = make_context()
+    ctx.current_round = 1
+    fixed_base(monkeypatch, systems)
+    ctx.units["b1"].troops = 4000
+    systems.state_lifecycle_system.apply(
+        ctx,
+        state_id=OfficialStateId.FIRST_AID.value,
+        owner_id="b1",
+        source_id="b1",
+        duration_rounds=2,
+        runtime_params=FirstAidStateParams(
+            probability=1.0,
+            recovery_model_kind=RecoveryModelKind.TREATMENT_AMOUNT,
+            recovery_potency_context=RecoveryPotencyContext(treatment_amount=50),
+        ),
+    )
+    apply(ctx, systems, OfficialStateId.HEALING_BAN, "b1", Stage11TimedFlagParams(), source="a1")
+
+    execution = execute_parent(ctx, systems)
+
+    assert execution.resolution.actual_target_troop_loss == 100
+    prevented = [e for e in ctx.event_bus.history if e.event_type is EventType.RECOVERY_PREVENTED]
+    assert len(prevented) == 1
+    assert prevented[0].payload["requested_recovery"] == 50
+    assert ctx.units["b1"].troops == 3900
+
+
+def test_stun_does_not_suppress_recuperation_hot():
+    ctx, systems = make_context()
+    ctx.current_round = 1
+    ctx.units["b1"].troops = 4000
+    apply(ctx, systems, OfficialStateId.STUN, "b1", source="a1")
+    systems.state_lifecycle_system.apply(
+        ctx,
+        state_id=OfficialStateId.RECUPERATION.value,
+        owner_id="b1",
+        source_id="b1",
+        source_skill_id="recuperation",
+        duration_rounds=2,
+        runtime_params=RecuperationStateParams(
+            probability=1.0,
+            recovery_potency_context=RecoveryPotencyContext(treatment_amount=60),
+        ),
+    )
+    ctx.current_phase = BattlePhase.UNIT_ACTION_START.value
+    ctx.action_progress.set_current_acting_unit("b1")
+    ctx.action_progress.mark_action_start("b1", 1)
+
+    result = systems.rule_hook_system.process(ctx, UnitActionStartHook(round_no=1, actor_id="b1"))
+
+    assert result.batch_status == "COMPLETED"
+    recovered = [e for e in ctx.event_bus.history if e.event_type is EventType.TROOPS_RECOVERED]
+    assert len(recovered) == 1
+    assert recovered[0].payload["actual_recovery"] == 60
+    assert ctx.units["b1"].troops == 4060
+
+
+def test_share_partitions_post_alert_damage(monkeypatch):
+    ctx, systems = make_context()
+    fixed_base(monkeypatch, systems, weapon=200)
+    alert = apply(
+        ctx, systems, OfficialStateId.VIGILANCE, "b1",
+        AlertStateParams(remaining_uses=1, reduction_rate=ExactRatio(1, 2), threshold=100),
+        source="b1",
+    )
+    apply(ctx, systems, OfficialStateId.DAMAGE_SHARE, "b1",
+          DamageShareStateParams("b2", ExactRatio(1, 2)), source="b2")
+
+    execution = execute_parent(ctx, systems)
+
+    assert execution.damage_result.alert_consumed_instance_id == alert.instance_id
+    assert execution.damage_result.final_damage == 100
+    assert execution.partition_plan.dtotal == 100
+    assert execution.partition_plan.primary_assigned_damage == 50
+    assert execution.partition_plan.shared_assigned_damage == 50
+    assert execution.resolution.actual_target_troop_loss == 50
+    assert execution.direct_losses[0].actual_loss == 50
+
+
+def test_distribution_lifesteal_keeps_explicit_target_only_runtime_default(monkeypatch):
+    ctx, systems = make_context()
+    fixed_base(monkeypatch, systems, weapon=100)
+    ctx.units["a1"].troops = 4000
+    apply(ctx, systems, OfficialStateId.WEAPON_LIFESTEAL, "a1", LifeStealStateParams(ExactRatio(1, 10)))
+    apply(ctx, systems, OfficialStateId.DAMAGE_SPLIT, "b1", DistributionStateParams(ExactRatio(1, 2)), source="b1")
+
+    execution = execute_parent(ctx, systems)
+
+    assert execution.partition_plan.dtotal == 100
+    assert execution.partition_plan.dtarget == 50
+    assert execution.resolution.actual_target_troop_loss == 50
+    assert sum(loss.actual_loss for loss in execution.direct_losses) == 50
+    recovery = [e for e in ctx.event_bus.history if e.event_type is EventType.TROOPS_RECOVERED]
+    assert len(recovery) == 1
+    assert recovery[0].payload["requested_recovery"] == 5
+    assert ctx.units["a1"].troops == 4005
