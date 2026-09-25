@@ -6,7 +6,12 @@ from .context import BattleContext
 from .damage_partition_system import DamageShareTransactionPlan
 from .enums import DamageType
 from .operation_identity import OperationLineage
-from .recovery_system import RecoveryRequest, RecoveryResult, RecoverySystem
+from .recovery_system import (
+    RecoveryModifierPolicy,
+    RecoveryRequest,
+    RecoveryResult,
+    RecoverySystem,
+)
 from .stage11_state_params import LifeStealStateParams
 from .stage11_state_runtime import Stage11StateRuntime
 
@@ -81,6 +86,7 @@ class Stage11AttackerRecoverySystem:
                         source_state_id=instance.state_id,
                         source_state_instance_id=instance.instance_id,
                         source_generation_id=instance.current_generation_id,
+                        modifier_policy=RecoveryModifierPolicy.APPLY,
                     ),
                 )
             )
@@ -122,6 +128,7 @@ class Stage11AttackerRecoverySystem:
                         source_state_id=instance.state_id,
                         source_state_instance_id=instance.instance_id,
                         source_generation_id=instance.current_generation_id,
+                        modifier_policy=RecoveryModifierPolicy.APPLY,
                     ),
                 )
             )
