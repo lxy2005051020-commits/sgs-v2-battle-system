@@ -58,7 +58,23 @@ ModifiedRecovery = CEIL(BaseRecovery × EffectiveRecoveryModifier)
 
 The first CEIL is owned by `Stage11AttackerRecoverySystem`; the second CEIL and recovery settlement are owned by `RecoverySystem`. The 13-vs-12 discriminator is green.
 
-## 4. Preserved Stage11 research debt
+## 4. Post-Freeze Final Acceptance
+
+```text
+Stage11 Post-Freeze Acceptance = PASS
+Stage11 Runtime Freeze         = CONFIRMED
+Stage11 Reopen Required        = NO
+Post-Freeze Acceptance SHA     = 5a0a4164e7624c28eae2c7aa28f66061ef3c9313
+Acceptance CI run              = 36170063365 / success
+pytest                         = 913 passed / 0 failed / 0 skipped / 0 xfailed
+demo smoke                     = PASS
+Research acceptance mirror     = 9ad990da544ad87047e74a664cc1984f890bb274
+Stage12 Activation Gate        = CLEARED
+```
+
+The post-freeze acceptance is a confirmation layer on top of the original Runtime Freeze. It does not alter the Runtime Tested SHA or Freeze Declaration SHA, and it does not erase residual research debt.
+
+## 5. Preserved Stage11 research debt
 
 - 690086 Distribution / DSTS9-B02 remains empirical OPEN / UNOBSERVED and runtime-closed by explicit project default.
 - Distribution × LifeSteal participant-loss extension is not inherited from Share.
@@ -68,20 +84,21 @@ The first CEIL is owned by `Stage11AttackerRecoverySystem`; the second CEIL and 
 - 690221 unsupported damage families remain explicit boundary violations.
 - generic partial recovery reduction remains unobserved.
 
-## 5. Stage12 · READY, NOT ACTIVE
+## 6. Stage12 · READY, NOT ACTIVE
 
 Stage12 canonical scope remains 7:
 
 `690089, 690101, 690107, 690108, 690109, 690110, 690222`.
 
 ```text
+Stage12 Activation Gate: CLEARED
 Stage12 Readiness: READY
 Stage12 Active: NO
 ```
 
 This Stage11 freeze does not start Stage12 gameplay implementation.
 
-## 6. Stage13+
+## 7. Stage13+
 
 ```text
 Stage13 = 突击战法运行时
