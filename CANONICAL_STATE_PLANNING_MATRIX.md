@@ -12,14 +12,14 @@
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 31
+Research FROZEN                 = 32
 Runtime FROZEN TO CONTRACT      = 16
 Strict Complete                 = 16
 Stage11 Scope                   = 17
-Stage11 Research FROZEN         = 15
+Stage11 Research FROZEN         = 16
 Stage11 Runtime FROZEN          = 0
 Stage12 Scope                   = 7
-Evidence-Blocked / Deferred     = 1
+Evidence-Blocked / Deferred     = 0
 Research-Debt States            = 1
 ```
 
@@ -75,7 +75,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690083 | 抵御 RESISTANCE | FROZEN | NOT_INTEGRATED | NO | Stage11 | Research Wave 2 | Research resistance contract | Runtime Integration Design |  |
 | 690092 | 必中 SURE_HIT | FROZEN | NOT_INTEGRATED | NO | Stage11 | Research Wave 2 | Research sure_hit contract | Runtime Integration Design |  |
 | 690093 | 破阵 BREAK_FORMATION | FROZEN | NOT_INTEGRATED | NO | Stage11 | Research Wave 2 | Research break_formation contract | Runtime Integration Design |  |
-| 690099 | 警戒 VIGILANCE | MINIMUM_USABLE | NOT_INTEGRATED | NO | Stage11 | Research Wave 2 | Research minimum_usable authority | Acquire evidence; targeted research | EVIDENCE BLOCKED / DEFERRED |
+| 690099 | 警戒 ALERT | FROZEN | NOT_INTEGRATED | NO | Stage11 | Research Wave 2 | Research states/functional/alert/MECHANISM_CONTRACT.md | Runtime Integration Design | Independent-batch + FIFO contract frozen; Freeze Audit PASS_WITH_NONBLOCKING_DEBT; explicit Q-D/Q-Id/Q-AO/non-10k/Q-AC debt preserved |
 | 690070 | 会心 CRITICAL | FROZEN | NOT_INTEGRATED | NO | Stage11 | Research Wave 2 | Research critical contract | Runtime Integration Design | Empirical-Frozen |
 | 690069 | 奇谋 STRATEGY_CRITICAL | FROZEN | NOT_INTEGRATED | NO | Stage11 | Research Wave 2 | Research strategy_critical contract | Runtime Integration Design | PROJECT-FROZEN MIRROR CONTRACT |
 | 690221 | 看破 DAMAGE_REDUCTION_PIERCE | FROZEN | NOT_INTEGRATED | NO | Stage11 | Research Wave 2 | Research states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md | Runtime Integration Design | Contract v0.3-frozen; Freeze Audit PASS_WITH_BOUNDED_UNKNOWNS; P(Speed)/timing provider-out-of-scope; Active/DOT blocked |
@@ -125,5 +125,5 @@ Authority:
 - Research FROZEN does not imply Runtime FROZEN.
 - Runtime default with research debt does not count as Strict Complete.
 - 690069, 690095 and 690091 retain their Project-Frozen Mirror distinction.
-- 690099 remains research-open / evidence-blocked or deferred. 690221 is Research FROZEN under the Research repository authority.
+- 690099 and 690221 are Research FROZEN under Research repository authority; 690099 remains Runtime NOT_INTEGRATED with explicit non-blocking debt.
 - No Stage12 or Stage13 activation is authorized by this reconciliation.
