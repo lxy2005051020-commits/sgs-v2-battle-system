@@ -15,14 +15,14 @@ Stage12 Active: NO
 ## Runtime / Authority Snapshot
 
 - Runtime Tested SHA: `ce42bc62cfb26f8ca0b448e74b26533604bb0505`
-- Freeze Declaration SHA: **DECLARATION_COMMIT_PENDING_SELF_REFERENCE**
+- Freeze Declaration SHA: `8cde73ce15c8d02a70b3e0913efbfc5a2887e92b`
 - Research Authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
-- Final pre-declaration CI Run: `36166160197`
+- Final Runtime CI Run: `36166160197`
 - pytest: **913 passed / 0 failed / 0 skipped / 0 xfailed**
 - demo smoke: **PASS**
 - pre-freeze Research governance mirror: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`
 
-The exact Freeze Declaration SHA is recorded by the immediate provenance follow-up commit because a commit cannot embed its own SHA before it exists.
+This SHA identifies the commit that first declared Stage11 Runtime FROZEN across the Battle governance documents.
 
 ## B11-FRZ-001 Closure
 
