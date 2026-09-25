@@ -34,8 +34,8 @@
 
 ```text
 Stage11 Scope           = 17
-Research FROZEN         = 12
-Research non-FROZEN/debt = 5
+Research FROZEN         = 15
+Research non-FROZEN/debt = 2
 Runtime FROZEN          = 0
 ```
 
@@ -53,10 +53,13 @@ Runtime FROZEN          = 0
 690090 FIRST_STRIKE
 690091 SURPRISE
 690102 DISARM
+690104 WEAKNESS
+690105 HEALING_BLOCK
 690111 STUN
+690221 DAMAGE_REDUCTION_PIERCE
 ```
 
-这 12 个状态均已 Research FROZEN；其中 690090 / 690091 / 690102 / 690111 当前 Runtime 为 `SKELETON_ONLY`，其余保持现有 `NOT_INTEGRATED` 记录。下一步统一是 Runtime Integration Design。
+这 15 个状态均已 Research FROZEN；其中 690090 / 690091 / 690102 / 690104 / 690105 / 690111 当前 Runtime 为 `SKELETON_ONLY`，690221 与其余保持 `NOT_INTEGRATED`。下一步统一是 Runtime Integration Design。
 
 ## 3. Research authority
 
@@ -66,7 +69,7 @@ Runtime FROZEN          = 0
 
 维护。
 
-当前 12 个冻结合同入口：
+当前 15 个冻结合同入口：
 
 ```text
 states/functional/evasion/MECHANISM_CONTRACT.md
@@ -80,7 +83,10 @@ states/functional/strategy_life_steal/MECHANISM_CONTRACT.md
 states/functional/first_strike/MECHANISM_CONTRACT.md
 states/functional/surprise/MECHANISM_CONTRACT.md
 states/control/disarm/MECHANISM_CONTRACT.md
+states/control/weakness/MECHANISM_CONTRACT.md
+states/control/healing_block/MECHANISM_CONTRACT.md
 states/control/stun/MECHANISM_CONTRACT.md
+states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md
 ```
 
 Battle repository 只维护 Project Stage、Runtime 进度与必要的 research authority bridge，不复制第二份机制语义。
@@ -101,13 +107,14 @@ Evidence Blocked 不等于自动移出 Stage11。
 ### 690221 看破
 
 ```text
-Research = NOT_INDEXED / OPEN
+Research = FROZEN
+Contract = states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md
+Freeze Audit = PASS_WITH_BOUNDED_UNKNOWNS
 Runtime = NOT_INTEGRATED
-Evidence = BLOCKED / DEFERRED
 Project Stage = Stage11
 ```
 
-同样不自动改变 Project Stage ownership。
+下一步进入 Runtime Integration Design；Provider P(Speed)/timing、ACTIVE/DOT 与 generic counterattack 未观测边界不得被 Runtime 静默补齐。
 
 ### 690086 分摊
 
@@ -214,7 +221,7 @@ Independent Runtime Audit
 Implementation Freeze
 ```
 
-已 Research FROZEN 的 12 个状态从 Runtime Integration Design 开始，不重复无证据机制研究。
+已 Research FROZEN 的 15 个状态从 Runtime Integration Design 开始，不重复无证据机制研究。
 
 ## 9. 明确不做
 
@@ -253,6 +260,6 @@ Stage13 = NOT ACTIVE
 
 Research side：继续关闭剩余 Stage11 研究、evidence blockage 与 DSTS9-B02 debt。
 
-Runtime side：对 8 个 Research-FROZEN 状态开展 **Stage11 Runtime Integration Design**。
+Runtime side：对 15 个 Research-FROZEN 状态开展 **Stage11 Runtime Integration Design**。
 
 规划正文：[STAGE11_PLANNING.md](STAGE11_PLANNING.md)

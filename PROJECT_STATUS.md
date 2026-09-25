@@ -32,7 +32,7 @@ tests  = 122ffd68f1aac06ce353572fd3568aa54d19b5dd
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 27
+Research FROZEN                 = 31
 Runtime FROZEN TO CONTRACT      = 16
 Strict Complete                 = 16
 ```
@@ -101,8 +101,8 @@ Canonical Scope = 17
 当前研究状态：
 
 ```text
-Research FROZEN = 11
-Research non-FROZEN / debt = 6
+Research FROZEN = 15
+Research non-FROZEN / debt = 2
 Runtime FROZEN = 0
 ```
 
@@ -120,15 +120,19 @@ Runtime FROZEN = 0
 690090 FIRST_STRIKE
 690091 SURPRISE
 690102 DISARM
+690104 WEAKNESS
+690105 HEALING_BLOCK
+690111 STUN
+690221 DAMAGE_REDUCTION_PIERCE
 ```
 
-这 11 个状态均未达到 Runtime FROZEN；690090 / 690091 / 690102 当前仍为 `SKELETON_ONLY`，其余已冻结状态保持既有 `NOT_INTEGRATED` 记录。
+这 15 个状态均未达到 Runtime FROZEN；690090 / 690091 / 690102 / 690104 / 690105 / 690111 当前仍为 `SKELETON_ONLY`，690221 与其余已冻结状态保持 `NOT_INTEGRATED` 记录。
 
 特殊项：
 
 ```text
 690099 警戒 = RESEARCH OPEN / EVIDENCE BLOCKED OR DEFERRED
-690221 看破 = RESEARCH OPEN / EVIDENCE BLOCKED OR DEFERRED
+690221 看破 = RESEARCH FROZEN / Runtime NOT_INTEGRATED
 690086 分摊 = DSTS9-B02 research debt
 ```
 
@@ -212,7 +216,7 @@ Research side：
 继续关闭 Stage11 未完成研究、证据阻塞与 DSTS9-B02 债务。
 
 Runtime side：
-对 11 个 Research-FROZEN 状态进入：
+对 15 个 Research-FROZEN 状态进入：
 
 ```text
 Runtime Integration Design

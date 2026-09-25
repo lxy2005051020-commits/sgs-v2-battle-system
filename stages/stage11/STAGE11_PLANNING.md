@@ -40,8 +40,8 @@ Stage11 负责将下列 17 个官方状态推进到项目可交付状态，同�
 
 ```text
 Stage11 Scope            = 17
-Research FROZEN          = 14
-Research non-FROZEN/debt = 3
+Research FROZEN          = 15
+Research non-FROZEN/debt = 2
 Runtime FROZEN           = 0
 Strict Complete added by Stage11 = 0
 ```
@@ -63,9 +63,10 @@ Strict Complete added by Stage11 = 0
 690104 WEAKNESS
 690105 HEALING_BLOCK
 690111 STUN
+690221 DAMAGE_REDUCTION_PIERCE
 ```
 
-这 14 个状态已经通过研究准入门槛，不再重复无新证据的专项问题扩张。下一步统一进入 Runtime Integration Design。690090 / 690091 / 690102 / 690104 / 690105 / 690111 当前 Runtime maturity 仍为 `SKELETON_ONLY`，不等于已集成。
+这 15 个状态已经通过研究准入门槛，不再重复无新证据的专项问题扩张。下一步统一进入 Runtime Integration Design。690090 / 690091 / 690102 / 690104 / 690105 / 690111 当前 Runtime maturity 仍为 `SKELETON_ONLY`；690221 为 `NOT_INTEGRATED`，均不等于已集成。
 
 Research authority repository：
 
@@ -88,6 +89,7 @@ states/control/disarm/MECHANISM_CONTRACT.md
 states/control/weakness/MECHANISM_CONTRACT.md
 states/control/healing_block/MECHANISM_CONTRACT.md
 states/control/stun/MECHANISM_CONTRACT.md
+states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md
 ```
 
 ### 2.2 Ordinary research-open states
@@ -100,7 +102,6 @@ states/control/stun/MECHANISM_CONTRACT.md
 
 ```text
 690099 警戒 = MINIMUM_USABLE / NOT_INTEGRATED
-690221 看破 = NOT_INDEXED / NOT_INTEGRATED
 ```
 
 当前治理标记：
@@ -110,7 +111,7 @@ RESEARCH OPEN
 EVIDENCE BLOCKED / DEFERRED
 ```
 
-Evidence Blocked 只描述研究证据状态，不修改 Stage11 ownership。
+690221 看破已 Research FROZEN，authority 为 Research repository 的 `states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md`；Runtime 仍为 NOT_INTEGRATED。
 
 ### 2.4 Research-debt state
 
@@ -254,7 +255,7 @@ Design Freeze
 Implementation
 ```
 
-14 个已经 Research FROZEN 的状态从 Runtime Integration Design 起步。
+15 个已经 Research FROZEN 的状态从 Runtime Integration Design 起步。
 
 Stage11 整体 production implementation 在 Design Freeze 前仍为 NOT AUTHORIZED。
 
@@ -317,7 +318,7 @@ Stage11 当前不建设：
 Research side：
 
 ```text
-处理 690099 / 690221 evidence blockage
+处理 690099 evidence blockage
 关闭或正式处置 690086 DSTS9-B02 debt
 ```
 
@@ -325,7 +326,7 @@ Runtime side：
 
 ```text
 为 690082 / 690083 / 690092 / 690093
-   690070 / 690069 / 690094 / 690095 / 690090 / 690091 / 690102 / 690104 / 690105 / 690111
+   690070 / 690069 / 690221 / 690094 / 690095 / 690090 / 690091 / 690102 / 690104 / 690105 / 690111
 开展 Stage11 Runtime Integration Design
 ```
 

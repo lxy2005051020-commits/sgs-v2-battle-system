@@ -36,7 +36,7 @@ Stage10 main integration commit：
 
 ```text
 Official States            = 40
-Research FROZEN            = 24
+Research FROZEN            = 31
 Runtime FROZEN TO CONTRACT = 16
 Strict Complete            = 16
 ```
@@ -45,8 +45,8 @@ Stage11：
 
 ```text
 Canonical Scope       = 17
-Research FROZEN       = 8
-Research non-FROZEN/debt = 9
+Research FROZEN       = 15
+Research non-FROZEN/debt = 2
 Runtime FROZEN        = 0
 ```
 
@@ -104,15 +104,22 @@ Research Wave 是研究顺序，不得覆盖项目阶段编号。
 690069 奇谋
 690094 倒戈
 690095 攻心
+690090 先攻
+690091 遇袭
+690102 缴械
+690104 虚弱
+690105 禁疗
+690111 震慑
+690221 看破
 ```
 
-八者 Runtime 均仍为 `NOT_INTEGRATED`，因此不增加 Strict Complete。
+这 15 个 Stage11 Research-FROZEN 状态 Runtime 均未 FROZEN TO CONTRACT，因此不增加 Strict Complete。
 
 ## 7. Stage11 特殊开放项
 
 ```text
 690099 警戒 = EVIDENCE BLOCKED / DEFERRED
-690221 看破 = EVIDENCE BLOCKED / DEFERRED
+690221 看破 = RESEARCH FROZEN / Runtime NOT_INTEGRATED
 690086 分摊 = DSTS9-B02 empirical research debt
 ```
 

@@ -43,7 +43,7 @@ Stage15 = 准备战法
 官方具体状态：40。
 
 ```text
-Research FROZEN            = 28 / 40
+Research FROZEN            = 31 / 40
 Runtime FROZEN TO CONTRACT = 16 / 40
 Strict Complete            = 16 / 40
 ```
@@ -94,9 +94,9 @@ Canonical Scope = 17：
 当前：
 
 ```text
-Stage11 Research FROZEN = 12
+Stage11 Research FROZEN = 15
 Stage11 Runtime FROZEN  = 0
-Stage11 non-FROZEN/debt = 5
+Stage11 non-FROZEN/debt = 2
 ```
 
 已 Research FROZEN：
@@ -113,16 +113,19 @@ Stage11 non-FROZEN/debt = 5
 690090 先攻 FIRST_STRIKE
 690091 遇袭 SURPRISE
 690102 缴械 DISARM
+690104 虚弱 WEAKNESS
+690105 禁疗 HEALING_BLOCK
 690111 震慑 STUN
+690221 看破 DAMAGE_REDUCTION_PIERCE
 ```
 
-十二者均未 Runtime FROZEN；690090 / 690091 / 690102 / 690111 保持 `SKELETON_ONLY`，其余既有 Research-FROZEN 状态保持当前 `NOT_INTEGRATED` 记录。
+十五者均未 Runtime FROZEN；690090 / 690091 / 690102 / 690104 / 690105 / 690111 保持 `SKELETON_ONLY`，690221 与其余 Research-FROZEN 状态保持当前 `NOT_INTEGRATED` 记录。
 
 特殊治理状态：
 
 ```text
 690099 警戒 = RESEARCH OPEN / EVIDENCE BLOCKED OR DEFERRED
-690221 看破 = RESEARCH OPEN / EVIDENCE BLOCKED OR DEFERRED
+690221 看破 = RESEARCH FROZEN / Runtime NOT_INTEGRATED
 690086 分摊 = DSTS9-B02 empirical debt
 ```
 
@@ -263,7 +266,7 @@ Research side：
 Runtime side：
 
 ```text
-11 个 Research-FROZEN 状态
+15 个 Research-FROZEN 状态
 → Runtime Integration Design
 → Independent Design Audit
 → Design Freeze
