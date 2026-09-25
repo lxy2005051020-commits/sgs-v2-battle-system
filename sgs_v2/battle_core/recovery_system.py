@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import Enum
 
 from .context import BattleContext
 from .events import EventType
 from .official_state_catalog import OfficialStateId
 from .state_generation import StateApplicationGenerationId
+from .stage9_integerization import ExactRatio
 from .troop_system import TroopChangeResult, TroopSystem
 
 
@@ -42,6 +43,7 @@ class RecoveryRequest:
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
     source_generation_id: StateApplicationGenerationId | None = None
+    healing_modifier: ExactRatio | None = None
 
     def __post_init__(self) -> None:
         _validate_optional_id(self.source_id, "source_id")
@@ -64,6 +66,11 @@ class RecoveryRequest:
             raise TypeError("amount must be an int")
         if self.amount < 0:
             raise ValueError("amount must be >= 0")
+        if self.healing_modifier is not None:
+            if not isinstance(self.healing_modifier, ExactRatio):
+                raise TypeError("healing_modifier must be an ExactRatio or None")
+            if self.healing_modifier.numerator < 0:
+                raise ValueError("healing_modifier cannot be negative")
 
 
 class RecoveryPreventionReason(str, Enum):
@@ -139,6 +146,15 @@ class RecoverySystem:
     ) -> RecoveryResult:
         if not isinstance(request, RecoveryRequest):
             raise TypeError("request must be a RecoveryRequest")
+
+        # RecoverySystem is the canonical modifier owner. Attacker recovery sends
+        # the already-CEILed base amount; an optional healing modifier receives a
+        # second independent CEIL here.
+        if request.healing_modifier is not None:
+            ratio = request.healing_modifier
+            num = request.amount * ratio.numerator
+            modified_amount = (num + ratio.denominator - 1) // ratio.denominator
+            request = replace(request, amount=modified_amount)
 
         target = context.get_unit(request.target_id)
 
