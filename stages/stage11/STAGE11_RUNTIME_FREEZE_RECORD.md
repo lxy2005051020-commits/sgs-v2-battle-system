@@ -106,9 +106,28 @@ Primary test: `test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_
 
 Runtime Freeze preserves these labels. It does not relabel project defaults as empirical game truth.
 
+## Post-Freeze Acceptance Confirmation
+
+The independent post-freeze acceptance audit has confirmed this freeze without reopening Stage11 gameplay behavior.
+
+```text
+Stage11 Post-Freeze Acceptance: PASS
+Stage11 Runtime Freeze: CONFIRMED
+Stage11 Reopen Required: NO
+Post-Freeze Acceptance Audit SHA: 5a0a4164e7624c28eae2c7aa28f66061ef3c9313
+Acceptance CI Run: 36170063365 / success
+pytest: 913 passed / 0 failed / 0 skipped / 0 xfailed
+demo smoke: PASS
+Research post-acceptance mirror: 9ad990da544ad87047e74a664cc1984f890bb274
+Stage12 Activation Gate: CLEARED
+```
+
+The original Runtime Tested SHA and Freeze Declaration SHA above remain the canonical freeze checkpoint. The acceptance audit is a later independent confirmation layer.
+
 ## Stage12
 
 ```text
+Stage12 Activation Gate: CLEARED
 Stage12 Readiness: READY
 Stage12 Active: NO
 ```
