@@ -3,6 +3,12 @@
 Date: 2026-09-26  
 Verdict: **PASS / RUNTIME FREEZE CANDIDATE ACCEPTED**  
 Blocker: **B11-FRZ-001 — CLOSED**
+Post-Freeze Acceptance: **PASS / FREEZE CONFIRMED**
+Acceptance Audit: `STAGE11_POST_FREEZE_ACCEPTANCE_AUDIT.md`
+Acceptance Audit SHA: `5a0a4164e7624c28eae2c7aa28f66061ef3c9313`
+Acceptance CI: `36170063365`
+Research post-acceptance mirror: `9ad990da544ad87047e74a664cc1984f890bb274`
+Stage12 Activation Gate: **CLEARED**
 
 ## 1. Audit Snapshot
 
