@@ -1,30 +1,79 @@
 # Stage11 Runtime Adversarial Audit
 
 Date: 2026-09-26  
-Verdict: **BLOCKED / RUNTIME NOT FROZEN**  
-Blocker: **B11-FRZ-001 — recovery-modifier owner / double-stage CEIL is not implemented**
+Verdict: **PASS / RUNTIME FROZEN**  
+Former blocker: **B11-FRZ-001 — CLOSED**
 
 ## 1. Audit Snapshot
 
-- Runtime-behavior SHA: `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`
-- Governance-tested Battle SHA: `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96`
-- Research authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
-- GitHub Actions run: `36163229356`
-- Workflow conclusion: `success`
-- pytest: **904 passed / 0 failed**
+- Runtime Tested SHA: `a38b5150dec36f50b3aa21587a0c0c70397c17e0`
+- Freeze Declaration SHA: `809f0c67b323ee2cca3cb30bc70375b33caacc14`
+- Research Authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
+- GitHub Actions run: `36166249971`
+- workflow conclusion: `success`
+- pytest: **917 passed / 0 failed / 0 skipped / 0 xfailed**
 - demo smoke: **PASS**
 
-This audit supersedes the earlier 888/10 intake snapshot as the current Stage11 governance result. The earlier authority-conflict document remains provenance only.
+This audit supersedes the prior 904-test BLOCKED snapshot.
 
 ## 2. Canonical 17-state scope
 
 `690086 DISTRIBUTION, 690090 FIRST_STRIKE, 690091 SURPRISE, 690102 DISARM, 690104 WEAKNESS, 690105 HEALING_BLOCK, 690111 STUN, 690082 EVASION, 690083 RESISTANCE, 690092 SURE_HIT, 690093 BREAK_FORMATION, 690099 ALERT, 690070 CRITICAL, 690069 STRATEGY_CRITICAL, 690221 DAMAGE_REDUCTION_PIERCE, 690094 LIFE_STEAL, 690095 STRATEGY_LIFE_STEAL`.
 
-## 3. Authority reconciliation — PASS
+## 3. B11-FRZ-001 closure — PASS
 
-The Share × attacker-recovery authority conflict is resolved by Research `STAGE11_SHARE_LIFESTEAL_AUTHORITY_RESOLUTION.md`.
+Canonical recovery pipeline is now executable:
 
-Canonical rule:
+```text
+RecoveryBasis
+→ LifeSteal / StrategyLifeSteal ratio
+→ FIRST CEIL
+→ typed RecoveryRequest
+→ Recovery Modifier
+→ SECOND CEIL
+→ HealingBlock
+→ recovery capacity
+→ ActualRecoveredTroops
+```
+
+Semantic owners:
+- `Stage11AttackerRecoverySystem`: RecoveryBasis, per-source ratio, first CEIL.
+- `RecoverySystem`: typed modifier eligibility, modifier operand, second CEIL, HealingBlock ordering.
+- `TroopSystem.restore`: final capacity clamp and troop mutation.
+
+The modifier seam uses `ExactRatio`; no float integerization path was introduced.
+
+## 4. Discriminating rounding audit — PASS
+
+Test `test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_110pct` proves:
+
+```text
+CEIL(101 × 10%) = 11
+CEIL(11 × 110%) = 13
+
+forbidden single-stage:
+CEIL(101 × 10% × 110%) = 12
+```
+
+The test asserts 13, so a single-stage implementation cannot pass accidentally.
+
+A 100% modifier test proves identity without an off-by-one. Multiple-source tests prove each source independently enters both integerization stages.
+
+## 5. HealingBlock / capacity ordering — PASS
+
+HealingBlock is evaluated after the modifier stage. Under the 101 / 10% / 110% fixture, the Runtime preserves:
+- RecoveryBasis = 101;
+- BaseRecovery = 11;
+- ModifiedRecovery = 13;
+- ActualRecoveredTroops = 0 under HealingBlock.
+
+Capacity is later still: when ModifiedRecovery is 13 and only 7 troops are recoverable, ActualRecoveredTroops is 7 while calculated ModifiedRecovery remains 13.
+
+Generic Stage10 recovery requests default to modifier-ineligible. No unsupported FirstAid/Recuperation modifier behavior was inferred.
+
+## 6. Share × LifeSteal — PASS
+
+Authority remains:
 
 ```text
 RecoveryBasis =
@@ -33,116 +82,70 @@ PrimaryAssignedDamage
 SharedAssignedDamage
 ```
 
-For the current conserved Share partition, this equals pre-Share finalized damage. It is not equivalent to committed actual troop loss when death or overkill truncates settlement.
+Target death, primary overkill and Share-receiver overkill do not shrink RecoveryBasis. Committed actual loss does not leak back into basis construction. Share direct troop loss creates no second LifeSteal trigger.
 
-Battle runtime at the audited SHA reads `DamageShareTransactionPlan.dtarget + dsharer_theoretical` for parent Share and Cleave-child Share. Dedicated tests cover normal nonlethal Share, target-death interruption, sharer/both-side overkill, per-source base CEIL, HealingBlock interception and STRATEGY lane mirroring. Legacy Cleave Share tests were migrated to the same authority.
+## 7. Cleave — PASS
 
-Distribution remains separate: participant direct loss is excluded from LifeSteal basis under an explicit `PROJECT_RUNTIME_DEFAULT / RESEARCH_DEBT`.
+Cleave attacker recovery reuses `Stage11AttackerRecoverySystem` for the first CEIL and the same canonical `RecoverySystem` modifier owner for the second CEIL. No Cleave-local recovery-modifier arithmetic exists.
 
-## 4. Pipeline ordering audit — PASS
+## 8. StrategyLifeSteal — PASS
 
-The Stage11 topology remains typed and ordered: critical-family decision, hit arbitration, formula policy, ordinary modifiers/reduction, See-Through transform, Weakness legal-zero, ALERT single-hit adjustment, central damage integerization, Stage9 partition/settlement, then attacker recovery.
+690095 follows the STRATEGY lane and reuses the same modifier owner and double-stage CEIL contract as 690094. No separate Strategy modifier implementation exists.
 
-No audit evidence was found that restores Weakness as an early-return prevention path, reruns Break base formula on a derived Cleave child, or gives Share direct troop loss a second LifeSteal trigger.
+## 9. Distribution debt preservation — PASS
 
-## 5. Action-control audit — PASS
+No 690086 Runtime or Research authority was modified. Distribution participant direct loss remains excluded from the LifeSteal basis under the existing `PROJECT_RUNTIME_DEFAULT / RESEARCH_DEBT`.
 
-- exact action-order ties are deterministic and consume no shuffle RNG;
-- the approved Design Amendment 001 provides the legacy-context attacker-team fallback without claiming it as empirical game truth;
-- STUN owns natural-action admission rather than generic RuleIntent suppression;
-- DISARM owns standard NormalAttack admission; Counterattack is not routed through that gate;
-- Combo #2 re-enters standard NormalAttack admission.
+## 10. RNG audit — PASS
 
-The legacy tests that contradicted these rules were migrated in the Stage11 implementation series and the full suite is green.
+The repair introduces no new RNG calls. No `random`, `shuffle`, `choice` or `randint` owner was added. Existing Stage11 randomness remains routed through `BattleContext.random`.
 
-## 6. Recovery audit — **BLOCKED**
+## 11. Mutation-owner audit — PASS
 
-PASS:
-- ordinary non-Share basis remains actual target troop loss;
-- Share basis uses partition-assigned damage;
-- target death and overkill do not shrink Share basis;
-- one recovery opportunity per eligible DamageInstance/source;
-- each LifeSteal source independently performs the base CEIL;
-- HealingBlock intercepts the positive request without mutating the basis;
-- target recovery capacity is owned by the canonical RecoverySystem/TroopSystem path.
+The repair adds no direct `StateRegistry` mutation. `StateLifecycleSystem` remains the physical mutation owner. RecoverySystem reads HealingBlock state and delegates troop mutation to TroopSystem.
 
-BLOCKER:
-Research authority now requires, when an applicable recovery modifier exists:
+## 12. Integerization-owner audit — PASS
 
-```text
-BaseRecovery     = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
-ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)
-```
+- LifeSteal first CEIL has one semantic owner: `Stage11AttackerRecoverySystem`.
+- Recovery modifier second CEIL has one semantic owner: `RecoverySystem`.
+- The attacker recovery caller does not apply the recovery modifier.
+- RecoverySystem does not recompute the first LifeSteal CEIL.
+- modifier-ineligible requests bypass the modifier provider.
+- zero eligible requests do not invoke the modifier provider.
 
-At audited Battle `main`:
-- `LifeStealStateParams` contains only the LifeSteal ratio/lifecycle facts;
-- `Stage11AttackerRecoverySystem` computes the first CEIL and immediately emits `RecoveryRequest(amount=BaseRecovery)`;
-- `RecoveryRequest` / `RecoverySystem` expose HealingBlock and troop-cap settlement but no canonical recovery-modifier operand/owner;
-- the dedicated Stage11 Share/LifeSteal test file contains no discriminating double-stage modifier integerization test.
+## 13. Other Stage11 topology — PASS
 
-Therefore the latest frozen authority has no executable owner for this required stage. A green suite cannot certify a path that is absent from both runtime and tests.
+No changes were made to:
+- Weakness legal-zero topology;
+- action-order ownership;
+- STUN natural-action admission;
+- DISARM NormalAttack admission;
+- Critical / StrategyCritical routing;
+- Break Formation formula ownership;
+- See-Through operand transformation;
+- ALERT ordering;
+- Stage9 partition ownership;
+- Stage10 persistent-state scheduling.
 
-## 7. Persistent-damage audit — PASS
+The full 917-test regression and demo smoke are green.
 
-Stage10 persistent application/tick ownership remains intact. Stage11 does not move tick scheduling, application-bound frozen damage context, source-death handling, or recovery-opportunity ownership into a Stage11 state monolith. Full Stage7-10 regression is green.
+## 14. Preserved research debt
 
-## 8. RNG audit — PASS
-
-Gameplay Stage11 randomness routes through `BattleContext.random`. The direct Python `random` implementation remains isolated in `RandomSystem`. Exact action-order ties consume no RNG.
-
-## 9. Mutation-owner audit — PASS
-
-Physical state mutation remains owned by `StateLifecycleSystem`. The Stage9 architecture regression `test_arch_07_ast_scan_state_registry_mutations_only_in_lifecycle_system` is green as part of the 904-test suite. Stage11 runtime façades request lifecycle mutations rather than becoming a second registry owner.
-
-## 10. Integerization audit — **BLOCKED**
-
-PASS:
-- damage uses existing central finalization;
-- LifeSteal base uses exact integer-safe CEIL;
-- ALERT performs no local rounding under its explicit runtime default;
-- See-Through performs no local rounding.
-
-BLOCKED:
-- required recovery-modifier second-stage CEIL has no canonical Runtime owner/test seam (B11-FRZ-001).
-
-## 11. Zero-damage topology audit — PASS
-
-Weakness is a resolved legal-zero damage result, not restored as Stage8 early prevention. Zero remains visible to the downstream topology required by Stage9/Stage10 while ALERT does not consume on the zero result.
-
-## 12. Derived-damage audit — PASS
-
-Cleave child DamageInstances retain independent partition assignment. Share-child recovery uses child assigned facts. The Share authority migration does not authorize critical rerolls or Break base-formula reruns.
-
-## 13. Research-debt preservation audit — PASS
-
-The audit preserves, rather than launders into “official truth”:
+Still explicit:
 - 690086 Distribution / DSTS9-B02 research debt;
-- Distribution × LifeSteal participant-loss exclusion as PROJECT_RUNTIME_DEFAULT;
-- ALERT threshold equality, generic threshold origin, positive integerization, holder-death and Share micro-order boundaries;
-- Critical/StrategyCritical exact micro-read / bonus-latch timing boundary;
+- Distribution × LifeSteal project default;
+- ALERT threshold equality / generic threshold / positive integerization / holder-death / Share micro-order boundaries;
+- Critical / StrategyCritical exact micro-read and bonus-latch timing;
 - DISARM reflected/proxy admission boundary;
 - See-Through unsupported damage families.
 
-## 14. Stage7-10 regression audit — PASS
+These are governed residual boundaries, not Freeze blockers.
 
-Run `36163229356` checked out governance commit `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96`, whose runtime code is unchanged from `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`; it completed **904 passed / 0 failed** and demo smoke successfully.
-
-## 15. Stage12 scope-leak audit — PASS
-
-No Stage12 runtime implementation is authorized or performed by this governance round.
-
-## 16. Final verdict
+## 15. Final verdict
 
 ```text
-Stage11 Runtime: BLOCKED
-Stage12 Readiness: NOT READY
+B11-FRZ-001: CLOSED
+Stage11 Runtime: FROZEN
+Stage12 Readiness: READY
+Stage12 Active: NO
 ```
-
-Reason: **B11-FRZ-001** must be implemented and covered by a discriminating double-stage CEIL test before the Runtime Freeze gate can be re-run.
-
-The prior Share × LifeSteal authority conflict is no longer the blocker.
-
-
-## 17. Cross-repository synchronization
-
-Research governance mirror SHA: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`. It records the same B11-FRZ-001 blocker and preserves Research authority SHA `80c4a9dd435b7ec1ed1baed1a957310159c1232a`.
