@@ -6,9 +6,10 @@ Blocker: **B11-FRZ-001 — recovery-modifier owner / double-stage CEIL is not im
 
 ## 1. Audit Snapshot
 
-- Battle audited SHA: `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`
+- Runtime-behavior SHA: `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`
+- Governance-tested Battle SHA: `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96`
 - Research authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
-- GitHub Actions run: `36161289003`
+- GitHub Actions run: `36163229356`
 - Workflow conclusion: `success`
 - pytest: **904 passed / 0 failed**
 - demo smoke: **PASS**
@@ -124,7 +125,7 @@ The audit preserves, rather than launders into “official truth”:
 
 ## 14. Stage7-10 regression audit — PASS
 
-Run `36161289003` checked out `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`, completed **904 passed / 0 failed**, and completed the demo smoke successfully.
+Run `36163229356` checked out governance commit `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96`, whose runtime code is unchanged from `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`; it completed **904 passed / 0 failed** and demo smoke successfully.
 
 ## 15. Stage12 scope-leak audit — PASS
 
@@ -140,3 +141,8 @@ Stage12 Readiness: NOT READY
 Reason: **B11-FRZ-001** must be implemented and covered by a discriminating double-stage CEIL test before the Runtime Freeze gate can be re-run.
 
 The prior Share × LifeSteal authority conflict is no longer the blocker.
+
+
+## 17. Cross-repository synchronization
+
+Research governance mirror SHA: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`. It records the same B11-FRZ-001 blocker and preserves Research authority SHA `80c4a9dd435b7ec1ed1baed1a957310159c1232a`.

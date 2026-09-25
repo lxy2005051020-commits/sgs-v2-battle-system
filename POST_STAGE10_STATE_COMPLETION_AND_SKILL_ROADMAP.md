@@ -42,7 +42,7 @@ Research side:
 
 Runtime side:
 - implementation and legacy-test migration are substantially complete;
-- audited runtime `eff9efcff878afcdd3a5c8609ef719d18fc58cdf` is green: 904 passed, demo PASS;
+- runtime behavior `eff9efcff878afcdd3a5c8609ef719d18fc58cdf` and governance-tested Battle commit `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96` are green: Actions `36163229356`, 904 passed, demo PASS;
 - Share × LifeSteal assigned-damage authority is migrated;
 - final Runtime Freeze is **BLOCKED by B11-FRZ-001**.
 
@@ -98,3 +98,6 @@ They remain downstream of the state-runtime gates.
 ## 6. Governance rule
 
 A green CI is necessary but does not override a missing normative contract path. Research debt may remain explicit under a project default, but a required Runtime owner cannot be replaced by documentation optimism. Humanity has tried that pattern often enough.
+
+
+Cross-repo blocker mirror: Research `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`.

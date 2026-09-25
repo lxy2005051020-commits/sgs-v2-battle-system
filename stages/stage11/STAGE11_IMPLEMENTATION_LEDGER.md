@@ -3,7 +3,7 @@
 Date: 2026-09-26  
 Design status: **FROZEN + AMENDED**  
 Implementation status: **COMPLETE EXCEPT B11-FRZ-001**  
-Full regression at audited runtime SHA: **904 passed / 0 failed; demo PASS**  
+Full regression at governance-tested Battle SHA `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96`: **904 passed / 0 failed; demo PASS** (Actions `36163229356`)  
 Runtime Freeze gate: **BLOCKED**
 
 Current cross-cutting blocker: `B11-FRZ-001` — latest 690094/690095 authority requires a canonical recovery-modifier owner that applies `CEIL(BaseRecovery × HealingModifier)` after the per-source base LifeSteal CEIL. That owner/test seam is absent at audited `main`.
@@ -44,3 +44,6 @@ Target-death interruption and either-side overkill do not shrink the basis. Clea
 The 17-state Stage11 implementation cannot be marked Runtime FROZEN while one normative cross-cutting recovery stage has no Runtime owner/test. No failing test is hidden; instead, the missing path itself is the blocker.
 
 Next permitted action is a scoped repair of B11-FRZ-001 followed by full regression, demo smoke, adversarial re-audit and a new freeze candidate.
+
+
+Research governance mirror: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d` (authority remains `80c4a9dd435b7ec1ed1baed1a957310159c1232a`).

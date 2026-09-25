@@ -6,9 +6,11 @@ Canonical Project Scope: **17 states**
 
 ## Current snapshot
 
-- Battle audited runtime SHA: `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`
+- Runtime-behavior SHA: `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`
+- Governance-tested Battle SHA: `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96`
 - Research authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
-- CI run: `36161289003` — success
+- Research governance mirror SHA: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`
+- CI run: `36163229356` — success
 - pytest: **904 passed / 0 failed**
 - demo smoke: **PASS**
 - Share × LifeSteal authority conflict: **RESOLVED**
