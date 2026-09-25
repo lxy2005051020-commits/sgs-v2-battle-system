@@ -237,19 +237,27 @@ class CleaveDerivedDamageResolver:
 
         fact = ResolvedDamageFact(request.damage_instance_id, target.unit_id, request.lineage,
                                   request.damage_type, assigned, actual)
-        share_actual = (
-            sum(int(item.actual_loss) for item in losses)
-            if isinstance(plan, DamageShareTransactionPlan)
-            else 0
-        )
-        recovery_basis = actual + share_actual
+        if isinstance(plan, DamageShareTransactionPlan):
+            # Stage11 Share × LifeSteal authority is assignment-based. This remains
+            # true when target death cancels the pending sharer commit or when the
+            # sharer has fewer troops than the assigned Share amount.
+            recovery_basis = plan.attacker_recovery_basis
+            external_authority = None
+        elif isinstance(plan, DistributionTransactionPlan):
+            # Distribution does not inherit Share semantics. Keep the explicit
+            # project runtime default: participant direct losses are excluded.
+            recovery_basis = actual
+            external_authority = (
+                "PROJECT_RUNTIME_DEFAULT: distribution external loss excluded"
+            )
+        else:
+            recovery_basis = actual
+            external_authority = None
         recovery = CleaveRecoveryFact(
             fact,
             plan.kind,
             recovery_basis,
-            "PROJECT_RUNTIME_DEFAULT: distribution external loss excluded"
-            if isinstance(plan, DistributionTransactionPlan)
-            else None,
+            external_authority,
         )
         aftermath_port = (
             self._damage_aftermath_port

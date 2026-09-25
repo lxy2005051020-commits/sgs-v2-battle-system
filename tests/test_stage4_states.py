@@ -156,20 +156,18 @@ def test_multiple_ambush_units_order_by_effective_speed_without_rng() -> None:
     assert context.random.shuffle_calls == 0
 
 
-def test_action_order_only_exact_same_tier_and_speed_consumes_shuffle_and_is_seeded() -> None:
-    def run_once(seed: int) -> list[str]:
-        context = make_order_context(seed)
-        context.get_unit("a1").speed = 100
-        context.get_unit("a2").speed = 100
-        context.get_unit("b1").speed = 100
-        apply_state(context, OfficialStateId.FIRST_STRIKE, "a1")
-        apply_state(context, OfficialStateId.FIRST_STRIKE, "a2")
+def test_action_order_exact_same_tier_and_speed_is_deterministic_without_rng() -> None:
+    context = make_order_context(2026)
+    context.get_unit("a1").speed = 100
+    context.get_unit("a2").speed = 100
+    context.get_unit("b1").speed = 100
+    apply_state(context, OfficialStateId.FIRST_STRIKE, "a1")
+    apply_state(context, OfficialStateId.FIRST_STRIKE, "a2")
 
-        order = BattleSystems().action_order_system.determine_order(context)
-        assert context.random.shuffle_calls == 1
-        return [unit.unit_id for unit in order]
+    order = BattleSystems().action_order_system.determine_order(context)
 
-    assert run_once(2026) == run_once(2026)
+    assert [unit.unit_id for unit in order] == ["a1", "a2", "b1"]
+    assert context.random.shuffle_calls == 0
 
 
 def test_first_strike_and_ambush_on_same_unit_cancel_to_normal_tier() -> None:
@@ -264,39 +262,29 @@ def test_stun_plus_disarm_is_blocked_by_stun_at_action_system_layer() -> None:
     assert blocked[0].payload["action_type"] == "ALL"
 
 
-def test_weakness_allows_target_selection_but_prevents_damage_before_formula_and_troops(
-    monkeypatch: pytest.MonkeyPatch,
-) -> None:
+def test_weakness_allows_formula_then_settles_legal_zero_damage() -> None:
     context = make_combat_context(seed=34)
     apply_state(context, OfficialStateId.WEAKNESS, "a1")
     targets = RecordingTargetSystem()
     troops = RecordingTroopSystem()
     systems = BattleSystems(target_system=targets, troop_system=troops)
-
-    def fail_formula(*args, **kwargs):
-        raise AssertionError("base damage formula must not run under weakness")
-
-    monkeypatch.setattr(
-        systems.damage_system,
-        "_calculate_weapon_base_damage",
-        fail_formula,
-    )
     before = {unit_id: unit.troops for unit_id, unit in context.units.items()}
 
     result = systems.normal_attack_system.execute(context, context.get_unit("a1"))
 
     assert targets.random_enemy_calls == 1
     assert context.random.choice_calls == 1
-    assert context.random.randint_calls == 0
+    assert context.random.randint_calls > 0
     assert result.target_id in {"b1", "b2"}
     assert result.damage is not None
-    assert result.damage.base_damage == 0
-    assert result.damage.scaled_damage == 0
+    assert result.damage.base_damage > 0
+    assert result.damage.scaled_damage > 0
     assert result.damage.final_damage == 0
-    assert result.damage.prevented is True
-    assert result.damage.prevented_by_state_id == OfficialStateId.WEAKNESS.value
-    assert result.troop_change is None
-    assert troops.apply_damage_calls == 0
+    assert result.damage.prevented is False
+    assert result.damage.zeroed_by_state_id == OfficialStateId.WEAKNESS.value
+    assert result.troop_change is not None
+    assert result.troop_change.actual_change == 0
+    assert troops.apply_damage_calls == 1
     assert {unit_id: unit.troops for unit_id, unit in context.units.items()} == before
 
     combat_events = [
@@ -307,11 +295,13 @@ def test_weakness_allows_target_selection_but_prevents_damage_before_formula_and
             EventType.DAMAGE_DEALT,
         }
     ]
-    assert combat_events == [EventType.NORMAL_ATTACK, EventType.DAMAGE_PREVENTED]
+    assert combat_events == [EventType.NORMAL_ATTACK, EventType.DAMAGE_DEALT]
 
 
-def test_weakness_prevents_strategy_damage_without_requiring_intelligence_or_formula_rng() -> None:
+def test_weakness_strategy_damage_runs_formula_then_zeroes_result() -> None:
     context = make_combat_context(seed=35)
+    context.get_unit("a1").intelligence = 300
+    context.get_unit("b1").intelligence = 200
     apply_state(context, OfficialStateId.WEAKNESS, "a1")
     result = BattleSystems().damage_system.calculate(
         context,
@@ -324,10 +314,12 @@ def test_weakness_prevents_strategy_damage_without_requiring_intelligence_or_for
         ),
     )
 
+    assert result.base_damage > 0
+    assert result.scaled_damage > 0
     assert result.final_damage == 0
-    assert result.prevented is True
-    assert result.prevented_by_state_id == OfficialStateId.WEAKNESS.value
-    assert context.random.randint_calls == 0
+    assert result.prevented is False
+    assert result.zeroed_by_state_id == OfficialStateId.WEAKNESS.value
+    assert context.random.randint_calls > 0
 
 
 def test_stage4_architecture_boundaries_remain_intact() -> None:
