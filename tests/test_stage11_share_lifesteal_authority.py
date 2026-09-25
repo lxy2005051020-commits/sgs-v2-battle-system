@@ -188,6 +188,30 @@ def test_share_target_death_interrupt_does_not_shrink_recovery_basis(monkeypatch
     assert events[0].payload["requested_recovery"] == 32
 
 
+def test_share_both_capacities_below_assignment_keeps_basis_and_target_death_cancels_sharer(monkeypatch) -> None:
+    ctx, systems = make_context(), BattleSystems()
+    ctx.units["a0"].troops = 4000
+    ctx.units["b2"].troops = 55
+    ctx.units["b1"].troops = 10
+    apply_share(ctx, systems, target="b2", sharer="b1")
+    apply_lifesteal(ctx, systems, damage_type=DamageType.WEAPON)
+
+    execution = execute_fixed_share(monkeypatch, ctx, systems, target="b2")
+
+    plan = execution.partition_plan
+    assert plan.primary_assigned_damage == 267
+    assert plan.shared_assigned_damage == 47
+    assert plan.attacker_recovery_basis == 314
+    assert execution.resolution.actual_target_troop_loss == 55
+    # Frozen target-first death interrupt cancels the pending sharer settlement,
+    # even though the sharer also lacks capacity for its 47 assigned damage.
+    assert execution.direct_losses == ()
+    assert ctx.units["b1"].troops == 10
+    events = recovery_events(ctx)
+    assert len(events) == 1
+    assert events[0].payload["requested_recovery"] == 32
+
+
 def test_share_receiver_overkill_uses_shared_assignment_not_actual_loss(monkeypatch) -> None:
     ctx, systems = make_context(), BattleSystems()
     ctx.units["a0"].troops = 4000
