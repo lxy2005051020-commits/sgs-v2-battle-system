@@ -158,6 +158,23 @@ def test_p97_clv_rec_01_share_target_death_recovery_uses_assigned_sum():
     assert ctx.units['b1'].troops == 5000
 
 
+def test_p97_clv_rec_01b_share_receiver_overkill_keeps_assigned_basis():
+    ctx, systems = context(), BattleSystems()
+    ctx.units['b1'].troops = 10
+    instance = cleave(ctx, systems, ratio=ExactRatio(1, 1))
+    state(ctx, systems, 'damage_share', 'b0', DamageShareStateParams('b1', ExactRatio(15, 100)))
+
+    result = systems.cleave_system.execute(
+        ctx, effect(ctx, systems, main_fact(ctx, amount=314), instance)
+    )[0]
+
+    assert result.partition_plan.primary_assigned_damage == 267
+    assert result.partition_plan.shared_assigned_damage == 47
+    assert result.actual_target_troop_loss == 267
+    assert result.direct_losses[0].actual_loss == 10
+    assert result.recovery.attacker_recovery_basis == 314
+
+
 def test_p97_clv_rec_02_distribution_keeps_explicit_project_default():
     received = []
     ctx, systems = context(), BattleSystems(cleave_attacker_recovery=lambda ctx, fact: received.append(fact))
