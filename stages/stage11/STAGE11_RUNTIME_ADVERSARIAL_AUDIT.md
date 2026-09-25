@@ -1,20 +1,20 @@
 # Stage11 Runtime Adversarial Audit
 
 Date: 2026-09-26  
-Verdict: **BLOCKED / RUNTIME NOT FROZEN**  
-Blocker: **B11-FRZ-001 — recovery-modifier owner / double-stage CEIL is not implemented**
+Verdict: **PASS / RUNTIME FREEZE CANDIDATE ACCEPTED**  
+Blocker: **B11-FRZ-001 — CLOSED**
 
 ## 1. Audit Snapshot
 
-- Runtime-behavior SHA: `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`
-- Governance-tested Battle SHA: `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96`
+- Runtime-tested Battle SHA: `ce42bc62cfb26f8ca0b448e74b26533604bb0505`
 - Research authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
-- GitHub Actions run: `36163229356`
+- GitHub Actions run: `36166160197`
 - Workflow conclusion: `success`
-- pytest: **904 passed / 0 failed**
+- pytest: **913 passed / 0 failed / 0 skipped / 0 xfailed**
 - demo smoke: **PASS**
+- pre-freeze Research governance mirror: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`
 
-This audit supersedes the earlier 888/10 intake snapshot as the current Stage11 governance result. The earlier authority-conflict document remains provenance only.
+This re-audit supersedes the earlier 904-test blocked snapshot. The blocked record remains provenance for why B11-FRZ-001 existed; it is not the current verdict.
 
 ## 2. Canonical 17-state scope
 
@@ -55,32 +55,64 @@ No audit evidence was found that restores Weakness as an early-return prevention
 
 The legacy tests that contradicted these rules were migrated in the Stage11 implementation series and the full suite is green.
 
-## 6. Recovery audit — **BLOCKED**
+## 6. Recovery audit — PASS
 
-PASS:
-- ordinary non-Share basis remains actual target troop loss;
-- Share basis uses partition-assigned damage;
-- target death and overkill do not shrink Share basis;
-- one recovery opportunity per eligible DamageInstance/source;
-- each LifeSteal source independently performs the base CEIL;
-- HealingBlock intercepts the positive request without mutating the basis;
-- target recovery capacity is owned by the canonical RecoverySystem/TroopSystem path.
-
-BLOCKER:
-Research authority now requires, when an applicable recovery modifier exists:
+The canonical pipeline is now executable:
 
 ```text
-BaseRecovery     = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
-ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)
+RecoveryBasis
+↓
+LifeSteal Ratio
+↓
+FIRST CEIL                    [Stage11AttackerRecoverySystem]
+↓
+Recovery Modifier
+↓
+SECOND CEIL                   [RecoverySystem]
+↓
+HealingBlock                  [RecoverySystem]
+↓
+Recovery Capacity             [TroopSystem.restore]
+↓
+Actual Recovered Troops
 ```
 
-At audited Battle `main`:
-- `LifeStealStateParams` contains only the LifeSteal ratio/lifecycle facts;
-- `Stage11AttackerRecoverySystem` computes the first CEIL and immediately emits `RecoveryRequest(amount=BaseRecovery)`;
-- `RecoveryRequest` / `RecoverySystem` expose HealingBlock and troop-cap settlement but no canonical recovery-modifier operand/owner;
-- the dedicated Stage11 Share/LifeSteal test file contains no discriminating double-stage modifier integerization test.
+### B11-FRZ-001 Closure Record
 
-Therefore the latest frozen authority has no executable owner for this required stage. A green suite cannot certify a path that is absent from both runtime and tests.
+```text
+Status: CLOSED
+Canonical owner: RecoverySystem
+Pipeline position: after BaseRecovery, before HealingBlock and capacity
+First CEIL owner: Stage11AttackerRecoverySystem
+Second CEIL owner: RecoverySystem
+Eligibility seam: RecoveryModifierPolicy
+Modifier operand seam: RecoveryModifierProvider -> ExactRatio
+Runtime-tested SHA: ce42bc62cfb26f8ca0b448e74b26533604bb0505
+CI run: 36166160197
+```
+
+Required discriminator:
+
+```text
+CEIL(101 × 10%) = 11
+CEIL(11 × 110%) = 13
+
+single-stage would produce:
+CEIL(101 × 10% × 110%) = 12
+```
+
+Dedicated tests:
+- `test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_110pct`
+- `test_recovery_modifier_precedes_healing_block_without_zeroing_calculated_amounts`
+- `test_recovery_modifier_precedes_capacity_clamp`
+- `test_recovery_modifier_100_percent_does_not_add_one`
+- `test_multiple_lifesteal_sources_each_own_first_ceil_and_reenter_modifier_stage`
+- `test_strategy_lifesteal_uses_same_recovery_modifier_owner_and_second_ceil`
+- `test_recovery_modifier_owner_applies_exact_second_ceil`
+- `test_recovery_modifier_policy_none_preserves_generic_recovery_and_skips_provider`
+- `test_zero_recovery_request_does_not_invoke_modifier_provider`
+
+Share target-death / overkill regressions remain green. Actual troop loss does not leak back into Share RecoveryBasis. Cleave reuses the same attacker-recovery path and therefore the same RecoverySystem modifier owner. Distribution is unchanged and retains its explicit project default.
 
 ## 7. Persistent-damage audit — PASS
 
@@ -94,16 +126,20 @@ Gameplay Stage11 randomness routes through `BattleContext.random`. The direct Py
 
 Physical state mutation remains owned by `StateLifecycleSystem`. The Stage9 architecture regression `test_arch_07_ast_scan_state_registry_mutations_only_in_lifecycle_system` is green as part of the 904-test suite. Stage11 runtime façades request lifecycle mutations rather than becoming a second registry owner.
 
-## 10. Integerization audit — **BLOCKED**
+## 10. Integerization audit — PASS
 
-PASS:
-- damage uses existing central finalization;
-- LifeSteal base uses exact integer-safe CEIL;
-- ALERT performs no local rounding under its explicit runtime default;
-- See-Through performs no local rounding.
-
-BLOCKED:
-- required recovery-modifier second-stage CEIL has no canonical Runtime owner/test seam (B11-FRZ-001).
+- central damage integerization ownership: PASS;
+- per-source LifeSteal first CEIL: PASS;
+- RecoverySystem second CEIL: PASS;
+- no float modifier path: PASS;
+- no duplicate second-CEIL owner: PASS;
+- modifier after first CEIL: PASS;
+- HealingBlock after modifier: PASS;
+- capacity after modifier: PASS;
+- 100% modifier identity: PASS;
+- multiple LifeSteal sources remain independently integerized: PASS;
+- 690095 mirrors the same owner: PASS;
+- ALERT / See-Through local-rounding prohibitions unchanged: PASS.
 
 ## 11. Zero-damage topology audit — PASS
 
@@ -125,7 +161,17 @@ The audit preserves, rather than launders into “official truth”:
 
 ## 14. Stage7-10 regression audit — PASS
 
-Run `36163229356` checked out governance commit `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96`, whose runtime code is unchanged from `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`; it completed **904 passed / 0 failed** and demo smoke successfully.
+Run `36166160197` checked out Runtime-tested SHA `ce42bc62cfb26f8ca0b448e74b26533604bb0505` and completed:
+
+```text
+913 passed
+0 failed
+0 skipped
+0 xfailed
+demo PASS
+```
+
+Existing Share target-death / overkill, Cleave, Distribution and Stage7-10 lifecycle / recovery regressions remain green.
 
 ## 15. Stage12 scope-leak audit — PASS
 
@@ -134,15 +180,23 @@ No Stage12 runtime implementation is authorized or performed by this governance 
 ## 16. Final verdict
 
 ```text
-Stage11 Runtime: BLOCKED
-Stage12 Readiness: NOT READY
+Stage11 Runtime: FROZEN
+B11-FRZ-001: CLOSED
+Stage12 Readiness: READY
+Stage12 Active: NO
 ```
 
-Reason: **B11-FRZ-001** must be implemented and covered by a discriminating double-stage CEIL test before the Runtime Freeze gate can be re-run.
-
-The prior Share × LifeSteal authority conflict is no longer the blocker.
-
+The remaining items are explicitly governed research debt / project runtime defaults, not missing required Runtime owners.
 
 ## 17. Cross-repository synchronization
 
-Research governance mirror SHA: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`. It records the same B11-FRZ-001 blocker and preserves Research authority SHA `80c4a9dd435b7ec1ed1baed1a957310159c1232a`.
+Research authority remains `80c4a9dd435b7ec1ed1baed1a957310159c1232a`. Pre-freeze Research governance mirror is `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`.
+
+After the Battle freeze declaration reaches `main`, Research must record:
+- Battle Runtime Tested SHA;
+- Battle Freeze Declaration SHA;
+- Battle freeze record path;
+- B11-FRZ-001 = CLOSED;
+- Stage11 Runtime = FROZEN;
+- Stage12 Readiness = READY.
+

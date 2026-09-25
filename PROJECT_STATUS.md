@@ -15,6 +15,7 @@ Stage 7  Trigger / Recovery                    ✅ FROZEN
 Stage 8  Damage Pipeline                       ✅ FROZEN
 Stage 9  Cross-Mechanism Runtime Orchestration ✅ FROZEN
 Stage10 Persistent State Runtime Integration  ✅ FROZEN
+Stage11 State Runtime Integration             ✅ FROZEN
 ```
 
 ## 2. Cross-repository completion baseline
@@ -22,94 +23,63 @@ Stage10 Persistent State Runtime Integration  ✅ FROZEN
 ```text
 Official States                 = 40
 Research FROZEN                 = 32
-Runtime FROZEN TO CONTRACT      = 16
-Strict Complete                 = 16
+Runtime FROZEN TO CONTRACT      = 33
+Strict Complete                 = 32
 ```
 
-These counts remain unchanged because Stage11 Runtime Freeze was **not** declared.
+Stage11 contributes 17 Runtime-FROZEN states. Sixteen are also Research FROZEN; 690086 Distribution remains governed by explicit research debt / project runtime default and therefore does not increase Strict Complete.
 
-## 3. Stage11 · FINAL GOVERNANCE AUDIT BLOCKED
+## 3. Stage11 · RUNTIME FROZEN
 
 Canonical scope = 17:
 
-```text
-690086 DISTRIBUTION
-690090 FIRST_STRIKE
-690091 SURPRISE
-690102 DISARM
-690104 WEAKNESS
-690105 HEALING_BLOCK
-690111 STUN
-690082 EVASION
-690083 RESISTANCE
-690092 SURE_HIT
-690093 BREAK_FORMATION
-690099 ALERT
-690070 CRITICAL
-690069 STRATEGY_CRITICAL
-690221 DAMAGE_REDUCTION_PIERCE
-690094 LIFE_STEAL
-690095 STRATEGY_LIFE_STEAL
-```
+`690086, 690090, 690091, 690102, 690104, 690105, 690111, 690082, 690083, 690092, 690093, 690099, 690070, 690069, 690221, 690094, 690095`.
 
-Current verified runtime snapshot:
+Verified freeze snapshot:
 
 ```text
-Runtime behavior SHA = eff9efcff878afcdd3a5c8609ef719d18fc58cdf
-Battle governance SHA = 14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96
+Runtime Tested SHA = ce42bc62cfb26f8ca0b448e74b26533604bb0505
 Research authority = 80c4a9dd435b7ec1ed1baed1a957310159c1232a
-Research sync SHA  = 0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d
-CI run             = 36163229356 / success
-pytest             = 904 passed / 0 failed
+CI run             = 36166160197 / success
+pytest             = 913 passed / 0 failed / 0 skipped / 0 xfailed
 demo smoke         = PASS
+B11-FRZ-001        = CLOSED
+Stage11 Runtime    = FROZEN
 ```
 
-The former Share × LifeSteal authority conflict is resolved. Runtime correctly uses:
-
-```text
-Share RecoveryBasis =
-PrimaryAssignedDamage + SharedAssignedDamage
-```
-
-and preserves that basis across target death / overkill.
-
-### B11-FRZ-001
-
-Final governance audit found one normative Runtime gap in 690094/690095:
+Recovery modifier settlement is canonical:
 
 ```text
 BaseRecovery     = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
-ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)
+ModifiedRecovery = CEIL(BaseRecovery × EffectiveRecoveryModifier)
+→ HealingBlock
+→ Recovery Capacity
 ```
 
-The audited Runtime implements the first CEIL but has no canonical recovery-modifier owner/seam for the second CEIL and no discriminating test for it.
-
-Therefore:
-
-```text
-Stage11 Runtime: BLOCKED
-Stage11 Runtime Freeze: NOT DECLARED
-Stage12 Readiness: NOT READY
-```
-
-No gameplay rule is being re-researched by this governance finding. The required next action is a scoped Runtime repair of B11-FRZ-001 followed by full regression and re-audit.
+The first CEIL is owned by `Stage11AttackerRecoverySystem`; the second CEIL and recovery settlement are owned by `RecoverySystem`. The 13-vs-12 discriminator is green.
 
 ## 4. Preserved Stage11 research debt
 
-- 690086 Distribution / DSTS9-B02 remains empirical OPEN / UNOBSERVED and runtime-closed only by explicit project default.
+- 690086 Distribution / DSTS9-B02 remains empirical OPEN / UNOBSERVED and runtime-closed by explicit project default.
 - Distribution × LifeSteal participant-loss extension is not inherited from Share.
 - ALERT retains threshold equality / generic threshold / positive integerization / holder-death / Share micro-order debt.
 - CRITICAL / STRATEGY_CRITICAL retain bounded micro-read / latch timing debt.
 - DISARM reflected/proxy admission remains bounded.
 - 690221 unsupported damage families remain explicit boundary violations.
+- generic partial recovery reduction remains unobserved.
 
-## 5. Stage12 · NOT READY
+## 5. Stage12 · READY, NOT ACTIVE
 
-Stage12 canonical scope remains 7 states:
+Stage12 canonical scope remains 7:
 
 `690089, 690101, 690107, 690108, 690109, 690110, 690222`.
 
-Stage12 is not activated and no Stage12 runtime work is authorized by the current governance round.
+```text
+Stage12 Readiness: READY
+Stage12 Active: NO
+```
+
+This Stage11 freeze does not start Stage12 gameplay implementation.
 
 ## 6. Stage13+
 
@@ -119,5 +89,3 @@ Stage14 = 普通主动战法
 Stage15 = 准备战法
 Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
 ```
-
-These remain gated behind Stage11/Stage12 exits.

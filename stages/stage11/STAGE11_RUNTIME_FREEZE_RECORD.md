@@ -5,120 +5,121 @@ Date: 2026-09-26
 ## Freeze Verdict
 
 ```text
-Stage11 Runtime: BLOCKED
-Freeze Candidate: REJECTED
-Stage12 Readiness: NOT READY
+Stage11 Runtime: FROZEN
+Freeze Candidate: ACCEPTED
+B11-FRZ-001: CLOSED
+Stage12 Readiness: READY
+Stage12 Active: NO
 ```
 
-This is a rejected-freeze record, not a declaration of Runtime FROZEN.
+## Runtime / Authority Snapshot
 
-## Audited Runtime / Authority Snapshot
-
-- Runtime-behavior SHA: `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`
-- Governance-tested Battle SHA: `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96`
-- Research authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
-- GitHub Actions run: `36163229356`
-- workflow conclusion: `success`
-- pytest: **904 passed / 0 failed**
+- Runtime Tested SHA: `ce42bc62cfb26f8ca0b448e74b26533604bb0505`
+- Freeze Declaration SHA: **DECLARATION_COMMIT_PENDING_SELF_REFERENCE**
+- Research Authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
+- Final pre-declaration CI Run: `36166160197`
+- pytest: **913 passed / 0 failed / 0 skipped / 0 xfailed**
 - demo smoke: **PASS**
-- Research governance mirror SHA: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`
-- Freeze declaration SHA: **NONE — freeze not declared**
+- pre-freeze Research governance mirror: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`
 
-## Canonical Stage11 Scope
+The exact Freeze Declaration SHA is recorded by the immediate provenance follow-up commit because a commit cannot embed its own SHA before it exists.
 
-`690086 DISTRIBUTION, 690090 FIRST_STRIKE, 690091 SURPRISE, 690102 DISARM, 690104 WEAKNESS, 690105 HEALING_BLOCK, 690111 STUN, 690082 EVASION, 690083 RESISTANCE, 690092 SURE_HIT, 690093 BREAK_FORMATION, 690099 ALERT, 690070 CRITICAL, 690069 STRATEGY_CRITICAL, 690221 DAMAGE_REDUCTION_PIERCE, 690094 LIFE_STEAL, 690095 STRATEGY_LIFE_STEAL`.
-
-## Design Freeze References
-
-- `STAGE11_DESIGN_FREEZE_RECORD.md`
-- `STAGE11_DESIGN_AUDIT.md`
-- `STAGE11_DESIGN_AMENDMENT_001.md`
-- `STAGE11_RUNTIME_INTEGRATION_DESIGN.md`
-
-## Research Authority / Share Resolution
-
-Research authority resolves Share × attacker recovery as:
+## B11-FRZ-001 Closure
 
 ```text
-RecoveryBasis =
-PrimaryAssignedDamage + SharedAssignedDamage
+Status: CLOSED
+Canonical owner: RecoverySystem
 
-BaseRecovery =
-CEIL(RecoveryBasis × EffectiveLifeStealRatio)
+RecoveryBasis
+→ LifeSteal Ratio
+→ FIRST CEIL                [Stage11AttackerRecoverySystem]
+→ Recovery Modifier
+→ SECOND CEIL               [RecoverySystem]
+→ HealingBlock              [RecoverySystem]
+→ Recovery Capacity         [TroopSystem.restore]
+→ Actual Recovered Troops
 ```
 
-The audited Runtime implements this assigned-damage Share basis for parent and Cleave-child Share, including target-death and overkill boundaries. 690095 mirrors the rule by final STRATEGY damage lane. Distribution remains excluded from automatic inheritance.
+Typed eligibility is carried by `RecoveryModifierPolicy`. 690094 / 690095 use `APPLY`; generic recovery remains `NONE` unless future authority opts it in. Modifier operands use `ExactRatio`, not float arithmetic.
 
-## Cross-mechanism Regression Summary
-
-At governance-tested Battle SHA `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96` (runtime behavior unchanged from `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`):
-- full pytest: PASS;
-- demo smoke: PASS;
-- legacy Weakness, exact-tie, STUN fixture, Cleave Share and Distribution expectations were migrated to current authority;
-- Share direct loss does not create a second LifeSteal trigger;
-- HealingBlock and recovery capacity remain downstream owners.
-
-## RNG Audit
-
-PASS. Stage11 random decisions use `BattleContext.random`; exact action-order ties are deterministic and consume no RNG.
-
-## Mutation-owner Audit
-
-PASS. `StateLifecycleSystem` remains the physical state mutation owner; the architecture guard remains green.
-
-## Integerization Audit
-
-PARTIAL / BLOCKED.
-
-PASS:
-- central damage integerization ownership;
-- per-source base LifeSteal CEIL;
-- ALERT no local rounding;
-- See-Through no local rounding.
-
-BLOCKER:
-Research authority requires an applicable recovery modifier to execute:
+Discriminator:
 
 ```text
-ModifiedRecovery =
-CEIL(BaseRecovery × HealingModifier)
+101 × 10% → CEIL(10.1) = 11
+11 × 110% → CEIL(12.1) = 13
+
+forbidden single-stage:
+CEIL(101 × 10% × 110%) = 12
 ```
 
-The audited Runtime has no canonical recovery-modifier owner/seam and no discriminating double-stage CEIL test.
+Primary test: `test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_110pct`.
 
-## Adversarial Audit Result
+## Canonical 17-state Runtime Status
 
-`STAGE11_RUNTIME_ADVERSARIAL_AUDIT.md` verdict: **BLOCKED** by **B11-FRZ-001**.
+| State ID | Runtime Owner | Runtime Freeze | Remaining Debt |
+|---|---|---|---|
+| 690086 DISTRIBUTION | DamagePartitionCoordinator | FROZEN | DSTS9-B02; Distribution × LifeSteal exclusion is PROJECT_RUNTIME_DEFAULT |
+| 690090 FIRST_STRIKE | ActionOrder + lifecycle | FROZEN | legacy metadata fallback project default |
+| 690091 SURPRISE | ActionOrder + lifecycle | FROZEN | mirror provenance |
+| 690102 DISARM | NormalAttack admission | FROZEN | reflected/proxy admission boundary |
+| 690104 WEAKNESS | Damage legal-zero gate | FROZEN | bounded research unknowns |
+| 690105 HEALING_BLOCK | RecoverySystem | FROZEN | bounded unobservable boundaries |
+| 690111 STUN | Natural Action admission | FROZEN | bounded research boundaries |
+| 690082 EVASION | Stage11 hit arbitration | FROZEN | none blocking |
+| 690083 RESISTANCE | Stage11 hit arbitration | FROZEN | none blocking |
+| 690092 SURE_HIT | Stage11 hit arbitration | FROZEN | none blocking |
+| 690093 BREAK_FORMATION | DamageFormulaPolicy | FROZEN | persistent/application limits |
+| 690099 ALERT | single-hit adjustment + lifecycle | FROZEN | equality 600; threshold; integerization; holder death; Share micro-order |
+| 690070 CRITICAL | CriticalResolution / damage rules | FROZEN | micro-read / bonus-latch timing |
+| 690069 STRATEGY_CRITICAL | CriticalResolution / lane routing | FROZEN | mirror provenance; same timing debt |
+| 690221 DAMAGE_REDUCTION_PIERCE | incoming reduction transform | FROZEN | unsupported damage families |
+| 690094 LIFE_STEAL | Stage11AttackerRecovery + RecoverySystem | FROZEN | generic partial recovery reduction research boundary |
+| 690095 STRATEGY_LIFE_STEAL | Stage11AttackerRecovery + RecoverySystem | FROZEN | mirror provenance; same partial-reduction boundary |
 
-## Known Research Debt / Project Runtime Defaults
+## Adversarial / Governance Gates
 
-- 690086 Distribution / DSTS9-B02: RESEARCH_DEBT; runtime behavior admitted by explicit project default.
-- Distribution × LifeSteal participant loss: PROJECT_RUNTIME_DEFAULT exclusion.
-- ALERT: equality threshold, generic threshold source, positive integerization, holder-death, Share micro-order boundaries.
-- Critical/StrategyCritical: bounded micro-read / latch timing uncertainty.
-- DISARM: reflected/proxy admission boundary.
-- See-Through: unsupported damage families remain explicit boundary violations.
+- 13-vs-12 double-stage discriminator: **PASS**
+- StrategyLifeSteal mirror: **PASS**
+- multiple-source independent integerization: **PASS**
+- Share target-death / primary-overkill / receiver-overkill / double-overkill regressions: **PASS**
+- Cleave reuse of canonical owner: **PASS**
+- Distribution debt preserved: **PASS**
+- HealingBlock after modifier: **PASS**
+- capacity after modifier: **PASS**
+- 100% modifier identity: **PASS**
+- zero recovery request bypass: **PASS**
+- RNG audit: **PASS**, no direct random path introduced
+- mutation-owner audit: **PASS**, no direct StateRegistry mutation introduced
+- integerization owner audit: **PASS**
+- full pytest: **PASS**
+- demo smoke: **PASS**
 
-These debts are not the same as B11-FRZ-001. The debt items are explicitly governed; B11-FRZ-001 is a missing required Runtime path.
+## Remaining Research Debt / Project Runtime Defaults
 
-## Stage12 Exclusions
+- 690086 Distribution / DSTS9-B02 research debt.
+- Distribution × LifeSteal participant-loss exclusion as PROJECT_RUNTIME_DEFAULT.
+- ALERT threshold equality, generic threshold source, positive integerization, holder-death and Share micro-order.
+- Critical / StrategyCritical exact micro-read / bonus-latch timing.
+- DISARM reflected/proxy admission boundary.
+- See-Through unsupported damage families.
+- generic partial recovery reduction remains unobserved.
 
-No Stage12 runtime was implemented or activated.
+Runtime Freeze preserves these labels. It does not relabel project defaults as empirical game truth.
 
-## Required Repair Before Re-freeze
+## Stage12
 
-1. introduce one canonical recovery-modifier owner/seam;
-2. preserve per-source base LifeSteal CEIL;
-3. apply the recovery modifier with a second CEIL;
-4. route both 690094 and 690095 through that owner without duplicating modifier arithmetic;
-5. add a discriminating test where one-stage and two-stage integerization produce different results;
-6. rerun full pytest and demo;
-7. rerun the adversarial and governance freeze gates.
+```text
+Stage12 Readiness: READY
+Stage12 Active: NO
+```
+
+No Stage12 gameplay implementation is included in this freeze.
 
 ## Final Statement
 
 ```text
-Stage11 Runtime Freeze: BLOCKED
-Reason: B11-FRZ-001
-Stage12 Readiness: NOT READY
+Stage11 Runtime: FROZEN
+B11-FRZ-001: CLOSED
+Stage12 Readiness: READY
+Stage12 Active: NO
 ```

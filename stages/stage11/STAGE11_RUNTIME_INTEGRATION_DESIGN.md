@@ -185,7 +185,7 @@ PrimaryAssignedDamage
 SharedAssignedDamage
 ```
 
-Under the current conserved Stage9 Share partition this is equivalent to the pre-Share finalized damage because `Dtarget + Dsharer_theoretical = Dtotal`. The semantic owner is still the partition plan. Committed actual troop loss must not be used to reconstruct the Share basis, and target death / overkill must not shrink it. A Share direct-loss commit does not create a second attacker-recovery trigger.
+Under the current conserved Stage9 Share partition this is equivalent to the pre-Share finalized damage because `Dtarget + Dsharer_theoretical = Dtotal`. The semantic owner is still the partition plan. Committed actual troop loss must not reconstruct the Share basis, and target death / overkill must not shrink it. A Share direct-loss commit does not create a second attacker-recovery trigger.
 
 Each active 690094 / 690095 source independently computes:
 
@@ -193,15 +193,34 @@ Each active 690094 / 690095 source independently computes:
 BaseRecovery = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
 ```
 
-If an applicable recovery modifier exists, current Research authority additionally requires:
+Ownership is frozen as:
 
 ```text
-ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)
+Stage11AttackerRecoverySystem
+  owns RecoveryBasis
+  owns LifeSteal ratio selection
+  owns FIRST CEIL
+  emits RecoveryRequest(amount = BaseRecovery, modifier_policy = APPLY)
+
+RecoverySystem
+  owns typed recovery-modifier eligibility
+  obtains ExactRatio modifier from RecoveryModifierProvider
+  owns SECOND CEIL
+  owns HealingBlock interception
+  delegates final capacity clamp to TroopSystem.restore
 ```
 
-That second stage must be owned by one canonical recovery-modifier seam rather than duplicated inside attacker recovery. **Current Runtime does not yet expose that seam; B11-FRZ-001 blocks Stage11 Runtime Freeze until it is implemented and tested.**
+If a verified recovery modifier applies:
+
+```text
+ModifiedRecovery = CEIL(BaseRecovery × EffectiveRecoveryModifier)
+```
+
+Generic Stage10 recovery requests remain `RecoveryModifierPolicy.NONE` unless later authority explicitly opts them in. This prevents FirstAid / Recuperation from inheriting an unverified modifier rule merely because they share the settlement system.
 
 For DISTRIBUTION, no 690094/690095 authority expands the Share exception. Runtime uses only the parent's actual target loss and excludes Distribution participant direct losses. This remains an explicit **PROJECT_RUNTIME_DEFAULT / RESEARCH_DEBT BOUNDARY**.
+
+**B11-FRZ-001 is CLOSED at Runtime-tested SHA `ce42bc62cfb26f8ca0b448e74b26533604bb0505`.**
 
 ## 12. Healing Block
 
@@ -226,7 +245,31 @@ Stage11 does not introduce a second damage integerization utility. Existing cent
 
 LifeSteal / StrategyLifeSteal base recovery uses Python-independent mathematical CEIL per source. The basis is ordinary actual target troop loss for non-Share eligible damage and assigned partition damage for Share.
 
-When a recovery modifier applies, authority requires a distinct second CEIL after the base LifeSteal CEIL. The current Runtime lacks the canonical recovery-modifier owner/seam for this second stage; this is **B11-FRZ-001** and is a Freeze blocker.
+When a recovery modifier applies, a distinct second CEIL occurs after BaseRecovery. Ownership is intentionally split by quantity:
+
+```text
+FIRST CEIL:
+Stage11AttackerRecoverySystem
+CEIL(RecoveryBasis × LifeStealRatio)
+
+SECOND CEIL:
+RecoverySystem
+CEIL(BaseRecovery × RecoveryModifier)
+```
+
+Both stages use exact integer / `ExactRatio` arithmetic. No float modifier path is permitted.
+
+The discriminating regression is:
+
+```text
+101 × 10%  → 11
+11 × 110%  → 13
+
+forbidden single-stage:
+CEIL(101 × 10% × 110%) = 12
+```
+
+`test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_110pct` fails any single-stage implementation. The 100% identity test prevents an accidental extra +1.
 
 690221 never rounds locally. 690099 never rounds locally under its explicit project runtime default.
 

@@ -1,21 +1,22 @@
 # Stage11 — State Runtime Integration
 
-Status: **DESIGN FROZEN / IMPLEMENTATION SUBSTANTIALLY COMPLETE / RUNTIME FREEZE BLOCKED**
+Status: **DESIGN FROZEN / IMPLEMENTATION COMPLETE / RUNTIME FROZEN**
 
 Canonical Project Scope: **17 states**
 
 ## Current snapshot
 
-- Runtime-behavior SHA: `eff9efcff878afcdd3a5c8609ef719d18fc58cdf`
-- Governance-tested Battle SHA: `14b89bd0bb3e90c4a40dc16c5ab0ca20485d8a96`
+- Runtime-tested Battle SHA: `ce42bc62cfb26f8ca0b448e74b26533604bb0505`
 - Research authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
-- Research governance mirror SHA: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`
-- CI run: `36163229356` — success
-- pytest: **904 passed / 0 failed**
+- pre-freeze Research governance mirror SHA: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`
+- CI run: `36166160197` — success
+- pytest: **913 passed / 0 failed / 0 skipped / 0 xfailed**
 - demo smoke: **PASS**
 - Share × LifeSteal authority conflict: **RESOLVED**
-- Final Runtime Freeze: **BLOCKED by B11-FRZ-001**
-- Stage12 Readiness: **NOT READY**
+- B11-FRZ-001: **CLOSED**
+- Final Runtime Freeze: **FROZEN**
+- Stage12 Readiness: **READY**
+- Stage12 Active: **NO**
 
 ## Scope
 
@@ -30,40 +31,38 @@ Canonical Project Scope: **17 states**
 - [Runtime Adversarial Audit](STAGE11_RUNTIME_ADVERSARIAL_AUDIT.md)
 - [Runtime Freeze Record](STAGE11_RUNTIME_FREEZE_RECORD.md)
 - [Historical Share × LifeSteal Reopen](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md)
-- Research authority: `sgs-state-mechanics-research/STAGE11_SHARE_LIFESTEAL_AUTHORITY_RESOLUTION.md`
 
 ## Authority reconciliation
 
-Current Share recovery rule:
-
 ```text
-RecoveryBasis =
-PrimaryAssignedDamage
-+
-SharedAssignedDamage
+Share RecoveryBasis =
+PrimaryAssignedDamage + SharedAssignedDamage
 ```
 
 Actual troop loss is not the Share recovery basis. Target death and overkill may reduce committed loss without reducing RecoveryBasis. Cleave child Share follows the same assignment-owned rule. Distribution remains separate research debt / project runtime default.
 
-## Regression result
-
-The audited runtime is fully green at 904 tests and demo smoke. That is necessary but not sufficient for Runtime Freeze.
-
-## Final audit blocker
-
-**B11-FRZ-001:** Research requires recovery modifiers to apply after base LifeSteal CEIL:
+## B11-FRZ-001 closure
 
 ```text
 BaseRecovery     = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
-ModifiedRecovery = CEIL(BaseRecovery × HealingModifier)
+ModifiedRecovery = CEIL(BaseRecovery × EffectiveRecoveryModifier)
+→ HealingBlock
+→ Recovery Capacity
 ```
 
-Current Runtime has the first CEIL, HealingBlock and capacity ownership, but no canonical recovery-modifier owner/seam and no discriminating test for the second CEIL. The final audit therefore rejected the freeze candidate.
+`Stage11AttackerRecoverySystem` owns the first CEIL. `RecoverySystem` owns typed modifier eligibility, the second CEIL and HealingBlock settlement. Capacity remains the final troop-system clamp.
+
+The required 101 / 10% / 110% test resolves to **13**; a forbidden single-stage implementation would resolve to **12**.
 
 ## Remaining debt
 
-Research debt and bounded unknowns remain explicit, including Distribution/DSTS9-B02, ALERT boundaries, Critical timing, DISARM proxy/reflection admission and See-Through unsupported families. Runtime Freeze would not erase them.
+Research debt and bounded unknowns remain explicit, including Distribution / DSTS9-B02, Distribution × LifeSteal project default, ALERT boundaries, Critical timing, DISARM proxy/reflection admission and See-Through unsupported families. Runtime Freeze does not erase them.
 
 ## Next stage
 
-Stage12 is **not activated**. Stage12 Readiness remains **NOT READY** until B11-FRZ-001 is repaired and Stage11 Runtime Freeze is re-audited successfully.
+```text
+Stage12 Readiness: READY
+Stage12 Active: NO
+```
+
+Stage12 gameplay implementation has not been started.
