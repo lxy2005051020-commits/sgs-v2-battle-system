@@ -6,6 +6,10 @@ Implementation status: **COMPLETE**
 Runtime-tested Battle SHA: `ce42bc62cfb26f8ca0b448e74b26533604bb0505`  
 Full regression: **913 passed / 0 failed / 0 skipped / 0 xfailed; demo PASS** (Actions `36166160197`)  
 Runtime Freeze gate: **PASS / FROZEN**
+Post-Freeze Acceptance: **PASS / CONFIRMED** (audit `5a0a4164e7624c28eae2c7aa28f66061ef3c9313`, Actions `36170063365`)
+Research post-acceptance mirror: `9ad990da544ad87047e74a664cc1984f890bb274`
+Stage11 Reopen Required: **NO**
+Stage12 Activation Gate: **CLEARED**
 
 `B11-FRZ-001: CLOSED`. `Stage11AttackerRecoverySystem` owns RecoveryBasis + per-source first CEIL. `RecoverySystem` owns typed recovery-modifier eligibility + exact-rational second CEIL + HealingBlock + capacity settlement.
 
