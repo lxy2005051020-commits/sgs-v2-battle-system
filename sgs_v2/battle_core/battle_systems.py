@@ -34,6 +34,7 @@ from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .stage9_state_runtime import Stage9StateRuntime
 from .stage11_state_runtime import Stage11StateRuntime
+from .stage11_attacker_recovery import Stage11AttackerRecoverySystem
 from .state_lifecycle_system import StateLifecycleSystem
 from .target_resolution_system import TargetResolutionSystem
 from .target_system import TargetSystem
@@ -92,6 +93,7 @@ class BattleSystems:
     assault_dispatch_port: AssaultDispatchPort = field(init=False)
     stage9_state_runtime: Stage9StateRuntime = field(init=False)
     stage11_state_runtime: Stage11StateRuntime = field(init=False)
+    stage11_attacker_recovery_system: Stage11AttackerRecoverySystem = field(init=False)
     target_resolution_system: TargetResolutionSystem = field(init=False)
     chain_system: ChainSystem = field(init=False)
     damage_callbacks: DamageCallbackAdmissionPoint = field(init=False)
@@ -109,6 +111,10 @@ class BattleSystems:
             self.troop_system, self.stage11_state_runtime
         )
         self.recovery_opportunity_system = RecoveryOpportunitySystem(self.recovery_system)
+        self.stage11_attacker_recovery_system = Stage11AttackerRecoverySystem(
+            self.recovery_system,
+            self.stage11_state_runtime,
+        )
 
         if self.defeat_cleanup_port is None:
             self.defeat_cleanup_port = DefeatCleanupPort(self.state_lifecycle_system)
@@ -183,6 +189,7 @@ class BattleSystems:
             resolved_damage_callback=self.damage_callbacks.accept,
             damage_aftermath_port=self.damage_aftermath_port,
             defeat_cleanup_port=self.defeat_cleanup_port,
+            attacker_recovery_system=self.stage11_attacker_recovery_system,
         )
         self.cleave_derived_damage_resolver = CleaveDerivedDamageResolver(
             troops=self.troop_system,
@@ -193,10 +200,14 @@ class BattleSystems:
             hit_rules=self.cleave_hit_rules or StateDamageRuleProvider(()),
             damage_callbacks=self.damage_callbacks,
             first_aid=self.cleave_first_aid,
-            attacker_recovery=self.cleave_attacker_recovery,
+            attacker_recovery=(
+                self.cleave_attacker_recovery
+                or self.stage11_attacker_recovery_system.resolve_cleave
+            ),
             consume_hit_prevention=self.cleave_hit_consumption,
             damage_aftermath_port=self.damage_aftermath_port,
             defeat_cleanup_port=self.defeat_cleanup_port,
+            stage11_state_runtime=self.stage11_state_runtime,
         )
         self.cleave_system = CleaveSystem(self.stage9_state_runtime, self.future_admission_gate, self.cleave_derived_damage_resolver)
         self.counter_system = CounterSystem(self.stage9_state_runtime, self.future_admission_gate, self.damage_instance_coordinator)

@@ -95,10 +95,11 @@ class Stage11AttackerRecoverySystem:
         if source is None or not source.is_alive:
             return AttackerRecoveryResolution(0, ())
 
-        # Cleave's frozen topology gives us the actual primary secondary-target
-        # troop loss. Distribution external losses remain excluded by the same
-        # project-runtime-default used for parent standard damage.
-        basis = int(fact.actual_target_troop_loss)
+        # Cleave resolver supplies an already-settled actual-loss basis. Share
+        # actual loss is included; Distribution external participants are excluded
+        # by the documented project-runtime-default.
+        basis_value = recovery_fact.attacker_recovery_basis
+        basis = int(fact.actual_target_troop_loss if basis_value is None else basis_value)
         results: list[RecoveryResult] = []
         for instance in self._states.lifesteal_instances(
             context, source_id, fact.damage_type

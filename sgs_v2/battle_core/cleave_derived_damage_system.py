@@ -94,7 +94,8 @@ class CleaveDerivedDamageResolver:
 
     def __init__(self, *, troops, partition, direct_loss, finalization, hit_resolution,
                  hit_rules, damage_callbacks, first_aid=None, attacker_recovery=None,
-                 consume_hit_prevention=None, damage_aftermath_port=None, defeat_cleanup_port=None):
+                 consume_hit_prevention=None, damage_aftermath_port=None, defeat_cleanup_port=None,
+                 stage11_state_runtime=None):
         self._troops = troops
         self._partition = partition
         self._direct_loss = direct_loss
@@ -107,6 +108,7 @@ class CleaveDerivedDamageResolver:
         self._consume_hit_prevention = consume_hit_prevention
         self._damage_aftermath_port = damage_aftermath_port
         self._defeat_cleanup = defeat_cleanup_port
+        self._stage11 = stage11_state_runtime
         self._requests = {}
 
 
@@ -157,6 +159,35 @@ class CleaveDerivedDamageResolver:
                 self._consume_hit_prevention(context, request, hit)
             self._event(context, EventType.DAMAGE_PREVENTED, request, {"requested_damage": amount})
             return CleaveDerivedDamageResult(request, amount, 0, 0, before, before, True, None, (), None)
+
+        if self._stage11 is not None and request.source_id is not None:
+            stage11_hit = self._stage11.resolve_hit(
+                context,
+                source_id=request.source_id,
+                target_id=request.target_id,
+            )
+            if stage11_hit.prevented:
+                self._event(
+                    context,
+                    EventType.DAMAGE_PREVENTED,
+                    request,
+                    {
+                        "requested_damage": amount,
+                        "reason_state_id": stage11_hit.prevented_by_state_id,
+                    },
+                )
+                return CleaveDerivedDamageResult(
+                    request, amount, 0, 0, before, before, True, None, (), None
+                )
+
+        weakness_zero = bool(
+            self._stage11 is not None
+            and request.source_id is not None
+            and self._stage11.weakness_active(context, request.source_id)
+        )
+        if weakness_zero:
+            amount = 0
+
         if not ReactionPermissionPolicy.can_enter_partition(request.source_type):
             raise ValueError("Cleave partition permission required")
         plan = self._partition.plan_derived(context, request.damage_instance_id, target.unit_id, amount)
@@ -206,9 +237,20 @@ class CleaveDerivedDamageResolver:
 
         fact = ResolvedDamageFact(request.damage_instance_id, target.unit_id, request.lineage,
                                   request.damage_type, assigned, actual)
-        recovery = CleaveRecoveryFact(fact, plan.kind,
-            None if isinstance(plan, DistributionTransactionPlan) else assigned,
-            "690094/690095" if isinstance(plan, DistributionTransactionPlan) else None)
+        share_actual = (
+            sum(int(item.actual_loss) for item in losses)
+            if isinstance(plan, DamageShareTransactionPlan)
+            else 0
+        )
+        recovery_basis = actual + share_actual
+        recovery = CleaveRecoveryFact(
+            fact,
+            plan.kind,
+            recovery_basis,
+            "PROJECT_RUNTIME_DEFAULT: distribution external loss excluded"
+            if isinstance(plan, DistributionTransactionPlan)
+            else None,
+        )
         aftermath_port = (
             self._damage_aftermath_port
             or getattr(getattr(context, "systems", None), "damage_aftermath_port", None)
@@ -224,7 +266,11 @@ class CleaveDerivedDamageResolver:
                 target_troops_after=target.troops,
                 target_defeated=death,
                 hit_topology=DamageHitTopology.RESOLVED_HIT,
-                zero_loss_cause=DamageZeroLossCause.SETTLED_ZERO if actual == 0 else None,
+                zero_loss_cause=(
+                    DamageZeroLossCause.WEAKNESS_ZERO
+                    if weakness_zero
+                    else (DamageZeroLossCause.SETTLED_ZERO if actual == 0 else None)
+                ),
             )
             aftermath_port.commit_aftermath(context, aftermath_fact)
         if ReactionPermissionPolicy.can_trigger_recovery(request.source_type):

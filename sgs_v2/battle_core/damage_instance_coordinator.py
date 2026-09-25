@@ -110,6 +110,7 @@ class DamageInstanceCoordinator:
         resolved_damage_callback=None,
         damage_aftermath_port: Any = None,
         defeat_cleanup_port: Any = None,
+        attacker_recovery_system: Any = None,
     ) -> None:
         if not isinstance(damage_system, DamageSystem):
             raise TypeError(
@@ -140,6 +141,7 @@ class DamageInstanceCoordinator:
         self._resolved_damage_callback = resolved_damage_callback
         self._damage_aftermath_port = damage_aftermath_port
         self._defeat_cleanup = defeat_cleanup_port
+        self._attacker_recovery = attacker_recovery_system
         self._active_instances: dict[tuple[int, DamageInstanceId], _ActiveDamageInstanceRecord] = {}
         self._permits: dict[tuple[int, str], _PermitRecord] = {}
         self._damage_resolution.bind_coordinator(self)
@@ -444,6 +446,18 @@ class DamageInstanceCoordinator:
             self._finalization.validate_reaction(context, *admitted_reaction, executing=True)
 
         def finish(execution):
+            # Attacker recovery consumes settled actual loss exactly once per parent
+            # DamageInstance. It runs before derived callback admission and never
+            # turns Share/Distribution direct loss into a second recovery trigger.
+            if self._attacker_recovery is not None:
+                self._attacker_recovery.resolve_parent_damage(
+                    context,
+                    lineage=lineage,
+                    damage_result=execution.damage_result,
+                    resolution=execution.resolution,
+                    partition_plan=execution.partition_plan,
+                    direct_losses=execution.direct_losses,
+                )
             # Forward a resolved fact only. No state lookup, Chain rule, or permit logic.
             callback = resolved_fact_consumer if resolved_fact_consumer is not None else self._resolved_damage_callback
             if callback is not None and not execution.damage_result.prevented:
