@@ -19,7 +19,7 @@
 ## 2. Cross-repository completion baseline
 
     Official States                 = 40
-    Research FROZEN                 = 35
+    Research FROZEN                 = 36
     Runtime FROZEN TO CONTRACT      = 33
     Strict Complete                 = 32
 
