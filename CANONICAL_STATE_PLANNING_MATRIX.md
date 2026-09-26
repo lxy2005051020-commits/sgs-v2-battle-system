@@ -2,7 +2,7 @@
 
 > Status: **CURRENT CROSS-REPO PROJECT AUTHORITY**
 >
-> Reconciled: 2026-09-26
+> Reconciled: 2026-09-27
 >
 > Project Stage and Runtime Maturity authority: this Battle repository.
 >
@@ -84,7 +84,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690221 | 看破 DAMAGE_REDUCTION_PIERCE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | unsupported damage families remain explicit boundary |
 | 690094 | 倒戈 LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | Share assigned-damage basis + double-stage CEIL integrated; B11-FRZ-001 CLOSED |
 | 690095 | 攻心 STRATEGY_LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research strategy_life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | PROJECT-FROZEN MIRROR CONTRACT; shared RecoverySystem second-CEIL owner |
-| 690089 | 洞察 INSIGHT | FROZEN | PARTIAL | NO | Stage12 | Research Wave 4 | Research states/functional/insight/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v0.2-frozen; Freeze Audit PASSED; PD-INS-001/002 frozen; special-state debts preserved |
+| 690089 | 洞察 INSIGHT | FROZEN | PARTIAL | NO | Stage12 | Research Wave 4 | Research states/functional/insight/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v0.3-frozen; original Freeze Audit PASSED; 690109 narrow cross-contract amendment audit PASS; PD-INS-001/002 preserved; 690109 direct overlap now OBSERVED/protected; remaining special-state debts preserved |
 | 690101 | 计穷 EXHAUSTION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/exhaustion/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v0.2-frozen; full-corpus falsification PASS; 23,002 reports / 18,487 EXHAUSTION executions / TRUE_COUNTEREXAMPLE=0; B-EXH-01..05 preserved |
 | 690107 | 伪报 FALSE_REPORT | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/false_report/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0.1-frozen; final falsification + coverage repair PASS; stronger-vs-weaker / unseen immunity / special NPC / untested Equipment subtype debt bounded and non-blocking |
 | 690108 | 挑拨 PROVOCATION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/provocation/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; Round 1–6 + adversarial falsification PASS; final correction audit 20/20 PASS; Q43 restored; bounded unknowns explicit; cfg_71 excluded from state core |
