@@ -140,7 +140,33 @@ Stage12 Runtime 设计必须保持 Admission 与 post-application suppression �
 
 ### 挑拨
 
-应明确它影响的是目标、行动还是其他权限，不与已冻结的嘲讽 / 援护语义混淆。
+当前研究镜像（2026-09-26）：
+
+```text
+Research Campaign: COMPLETE
+Mechanism Contract: v1.0-frozen
+Final Adversarial Falsification: PASS
+Final Contract Correction Audit: PASS
+Freeze Gate: 20 / 20 PASS
+Research Maturity: FROZEN
+Runtime Maturity: NOT_INTEGRATED
+Target Granularity: eligible target-producing operation / query
+Source Legality: frozen with bounded edge cases
+Source Death: State resident, forcing ineffective
+Taunt: Normal Attack domain
+Confusion: target-control pre-emption at observable level
+Insight: admission reject + existing-state suppression
+Exhaustion / FalseReport: cross-state dependencies frozen
+Damage Reduction cfg_71: NOT intrinsic to 690108
+Q43 Source relation change: BOUNDED_UNKNOWN / NO_NATURAL_CASE
+Mandatory Runtime Tests: >= 25
+Next: Stage12 contract-aligned Runtime Design
+```
+
+正式研究权威位于 Research repository 的 `states/control/provocation/MECHANISM_CONTRACT.md`。
+本仓镜像记录：[STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md](STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md)。
+
+Stage12 Runtime 设计必须保持 Resident 与 Effective 分离、Source admissibility、Target Contract taxonomy、Taunt/Confusion/Insight/Exhaustion/FalseReport 边界，并禁止把 Latest-Wins、same-source refresh、具体 TargetSystem/Interceptor owner 或 cfg_71 减伤伪装成 690108 研究事实。
 
 ### 破坏
 
