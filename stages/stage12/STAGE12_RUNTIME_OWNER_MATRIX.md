@@ -44,14 +44,23 @@
 
 ## Design-open items
 
-- exact API names for Stage12 state admission/effectiveness policy;
-- whether Skill Permission and Provider Validity share one policy object or two;
-- minimal equipment-provider runtime abstraction without starting a full equipment subsystem;
-- precise injection points in SkillResolver / TriggerSystem / DamageSystem / RecoverySystem;
-- ProviderValidityPolicy composition and selected Intimidation binding execution semantics;
-- Stage12 RuntimeParams types needed for source/binding/lifetime facts.
+The following remain open after Round 4:
 
-These are architecture decisions, not research questions.
+- DQ-SF-06 Skill Permission API and exact Active admission injection point;
+- DQ-SF-07 preparation interruption port;
+- DQ-SF-09 / 10 target-operation policy and query granularity;
+- DQ-SF-11 minimal equipment-effectiveness runtime abstraction;
+- DQ-SF-12 final RNG signatures / ordering outside the Round 4 candidate and refresh boundaries;
+- DQ-SF-13 public event model;
+- DQ-SF-17 composition-root wiring;
+- DQ-SF-19 Capture composite execution;
+- DQ-SF-21 existing JIT Provider gate migration;
+- DQ-SF-23 queued / in-flight semantics;
+- DQ-SF-26 independent Shared Foundation design audit.
+
+Admission, effectiveness, Provider validity, lifecycle transaction, clock and removal-policy owner names are no longer open architecture questions.
+
+These remaining items are architecture decisions, not new Research questions unless a named contract boundary is explicitly reopened.
 
 ## SF-0 owner qualification — 2026-09-27
 
