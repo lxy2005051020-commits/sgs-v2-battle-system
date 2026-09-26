@@ -24,8 +24,8 @@ Frozen contract:
 Authority pins:
 
 ```text
-Contract commit                    = 5745b34801c2ba9fc7b47c83e1e796635c5c7cce
-Contract blob                      = 3fff99e93cf94bb6d4d82537522c5ed655173634
+Contract commit                    = 5c1382c76bb49bb09444cef807dd758a8a1838b2
+Contract blob                      = 8c93111a6dedaeb84148a3f387b04d16788d74e6
 Question ledger commit             = bb0e4ad31622be608aa3b95ff7bd7b7496e8f5b2
 Question ledger blob               = 574cc0e478235bf37fece0708a7d147bc731e0d4
 Falsification audit commit         = 45534501f072f892f17d5543d678efe734daa882
