@@ -61,3 +61,21 @@ INSIGHT existing-control suppression must include the AR-SF-01 legacy CONFUSION 
 Provider validity must cover RecoveryOpportunitySystem's existing gate, not TriggerSystem alone.
 Capture equipment attributes, ordinary-cleanse resistance, actor/proxy provenance, and queued-work
 boundaries are tracked in DQ-SF-11/19/23/25 and must not disappear from the completed mapping.
+
+
+## SF Round 2 frozen design bindings — 2026-09-27
+
+These rows are DESIGN_FROZEN_FOUNDATION, not GREEN. GREEN still requires implementation and tests.
+
+| Foundation item | Authority | Frozen design binding | Implementation status |
+|---|---|---|---|
+| Insight × existing Confusion | STAGE12_INSIGHT_CONFUSION_AUTHORITY_MIGRATION.md + Insight v0.4 §§3/4/7/8/21/22 | resident Confusion becomes ineffective under effective Insight; timer continues; surviving instance resumes; old P0-CFS-P93-01 claim narrowly superseded | NOT IMPLEMENTED |
+| Skill taxonomy | DQ-SF-04 | SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION; PreparationMode orthogonal; Normal Attack non-skill operation; equipment special separate ProviderCategory | NOT IMPLEMENTED |
+| Skill Provider identity | DQ-SF-05 | SkillProviderRef(owner_id, slot, skill_id); Registry resolves owner+slot and validates expected skill ID | NOT IMPLEMENTED |
+| Equipment Provider identity | DQ-SF-05 / DQ-SF-11 boundary | EquipmentProviderRef(owner_id, provider_key) enters typed ProviderRef union without masquerading as Skill | DESIGN ONLY |
+| Provider enumeration | RD-SF-002 | deterministic slot order 0/1/2 for identity enumeration; no implied Intimidation weighting | NOT IMPLEMENTED |
+| Legacy SkillDefinition classification | RD-SF-001 | compatibility default ACTIVE + PreparationMode.NONE; new Stage12 definitions explicit | NOT IMPLEMENTED |
+| Recovery source gate migration | DQ-SF-21 | slot 0 checked by is-not-None semantics; expected skill mismatch and missing ref explicit; current validity delegated later to DQ-SF-08 | NOT IMPLEMENTED |
+| Intimidation × Insight provenance | AR-SF-02 / DQ-SF-28 | use Intimidation §§5/11 as positive outcome authority; preserve Insight DIRECT_OVERLAP_UNOBSERVED evidence label | DESIGN AUTHORITY CLOSED |
+
+Future mapping work must not move these rows to GREEN until code and discriminating tests exist.
