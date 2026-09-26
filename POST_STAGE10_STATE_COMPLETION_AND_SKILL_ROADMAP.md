@@ -21,7 +21,7 @@ Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 32
+Research FROZEN                 = 34
 Runtime FROZEN TO CONTRACT      = 33
 Strict Complete                 = 32
 ```
@@ -94,7 +94,15 @@ Current state:
 Stage12 Activation Gate: CLEARED
 Stage12 Readiness: READY
 Stage12 Active: NO
+Stage12 Research FROZEN: 2 / 7
+Stage12 Runtime Frozen: 0 / 7
 ```
+
+Research FROZEN:
+- 690089 INSIGHT — v0.2-frozen; Runtime PARTIAL.
+- 690101 EXHAUSTION — v0.2-frozen; full-corpus adversarial audit PASS; Runtime NOT_INTEGRATED.
+
+Research prework is active, but no Stage12 production gameplay implementation is implied by this status.
 
 No Stage12 gameplay implementation is included in this Stage11 freeze.
 
