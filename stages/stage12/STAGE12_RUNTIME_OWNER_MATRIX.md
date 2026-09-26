@@ -49,3 +49,14 @@
 - Stage12 RuntimeParams types needed for source/binding/lifetime facts.
 
 These are architecture decisions, not research questions.
+
+## SF-0 owner qualification — 2026-09-27
+
+Status remains DESIGN INPUT, not COMPLETE or FROZEN.
+The [current capability inventory and gap ledger](STAGE12_SHARED_FOUNDATION_ARCHITECTURE_RECONNAISSANCE.md)
+adds omitted owners: Stage9StateRuntime (Taunt/Insight effective read),
+RecoveryOpportunitySystem (existing JIT source-skill gate), AttributeSystem and modifier-provider
+seams. Stage11ApplicationPolicy is a module of conflict/ingress functions, not a general immunity class.
+Shared effectiveness must migrate/delegate existing Stage9 and Stage11 readers, not duplicate them.
+AR-SF-01 legacy Confusion semantics requires authority disposition first.
+The [28-question ledger](STAGE12_SHARED_FOUNDATION_DESIGN_QUESTION_LEDGER.md) precedes method-level owner freeze.

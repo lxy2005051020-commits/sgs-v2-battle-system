@@ -15,7 +15,7 @@
     Stage12 Research FROZEN: 7 / 7
     Stage12 Runtime Frozen: 0 / 7
 
-这里的 Stage12 Active = YES 指生产 Runtime 阶段尚未正式激活。Research 已经 7 / 7 FROZEN，下一工作是 contract-aligned Runtime Integration Design。研究完成和代码写完终于被当成两件不同的事，世界短暂恢复理智。
+Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate，当前进行 Shared Foundation Architecture Design；不表示七状态已完成 gameplay integration 或 Runtime Freeze。
 
 ## 已冻结研究
 
@@ -140,3 +140,19 @@ Entry authority and architecture records:
 - `stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md`
 
 This activation authorizes Stage12 contract-aligned Runtime Integration Design only. It does not declare any of the seven states Runtime Frozen, does not reopen Stage11, and does not activate Stage13/14/15 gameplay runtimes.
+
+
+## Shared Foundation SF-0 Reconnaissance — 2026-09-27
+
+Architecture reconnaissance is complete with design blockers; Shared Foundation Design is **NOT FROZEN**.
+Current capability inventory, 690089 migration findings and the 20-row gap ledger are in
+[Architecture Reconnaissance](STAGE12_SHARED_FOUNDATION_ARCHITECTURE_RECONNAISSANCE.md).
+The [Design Question Ledger](STAGE12_SHARED_FOUNDATION_DESIGN_QUESTION_LEDGER.md) tracks 28 questions.
+
+AR-SF-01: the frozen legacy Insight × Confusion runtime/test expectation conflicts with current
+Insight v0.4 existing-control suppression. A narrow authority/supersession disposition is required
+before design freeze or migration. Existing gameplay and tests are preserved.
+
+Stage11 Runtime FROZEN / Reopen Required NO in this documentation-only phase; Stage12 Active YES;
+Stage12 Runtime Frozen 0 / 7; Stage13 Active NO; Research FROZEN 39 / 40; DSTS9-B02 OPEN / UNOBSERVED.
+NEXT: DQ-SF-15/16 authority reconciliation, then DQ-SF-04/05 taxonomy and Provider identity design.

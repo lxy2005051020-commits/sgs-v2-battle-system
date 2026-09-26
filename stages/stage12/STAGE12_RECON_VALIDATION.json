@@ -1,0 +1,17 @@
+{
+  "battle_baseline_sha": "0c2983461e4f68a43bcb2851498c975e820592dc",
+  "research_baseline_sha": "e18ae56a4db5662b87458dfa8fdff25dcdd8053b",
+  "baseline_ci": {"run_id": 36260483646, "job_id": 108455212632, "conclusion": "success", "test_step": "success", "demo_step": "success"},
+  "local_pytest": {"command": "python -m pytest -q", "passed": 913, "seconds": 3.37},
+  "local_demo": {"command": "python demo.py", "exit_code": 0, "final_round": 7, "winner": "A"},
+  "slot_zero_probe": {
+    "classification": "CURRENT_RUNTIME_REPRODUCTION_NOT_GAME_MECHANISM_EVIDENCE",
+    "method": "runpy.run_path on tests/test_stage10_phase5_recovery_opportunity_system.py; create_test_context; b1.troops=800; register_mock_skill_runtime(a1, slot, enabled=False, skill_id=sk_recup); make_recuperation_opportunity(source_actor_id=a1,target_actor_id=b1,source_skill_id=sk_recup,recovery_amount=100,probability=1.0,source_skill_slot=slot,source_skill_gate=PersistentSourceSkillGate.query_skill_runtime()); patch.object(context.random,chance,wraps=context.random.chance); systems.recovery_opportunity_system.execute(context,opp)",
+    "results": [
+      {"slot": 0, "executed": true, "reason": null, "rng_calls": 1, "troops": 900},
+      {"slot": 1, "executed": false, "reason": "SKILL_TEMPORARILY_DISABLED", "rng_calls": 0, "troops": 800}
+    ],
+    "production_modified": false,
+    "tests_modified": false
+  }
+}

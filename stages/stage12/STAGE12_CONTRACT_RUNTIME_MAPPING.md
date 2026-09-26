@@ -52,3 +52,12 @@ contract rule identified
 ```
 
 Bounded unknowns that require an engineering choice must be linked to `STAGE12_RUNTIME_DEFAULT_LEDGER.md` and labelled `PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN`.
+
+## SF-0 mapping qualification — 2026-09-27
+
+This remains a skeleton. [Reconnaissance](STAGE12_SHARED_FOUNDATION_ARCHITECTURE_RECONNAISSANCE.md)
+section 2 maps all seven current contracts to rule groups; the method-level completed design is future work.
+INSIGHT existing-control suppression must include the AR-SF-01 legacy CONFUSION discriminator.
+Provider validity must cover RecoveryOpportunitySystem's existing gate, not TriggerSystem alone.
+Capture equipment attributes, ordinary-cleanse resistance, actor/proxy provenance, and queued-work
+boundaries are tracked in DQ-SF-11/19/23/25 and must not disappear from the completed mapping.

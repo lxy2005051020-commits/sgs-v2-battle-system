@@ -254,3 +254,14 @@ Entry Audit demo:
 ```
 
 The publication SHA is the exact governance commit that introduced this audit, the owner/mapping/test skeletons, corrected the Battle-side Insight version mirrors, and activated Stage12 Runtime. The commit contains no Stage12 gameplay implementation.
+
+## K. SF-0 Reconnaissance Correction — 2026-09-27
+
+The historical Entry PASS is retained. Current code reconnaissance corrects section D's
+690089 inventory: Stage9StateRuntime has real Insight-dependent Taunt suppression and resume
+tests, so PARTIAL is not only a storage shell. It still lacks full v0.4 admission/effectiveness.
+A legacy frozen Confusion test forbids the existing-control suppression required by Insight v0.4;
+AR-SF-01 therefore blocks Shared Foundation design freeze pending explicit authority disposition.
+This finding qualifies the earlier no-conflict assessment; green baseline CI does not resolve it.
+See [reconnaissance](STAGE12_SHARED_FOUNDATION_ARCHITECTURE_RECONNAISSANCE.md) sections 2–4.
+No gameplay, test, contract or historical freeze record was changed.
