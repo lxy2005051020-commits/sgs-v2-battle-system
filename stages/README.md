@@ -13,68 +13,80 @@
 - [Stage 7：Trigger / Recovery](stage7/README.md)
 - [Stage 8：Damage Pipeline — FROZEN](stage8/README.md)
 - [Stage 9：Cross-Mechanism Runtime Orchestration — FROZEN](stage9/README.md)
-- [Stage 10：Persistent State Runtime Integration — FROZEN / main integrated](stage10/README.md)
-- [Stage 11：官方状态补全（一）— ACTIVE](stage11/README.md)
-- [Stage 12：官方状态补全（二）— PLANNING ONLY](stage12/README.md)
+- [Stage 10：Persistent State Runtime Integration — FROZEN](stage10/README.md)
+- [Stage 11：官方状态补全（一）— RUNTIME FROZEN / POST-FREEZE ACCEPTED](stage11/README.md)
+- [Stage 12：官方状态补全（二）— RESEARCH IN PROGRESS / PRODUCTION RUNTIME NOT ACTIVE](stage12/README.md)
 
 ## 2. 当前阶段
 
 ```text
 Stage 8  = FROZEN
 Stage 9  = FROZEN
-Stage 10 = FROZEN / MAIN INTEGRATION COMPLETE
-Stage 11 = ACTIVE / RESEARCH CLOSURE + RUNTIME INTEGRATION DESIGN
-Stage 12 = PLANNING ONLY
-Stage 13 = NOT ACTIVE
+Stage10  = FROZEN / MAIN INTEGRATION COMPLETE
+Stage11  = RUNTIME FROZEN / POST-FREEZE ACCEPTED
+Stage12  = ACTIVATION GATE CLEARED / RESEARCH IN PROGRESS / PRODUCTION RUNTIME NOT ACTIVE
+Stage13  = NOT ACTIVE
 ```
-
-Stage10 main integration commit：
-
-`30f623f9efed20b5a82044b51519db1af6da86d3`
 
 ## 3. 当前统一状态数字
 
 ```text
 Official States            = 40
-Research FROZEN            = 31
-Runtime FROZEN TO CONTRACT = 16
-Strict Complete            = 16
+Research FROZEN            = 35
+Runtime FROZEN TO CONTRACT = 33
+Strict Complete            = 32
+
+Stage11 Scope              = 17
+Stage11 Research FROZEN    = 16
+Stage11 Runtime FROZEN     = 17
+
+Stage12 Scope              = 7
+Stage12 Research FROZEN    = 3
+Stage12 Runtime FROZEN     = 0
 ```
 
-Stage11：
+Strict Complete requires both Research FROZEN and Runtime FROZEN TO CONTRACT.
+
+## 4. Stage11 final authority
 
 ```text
-Canonical Scope       = 17
-Research FROZEN       = 15
-Research non-FROZEN/debt = 2
-Runtime FROZEN        = 0
+Runtime Tested SHA         = ce42bc62cfb26f8ca0b448e74b26533604bb0505
+Post-Freeze Acceptance SHA = 5a0a4164e7624c28eae2c7aa28f66061ef3c9313
+Acceptance CI              = 36170063365 / 913 passed / demo PASS
+B11-FRZ-001                = CLOSED
+Stage11 Reopen Required    = NO
 ```
 
-Stage12：
+690086 Distribution remains a research-debt state governed by an explicit project runtime default, so it remains outside Strict Complete.
+
+## 5. Stage12 research snapshot
+
+Research FROZEN:
+
+- 690089 INSIGHT
+- 690101 EXHAUSTION
+- 690107 FALSE_REPORT
+
+Battle research mirrors:
+
+- [690101 EXHAUSTION](stage12/STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md)
+- [690107 FALSE_REPORT](stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md)
+
+Remaining research queue:
 
 ```text
-Canonical Scope = 7
-Status          = PLANNING ONLY
+Wave 4:
+  690108 PROVOCATION
+  690222 INTIMIDATION
+
+Wave 5:
+  690109 SABOTAGE
+  690110 CAPTURE
 ```
 
-## 4. 当前路线 Authority
+Stage12 production Runtime remains inactive. Research Freeze is not Runtime Freeze, because apparently the distinction must be written on every wall before dashboards stop trying to merge the two.
 
-项目级路线：
-
-- [第十阶段后官方状态补全与战法接入总路线](../POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md)
-- [Canonical State Planning Matrix](../CANONICAL_STATE_PLANNING_MATRIX.md)
-- [当前项目状态](../PROJECT_STATUS.md)
-
-Stage 规划：
-
-- [Stage11 Planning](stage11/STAGE11_PLANNING.md)
-- [Stage12 Planning](stage12/STAGE12_PLANNING.md)
-
-Research mechanism authority：
-
-`lxy2005051020-commits/sgs-state-mechanics-research`
-
-## 5. Project Stage 与 Research Wave
+## 6. Project Stage 与 Research Wave
 
 ```text
 Project Stage11
@@ -93,54 +105,14 @@ Project Stage15 = 准备战法
 
 Research Wave 是研究顺序，不得覆盖项目阶段编号。
 
-## 6. 当前 Stage11 Research FROZEN
+## 7. Current next action
 
 ```text
-690082 规避
-690083 抵御
-690092 必中
-690093 破阵
-690070 会心
-690069 奇谋
-690094 倒戈
-690095 攻心
-690090 先攻
-690091 遇袭
-690102 缴械
-690104 虚弱
-690105 禁疗
-690111 震慑
-690221 看破
+Continue Stage12 Research Wave 4
+→ 690108 PROVOCATION
+→ Mechanism Contract
+→ Freeze Audit
+→ Research FROZEN
 ```
 
-这 15 个 Stage11 Research-FROZEN 状态 Runtime 均未 FROZEN TO CONTRACT，因此不增加 Strict Complete。
-
-## 7. Stage11 特殊开放项
-
-```text
-690099 警戒 = EVIDENCE BLOCKED / DEFERRED
-690221 看破 = RESEARCH FROZEN / Runtime NOT_INTEGRATED
-690086 分摊 = DSTS9-B02 empirical research debt
-```
-
-Evidence blockage 不等于改变 Project Stage ownership。
-
-## 8. 当前下一动作
-
-```text
-Research closure
-↓
-Mechanism Contract
-↓
-Runtime Integration Design
-↓
-Independent Design Audit
-↓
-Design Freeze
-↓
-Implementation
-```
-
-已经 Research FROZEN 的状态可以进入 Runtime Integration Design，但 Stage11 整体 production implementation 尚未授权。
-
-Stage11 Exit Gate 满足前，不进入 Stage12 Active 或 Stage13 Skill Runtime。
+Stage12 Runtime design work for already frozen states may be prepared only under the frozen research contracts and current production-activation governance.
