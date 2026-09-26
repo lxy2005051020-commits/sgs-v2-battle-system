@@ -8,6 +8,7 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 - CLOSED_BY_EXISTING_ARCHITECTURE: existing canonical owner resolves the stated question.
 - DESIGN_REQUIRED: evidence is sufficient, but interface/composition decision remains.
 - CONTRACT_DEPENDENT: bounded or external contract boundary must be preserved/qualified.
+- CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED: the shared architecture is frozen, while named mechanism-specific evidence boundaries remain explicitly bounded/unsupported.
 - BLOCKED: a concrete incompatible authority prevents closure without explicit resolution.
 - CLOSED_BY_AUTHORITY_MIGRATION: a later canonical authority explicitly supersedes the conflicting historical rule.
 - CLOSED_BY_SCOPED_SUPERSESSION: the exact affected historical scope is named and unaffected frozen scope is preserved.
@@ -18,7 +19,7 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 
 | ID | Question / evidence | Status | Candidate owner and required next decision | Dependencies / acceptance discriminator |
 |---|---|---|---|---|
-| DQ-SF-01 | Who admits incoming state? Lifecycle.apply mutates, Stage11 policy only checks conflict | DESIGN_REQUIRED | State admission policy queried by Lifecycle; define validation vs immunity vs conflict order; mutation only Lifecycle | 02,03,14,22; rejection changes no old instance/timer and emits no applied/removed pair; source RNG preserved |
+| DQ-SF-01 | Who admits incoming state? Lifecycle.apply mutates, Stage11 policy only checks conflict | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `StateAdmissionPolicy.evaluate_candidate` is the pure target-admission owner. Source RNG/candidate generation precedes admission; admission precedes contract-relevant conflict; Lifecycle remains the only writer. | 02,03,14,22; typed rejection allocates no generation, changes no old instance/timer/binding, emits no applied/removed pair and does not abort legal sibling effects |
 | DQ-SF-02 | Who answers effective state across Stage9/11/12? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `StateEffectivenessPolicy` is the single canonical owner for current gameplay authority of a resident state. Registry remains storage; Lifecycle remains writer; Stage9/11 delegate shared truth while retaining domain arbitration. | 05,08,15,20; suppressed Insight cannot suppress protected controls; removed instances are not query results |
 | DQ-SF-03 | How represent Resident / Effective / Suppressed / Removed? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Residency is a Registry fact; `StateEffectivenessDecision` is returned only for resident instances and distinguishes EFFECTIVE / SUPPRESSED / INACTIVE with stable typed blockers. Removal is absence from Registry, never a decision status. | 02,08; independent causes compose; final cause removal resumes only still-live instances; suppression never pauses lifecycle by default |
 | DQ-SF-04 | Minimal SkillType, preparation characteristic, and ProviderCategory? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | SkillDefinition metadata: SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION + PreparationMode NONE/REQUIRED; PREPARATION_ACTIVE = ACTIVE+REQUIRED; NORMAL_ATTACK remains operation; equipment special remains separate ProviderCategory | See STAGE12_SKILLTYPE_PROVIDER_IDENTITY_DESIGN.md; legacy compatibility default RD-SF-001; no execution chain |
@@ -44,10 +45,10 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 | DQ-SF-19 | Capture composite action/damage/recovery/target permission | DESIGN_REQUIRED | ActionSystem, DamageSystem stack, RecoverySystem, target policy, ProviderValidityPolicy own separate decisions; decide result topology and concurrent reason reporting | Counter blocked vs attached Active DOT continues; free proxy actor remains legal; friendly single/2-target excluded; self recovery arrives but zero; equipment attributes only proven scope |
 | DQ-SF-20 | Cyclic dependencies and immediate transitions | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Evaluation uses an explicit consumer→prerequisite dependency graph with per-evaluation memoization and cycle detection. `EffectivenessTransitionCoordinator` is a non-authoritative propagation coordinator. Cycles are unsupported: raise `DependencyCycleError`, produce no guessed allow/deny truth, and require topology validation before committing dependency-changing transitions. | No fixed point; reverse dependency closure drives synchronous re-evaluation; cycle path explicit; no replay; no Runtime Default needed because no gameplay fallback is chosen |
 | DQ-SF-21 | Existing JIT source-gate migration and slot 0 | DESIGN_REQUIRED | Identity obligation is fixed by DQ-SF-05: explicit slot is-not-None, expected skill ID validation, missing/mismatch distinction; implementation must delegate current effectiveness to ProviderValidityPolicy | INHERENT=0 lookup, mismatch, missing, suppression and no-RNG rejection remain implementation discriminators |
-| DQ-SF-22 | Application result, refresh transaction, binding atomicity | DESIGN_REQUIRED | Lifecycle sole physical writer; admission/conflict decisions pure where possible; binding resolver consumes RNG only after allowed path | No half-released old binding on failure; refresh selects one, resume preserves binding; direct refresh cannot bypass policy; old API ValueError vs rejected outcome adapter explicit |
+| DQ-SF-22 | Application result, refresh transaction, binding atomicity | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `StateConflictPolicy` + immutable `StateApplicationTransaction` + non-writing coordinator prepare CREATE/REFRESH/REPLACE/REJECT; only Lifecycle commits. REFRESH keeps instance_id and creates a new application generation. | All fallible validation precedes commit; old Intimidation binding/timer stay authoritative until commit; resume preserves binding/generation/timer; legacy ValueError surface retained for old callers |
 | DQ-SF-23 | Admitted/queued work vs JIT recheck | CONTRACT_DEPENDENT | Owning operation + execution-right system preserve admission identity; distinguish new operation from continuation | Exhaustion in-flight Active no rollback; Stage9 Counter admitted-entry invariant; Capture Q16/Q44/Q45 and Sabotage B-SAB-07 remain bounded until default/authority disposition |
-| DQ-SF-24 | Clock continuation during suppression | DESIGN_REQUIRED | Lifecycle physical mutation; explicit clock semantics and Stage11 maintenance delegation; never route all Stage12 durations through Stage10 detector | STUN block counter versus lifetime; FalseReport representative holder-action timeline; Intimidation suspended expiry; no clock pause; incompatible legacy expectation triggers scoped review |
-| DQ-SF-25 | Cleanse eligibility, strength, reapplication and source death | CONTRACT_DEPENDENT | Removal-selection policy separate from Lifecycle.remove primitive; per-contract inputs; source-dependent flags cannot be universal | Capture ordinary cleanse resistant; Intimidation tested generic removal fails, specialized unknown; FR/SAB equal no refresh; Capture/Provocation/Intimidation multi-source labels preserved |
+| DQ-SF-24 | Clock continuation during suppression | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `StateLifecycleSystem` owns physical lifetime; explicit clock domains separate round/holder-action/phase lifetime from behavioral block/use counters and provider/source counters. Stage12 uses typed lifetime metadata instead of entering Stage10 merely via duration_rounds/lifecycle_window. | suppression never pauses physical lifetime; STUN block consumption requires an actually blocked opportunity; Intimidation may expire while ineffective; RD-SF-003 fixes same-envelope settlement ordering |
+| DQ-SF-25 | Cleanse eligibility, strength, reapplication and source death | CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED | `StateRemovalPolicy.evaluate_removal` owns gameplay removal eligibility; `StateLifecycleSystem.remove` remains the authorized physical primitive. Natural expiry/defeat/teardown are infrastructure, not ordinary cleanse. | Capture ordinary cleanse rejected; Intimidation generic cleanse rejected but specialized removal bounded; FR/SAB removal classes stay evidence-scoped; source death never implies global cleanup; reapplication unknowns remain unsupported, not invented |
 | DQ-SF-26 | Design Freeze audit owner and gate | DESIGN_REQUIRED | Independent audit after full design, with seven contracts, concrete API mapping, defaults, tests and risk register; no freeze audit claim in SF-0 | 17 requested audit checks; no blocking owner/conflict, no Stage13+ leakage; architecture freeze distinct from 0/7 Runtime |
 | DQ-SF-27 | Physical state write and RNG service ownership | CLOSED_BY_EXISTING_ARCHITECTURE | StateLifecycleSystem writes; StateRegistry stores; BattleContext.random is sole random source; EventBus records | Consumers delegate/query; no second lifecycle, no direct random.*, no permission decisions in event handlers |
 | DQ-SF-28 | Intimidation × Insight evidence labels across contracts | CLOSED_BY_PROVENANCE_QUALIFICATION | Runtime uses Intimidation §§5,11 as positive authority while Insight retains SPECIAL_CASE_SUPPORTED / DIRECT_OVERLAP_UNOBSERVED provenance; Research files are not rewritten | Ordinary Insight non-rejection is usable without falsely claiming direct Insight-corpus observation |
@@ -150,3 +151,45 @@ Frozen design facts:
 Shared Foundation Design Freeze remains NOT YET.
 Stage12 Runtime Frozen remains 0 / 7.
 Stage13 Active remains NO.
+
+## 6. SF Round 4 closure — State Admission / Lifecycle Transaction / Clock / Removal
+
+Authority record: [STAGE12_STATE_LIFECYCLE_TRANSACTION_DESIGN.md](STAGE12_STATE_LIFECYCLE_TRANSACTION_DESIGN.md)
+
+Closed/frozen in `STAGE12_SF_ROUND4_STATE_LIFECYCLE_TRANSACTION_DESIGN`:
+
+- DQ-SF-01 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+- DQ-SF-22 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+- DQ-SF-24 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+- DQ-SF-25 = CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED.
+
+Frozen shared facts:
+
+1. `StateAdmissionPolicy` is the sole pure admission owner; source candidate-generation RNG precedes it.
+2. Admission precedes contract-relevant same-state conflict. A rejected candidate has zero physical side effects.
+3. `StateConflictPolicy` may return CREATE / REFRESH / REPLACE / REJECT_CONFLICT / UNSUPPORTED_BOUNDARY; same-state does not universally mean refresh.
+4. REFRESH preserves physical `instance_id` but advances to a new `application_generation_id`.
+5. Intimidation's old binding remains authoritative until a successful refresh commit; resume never rerolls.
+6. `StateLifecycleSystem` remains the only physical writer and physical clock owner.
+7. Stage12 lifetime metadata must not enter Stage10 persistence merely because a duration exists.
+8. suppression does not pause physical lifetime, while behavioral block/use counters consume only their actual qualifying opportunities.
+9. `StateRemovalPolicy` owns gameplay removal eligibility; cleanse resistance is not hidden inside `Lifecycle.remove()`.
+10. source death is not a global state-removal operation.
+11. RD-SF-003 freezes the project-only same-envelope expiry/removal settlement order.
+12. no Stage12 gameplay implementation was authorized.
+
+Current 28-question disposition after Round 4:
+
+- 12 DESIGN_REQUIRED
+- 2 CONTRACT_DEPENDENT
+- 1 CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED
+- 0 BLOCKED
+- 1 CLOSED_BY_EXISTING_ARCHITECTURE
+- 9 CLOSED_BY_SHARED_FOUNDATION_DESIGN
+- 1 CLOSED_BY_AUTHORITY_MIGRATION
+- 1 CLOSED_BY_SCOPED_SUPERSESSION
+- 1 CLOSED_BY_PROVENANCE_QUALIFICATION
+
+Shared Foundation Design Freeze remains **NOT PASSED**.
+
+NEXT: DQ-SF-06 / DQ-SF-07 / DQ-SF-21 — Skill Permission + Preparation Interruption + Existing JIT Provider Gate Migration.
