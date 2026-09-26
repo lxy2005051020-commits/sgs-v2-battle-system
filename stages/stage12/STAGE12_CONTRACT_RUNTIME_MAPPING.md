@@ -109,3 +109,47 @@ These bindings are `DESIGN_FROZEN_FOUNDATION`, not GREEN.
 | RecoveryOpportunitySystem JIT source skill gate | future DQ-SF-21 implementation resolves SkillProviderRef then delegates current validity to ProviderValidityPolicy before RNG |
 
 No row is GREEN until production code and discriminating tests exist.
+
+## SF Round 4 frozen lifecycle bindings — admission / transaction / clock / removal
+
+These rows are `DESIGN_FROZEN_FOUNDATION`, not GREEN.
+
+| State | Admission | Conflict / Refresh | Clock | Removal / Cleanse |
+|---|---|---|---|---|
+| INSIGHT | effective Insight is the admission blocker for protected incoming states; candidate rejection precedes their conflict path | PD-INS-002 rejects every incoming Insight while a canonical instance is PRESENT, including SUPPRESSED; no refresh/replace/backup | source-defined holder lifecycle; suppression never pauses | expiry/removal through Lifecycle; surviving protected controls re-evaluate after commit |
+| EXHAUSTION | effective Insight rejects incoming Exhaustion | no universal reapplication rule added in Round 4 | physical lifetime continues while suppressed; skill-permission behavior remains DQ-SF-06 | evidence/source-lifecycle scoped; no new cleanse generalization |
+| FALSE_REPORT | ordinary Insight does not reject; tested special protection may reject | equal-strength same/different-source reapply rejected with no refresh; stronger/weaker remains unsupported bounded | holder-relative action lifecycle | tested cleanse classes allowed; untested classes bounded; source death does not remove |
+| PROVOCATION | effective Insight rejects incoming Provocation | multi-source/same-source reapply remains unsupported bounded | own resident lifetime continues when Source is inadmissible | Source death does not remove; normal later lifecycle ends state |
+| INTIMIDATION | special protection resolves before Provider selection; ordinary Insight does not reject | successful supported repeat = REFRESH, same instance + new generation + newly selected binding; resume preserves binding/timer; multisource bounded | observed 1-round source scope; lifetime continues while ineffective | tested generic cleanse rejected; specialized removal bounded; expiry terminates state + binding |
+| SABOTAGE | effective Insight / tested special protection reject before conflict | observed equal-or-stronger conflict rejects incoming; stronger different-source replacement remains bounded | physical lifetime continues under suppression | natural expiry + observed cleanse path supported; unseen removal classes bounded |
+| CAPTURE | effective Insight does not reject verified Capture | state-core reapply/multisource Q70-Q74 remains unsupported; source skill owns alternate branch | verified provider supplies 2-round lifetime, not a universal State Core constant | ordinary cleanse rejected; source death does not remove established Capture |
+
+### Shared transaction binding
+
+```text
+Candidate Generated
+→ StateAdmissionPolicy
+→ StateConflictPolicy
+→ immutable StateApplicationTransaction
+→ validate topology / preconditions
+→ transaction-authorized RNG only
+→ StateLifecycleSystem one physical commit
+→ EffectivenessTransitionCoordinator affected closure
+→ domain transition ports
+→ committed observable facts
+```
+
+Generation rule:
+
+- CREATE: new instance + new generation.
+- REFRESH: same instance + new generation.
+- REPLACE: new instance + new generation.
+- REJECT: no candidate generation allocation and no mutation.
+
+Removal rule:
+
+- StateRemovalPolicy governs gameplay cleanse/removal selection.
+- NATURAL_EXPIRY / OWNER_DEFEAT_CLEANUP / BATTLE_TEARDOWN are lifecycle infrastructure.
+- source death is not a universal removal category.
+
+RD-SF-003 fixes same-envelope due-removal batching before effectiveness/provider resume recomputation.
