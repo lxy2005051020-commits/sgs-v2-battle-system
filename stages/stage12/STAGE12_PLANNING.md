@@ -1,12 +1,12 @@
 # 第十二阶段规划 · 官方状态补全（二）
 
-> 状态：**RESEARCH IN PROGRESS / PRODUCTION RUNTIME NOT ACTIVE**  
+> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME NOT ACTIVE**  
 > Canonical Scope：**7 states**  
 > Project Stage ownership：Stage12  
 > Research mapping：Wave 4 + Wave 5；研究波次只是执行顺序，不是 Project Stage13/14。  
 > Canonical authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 
-> 状态：Research Wave 4 已启动；Stage12 production Runtime 尚未激活  
+> 状态：Research Wave 4 / 5 已全部完成；Stage12 production Runtime 尚未激活  
 > 目标：完成剩余复杂控制状态并收口官方 40 状态
 
 ## 1. 阶段责任
@@ -170,11 +170,40 @@ Stage12 Runtime 设计必须保持 Resident 与 Effective 分离、Source admiss
 
 ### 破坏
 
-如确实涉及装备能力，应只建立满足该状态所需的最小装备权限基础，不提前建设完整装备系统。
+当前研究镜像（2026-09-27）：
+
+Research Campaign: COMPLETE
+Mechanism Contract: v1.0-frozen
+Freeze Audit: PASS
+Research Maturity: FROZEN
+Runtime Maturity: NOT_INTEGRATED
+Next: Stage12 contract-aligned Runtime Design
+
+正式研究权威位于 Research repository 的 states/control/sabotage/MECHANISM_CONTRACT.md。
 
 ### 捕获
 
-如果是复合控制，应通过统一权限组合行动、伤害、技能、恢复、目标等事实，不复制多个系统逻辑。
+当前研究镜像（2026-09-27）：
+
+Research Campaign: COMPLETE
+Mechanism Contract: v1.0-frozen
+Final Adversarial Falsification: PASS
+Independent Freeze Audit: PASS
+Research Maturity: FROZEN
+Runtime Maturity: NOT_INTEGRATED
+Counterattack: no damage
+Previously attached Active-origin DOT: continues
+Insight × Capture: Insight does not block verified Capture
+Restoration: RST1 RESUME
+Missed Trigger Replay: NO / FUTURE ONLY
+Source Death: applied Capture continues
+Q70-Q74: SOURCE_SKILL_BOUNDED_UNKNOWN
+Next: Stage12 contract-aligned Runtime Design
+
+正式研究权威位于 Research repository 的 states/control/capture/MECHANISM_CONTRACT.md。
+本仓镜像记录：[STAGE12_690110_CAPTURE_RESEARCH_SYNC.md](STAGE12_690110_CAPTURE_RESEARCH_SYNC.md)。
+
+Stage12 Runtime 设计必须保持 690110 State Core 与 20228【暗箭难防】来源战法分支严格分离；不得把已有捕获时的痛击替代分支、概率与目标选择塞进状态本体。
 
 ### 威慑
 
@@ -203,6 +232,12 @@ Next: Stage12 contract-aligned Runtime Design
 本仓镜像记录：[STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md](STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)。
 
 Stage12 Runtime 设计必须保持单一技能绑定、Provider 级压制、Refresh 与 Resume 分离、暂停期间寿命继续、Insight/Gangyi/清除边界，以及 State Core 与【承天靖世】来源战法计数语义的隔离。不得把 uniform RNG、全局不可净化、未来来源门控、多来源覆盖等未证实规则写死。
+
+## 5.1 Research completion gate
+
+Stage12 Research = 7 / 7 FROZEN.
+
+Research phase is complete. The next owner is contract-aligned Runtime Integration Design; no Stage13 skill runtime is activated by this milestone.
 
 ## 6. 第十一阶段输入
 
