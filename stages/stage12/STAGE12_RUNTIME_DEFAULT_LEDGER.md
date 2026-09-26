@@ -98,3 +98,50 @@ Round 3 deliberately avoids three fake defaults:
 3. Source death has no universal Provider/state invalidation default. A liveness dependency exists only when a contract/runtime record explicitly declares it.
 
 Therefore RD-SF-001 and RD-SF-002 remain the only Shared Foundation Runtime Defaults after Round 3.
+
+## RD-SF-003 — Same-envelope lifecycle settlement ordering
+
+Mechanism: Shared State Lifecycle / Effectiveness Transition  
+Question: If a state and one of its suppression sources are both due to leave in the same lifecycle envelope, does Runtime expose a transient resume before the due state is removed?
+
+Research status: Insight freezes only the observable boundary that expiry / suppression-source removal settles before later behavior depending on the resulting privilege. It does not prove hidden function-level micro-order for two states due in the same envelope.
+
+Why Runtime must decide: transaction/transition architecture needs a deterministic order and must avoid a due-to-expire state briefly regaining gameplay authority merely because its suppressor is removed first.
+
+Chosen Runtime default:
+
+1. Snapshot the complete set of states due for physical expiry/removal at the current lifecycle settlement envelope.
+2. Commit that due-removal set in deterministic `instance_id` order.
+3. Only after the due-removal batch is complete, recompute the affected StateEffectiveness / ProviderValidity dependency closure.
+4. Invoke synchronous transition ports and permit later gameplay behavior.
+5. A state included in the due-removal snapshot cannot emit/own a transient resume in that envelope.
+
+Scope:
+
+- same-envelope lifecycle settlement ordering only;
+- does not change a contract's duration;
+- does not define server-internal call order;
+- does not authorize removal classes that a contract leaves bounded;
+- deterministic `instance_id` ordering is a project serialization/observation choice, not original-game evidence.
+
+Evidence classification:
+
+`PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN`
+
+Reopen trigger:
+
+- model-separating evidence proves an observable transient resume in this exact same-envelope case;
+- a later authoritative lifecycle contract freezes another externally visible order.
+
+Required tests:
+
+- state and suppressor both due in same envelope -> due state never transiently resumes;
+- suppressor due but state remains live -> state resumes after due-removal batch;
+- multiple due states settle deterministically without replay;
+- no later gameplay behavior observes a pre-settlement privilege.
+
+## SF Round 4 default disposition — 2026-09-27
+
+New Runtime Defaults added: **RD-SF-003 only**.
+
+No defaults are added for Provocation/Capture reapplication, Intimidation specialized removal/source death, FalseReport stronger/weaker conflict, Sabotage stronger different-source replacement, or unknown cleanse classes. Those remain explicit bounded/unsupported contract edges.
