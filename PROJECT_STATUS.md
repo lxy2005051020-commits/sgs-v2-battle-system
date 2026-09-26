@@ -1,108 +1,106 @@
 # 三国志战略版战斗模拟器 V2 · 当前项目状态
 
-> Current governance snapshot: 2026-09-26.
+> Current governance snapshot: **2026-09-26**
 
-## 1. Completed stages
+## 1. Completed runtime stages
 
-```text
-Stage 1  基础运行模型                           ✅
-Stage 2  BattleSystem                          ✅ FROZEN
-Stage 3  BattleState                           ✅
-Stage 4  官方状态代表接入                       ✅ FROZEN（工程阶段）
-Stage 5  Effect                                ✅ FROZEN
-Stage 6  Skill Runtime                         ✅ FROZEN（基础能力）
-Stage 7  Trigger / Recovery                    ✅ FROZEN
-Stage 8  Damage Pipeline                       ✅ FROZEN
-Stage 9  Cross-Mechanism Runtime Orchestration ✅ FROZEN
-Stage10 Persistent State Runtime Integration  ✅ FROZEN
-Stage11 State Runtime Integration             ✅ FROZEN
-```
+    Stage 1  基础运行模型                           COMPLETE
+    Stage 2  BattleSystem                          FROZEN
+    Stage 3  BattleState                           COMPLETE
+    Stage 4  官方状态代表接入                       FROZEN
+    Stage 5  Effect                                FROZEN
+    Stage 6  Skill Runtime 基础                     FROZEN
+    Stage 7  Trigger / Recovery                    FROZEN
+    Stage 8  Damage Pipeline                       FROZEN
+    Stage 9  Cross-Mechanism Runtime Orchestration FROZEN
+    Stage10 Persistent State Runtime Integration   FROZEN
+    Stage11 State Runtime Integration              FROZEN / POST-FREEZE ACCEPTED
 
 ## 2. Cross-repository completion baseline
 
-```text
-Official States                 = 40
-Research FROZEN                 = 32
-Runtime FROZEN TO CONTRACT      = 33
-Strict Complete                 = 32
-```
+    Official States                 = 40
+    Research FROZEN                 = 34
+    Runtime FROZEN TO CONTRACT      = 33
+    Strict Complete                 = 32
 
-Stage11 contributes 17 Runtime-FROZEN states. Sixteen are also Research FROZEN; 690086 Distribution remains governed by explicit research debt / project runtime default and therefore does not increase Strict Complete.
+Strict Complete requires both research freeze and runtime freeze to contract.
 
-## 3. Stage11 · RUNTIME FROZEN
+## 3. Stage11 final authority
 
-Canonical scope = 17:
+    Runtime Tested SHA             = ce42bc62cfb26f8ca0b448e74b26533604bb0505
+    Freeze Declaration SHA         = 8cde73ce15c8d02a70b3e0913efbfc5a2887e92b
+    Post-Freeze Acceptance SHA     = 5a0a4164e7624c28eae2c7aa28f66061ef3c9313
+    Acceptance CI                  = 36170063365
+    pytest                         = 913 passed / 0 failed / 0 skipped / 0 xfailed
+    demo                           = PASS
+    B11-FRZ-001                    = CLOSED
+    Stage11 Runtime               = FROZEN
+    Stage11 Reopen Required        = NO
 
-`690086, 690090, 690091, 690102, 690104, 690105, 690111, 690082, 690083, 690092, 690093, 690099, 690070, 690069, 690221, 690094, 690095`.
+690086 Distribution remains a research-debt state governed at runtime by an explicit project default, so it does not count as Strict Complete.
 
-Verified freeze snapshot:
+## 4. Stage12
 
-```text
-Runtime Tested SHA = ce42bc62cfb26f8ca0b448e74b26533604bb0505
-Research authority = 80c4a9dd435b7ec1ed1baed1a957310159c1232a
-CI run             = 36166160197 / success
-pytest             = 913 passed / 0 failed / 0 skipped / 0 xfailed
-demo smoke         = PASS
-B11-FRZ-001        = CLOSED
-Stage11 Runtime    = FROZEN
-```
+Canonical scope:
 
-Recovery modifier settlement is canonical:
+    690089 INSIGHT
+    690101 EXHAUSTION
+    690107 FALSE_REPORT
+    690108 PROVOCATION
+    690109 SABOTAGE
+    690110 CAPTURE
+    690222 INTIMIDATION
 
-```text
-BaseRecovery     = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
-ModifiedRecovery = CEIL(BaseRecovery × EffectiveRecoveryModifier)
-→ HealingBlock
-→ Recovery Capacity
-```
+Governance:
 
-The first CEIL is owned by `Stage11AttackerRecoverySystem`; the second CEIL and recovery settlement are owned by `RecoverySystem`. The 13-vs-12 discriminator is green.
+    Stage12 Activation Gate: CLEARED
+    Stage12 Readiness: READY
+    Stage12 Active: NO
 
-## 4. Post-Freeze Final Acceptance
+    Research Wave 4: IN PROGRESS
+    Research FROZEN: 2 / 7
+    Runtime Frozen: 0 / 7
 
-```text
-Stage11 Post-Freeze Acceptance = PASS
-Stage11 Runtime Freeze         = CONFIRMED
-Stage11 Reopen Required        = NO
-Post-Freeze Acceptance SHA     = 5a0a4164e7624c28eae2c7aa28f66061ef3c9313
-Acceptance CI run              = 36170063365 / success
-pytest                         = 913 passed / 0 failed / 0 skipped / 0 xfailed
-demo smoke                     = PASS
-Research acceptance mirror     = 9ad990da544ad87047e74a664cc1984f890bb274
-Stage12 Activation Gate        = CLEARED
-```
+The Active = NO flag refers to production Stage12 Runtime activation. Mechanism research is already progressing.
 
-The post-freeze acceptance is a confirmation layer on top of the original Runtime Freeze. It does not alter the Runtime Tested SHA or Freeze Declaration SHA, and it does not erase residual research debt.
+### 690089 INSIGHT
 
-## 5. Preserved Stage11 research debt
+    Research: FROZEN
+    Contract: v0.2-frozen
+    Runtime: PARTIAL / NOT FROZEN
+    Next: contract-aligned Runtime Design
 
-- 690086 Distribution / DSTS9-B02 remains empirical OPEN / UNOBSERVED and runtime-closed by explicit project default.
-- Distribution × LifeSteal participant-loss extension is not inherited from Share.
-- ALERT retains threshold equality / generic threshold / positive integerization / holder-death / Share micro-order debt.
-- CRITICAL / STRATEGY_CRITICAL retain bounded micro-read / latch timing debt.
-- DISARM reflected/proxy admission remains bounded.
-- 690221 unsupported damage families remain explicit boundary violations.
-- generic partial recovery reduction remains unobserved.
+### 690101 EXHAUSTION
 
-## 6. Stage12 · READY, NOT ACTIVE
+    Research: FROZEN
+    Contract: v0.2-frozen
+    Adversarial Falsification: PASS
+    Freeze Audit: PASS
+    Structured Reports: 23,002
+    Observed EXHAUSTION Executions: 18,487
+    True Counterexamples: 0
+    Runtime: NOT_INTEGRATED
+    Next: contract-aligned Runtime Design
 
-Stage12 canonical scope remains 7:
+Battle-side mirror:
+[stages/stage12/STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md](stages/stage12/STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md)
 
-`690089, 690101, 690107, 690108, 690109, 690110, 690222`.
+## 5. Remaining Stage12 research
 
-```text
-Stage12 Activation Gate: CLEARED
-Stage12 Readiness: READY
-Stage12 Active: NO
-```
+Wave 4:
+- 690107 FALSE_REPORT
+- 690108 PROVOCATION
+- 690222 INTIMIDATION
 
-This Stage11 freeze does not start Stage12 gameplay implementation.
+Wave 5:
+- 690109 SABOTAGE
+- 690110 CAPTURE
 
-## 7. Stage13+
+## 6. Later stages
 
-```text
-Stage13 = 突击战法运行时
-Stage14 = 普通主动战法
-Stage15 = 准备战法
-Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
-```
+    Stage13 = 突击战法运行时
+    Stage14 = 普通主动战法
+    Stage15 = 准备战法
+    Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
+
+Stage13 is not activated.
