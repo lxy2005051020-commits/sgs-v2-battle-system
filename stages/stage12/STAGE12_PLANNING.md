@@ -113,7 +113,30 @@ Next: Stage12 contract-aligned Runtime Design
 
 ### 伪报
 
-必须先研究其正式作用范围，再由对应权限系统解释，禁止凭状态名称猜测。
+当前研究镜像（2026-09-26）：
+
+```text
+Research Campaign: COMPLETE
+Mechanism Contract: v1.0.1-frozen
+Final Adversarial Falsification: PASS
+Coverage Repair: PASS
+Research Maturity: FROZEN
+Runtime Maturity: NOT_INTEGRATED
+Core Suppression: PASSIVE / COMMAND
+Tested persistent Equipment Specials: separately confirmed suppressible
+Provider Ownership: FROZEN for tested ongoing categories
+Equal-strength Reapply: NO-OP / no refresh
+Cleanse: confirmed for tested removal mechanics
+Cross-State Core Permissions: frozen
+Stronger-vs-Weaker FalseReport: BOUNDED_UNKNOWN
+Mandatory Runtime Tests: >= 30
+Next: Stage12 contract-aligned Runtime Design
+```
+
+正式研究权威位于 Research repository 的 `states/control/false_report/MECHANISM_CONTRACT.md`。
+本仓镜像记录：[STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md](STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md)。
+
+Stage12 Runtime 设计必须保持 Admission 与 post-application suppression 分层、Provider 与 Holder 分离、其它行动权限正交，并禁止把 Equipment 内部类型猜测或 stronger-vs-weaker 默认值伪装成研究事实。
 
 ### 挑拨
 
