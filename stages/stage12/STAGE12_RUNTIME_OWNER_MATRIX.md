@@ -8,8 +8,12 @@
 |---|---|---|---|---|
 | State physical storage | StateRegistry | StateRegistry | all 7 | REUSE |
 | State lifecycle mutation | StateLifecycleSystem | StateLifecycleSystem | all 7 | REUSE / EXTEND |
+| State physical lifetime clock | mixed Stage10/11 mechanisms | `StateLifecycleSystem` with explicit clock domains / typed Stage12 lifetime metadata | all 7 | DESIGN FIXED / FUTURE EXTEND |
 | Resident/effective interpretation | Stage9/Stage11 local readers | `StateEffectivenessPolicy` | all resident states requiring current authority | NEW CANONICAL SHARED OWNER; Stage9/11 DELEGATE |
-| State admission / immunity | Stage11-specific application policy only | Stage12 admission policy seam invoked by lifecycle | INSIGHT + protected/special boundaries | NEW MINIMAL OWNER |
+| State admission / immunity | Stage11-specific application policy only | `StateAdmissionPolicy` pure decision owner, invoked before state conflict | INSIGHT + protected/special boundaries | NEW CANONICAL SHARED OWNER |
+| State conflict / reapplication | mixed rules inside Lifecycle/application modules | `StateConflictPolicy` pure per-contract decision owner | all 7 | NEW CANONICAL SHARED OWNER |
+| State application transaction orchestration | implicit inside Lifecycle.apply | `StateApplicationCoordinator` prepares immutable transaction; `StateLifecycleSystem` alone commits | all 7 | NEW NON-WRITING COORDINATOR |
+| State removal / cleanse eligibility | no shared canonical owner | `StateRemovalPolicy` pure gameplay-removal eligibility owner; Lifecycle keeps physical remove primitive | all 7 | NEW CANONICAL SHARED OWNER |
 | Natural action admission | ActionSystem | ActionSystem | CAPTURE | EXTEND |
 | Normal attack permission | NormalAttackSystem | NormalAttackSystem | EXHAUSTION negative discriminator; Capture action interaction | REUSE |
 | Skill identity / slots | SkillRuntime + SkillRuntimeRegistry | same registry + frozen SkillProviderRef(owner_id, slot, skill_id) identity | EXHAUSTION, FALSE_REPORT, INTIMIDATION, CAPTURE | REUSE / DESIGN FIXED |
@@ -109,5 +113,38 @@ Owner invariants:
 - Shared policies never mutate `SkillRuntime.enabled` or state runtime params to represent transient suppression.
 - Explicit Intimidation ProviderRef binding remains state-owned gameplay data; it is not a mutable suppression ledger.
 - Equipment Provider identity can enter ProviderRef, but DQ-SF-11 still owns the equipment-effectiveness semantics and adapter.
+
+No gameplay implementation is authorized by these owner decisions.
+
+## SF Round 4 owner decisions — 2026-09-27
+
+Authority record:
+- STAGE12_STATE_LIFECYCLE_TRANSACTION_DESIGN.md
+
+Canonical Round 4 split:
+
+| Responsibility | Canonical owner | Non-owner collaborators |
+|---|---|---|
+| incoming state admission | StateAdmissionPolicy | source operation creates candidate first; conflict policy runs only after ALLOW |
+| same-state / reapplication conflict | StateConflictPolicy | per-state contract adapters; Lifecycle does not invent generic stacking |
+| application transaction preparation | StateApplicationCoordinator | pure policies, Provider selection/binding preparation, transition coordinator |
+| physical create/refresh/replace/remove | StateLifecycleSystem | Registry remains storage only |
+| physical state lifetime clock | StateLifecycleSystem | domain-specific helpers/counters remain separate |
+| gameplay removal eligibility | StateRemovalPolicy | cleanse/source operation supplies typed RemovalOperation |
+| effectiveness after commit | StateEffectivenessPolicy | EffectivenessTransitionCoordinator re-evaluates affected closure |
+| Provider validity after commit | ProviderValidityPolicy | same transition closure |
+| same-envelope project ordering | RD-SF-003 | Lifecycle snapshots due removals before transition recomputation |
+
+Round 4 invariants:
+
+- decision first, mutation second;
+- a rejected admission/removal request changes nothing physical;
+- REFRESH = same physical instance + new application generation;
+- REPLACE = old physical instance terminates + new physical instance begins;
+- resume is not refresh;
+- suppression does not pause physical lifetime;
+- Stage12 clock metadata must not accidentally opt into Stage10 persistence;
+- ordinary cleanse policy is distinct from expiry/defeat/teardown infrastructure;
+- no global source-death cleanup rule exists.
 
 No gameplay implementation is authorized by these owner decisions.
