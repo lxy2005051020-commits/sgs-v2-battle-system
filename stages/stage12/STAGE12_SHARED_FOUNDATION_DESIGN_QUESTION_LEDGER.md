@@ -9,6 +9,10 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 - DESIGN_REQUIRED: evidence is sufficient, but interface/composition decision remains.
 - CONTRACT_DEPENDENT: bounded or external contract boundary must be preserved/qualified.
 - BLOCKED: a concrete incompatible authority prevents closure without explicit resolution.
+- CLOSED_BY_AUTHORITY_MIGRATION: a later canonical authority explicitly supersedes the conflicting historical rule.
+- CLOSED_BY_SCOPED_SUPERSESSION: the exact affected historical scope is named and unaffected frozen scope is preserved.
+- CLOSED_BY_SHARED_FOUNDATION_DESIGN: the representation needed by downstream Shared Foundation design is fixed; this is not Runtime Freeze.
+- CLOSED_BY_PROVENANCE_QUALIFICATION: cross-contract outcome and evidence provenance are both explicitly preserved.
 
 ## 1. Mandatory question ledger
 
@@ -17,8 +21,8 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 | DQ-SF-01 | Who admits incoming state? Lifecycle.apply mutates, Stage11 policy only checks conflict | DESIGN_REQUIRED | State admission policy queried by Lifecycle; define validation vs immunity vs conflict order; mutation only Lifecycle | 02,03,14,22; rejection changes no old instance/timer and emits no applied/removed pair; source RNG preserved |
 | DQ-SF-02 | Who answers effective state across Stage9/11/12? | DESIGN_REQUIRED | Shared StateEffectivenessPolicy candidate; Stage9/11 delegate common truth while retaining domain arbitration | 05,08,15,20; suppressed Insight cannot suppress Taunt; no policy in Registry |
 | DQ-SF-03 | How represent Resident / Effective / Suppressed / Removed? | DESIGN_REQUIRED | Residency from Registry; minimal typed decision with reason(s), state/provider identity only when useful; operation-inadmissible distinct | 02,08; removal of one reason cannot restore while another remains; expired state never resumes |
-| DQ-SF-04 | Minimal SkillType, preparation characteristic, and ProviderCategory? | DESIGN_REQUIRED | SkillDefinition metadata; compare ACTIVE+preparation mode with separate PREPARATION_ACTIVE; ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION supported by contract; NORMAL_ATTACK stays operation; equipment/talent/bingshu not silently classified as skill | 05; table for every positive and negative contract category; explicit legacy defaults, no execution chain |
-| DQ-SF-05 | Stable provider identity and enumeration? | DESIGN_REQUIRED | Reuse Registry `(owner_id, SkillSlot)` + expected skill ID; define ProviderRef discriminated skill/equipment identity; no Python id() | 04,21; same skill on two owners/slots distinct; slot 0 valid; serialization/replay; absent slot handling |
+| DQ-SF-04 | Minimal SkillType, preparation characteristic, and ProviderCategory? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | SkillDefinition metadata: SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION + PreparationMode NONE/REQUIRED; PREPARATION_ACTIVE = ACTIVE+REQUIRED; NORMAL_ATTACK remains operation; equipment special remains separate ProviderCategory | See STAGE12_SKILLTYPE_PROVIDER_IDENTITY_DESIGN.md; legacy compatibility default RD-SF-001; no execution chain |
+| DQ-SF-05 | Stable provider identity and enumeration? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Typed ProviderRef union: SkillProviderRef(owner_id, slot, skill_id) + EquipmentProviderRef(owner_id, provider_key); Registry resolves skill key and expected ID; deterministic enumeration RD-SF-002 | 04,21; same skill on two owners/slots distinct; slot 0 valid; serialization/replay; missing vs mismatch explicit |
 | DQ-SF-06 | Skill permission API and canonical admission point? | DESIGN_REQUIRED | SkillPermissionPolicy.can_admit candidate, invoked by explicit operation admission before observable activation; do not recheck activated child chain as new skill | 04,08,12,13; one holder-level Exhaustion block, no-active silent, Basic/Assault unaffected; no Stage14 loop |
 | DQ-SF-07 | Preparation interruption port and state ownership? | DESIGN_REQUIRED | Future preparation owner stores progress; Stage12 requests unit-wide Active or selected Provider interruption through a minimal injected port; define no-op/fake and synchronously triggered transitions | 05,06,08,20; effective Exhaustion interrupts now, selected Intimidation interrupts only that provider, no missed progress replay; no Stage15 scheduler |
 | DQ-SF-08 | Provider validity query and dependency propagation? | DESIGN_REQUIRED | ProviderValidityPolicy.evaluate candidate; compose baseline enabled and independent suppression causes; ongoing dependencies explicit, never infer all from source_id | 02,04,05,20,21; A suppressed/B holder vs B suppressed/A effective; final cause removal only resumes future live behavior |
@@ -28,8 +32,8 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 | DQ-SF-12 | Who consumes RNG, when and for what? | DESIGN_REQUIRED | RNG owner already closed: context.random/RandomSystem. Source operation owns application probability, selector owns target sampling, accepted Intimidation binding owns selection; signatures/ordering/defaults unresolved | 01,06,09,14,22; PD-INS-001 parity; refresh actual reroll vs same result; resume zero reroll; rejected immunity no binding selection |
 | DQ-SF-13 | Minimal events and explicit decisions? | DESIGN_REQUIRED | Domain owners publish after decision; reuse ACTION_BLOCKED/RECOVERY_PREVENTED where truthful; evaluate rejection and transition facts, don't emit on every query | 01,03,06,07,20; duplicate read produces no repeated transition; Provocation execution not automatically TARGET_FORCED |
 | DQ-SF-14 | Which runtime defaults are required and where recorded? | CONTRACT_DEPENDENT | Runtime Default Ledger required before choices are frozen; carry exact research labels and section IDs; inherit PD-INS-001/002 verbatim in substance | All DQs; every necessary unsupported choice gets reason, chosen value, scope, reopen trigger, tests; no silent default |
-| DQ-SF-15 | How migrate actual 690089 PARTIAL? | BLOCKED | Preserve identity/lifecycle/Taunt tests; replace presence-only query by delegation after AR-SF-01 disposition | 02,16; conflicting P0-CFS-P93-01 must have explicit provenance/supersession, never silently weakened |
-| DQ-SF-16 | Stage11 and older frozen regression boundary? | BLOCKED | Existing owners retained; AR-SF-01 is legacy Stage9 conflict; narrowly resolve before no-conflict assertion. Stage11 Reopen Required NO in SF-0 | 15,24; legacy no-Stage12 RNG/events/results stable; clock conflict if proven requires scoped reopen |
+| DQ-SF-15 | How migrate actual 690089 PARTIAL? | CLOSED_BY_AUTHORITY_MIGRATION | STAGE12_INSIGHT_CONFUSION_AUTHORITY_MIGRATION.md establishes later Insight v0.4 authority and explicit future test replacement; identity/lifecycle/Taunt scope preserved | 02,16; implementation still pending, but authority blocker is closed |
+| DQ-SF-16 | Stage11 and older frozen regression boundary? | CLOSED_BY_SCOPED_SUPERSESSION | P0-CFS-P93-01/P93-B01 superseded only for existing Confusion remaining operational after later effective Insight; all enumerated unaffected Stage9 rules preserved; Stage11 Reopen Required NO | 15,24; any future clock contradiction requires a separately proven scoped reopen |
 | DQ-SF-17 | BattleSystems wiring and compatibility paths? | DESIGN_REQUIRED | Composition root constructs one shared dependency graph, injects consumers and ports; legacy standalone constructors must not create second policy truth | 02,05,08,20; same policy instance for production consumers, explicit dependency failure, no EventBus backdoor |
 | DQ-SF-18 | Test architecture and model discriminators? | DESIGN_REQUIRED | Foundation tests + seven state files + cross-state suite; current 913 tests are baseline, not Stage12 coverage | All DQs; exact contract sections→future test cases; 30/25/21 minima retained; AST owner/RNG scans; independent design audit later |
 
@@ -39,22 +43,21 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 |---|---|---|---|---|
 | DQ-SF-19 | Capture composite action/damage/recovery/target permission | DESIGN_REQUIRED | ActionSystem, DamageSystem stack, RecoverySystem, target policy, ProviderValidityPolicy own separate decisions; decide result topology and concurrent reason reporting | Counter blocked vs attached Active DOT continues; free proxy actor remains legal; friendly single/2-target excluded; self recovery arrives but zero; equipment attributes only proven scope |
 | DQ-SF-20 | Cyclic dependencies and immediate transitions | DESIGN_REQUIRED | Shared effective/provider query graph must define bounded evaluation and synchronous transition application; detect cycles rather than recurse indefinitely or invent fixed-point truth | Example source-provider suppression→Intimidation ineffective→selected Provider resumes→provider-derived Insight changes; overlapping causes stable; no replay; cycle fallback requires ledger if needed |
-| DQ-SF-21 | Existing JIT source-gate migration and slot 0 | DESIGN_REQUIRED | RecoveryOpportunitySystem delegates validity; Registry keeps identity validation; no independent enabled-only answer | INHERENT=0 lookup, expected skill mismatch, missing reference semantics, source-death independent enabled gate, suppression consumes no recovery RNG |
+| DQ-SF-21 | Existing JIT source-gate migration and slot 0 | DESIGN_REQUIRED | Identity obligation is fixed by DQ-SF-05: explicit slot is-not-None, expected skill ID validation, missing/mismatch distinction; implementation must delegate current effectiveness to ProviderValidityPolicy | INHERENT=0 lookup, mismatch, missing, suppression and no-RNG rejection remain implementation discriminators |
 | DQ-SF-22 | Application result, refresh transaction, binding atomicity | DESIGN_REQUIRED | Lifecycle sole physical writer; admission/conflict decisions pure where possible; binding resolver consumes RNG only after allowed path | No half-released old binding on failure; refresh selects one, resume preserves binding; direct refresh cannot bypass policy; old API ValueError vs rejected outcome adapter explicit |
 | DQ-SF-23 | Admitted/queued work vs JIT recheck | CONTRACT_DEPENDENT | Owning operation + execution-right system preserve admission identity; distinguish new operation from continuation | Exhaustion in-flight Active no rollback; Stage9 Counter admitted-entry invariant; Capture Q16/Q44/Q45 and Sabotage B-SAB-07 remain bounded until default/authority disposition |
 | DQ-SF-24 | Clock continuation during suppression | DESIGN_REQUIRED | Lifecycle physical mutation; explicit clock semantics and Stage11 maintenance delegation; never route all Stage12 durations through Stage10 detector | STUN block counter versus lifetime; FalseReport representative holder-action timeline; Intimidation suspended expiry; no clock pause; incompatible legacy expectation triggers scoped review |
 | DQ-SF-25 | Cleanse eligibility, strength, reapplication and source death | CONTRACT_DEPENDENT | Removal-selection policy separate from Lifecycle.remove primitive; per-contract inputs; source-dependent flags cannot be universal | Capture ordinary cleanse resistant; Intimidation tested generic removal fails, specialized unknown; FR/SAB equal no refresh; Capture/Provocation/Intimidation multi-source labels preserved |
 | DQ-SF-26 | Design Freeze audit owner and gate | DESIGN_REQUIRED | Independent audit after full design, with seven contracts, concrete API mapping, defaults, tests and risk register; no freeze audit claim in SF-0 | 17 requested audit checks; no blocking owner/conflict, no Stage13+ leakage; architecture freeze distinct from 0/7 Runtime |
 | DQ-SF-27 | Physical state write and RNG service ownership | CLOSED_BY_EXISTING_ARCHITECTURE | StateLifecycleSystem writes; StateRegistry stores; BattleContext.random is sole random source; EventBus records | Consumers delegate/query; no second lifecycle, no direct random.*, no permission decisions in event handlers |
-| DQ-SF-28 | Intimidation × Insight evidence labels across contracts | CONTRACT_DEPENDENT | AR-SF-02 cross-contract provenance qualification; outcome comes from Intimidation §§5,11; do not silently update Research | Ordinary Insight does not reject within that contract; Insight's direct-overlap label remains traceable, not falsely marked reconciled |
+| DQ-SF-28 | Intimidation × Insight evidence labels across contracts | CLOSED_BY_PROVENANCE_QUALIFICATION | Runtime uses Intimidation §§5,11 as positive authority while Insight retains SPECIAL_CASE_SUPPORTED / DIRECT_OVERLAP_UNOBSERVED provenance; Research files are not rewritten | Ordinary Insight non-rejection is usable without falsely claiming direct Insight-corpus observation |
 
 ## 3. Default candidates and preserved non-claims
 
-This is a **question inventory**, not a ledger of newly chosen behavior. No new gameplay default
-is selected in SF-0. The later `STAGE12_RUNTIME_DEFAULT_LEDGER.md` must include, per selected
-choice: ID, Mechanism, Question, Research Status, Why Runtime Must Decide, Chosen Runtime Default,
-Evidence Classification, Scope, Reopen Trigger, Tests, and the labels
-`PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN`.
+Round 2 has started STAGE12_RUNTIME_DEFAULT_LEDGER.md with only two defaults that are actually required now:
+RD-SF-001 legacy SkillDefinition classification compatibility and RD-SF-002 deterministic loaded Skill Provider enumeration.
+No Intimidation weighting or empty-pool default is selected. Future choices must use the same fields and the labels
+PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN.
 
 | Authority | Already governed or unresolved items to carry into design |
 |---|---|
@@ -99,10 +102,19 @@ Methods listed here are proposed future case names, not passing tests.
 
 ## 5. Exit and next task
 
-SF-0 reconnaissance complete. There are 28 tracked questions:
-**1 CLOSED_BY_EXISTING_ARCHITECTURE, 21 DESIGN_REQUIRED, 4 CONTRACT_DEPENDENT, 2 BLOCKED**.
-The two BLOCKED questions share AR-SF-01; they are not two independent root blockers.
+Round 2 authority and identity design is complete for its assigned scope. There are 28 tracked questions:
+- 19 DESIGN_REQUIRED
+- 3 CONTRACT_DEPENDENT
+- 0 BLOCKED
+- 1 CLOSED_BY_EXISTING_ARCHITECTURE
+- 2 CLOSED_BY_SHARED_FOUNDATION_DESIGN
+- 1 CLOSED_BY_AUTHORITY_MIGRATION
+- 1 CLOSED_BY_SCOPED_SUPERSESSION
+- 1 CLOSED_BY_PROVENANCE_QUALIFICATION
 
-NEXT: resolve DQ-SF-15/16 authority disposition; design DQ-SF-04 + DQ-SF-05
-SkillType Taxonomy / Provider Identity, including slot-0 and legacy provenance migration.
-Independent Design Audit and Design Freeze remain NOT_STARTED / NOT PASSED respectively.
+AR-SF-01 is closed by explicit authority migration. AR-SF-02 provenance is qualified.
+DQ-SF-04/05/15/16/28 are closed under the statuses above.
+Shared Foundation Design Freeze remains NOT PASSED.
+
+NEXT: DQ-SF-02 / DQ-SF-03 / DQ-SF-08 / DQ-SF-20:
+State Effectiveness + Suppression Composition + Provider Validity + Dependency Cycle Design.
