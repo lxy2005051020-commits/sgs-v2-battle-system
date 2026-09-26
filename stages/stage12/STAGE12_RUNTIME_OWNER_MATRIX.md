@@ -19,7 +19,9 @@
 | Skill identity / slots | SkillRuntime + SkillRuntimeRegistry | same registry + frozen SkillProviderRef(owner_id, slot, skill_id) identity | EXHAUSTION, FALSE_REPORT, INTIMIDATION, CAPTURE | REUSE / DESIGN FIXED |
 | Skill category recognition | insufficient general taxonomy | SkillDefinition metadata: SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION + PreparationMode NONE/REQUIRED | EXHAUSTION, FALSE_REPORT, INTIMIDATION, CAPTURE | DESIGN FIXED / FUTURE SCHEMA |
 | Skill permission | none canonical | SkillPermissionPolicy, holder-level permission only | EXHAUSTION | NEW CANONICAL MINIMAL OWNER; DESIGN FIXED |
-| Skill operation admission composition | SkillResolver local enabled gate | SkillOperationAdmissionCoordinator composes ProviderValidityPolicy + SkillPermissionPolicy before observable activation/RNG | EXHAUSTION + all skill Providers | NEW THIN COORDINATOR; DESIGN FIXED |\n| Preparation interruption request | none | PreparationInterruptionPort implemented later by the true preparation owner | EXHAUSTION, INTIMIDATION | NEW MINIMAL PORT; DESIGN FIXED / IMPLEMENTATION DEPENDENCY |\n| Skill Provider validity | none canonical | `ProviderValidityPolicy` after ProviderRef identity resolution | FALSE_REPORT, INTIMIDATION, CAPTURE; explicit provider-dependent effects | NEW CANONICAL SHARED OWNER |
+| Skill operation admission composition | SkillResolver local enabled gate | SkillOperationAdmissionCoordinator composes ProviderValidityPolicy + SkillPermissionPolicy before observable activation/RNG | EXHAUSTION + all skill Providers | NEW THIN COORDINATOR; DESIGN FIXED |
+| Preparation interruption request | none | PreparationInterruptionPort implemented later by the true preparation owner | EXHAUSTION, INTIMIDATION | NEW MINIMAL PORT; DESIGN FIXED / IMPLEMENTATION DEPENDENCY |
+| Skill Provider validity | none canonical | `ProviderValidityPolicy` after ProviderRef identity resolution | FALSE_REPORT, INTIMIDATION, CAPTURE; explicit provider-dependent effects | NEW CANONICAL SHARED OWNER |
 | Skill target candidate construction | SkillResolver + TargetSystem | same + Stage12 eligibility/forcing policy seam | PROVOCATION, CAPTURE | EXTEND |
 | Normal Attack target arbitration | TargetResolutionSystem | TargetResolutionSystem | TAUNT/CONFUSION regression, Provocation non-domain | REUSE |
 | Damage permission | DamageSystem / existing prevention seams | canonical damage admission seam in DamageSystem stack | CAPTURE | EXTEND |
@@ -47,7 +49,7 @@
 The following remain open after Round 4:
 
 - DQ-SF-06 CLOSED in Round 5: SkillPermissionPolicy + pre-RNG SkillOperationAdmissionCoordinator;
-- DQ-SF-07 preparation interruption port;
+- DQ-SF-07 CLOSED in Round 5: PreparationInterruptionPort + synchronous transition timing; concrete preparation owner remains an integration dependency;
 - DQ-SF-09 / 10 target-operation policy and query granularity;
 - DQ-SF-11 minimal equipment-effectiveness runtime abstraction;
 - DQ-SF-12 final RNG signatures / ordering outside the Round 4 candidate and refresh boundaries;
