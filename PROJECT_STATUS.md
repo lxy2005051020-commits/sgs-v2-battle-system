@@ -19,7 +19,7 @@
 ## 2. Cross-repository completion baseline
 
     Official States                 = 40
-    Research FROZEN                 = 34
+    Research FROZEN                 = 35
     Runtime FROZEN TO CONTRACT      = 33
     Strict Complete                 = 32
 
@@ -58,7 +58,7 @@ Governance:
     Stage12 Active: NO
 
     Research Wave 4: IN PROGRESS
-    Research FROZEN: 2 / 7
+    Research FROZEN: 3 / 7
     Runtime Frozen: 0 / 7
 
 The Active = NO flag refers to production Stage12 Runtime activation. Mechanism research is already progressing.
@@ -85,10 +85,21 @@ The Active = NO flag refers to production Stage12 Runtime activation. Mechanism 
 Battle-side mirror:
 [stages/stage12/STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md](stages/stage12/STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md)
 
+### 690107 FALSE_REPORT
+
+    Research: FROZEN
+    Contract: v1.0.1-frozen
+    Final Adversarial Falsification: PASS
+    Coverage Repair: PASS
+    Runtime: NOT_INTEGRATED
+    Next: contract-aligned Runtime Design
+
+Battle-side mirror:
+[stages/stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md](stages/stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md)
+
 ## 5. Remaining Stage12 research
 
 Wave 4:
-- 690107 FALSE_REPORT
 - 690108 PROVOCATION
 - 690222 INTIMIDATION
 
