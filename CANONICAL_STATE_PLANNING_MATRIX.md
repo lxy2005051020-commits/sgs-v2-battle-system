@@ -14,14 +14,14 @@
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 37
+Research FROZEN                 = 38
 Runtime FROZEN TO CONTRACT      = 33
 Strict Complete                 = 32
 Stage11 Scope                   = 17
 Stage11 Research FROZEN         = 16
 Stage11 Runtime FROZEN          = 17
 Stage12 Scope                   = 7
-Stage12 Research FROZEN         = 5
+Stage12 Research FROZEN         = 6
 Evidence-Blocked / Deferred     = 0
 Research-Debt States            = 1
 ```
@@ -89,7 +89,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690107 | 伪报 FALSE_REPORT | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/false_report/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0.1-frozen; final falsification + coverage repair PASS; stronger-vs-weaker / unseen immunity / special NPC / untested Equipment subtype debt bounded and non-blocking |
 | 690108 | 挑拨 PROVOCATION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/provocation/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; Round 1–6 + adversarial falsification PASS; final correction audit 20/20 PASS; Q43 restored; bounded unknowns explicit; cfg_71 excluded from state core |
 | 690222 | 威慑 INTIMIDATION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/intimidation/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; repaired adversarial falsification PASS; Q1-Q80 canonical governance PASS; OPEN_BLOCKING=0; source-skill counter separated; BU-01..10 explicit/non-blocking |
-| 690109 | 破坏 SABOTAGE | MINIMUM_USABLE | NOT_INTEGRATED | NO | Stage12 | Research Wave 5 | Research minimum_usable authority | Targeted research before Stage12 design |  |
+| 690109 | 破坏 SABOTAGE | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 5 | Research `states/control/sabotage/MECHANISM_CONTRACT.md` v1.0-frozen | Stage12 contract-aligned Runtime Design | Freeze Audit PASS; 690089 cross-contract amendment PASS; bounded unknowns explicit/non-blocking |
 | 690110 | 捕获 CAPTURE | MINIMUM_USABLE | NOT_INTEGRATED | NO | Stage12 | Research Wave 5 | Research minimum_usable authority | Targeted research before Stage12 design |  |
 
 ## 4. Stage11 Final Acceptance Snapshot
@@ -149,5 +149,5 @@ Authority:
 - Runtime default with research debt does not count as Strict Complete.
 - 690069, 690095 and 690091 retain their Project-Frozen Mirror distinction.
 - 690099 and 690221 are Research FROZEN and Runtime FROZEN TO CONTRACT; bounded debt remains explicit and non-blocking.
-- Stage12 research has begun ahead of production activation: 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT, 690108 PROVOCATION and 690222 INTIMIDATION are Research FROZEN. Research Wave 4 is complete; Stage12 Active remains NO and their Runtime work is not yet frozen.
+- Stage12 research has begun ahead of production activation: 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT, 690108 PROVOCATION, 690109 SABOTAGE and 690222 INTIMIDATION are Research FROZEN. Research Wave 4 is complete and Research Wave 5 now has 690109 frozen; Stage12 Active remains NO and their Runtime work is not yet frozen.
 - Stage12 Activation Gate is CLEARED and Stage12 Readiness is READY; Stage12 Active remains NO. Stage13 is not activated.
