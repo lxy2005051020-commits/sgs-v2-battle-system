@@ -15,7 +15,7 @@
     Stage9  = FROZEN
     Stage10 = FROZEN
     Stage11 = RUNTIME FROZEN / POST-FREEZE ACCEPTED
-    Stage12 = ACTIVATION GATE CLEARED / RESEARCH IN PROGRESS / PRODUCTION RUNTIME NOT ACTIVE
+    Stage12 = ACTIVATION GATE CLEARED / RESEARCH COMPLETE / PRODUCTION RUNTIME NOT ACTIVE
     Stage13 = NOT ACTIVE
 
 Stage11 Runtime Tested SHA:
@@ -30,7 +30,7 @@ Acceptance CI:
 ## 官方状态统一完成度
 
     Official States                 = 40
-    Research FROZEN                 = 37 / 40
+    Research FROZEN                 = 39 / 40
     Runtime FROZEN TO CONTRACT      = 33 / 40
     Strict Complete                 = 32 / 40
 
@@ -51,6 +51,8 @@ Research FROZEN:
 - 690101 EXHAUSTION
 - 690107 FALSE_REPORT
 - 690108 PROVOCATION
+- 690109 SABOTAGE
+- 690110 CAPTURE
 - 690222 INTIMIDATION
 
 690101 当前状态：
@@ -88,9 +90,22 @@ Research FROZEN:
 - Runtime NOT_INTEGRATED
 - Battle mirror: stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md
 
-Remaining research:
-- 690109 SABOTAGE
-- 690110 CAPTURE
+690109 当前状态：
+- Contract v1.0-frozen
+- Freeze Audit PASS
+- Runtime NOT_INTEGRATED
+
+690110 当前状态：
+- Contract v1.0-frozen
+- final adversarial falsification PASS
+- independent Freeze Audit PASS
+- counterattack / Active-DOT / Insight discriminators resolved
+- RST1 Resume / no missed-trigger replay / source-death independence
+- Runtime NOT_INTEGRATED
+- Battle mirror: stages/stage12/STAGE12_690110_CAPTURE_RESEARCH_SYNC.md
+
+Stage12 Research = 7 / 7 FROZEN.
+Next: contract-aligned Runtime Integration Design.
 
 ## Stage sequencing
 
