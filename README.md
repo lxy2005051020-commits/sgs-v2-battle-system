@@ -30,7 +30,7 @@ Acceptance CI:
 ## 官方状态统一完成度
 
     Official States                 = 40
-    Research FROZEN                 = 34 / 40
+    Research FROZEN                 = 35 / 40
     Runtime FROZEN TO CONTRACT      = 33 / 40
     Strict Complete                 = 32 / 40
 
@@ -49,6 +49,7 @@ Stage12 canonical scope = 7.
 Research FROZEN:
 - 690089 INSIGHT
 - 690101 EXHAUSTION
+- 690107 FALSE_REPORT
 
 690101 当前状态：
 - Contract v0.2-frozen
@@ -59,8 +60,15 @@ Research FROZEN:
 - TRUE_COUNTEREXAMPLE = 0
 - Runtime NOT_INTEGRATED
 
+690107 当前状态：
+- Contract v1.0.1-frozen
+- final adversarial falsification + coverage repair PASS
+- Provider ownership / suppression / lifecycle / cleanse / cross-state contract frozen
+- stronger-vs-weaker FR remains BOUNDED_UNKNOWN
+- Runtime NOT_INTEGRATED
+- Battle mirror: stages/stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md
+
 Remaining research:
-- 690107 FALSE_REPORT
 - 690108 PROVOCATION
 - 690222 INTIMIDATION
 - 690109 SABOTAGE
