@@ -21,7 +21,7 @@ Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 35
+Research FROZEN                 = 36
 Runtime FROZEN TO CONTRACT      = 33
 Strict Complete                 = 32
 ```
@@ -94,7 +94,7 @@ Current state:
 Stage12 Activation Gate: CLEARED
 Stage12 Readiness: READY
 Stage12 Active: NO
-Stage12 Research FROZEN: 3 / 7
+Stage12 Research FROZEN: 4 / 7
 Stage12 Runtime Frozen: 0 / 7
 ```
 
@@ -102,8 +102,9 @@ Research FROZEN:
 - 690089 INSIGHT — v0.2-frozen; Runtime PARTIAL.
 - 690101 EXHAUSTION — v0.2-frozen; full-corpus adversarial audit PASS; Runtime NOT_INTEGRATED.
 - 690107 FALSE_REPORT — v1.0.1-frozen; final falsification + coverage repair PASS; Runtime NOT_INTEGRATED.
+- 690108 PROVOCATION — v1.0-frozen; Round 1–6 + final adversarial falsification PASS; final contract correction audit 20/20 PASS; Runtime NOT_INTEGRATED.
 
-Research prework is active. 690089 / 690101 / 690107 are now Research FROZEN; the next Wave 4 research target is 690108 PROVOCATION. No Stage12 production gameplay implementation is implied by this status.
+Research prework is active. 690089 / 690101 / 690107 / 690108 are now Research FROZEN; the next Wave 4 research target is 690222 INTIMIDATION. No Stage12 production gameplay implementation is implied by this status.
 
 No Stage12 gameplay implementation is included in this Stage11 freeze.
 
