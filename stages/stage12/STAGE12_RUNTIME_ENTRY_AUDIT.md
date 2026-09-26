@@ -235,3 +235,22 @@ STAGE12_RUNTIME_INTEGRATION_DESIGN
 ```
 
 No Stage13 gameplay implementation is authorized.
+
+
+## J. Entry Audit Publication Record
+
+```text
+Entry Audit Publication SHA:
+  4af3f8f29259908c71d1545d67b99365ce93d89d
+
+Entry Audit CI:
+  36260389283 / success
+
+Entry Audit pytest:
+  913 passed
+
+Entry Audit demo:
+  PASS
+```
+
+The publication SHA is the exact governance commit that introduced this audit, the owner/mapping/test skeletons, corrected the Battle-side Insight version mirrors, and activated Stage12 Runtime. The commit contains no Stage12 gameplay implementation.
