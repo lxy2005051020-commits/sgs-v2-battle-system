@@ -1,48 +1,66 @@
 # 第十二阶段 · 官方状态补全（二）
 
-> 状态：**PLANNING ONLY / NOT ACTIVE**  
-> Canonical Scope：**7 states**  
-> Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)  
-> Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）；Research Wave 不改变 Project Stage 编号。
+> 状态：**RESEARCH IN PROGRESS / PRODUCTION RUNTIME NOT ACTIVE**
+> Canonical Scope：**7 states**
+> Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
+> Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）
 
-当前状态：
+当前治理状态：
 
-```text
-规划阶段
-尚未开始正式机制冻结
-尚未授权生产实现
-```
+    Stage11 Runtime: FROZEN
+    Stage12 Activation Gate: CLEARED
+    Stage12 Readiness: READY
+    Stage12 Active: NO
 
-第十二阶段目标：
+    Stage12 Research FROZEN: 2 / 7
+    Stage12 Runtime Frozen: 0 / 7
 
-> 完成剩余依赖控制权限、战法类别认识或复合规则的官方状态，并完成官方 40 状态总收口。
+这里的 Stage12 Active = NO 指生产 Runtime 阶段尚未正式激活；不妨碍 Research Wave 4 提前完成机制研究。项目终于学会把“研究完成”和“代码写完”分成两件事了。
 
-当前候选重点：
+## 已冻结研究
 
-```text
-洞察
-计穷
-伪报
-挑拨
-破坏
-捕获
-威慑
-```
+### 690089 洞察 INSIGHT
+- Research FROZEN
+- Contract v0.2-frozen
+- Runtime PARTIAL / NOT FROZEN
+- Next: contract-aligned Runtime Design
 
-第十二阶段允许建立最小“战法类别与权限判断”基础能力，但不正式接入具体战法执行。
+### 690101 计穷 EXHAUSTION
+- Research FROZEN
+- Contract v0.2-frozen
+- Full-corpus adversarial audit: PASS
+- 23,002 structured battle reports
+- 18,487 observed EXHAUSTION executions
+- TRUE_COUNTEREXAMPLE = 0
+- Runtime NOT_INTEGRATED
+- Next: contract-aligned Runtime Design
+- Battle mirror: [690101 research authority sync](STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md)
 
-阶段最终目标：
+## Remaining research queue
 
-```text
-40 / 40 官方状态研究完成
-40 / 40 官方状态运行时完成
-官方状态体系正式冻结
-```
+Wave 4:
+- 690107 伪报 FALSE_REPORT
+- 690108 挑拨 PROVOCATION
+- 690222 威慑 INTIMIDATION
 
-规划文件：
+Wave 5:
+- 690109 破坏 SABOTAGE
+- 690110 捕获 CAPTURE
 
-- [第十二阶段规划](STAGE12_PLANNING.md)
-- [第十阶段后总路线](../../POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md)
-- [演示场景套件规划](../../DEMO_SCENARIO_SUITE_ROADMAP.md)
+## Stage12 responsibility
 
-第十二阶段完成后，下一主线才进入正式战法接入。
+Stage12 completes the remaining control/permission/composite official states and ultimately closes the 40-state system.
+
+It may establish the minimum permission-layer capability needed by these states, but it does not start Stage13/14/15 real skill execution runtimes early.
+
+## Exit target
+
+    40 / 40 official-state research complete
+    40 / 40 official-state runtime complete
+    final combined regression PASS
+    final independent audit PASS
+    official state system frozen
+
+Planning:
+- [STAGE12_PLANNING.md](STAGE12_PLANNING.md)
+- [Canonical State Planning Matrix](../../CANONICAL_STATE_PLANNING_MATRIX.md)
