@@ -1,6 +1,6 @@
 # 三国志战略版战斗模拟器 V2 · 当前项目状态
 
-> Current governance snapshot: **2026-09-26**
+> Current governance snapshot: **2026-09-27**
 
 ## 1. Completed runtime stages
 
@@ -19,7 +19,7 @@
 ## 2. Cross-repository completion baseline
 
     Official States                 = 40
-    Research FROZEN                 = 37
+    Research FROZEN                 = 39
     Runtime FROZEN TO CONTRACT      = 33
     Strict Complete                 = 32
 
@@ -58,7 +58,7 @@ Governance:
     Stage12 Active: NO
 
     Research Wave 4: COMPLETE
-    Research FROZEN: 5 / 7
+    Research FROZEN: 7 / 7
     Runtime Frozen: 0 / 7
 
 The Active = NO flag refers to production Stage12 Runtime activation. Mechanism research is already progressing.
@@ -66,7 +66,7 @@ The Active = NO flag refers to production Stage12 Runtime activation. Mechanism 
 ### 690089 INSIGHT
 
     Research: FROZEN
-    Contract: v0.2-frozen
+    Contract: v0.4-frozen
     Runtime: PARTIAL / NOT FROZEN
     Next: contract-aligned Runtime Design
 
@@ -123,14 +123,37 @@ Battle-side mirror:
 Battle-side mirror:
 [stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md](stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)
 
-## 5. Remaining Stage12 research
+### 690109 SABOTAGE
 
-Wave 4:
-- COMPLETE
+    Research: FROZEN
+    Contract: v1.0-frozen
+    Freeze Audit: PASS
+    Runtime: NOT_INTEGRATED
+    Next: contract-aligned Runtime Design
 
-Wave 5:
-- 690109 SABOTAGE
-- 690110 CAPTURE
+### 690110 CAPTURE
+
+    Research: FROZEN
+    Contract: v1.0-frozen
+    Final Adversarial Falsification: PASS
+    Freeze Audit: PASS
+    Counterattack / Active-DOT / Insight discriminators: RESOLVED
+    Restoration: RST1 RESUME / NO MISSED-TRIGGER REPLAY
+    Source Death: independent lifecycle
+    Runtime: NOT_INTEGRATED
+    Next: contract-aligned Runtime Design
+
+Battle-side mirror:
+[stages/stage12/STAGE12_690110_CAPTURE_RESEARCH_SYNC.md](stages/stage12/STAGE12_690110_CAPTURE_RESEARCH_SYNC.md)
+
+## 5. Stage12 research completion
+
+Wave 4: COMPLETE
+Wave 5: COMPLETE
+Stage12 Research: 7 / 7 FROZEN
+
+Next owner: Stage12 contract-aligned Runtime Integration Design.
+Stage12 production Runtime remains NOT ACTIVE / NOT FROZEN.
 
 ## 6. Later stages
 
