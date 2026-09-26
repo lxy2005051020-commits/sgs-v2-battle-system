@@ -14,13 +14,14 @@
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 33
+Research FROZEN                 = 34
 Runtime FROZEN TO CONTRACT      = 33
 Strict Complete                 = 32
 Stage11 Scope                   = 17
 Stage11 Research FROZEN         = 16
 Stage11 Runtime FROZEN          = 17
 Stage12 Scope                   = 7
+Stage12 Research FROZEN         = 2
 Evidence-Blocked / Deferred     = 0
 Research-Debt States            = 1
 ```
@@ -84,7 +85,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690094 | 倒戈 LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | Share assigned-damage basis + double-stage CEIL integrated; B11-FRZ-001 CLOSED |
 | 690095 | 攻心 STRATEGY_LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research strategy_life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | PROJECT-FROZEN MIRROR CONTRACT; shared RecoverySystem second-CEIL owner |
 | 690089 | 洞察 INSIGHT | FROZEN | PARTIAL | NO | Stage12 | Research Wave 4 | Research states/functional/insight/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v0.2-frozen; Freeze Audit PASSED; PD-INS-001/002 frozen; special-state debts preserved |
-| 690101 | 计穷 EXHAUSTION | MINIMUM_USABLE | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research minimum_usable authority | Targeted research before Stage12 design |  |
+| 690101 | 计穷 EXHAUSTION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/exhaustion/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v0.2-frozen; full-corpus falsification PASS; 23,002 reports / 18,487 EXHAUSTION executions / TRUE_COUNTEREXAMPLE=0; B-EXH-01..05 preserved |
 | 690107 | 伪报 FALSE_REPORT | MINIMUM_USABLE | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research minimum_usable authority | Targeted research before Stage12 design |  |
 | 690108 | 挑拨 PROVOCATION | MINIMUM_USABLE | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research minimum_usable authority | Targeted research before Stage12 design |  |
 | 690222 | 威慑 INTIMIDATION | NOT_INDEXED | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | No current indexed contract | Create research authority before Stage12 design |  |
@@ -148,4 +149,5 @@ Authority:
 - Runtime default with research debt does not count as Strict Complete.
 - 690069, 690095 and 690091 retain their Project-Frozen Mirror distinction.
 - 690099 and 690221 are Research FROZEN and Runtime FROZEN TO CONTRACT; bounded debt remains explicit and non-blocking.
+- Stage12 research has begun ahead of production activation: 690089 INSIGHT and 690101 EXHAUSTION are Research FROZEN, while Stage12 Active remains NO and their Runtime work is not yet frozen.
 - Stage12 Activation Gate is CLEARED and Stage12 Readiness is READY; Stage12 Active remains NO. Stage13 is not activated.
