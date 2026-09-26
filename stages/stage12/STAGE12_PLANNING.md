@@ -1,12 +1,12 @@
 # 第十二阶段规划 · 官方状态补全（二）
 
-> 状态：**CURRENT STAGE12 PLANNING / NOT ACTIVE**  
+> 状态：**RESEARCH IN PROGRESS / PRODUCTION RUNTIME NOT ACTIVE**  
 > Canonical Scope：**7 states**  
 > Project Stage ownership：Stage12  
 > Research mapping：Wave 4 + Wave 5；研究波次只是执行顺序，不是 Project Stage13/14。  
 > Canonical authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 
-> 状态：规划草案  
+> 状态：Research Wave 4 已启动；Stage12 production Runtime 尚未激活  
 > 目标：完成剩余复杂控制状态并收口官方 40 状态
 
 ## 1. 阶段责任
@@ -92,7 +92,24 @@ Next: Stage12 contract-aligned Runtime Design
 
 ### 计穷
 
-应由统一战法权限系统解释“哪些战法类别被禁止”。
+当前研究镜像（2026-09-26）：
+
+    Research Campaign: COMPLETE
+    Mechanism Contract: v0.2-frozen
+    Adversarial Falsification: PASS
+    Independent Freeze Audit: PASS
+    Research Maturity: FROZEN
+    Runtime Maturity: NOT_INTEGRATED
+    Corpus: 23,002 structured reports
+    Observed EXHAUSTION executions: 18,487
+    TRUE_COUNTEREXAMPLE: 0
+    Remaining Bounded Unknowns: B-EXH-01..05
+    Next: Stage12 contract-aligned Runtime Design
+
+正式研究权威位于 Research repository 的 states/control/exhaustion/MECHANISM_CONTRACT.md。
+本仓镜像记录：[STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md](STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md)。
+
+计穷应由统一战法权限系统解释 ACTIVE_SKILL admission；同时必须支持“计穷生效时立即打断既有准备状态”的异步义务。不得把研究冻结误写成 Runtime 已集成。
 
 ### 伪报
 
