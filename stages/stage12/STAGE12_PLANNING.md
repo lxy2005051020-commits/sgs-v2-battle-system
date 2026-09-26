@@ -178,7 +178,31 @@ Stage12 Runtime 设计必须保持 Resident 与 Effective 分离、Source admiss
 
 ### 威慑
 
-必须先完成机制研究再决定真正运行时所有者。
+当前研究镜像（2026-09-26）：
+
+```text
+Research Campaign: COMPLETE
+Mechanism Contract: v1.0-frozen
+Adversarial Falsification: PASS
+Canonical Governance: PASS
+OPEN_BLOCKING: 0
+Research Maturity: FROZEN
+Runtime Maturity: NOT_INTEGRATED
+Core: single selected Skill Provider suppression
+Refresh: reroll one eligible skill; no multi-disable stack
+Resume: observed source recovery preserves selected binding
+Insight: ordinary Insight does not reject Intimidation
+Immunity: Gangyi confirmed; exhaustive special-immunity set not claimed
+Counter: NOT a 690222 State Stack; precise counting remains Source Skill scope
+Bounded Unknowns: BU-01..BU-10
+Mandatory Runtime Tests: >= 21
+Next: Stage12 contract-aligned Runtime Design
+```
+
+正式研究权威位于 Research repository 的 `states/control/intimidation/MECHANISM_CONTRACT.md`。
+本仓镜像记录：[STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md](STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)。
+
+Stage12 Runtime 设计必须保持单一技能绑定、Provider 级压制、Refresh 与 Resume 分离、暂停期间寿命继续、Insight/Gangyi/清除边界，以及 State Core 与【承天靖世】来源战法计数语义的隔离。不得把 uniform RNG、全局不可净化、未来来源门控、多来源覆盖等未证实规则写死。
 
 ## 6. 第十一阶段输入
 
