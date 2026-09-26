@@ -75,7 +75,7 @@ These rows are DESIGN_FROZEN_FOUNDATION, not GREEN. GREEN still requires impleme
 | Equipment Provider identity | DQ-SF-05 / DQ-SF-11 boundary | EquipmentProviderRef(owner_id, provider_key) enters typed ProviderRef union without masquerading as Skill | DESIGN ONLY |
 | Provider enumeration | RD-SF-002 | deterministic slot order 0/1/2 for identity enumeration; no implied Intimidation weighting | NOT IMPLEMENTED |
 | Legacy SkillDefinition classification | RD-SF-001 | compatibility default ACTIVE + PreparationMode.NONE; new Stage12 definitions explicit | NOT IMPLEMENTED |
-| Recovery source gate migration | DQ-SF-21 | slot 0 checked by is-not-None semantics; expected skill mismatch and missing ref explicit; current validity delegated later to DQ-SF-08 | NOT IMPLEMENTED |
+| Recovery source gate migration | DQ-SF-21 | RecoveryOpportunitySystem Gate 4 constructs SkillProviderRef with slot-is-not-None + expected skill_id, delegates to ProviderValidityPolicy, rejects all non-VALID statuses before probability RNG | DESIGN CLOSED / NOT IMPLEMENTED |
 | Intimidation × Insight provenance | AR-SF-02 / DQ-SF-28 | use Intimidation §§5/11 as positive outcome authority; preserve Insight DIRECT_OVERLAP_UNOBSERVED evidence label | DESIGN AUTHORITY CLOSED |
 
 Future mapping work must not move these rows to GREEN until code and discriminating tests exist.
@@ -153,3 +153,32 @@ Removal rule:
 - source death is not a universal removal category.
 
 RD-SF-003 fixes same-envelope due-removal batching before effectiveness/provider resume recomputation.
+
+
+## SF Round 5 contract/runtime mapping — permission, preparation, JIT Provider gate
+
+| Contract concern | Runtime mapping | Decision | Implementation state |
+|---|---|---|---|
+| EXHAUSTION blocks ACTIVE | SkillPermissionPolicy | deny only NEW_ADMISSION with SkillType.ACTIVE when Exhaustion is EFFECTIVE | DESIGN CLOSED / NOT IMPLEMENTED |
+| EXHAUSTION does not block Normal Attack | NormalAttackSystem / ActionSystem remain outside SkillPermissionPolicy | no global action block | DESIGN CLOSED |
+| EXHAUSTION does not block standard ASSAULT | SkillPermissionPolicy does not deny ASSAULT merely for Exhaustion | selected Assault can still be blocked by ProviderValidityPolicy | DESIGN CLOSED |
+| skip preparation | SkillType remains ACTIVE; PreparationMode behavior does not change permission category | Exhaustion still denies | DESIGN CLOSED |
+| already activated Active | admission identity retained by admitted work | no rollback and no child-effect re-admission | DESIGN CLOSED; broader DQ-SF-23 remains bounded |
+| EXHAUSTION becomes EFFECTIVE during preparation | EffectivenessTransitionCoordinator -> PreparationInterruptionPort HOLDER_ACTIVE request | synchronous before later gameplay | DESIGN CLOSED / concrete preparation owner pending |
+| INTIMIDATION selected preparation Provider | selected Provider VALID -> SUPPRESSED transition -> PreparationInterruptionPort PROVIDER request | only selected Provider interrupted | DESIGN CLOSED / concrete preparation owner pending |
+| state/provider resume | policy becomes permissive/valid for future admission | old interrupted preparation never resumes | DESIGN CLOSED |
+| RecoveryOpportunitySystem JIT source gate | evaluate_and_resolve Gate 4 | ProviderValidityPolicy replaces direct runtime.enabled truth; explicit slot 0 and expected skill id | DESIGN CLOSED / NOT IMPLEMENTED |
+| EffectSourceRef only | attribution | no automatic ProviderDependency | DESIGN CLOSED |
+| TriggerSystem frozen damage slot fallback | provenance identity construction | truthiness hazard recorded separately; not a liveness gate and not modified in Round 5 | AUDIT FINDING / FUTURE HYGIENE |
+
+Canonical new-skill topology:
+
+~~~text
+provider identity resolution
+-> ProviderValidityPolicy
+-> SkillPermissionPolicy
+-> composed SkillOperationAdmissionDecision
+-> observable activation / activation RNG / target RNG
+~~~
+
+The two policy reads may both be evaluated so that the composed internal decision retains all blockers. Any presentation ordering of blockers is diagnostic/serialization only and has no gameplay authority. Public event vocabulary remains DQ-SF-13.

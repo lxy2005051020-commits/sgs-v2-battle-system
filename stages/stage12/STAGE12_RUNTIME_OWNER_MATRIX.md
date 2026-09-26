@@ -18,8 +18,8 @@
 | Normal attack permission | NormalAttackSystem | NormalAttackSystem | EXHAUSTION negative discriminator; Capture action interaction | REUSE |
 | Skill identity / slots | SkillRuntime + SkillRuntimeRegistry | same registry + frozen SkillProviderRef(owner_id, slot, skill_id) identity | EXHAUSTION, FALSE_REPORT, INTIMIDATION, CAPTURE | REUSE / DESIGN FIXED |
 | Skill category recognition | insufficient general taxonomy | SkillDefinition metadata: SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION + PreparationMode NONE/REQUIRED | EXHAUSTION, FALSE_REPORT, INTIMIDATION, CAPTURE | DESIGN FIXED / FUTURE SCHEMA |
-| Skill permission | none canonical | Stage12 skill-permission policy | EXHAUSTION | NEW MINIMAL OWNER |
-| Skill Provider validity | none canonical | `ProviderValidityPolicy` after ProviderRef identity resolution | FALSE_REPORT, INTIMIDATION, CAPTURE; explicit provider-dependent effects | NEW CANONICAL SHARED OWNER |
+| Skill permission | none canonical | SkillPermissionPolicy, holder-level permission only | EXHAUSTION | NEW CANONICAL MINIMAL OWNER; DESIGN FIXED |
+| Skill operation admission composition | SkillResolver local enabled gate | SkillOperationAdmissionCoordinator composes ProviderValidityPolicy + SkillPermissionPolicy before observable activation/RNG | EXHAUSTION + all skill Providers | NEW THIN COORDINATOR; DESIGN FIXED |\n| Preparation interruption request | none | PreparationInterruptionPort implemented later by the true preparation owner | EXHAUSTION, INTIMIDATION | NEW MINIMAL PORT; DESIGN FIXED / IMPLEMENTATION DEPENDENCY |\n| Skill Provider validity | none canonical | `ProviderValidityPolicy` after ProviderRef identity resolution | FALSE_REPORT, INTIMIDATION, CAPTURE; explicit provider-dependent effects | NEW CANONICAL SHARED OWNER |
 | Skill target candidate construction | SkillResolver + TargetSystem | same + Stage12 eligibility/forcing policy seam | PROVOCATION, CAPTURE | EXTEND |
 | Normal Attack target arbitration | TargetResolutionSystem | TargetResolutionSystem | TAUNT/CONFUSION regression, Provocation non-domain | REUSE |
 | Damage permission | DamageSystem / existing prevention seams | canonical damage admission seam in DamageSystem stack | CAPTURE | EXTEND |
@@ -46,7 +46,7 @@
 
 The following remain open after Round 4:
 
-- DQ-SF-06 Skill Permission API and exact Active admission injection point;
+- DQ-SF-06 CLOSED in Round 5: SkillPermissionPolicy + pre-RNG SkillOperationAdmissionCoordinator;
 - DQ-SF-07 preparation interruption port;
 - DQ-SF-09 / 10 target-operation policy and query granularity;
 - DQ-SF-11 minimal equipment-effectiveness runtime abstraction;
@@ -54,7 +54,7 @@ The following remain open after Round 4:
 - DQ-SF-13 public event model;
 - DQ-SF-17 composition-root wiring;
 - DQ-SF-19 Capture composite execution;
-- DQ-SF-21 existing JIT Provider gate migration;
+- DQ-SF-21 CLOSED_BY_SHARED_FOUNDATION_DESIGN in Round 5: RecoveryOpportunitySystem Gate 4 migration contract frozen; implementation remains pending;
 - DQ-SF-23 queued / in-flight semantics;
 - DQ-SF-26 independent Shared Foundation design audit.
 
@@ -157,3 +157,22 @@ Round 4 invariants:
 - no global source-death cleanup rule exists.
 
 No gameplay implementation is authorized by these owner decisions.
+
+
+## SF Round 5 owner closure
+
+| Responsibility | Canonical owner | Non-owner collaborators | Frozen boundary |
+|---|---|---|---|
+| holder-level skill permission | SkillPermissionPolicy | StateEffectivenessPolicy supplies effective Exhaustion fact | no Provider validity, RNG, targeting or execution |
+| new skill operation admission composition | SkillOperationAdmissionCoordinator | ProviderValidityPolicy + SkillPermissionPolicy | pure/pre-RNG decision seam only |
+| Provider current validity | ProviderValidityPolicy | SkillRuntimeRegistry resolves identity | unchanged from Round 3 |
+| preparation progress/storage | future Stage15 preparation owner | PreparationInterruptionPort exposes only interruption command | Stage12 never stores progress |
+| preparation interruption transition dispatch | EffectivenessTransitionCoordinator | StateEffectivenessPolicy / ProviderValidityPolicy transition facts + PreparationInterruptionPort | synchronous, non-authoritative |
+| recovery JIT source gate | RecoveryOpportunitySystem remains opportunity owner; validity delegated to ProviderValidityPolicy | typed SkillProviderRef construction | rejection before probability RNG |
+
+Owner invariants:
+
+- SkillPermissionPolicy and ProviderValidityPolicy remain separate truth domains.
+- SkillOperationAdmissionCoordinator may aggregate blockers, but it may not invent a second permission/validity truth.
+- Provider resume means only future behavior may become eligible; it never auto-activates a skill or resumes old preparation.
+- EventBus records committed/decided facts and does not decide interruption.

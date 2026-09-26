@@ -24,8 +24,8 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 | DQ-SF-03 | How represent Resident / Effective / Suppressed / Removed? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Residency is a Registry fact; `StateEffectivenessDecision` is returned only for resident instances and distinguishes EFFECTIVE / SUPPRESSED / INACTIVE with stable typed blockers. Removal is absence from Registry, never a decision status. | 02,08; independent causes compose; final cause removal resumes only still-live instances; suppression never pauses lifecycle by default |
 | DQ-SF-04 | Minimal SkillType, preparation characteristic, and ProviderCategory? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | SkillDefinition metadata: SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION + PreparationMode NONE/REQUIRED; PREPARATION_ACTIVE = ACTIVE+REQUIRED; NORMAL_ATTACK remains operation; equipment special remains separate ProviderCategory | See STAGE12_SKILLTYPE_PROVIDER_IDENTITY_DESIGN.md; legacy compatibility default RD-SF-001; no execution chain |
 | DQ-SF-05 | Stable provider identity and enumeration? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Typed ProviderRef union: SkillProviderRef(owner_id, slot, skill_id) + EquipmentProviderRef(owner_id, provider_key); Registry resolves skill key and expected ID; deterministic enumeration RD-SF-002 | 04,21; same skill on two owners/slots distinct; slot 0 valid; serialization/replay; missing vs mismatch explicit |
-| DQ-SF-06 | Skill permission API and canonical admission point? | DESIGN_REQUIRED | SkillPermissionPolicy.can_admit candidate, invoked by explicit operation admission before observable activation; do not recheck activated child chain as new skill | 04,08,12,13; one holder-level Exhaustion block, no-active silent, Basic/Assault unaffected; no Stage14 loop |
-| DQ-SF-07 | Preparation interruption port and state ownership? | DESIGN_REQUIRED | Future preparation owner stores progress; Stage12 requests unit-wide Active or selected Provider interruption through a minimal injected port; define no-op/fake and synchronously triggered transitions | 05,06,08,20; effective Exhaustion interrupts now, selected Intimidation interrupts only that provider, no missed progress replay; no Stage15 scheduler |
+| DQ-SF-06 | Skill permission API and canonical admission point? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | SkillPermissionPolicy is the canonical holder-level permission owner. SkillOperationAdmissionCoordinator composes ProviderValidityPolicy + SkillPermissionPolicy before observable activation/RNG; already-admitted continuation is not re-admitted. | 04,08,12,13; Exhaustion denies only new ACTIVE admission; Normal Attack outside domain; standard ASSAULT not denied by Exhaustion; skip-preparation stays ACTIVE |
+| DQ-SF-07 | Preparation interruption port and state ownership? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | PreparationInterruptionPort is the minimal Stage12-facing protocol; the future Stage15 preparation owner stores progress. EffectivenessTransitionCoordinator synchronously issues holder-wide ACTIVE or selected-Provider requests on relevant effectiveness/validity transitions. | 05,06,08,20; interruption occurs before later gameplay, old progress never resumes, Fake port is testable, production placeholder cannot imply contract completion |
 | DQ-SF-08 | Provider validity query and dependency propagation? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `ProviderValidityPolicy.evaluate(context, ProviderRef)` owns current Provider validity after identity resolution. Statuses: VALID / SUPPRESSED / BASELINE_DISABLED / MISSING / IDENTITY_MISMATCH. Independent suppression causes are derived; live state dependencies are explicit `ProviderDependency`, never inferred from provenance. | 02,04,05,20,21; Provider/Holder separation; final cause removal resumes future-only behavior; no missed-trigger replay |
 | DQ-SF-09 | Target Operation model? | DESIGN_REQUIRED | TargetSystem primitives + Skill target policy seam; model relation, cardinality, selector, legal context and target provenance as separate dimensions | 04,05,10; single/random/deterministic/Choose-N/Fixed-All, friendly/healing/self; closed Duel admissibility |
 | DQ-SF-10 | What creates a new target operation? | DESIGN_REQUIRED | SkillResolver/explicit operation producer declares fresh independent query; inherited/derived targets carry prior resolution identity and no implicit recheck | 09,12,23; locked multihit vs independent multi-query; source inclusion never reduces N |
@@ -44,7 +44,7 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 |---|---|---|---|---|
 | DQ-SF-19 | Capture composite action/damage/recovery/target permission | DESIGN_REQUIRED | ActionSystem, DamageSystem stack, RecoverySystem, target policy, ProviderValidityPolicy own separate decisions; decide result topology and concurrent reason reporting | Counter blocked vs attached Active DOT continues; free proxy actor remains legal; friendly single/2-target excluded; self recovery arrives but zero; equipment attributes only proven scope |
 | DQ-SF-20 | Cyclic dependencies and immediate transitions | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Evaluation uses an explicit consumer→prerequisite dependency graph with per-evaluation memoization and cycle detection. `EffectivenessTransitionCoordinator` is a non-authoritative propagation coordinator. Cycles are unsupported: raise `DependencyCycleError`, produce no guessed allow/deny truth, and require topology validation before committing dependency-changing transitions. | No fixed point; reverse dependency closure drives synchronous re-evaluation; cycle path explicit; no replay; no Runtime Default needed because no gameplay fallback is chosen |
-| DQ-SF-21 | Existing JIT source-gate migration and slot 0 | DESIGN_REQUIRED | Identity obligation is fixed by DQ-SF-05: explicit slot is-not-None, expected skill ID validation, missing/mismatch distinction; implementation must delegate current effectiveness to ProviderValidityPolicy | INHERENT=0 lookup, mismatch, missing, suppression and no-RNG rejection remain implementation discriminators |
+| DQ-SF-21 | Existing JIT source-gate migration and slot 0 | CLOSED_BY_SHARED_FOUNDATION_DESIGN | RecoveryOpportunitySystem Gate 4 must construct SkillProviderRef with explicit slot-is-not-None semantics and expected skill_id, then delegate all current validity to ProviderValidityPolicy before recovery RNG. SkillResolver admission must likewise stop treating runtime.enabled as the complete truth. | INHERENT=0/1/2 same path; MISSING / IDENTITY_MISMATCH / BASELINE_DISABLED / SUPPRESSED all reject before owned RNG; attribution-only source_ref does not gain liveness |
 | DQ-SF-22 | Application result, refresh transaction, binding atomicity | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `StateConflictPolicy` + immutable `StateApplicationTransaction` + non-writing coordinator prepare CREATE/REFRESH/REPLACE/REJECT; only Lifecycle commits. REFRESH keeps instance_id and creates a new application generation. | All fallible validation precedes commit; old Intimidation binding/timer stay authoritative until commit; resume preserves binding/generation/timer; legacy ValueError surface retained for old callers |
 | DQ-SF-23 | Admitted/queued work vs JIT recheck | CONTRACT_DEPENDENT | Owning operation + execution-right system preserve admission identity; distinguish new operation from continuation | Exhaustion in-flight Active no rollback; Stage9 Counter admitted-entry invariant; Capture Q16/Q44/Q45 and Sabotage B-SAB-07 remain bounded until default/authority disposition |
 | DQ-SF-24 | Clock continuation during suppression | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `StateLifecycleSystem` owns physical lifetime; explicit clock domains separate round/holder-action/phase lifetime from behavioral block/use counters and provider/source counters. Stage12 uses typed lifetime metadata instead of entering Stage10 merely via duration_rounds/lifecycle_window. | suppression never pauses physical lifetime; STUN block consumption requires an actually blocked opportunity; Intimidation may expire while ineffective; RD-SF-003 fixes same-envelope settlement ordering |
@@ -193,3 +193,50 @@ Current 28-question disposition after Round 4:
 Shared Foundation Design Freeze remains **NOT PASSED**.
 
 NEXT: DQ-SF-06 / DQ-SF-07 / DQ-SF-21 — Skill Permission + Preparation Interruption + Existing JIT Provider Gate Migration.
+
+
+## 7. SF Round 5 closure — Skill Permission / Preparation Interruption / JIT Provider Gate
+
+Authority record: [STAGE12_SKILL_PERMISSION_PREPARATION_PROVIDER_GATE_DESIGN.md](STAGE12_SKILL_PERMISSION_PREPARATION_PROVIDER_GATE_DESIGN.md)
+
+Closed in STAGE12_SF_ROUND5_SKILL_PERMISSION_PREPARATION_PROVIDER_GATE_DESIGN:
+
+- DQ-SF-06 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+- DQ-SF-07 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+- DQ-SF-21 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+
+Frozen shared facts:
+
+1. SkillPermissionPolicy owns holder-level permission only; it never mutates SkillRuntime, consumes RNG, selects targets or decides Provider validity.
+2. ProviderValidityPolicy remains the only owner of ProviderRef current validity.
+3. SkillOperationAdmissionCoordinator is a thin composition seam, not a new gameplay owner. It resolves identity, evaluates Provider validity and holder permission, and admits only after all blockers are known.
+4. Exhaustion denies only a real new ACTIVE admission. Normal Attack is outside the policy; standard ASSAULT is not denied merely by Exhaustion.
+5. Already-admitted Active work is not rolled back by a later Exhaustion transition. Child effects are not automatically new admissions.
+6. Skip-preparation does not change SkillType; ACTIVE + skipped preparation is still subject to Exhaustion.
+7. PreparationInterruptionPort is a Stage12-facing protocol only. Stage12 does not own preparation progress or a scheduler.
+8. Exhaustion entering EFFECTIVE synchronously requests holder-wide interruption of current ACTIVE preparations.
+9. Intimidation causing the selected Provider to transition VALID -> SUPPRESSED synchronously requests interruption only for that selected Provider when it is a preparation Active.
+10. Interruption is destructive with respect to the old preparation instance: later state/provider resume never restores old progress.
+11. RecoveryOpportunitySystem Gate 4 is the first concrete JIT migration target. SkillSlot.INHERENT == 0 is valid and must use explicit is-not-None semantics.
+12. Query-gated recovery must validate expected skill_id; MISSING, IDENTITY_MISMATCH, BASELINE_DISABLED and SUPPRESSED all reject before recovery probability RNG.
+13. EffectSourceRef provenance alone never creates ProviderDependency.
+14. The existing TriggerSystem source_skill_slot truthiness fallback is recorded as a separate identity/provenance hygiene hazard; it is not silently reclassified as a Provider liveness gate.
+15. No Stage12 gameplay implementation was authorized in this round.
+
+Current 28-question disposition after Round 5:
+
+- 9 DESIGN_REQUIRED
+- 2 CONTRACT_DEPENDENT
+- 1 CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED
+- 0 BLOCKED
+- 1 CLOSED_BY_EXISTING_ARCHITECTURE
+- 12 CLOSED_BY_SHARED_FOUNDATION_DESIGN
+- 1 CLOSED_BY_AUTHORITY_MIGRATION
+- 1 CLOSED_BY_SCOPED_SUPERSESSION
+- 1 CLOSED_BY_PROVENANCE_QUALIFICATION
+
+Shared Foundation Design Freeze remains **NOT PASSED**.
+Stage12 Runtime Frozen remains **0 / 7**.
+Stage13 / Stage14 / Stage15 Active remain **NO**.
+
+NEXT: DQ-SF-09 / DQ-SF-10 — Skill Target Operation / Provocation / Capture Target Eligibility Design.

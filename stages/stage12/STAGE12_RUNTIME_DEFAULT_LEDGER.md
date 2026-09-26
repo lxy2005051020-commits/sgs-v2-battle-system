@@ -145,3 +145,17 @@ Required tests:
 New Runtime Defaults added: **RD-SF-003 only**.
 
 No defaults are added for Provocation/Capture reapplication, Intimidation specialized removal/source death, FalseReport stronger/weaker conflict, Sabotage stronger different-source replacement, or unknown cleanse classes. Those remain explicit bounded/unsupported contract edges.
+
+
+## SF Round 5 default disposition — 2026-09-27
+
+New Runtime Defaults added: **NONE**.
+
+Round 5 closes architecture without inventing original-game behavior:
+
+1. Provider-invalid vs holder-permission blocker ordering is not gameplay semantics. A composed internal decision may serialize blockers deterministically, but public event vocabulary/primary-reason presentation remains DQ-SF-13 and is not a PROJECT_RUNTIME_DEFAULT here.
+2. MISSING / IDENTITY_MISMATCH / BASELINE_DISABLED / SUPPRESSED are already canonical ProviderValidityPolicy outcomes, not guessed defaults. For an explicitly Provider-dependent JIT opportunity, every non-VALID outcome rejects that opportunity before its owned RNG.
+3. A silent production NoopPreparationInterruptionPort is not adopted as a completion default. Before a concrete preparation owner exists, tests may use a Fake port; production composition may only use an explicit no-preparation placeholder under the invariant that PREPARING work cannot exist, and affected state Runtime Freeze may not claim the preparation contract complete.
+4. Provider resume does not auto-activate or restore old preparation. This is contract-derived future-only semantics, not a project default.
+
+Therefore RD-SF-001, RD-SF-002 and RD-SF-003 remain the complete Shared Foundation Runtime Default set after Round 5.

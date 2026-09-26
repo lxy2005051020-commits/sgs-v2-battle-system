@@ -238,3 +238,77 @@ test_legacy_apply_failure_adapter_preserved
 ```
 
 Round 4 adds design coverage only. It changes zero production tests and zero gameplay code.
+
+
+## SF Round 5 planned discriminator suite
+
+Status: **DESIGN_FROZEN / NOT IMPLEMENTED**.
+
+### Skill Permission
+
+~~~text
+test_exhaustion_denies_active
+test_exhaustion_allows_normal_attack
+test_exhaustion_does_not_deny_standard_assault
+test_exhaustion_does_not_disable_passive_command
+test_suppressed_exhaustion_allows_active
+test_exhaustion_resume_denies_future_active
+test_already_admitted_active_not_rolled_back
+test_skip_preparation_does_not_bypass_exhaustion
+test_no_active_attempt_emits_no_block
+~~~
+
+### Preparation interruption port
+
+~~~text
+test_effective_exhaustion_interrupts_all_current_active_preparations_for_holder
+test_selected_intimidation_interrupts_only_selected_provider
+test_unselected_provider_preparation_untouched
+test_suppressed_exhaustion_does_not_interrupt
+test_exhaustion_becomes_effective_after_insight_ends_interrupts_immediately
+test_interrupted_preparation_does_not_resume
+test_provider_resume_does_not_resume_preparation
+test_not_preparing_is_noop
+test_provider_not_matched_is_distinct_from_not_preparing
+test_interruption_completes_before_later_gameplay_in_same_transition_wave
+~~~
+
+### JIT Provider gate migration
+
+~~~text
+test_slot_zero_provider_is_gated
+test_slot_one_provider_is_gated
+test_slot_two_provider_is_gated
+test_expected_skill_id_mismatch_rejected
+test_missing_provider_rejected
+test_baseline_disabled_rejected
+test_provider_suppressed_rejected
+test_provider_gate_rejection_consumes_no_recovery_rng
+test_provider_valid_path_preserves_existing_rng_behavior
+test_attribution_only_effect_does_not_gain_provider_liveness
+~~~
+
+### Composition
+
+~~~text
+test_provider_valid_but_exhaustion_blocks_active
+test_provider_suppressed_without_exhaustion_blocks_selected_skill
+test_provider_and_exhaustion_blockers_do_not_change_allow_deny_by_evaluation_order
+test_remove_intimidation_but_capture_remains_provider_suppressed
+test_final_suppression_removed_provider_valid_but_exhaustion_still_blocks_active
+test_provider_resume_never_auto_activates_skill
+test_provider_resume_never_resumes_old_preparation
+~~~
+
+### Static / architecture audit
+
+~~~text
+test_skill_permission_policy_consumes_no_rng
+test_provider_validity_policy_consumes_no_rng
+test_recovery_gate_has_no_source_skill_slot_truthiness_check
+test_skill_resolver_does_not_treat_runtime_enabled_as_complete_provider_truth
+test_preparation_port_is_protocol_only_and_does_not_store_progress
+test_event_handlers_do_not_decide_preparation_interruption
+~~~
+
+Round 5 changes zero production tests and zero gameplay code.
