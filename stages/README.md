@@ -84,7 +84,7 @@ Wave 5:
   690110 CAPTURE
 ```
 
-Stage12 production Runtime remains inactive. Research Freeze is not Runtime Freeze, because apparently the distinction must be written on every wall before dashboards stop trying to merge the two.
+Stage12 production Runtime remains inactive. Research Freeze and Runtime Freeze remain separate governance states.
 
 ## 6. Project Stage 与 Research Wave
 
