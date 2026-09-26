@@ -55,10 +55,10 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 
 ## 3. Default candidates and preserved non-claims
 
-Round 2 has started STAGE12_RUNTIME_DEFAULT_LEDGER.md with only two defaults that are actually required now:
-RD-SF-001 legacy SkillDefinition classification compatibility and RD-SF-002 deterministic loaded Skill Provider enumeration.
-No Intimidation weighting or empty-pool default is selected. Future choices must use the same fields and the labels
-PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN.
+Round 2 started STAGE12_RUNTIME_DEFAULT_LEDGER.md with RD-SF-001 and RD-SF-002.
+Round 4 adds RD-SF-003 for same-envelope lifecycle settlement ordering.
+No Intimidation weighting, empty-pool behavior, unsupported reapplication rule, or unknown removal class is silently selected.
+Future choices must use the same fields and the labels PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN.
 
 | Authority | Already governed or unresolved items to carry into design |
 |---|---|
