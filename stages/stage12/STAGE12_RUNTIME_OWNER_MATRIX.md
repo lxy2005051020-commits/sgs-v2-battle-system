@@ -8,14 +8,14 @@
 |---|---|---|---|---|
 | State physical storage | StateRegistry | StateRegistry | all 7 | REUSE |
 | State lifecycle mutation | StateLifecycleSystem | StateLifecycleSystem | all 7 | REUSE / EXTEND |
-| Resident/effective interpretation | Stage11StateRuntime only for Stage11 | Stage12 policy/read façade, exact class name TBD by design | INSIGHT, PROVOCATION, provider suppression | NEW MINIMAL OWNER |
+| Resident/effective interpretation | Stage9/Stage11 local readers | `StateEffectivenessPolicy` | all resident states requiring current authority | NEW CANONICAL SHARED OWNER; Stage9/11 DELEGATE |
 | State admission / immunity | Stage11-specific application policy only | Stage12 admission policy seam invoked by lifecycle | INSIGHT + protected/special boundaries | NEW MINIMAL OWNER |
 | Natural action admission | ActionSystem | ActionSystem | CAPTURE | EXTEND |
 | Normal attack permission | NormalAttackSystem | NormalAttackSystem | EXHAUSTION negative discriminator; Capture action interaction | REUSE |
 | Skill identity / slots | SkillRuntime + SkillRuntimeRegistry | same registry + frozen SkillProviderRef(owner_id, slot, skill_id) identity | EXHAUSTION, FALSE_REPORT, INTIMIDATION, CAPTURE | REUSE / DESIGN FIXED |
 | Skill category recognition | insufficient general taxonomy | SkillDefinition metadata: SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION + PreparationMode NONE/REQUIRED | EXHAUSTION, FALSE_REPORT, INTIMIDATION, CAPTURE | DESIGN FIXED / FUTURE SCHEMA |
 | Skill permission | none canonical | Stage12 skill-permission policy | EXHAUSTION | NEW MINIMAL OWNER |
-| Skill Provider validity | none canonical | Stage12 provider-validity policy | FALSE_REPORT, INTIMIDATION, CAPTURE | NEW MINIMAL OWNER |
+| Skill Provider validity | none canonical | `ProviderValidityPolicy` after ProviderRef identity resolution | FALSE_REPORT, INTIMIDATION, CAPTURE; explicit provider-dependent effects | NEW CANONICAL SHARED OWNER |
 | Skill target candidate construction | SkillResolver + TargetSystem | same + Stage12 eligibility/forcing policy seam | PROVOCATION, CAPTURE | EXTEND |
 | Normal Attack target arbitration | TargetResolutionSystem | TargetResolutionSystem | TAUNT/CONFUSION regression, Provocation non-domain | REUSE |
 | Damage permission | DamageSystem / existing prevention seams | canonical damage admission seam in DamageSystem stack | CAPTURE | EXTEND |
@@ -80,5 +80,34 @@ Fixed for downstream Shared Foundation design:
 8. Provider current validity remains a separate DQ-SF-08 owner; disabled/suppressed does not mean identity missing.
 9. Intimidation binding will store ProviderRef rather than Python object identity.
 10. RecoveryOpportunitySystem slot-0 truthiness is a formal migration obligation, not repaired in this design round.
+
+No gameplay implementation is authorized by these owner decisions.
+
+
+## SF Round 3 owner decisions — 2026-09-27
+
+Authority record:
+- STAGE12_STATE_EFFECTIVENESS_PROVIDER_VALIDITY_DESIGN.md
+
+Canonical owner split:
+
+| Responsibility | Canonical owner | Non-owner collaborators |
+|---|---|---|
+| physical state residency | StateRegistry | policies may read only |
+| physical state mutation / expiry | StateLifecycleSystem | transition coordinator observes before/after decisions |
+| current state gameplay authority | StateEffectivenessPolicy | Stage9StateRuntime / Stage11StateRuntime delegate |
+| Provider identity resolution | SkillRuntimeRegistry and future typed equipment resolver | ProviderValidityPolicy consumes resolved identity facts |
+| current Provider validity | ProviderValidityPolicy | state policy may depend on its decision |
+| dependency propagation / transition awareness | EffectivenessTransitionCoordinator | policies remain the decision owners |
+| domain arbitration | existing Stage9/11/12 domain systems | consume effective/valid decisions |
+| observable event publication | deciding domain owner → EventBus | coordinator may surface internal transition facts but EventBus never decides |
+
+Owner invariants:
+
+- StateEffectivenessPolicy and ProviderValidityPolicy remain separate because StateInstance identity and ProviderRef identity are different domains.
+- EffectivenessTransitionCoordinator is deliberately not a God object. It owns neither Registry/Lifecycle nor Action/Damage/Recovery/Target/RNG.
+- Shared policies never mutate `SkillRuntime.enabled` or state runtime params to represent transient suppression.
+- Explicit Intimidation ProviderRef binding remains state-owned gameplay data; it is not a mutable suppression ledger.
+- Equipment Provider identity can enter ProviderRef, but DQ-SF-11 still owns the equipment-effectiveness semantics and adapter.
 
 No gameplay implementation is authorized by these owner decisions.

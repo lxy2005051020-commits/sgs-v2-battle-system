@@ -81,7 +81,20 @@ The following are not defaults yet:
 - Intimidation uniform/equal selection probability.
 - Intimidation empty eligible-pool behavior.
 - Equipment/Bingshu eligibility for Intimidation.
-- Provider-validity cycle fallback.
+- Provider-validity cycle fallback: no gameplay fallback is selected. Round 3 declares dependency cycles an explicit unsupported boundary that raises `DependencyCycleError`; this is not a PROJECT_RUNTIME_DEFAULT because no allow/deny value is invented.
 - Any Stage13/14/15 execution behavior.
 
 DQ-SF-14 remains CONTRACT_DEPENDENT / OPEN. The ledger now exists so later design choices have a lawful place to live.
+
+
+## SF Round 3 default disposition — 2026-09-27
+
+New Runtime Defaults added: **NONE**.
+
+Round 3 deliberately avoids three fake defaults:
+
+1. Suppression-cause ordering is semantically a set. Implementations may sort stable serialization keys for deterministic output, but order has no gameplay authority and is not a server-behavior claim.
+2. Dependency cycles have no guessed gameplay answer. Evaluation/topology validation raises `DependencyCycleError`; no fixed-point, ALLOW, DENY, or “last writer wins” fallback is chosen.
+3. Source death has no universal Provider/state invalidation default. A liveness dependency exists only when a contract/runtime record explicitly declares it.
+
+Therefore RD-SF-001 and RD-SF-002 remain the only Shared Foundation Runtime Defaults after Round 3.

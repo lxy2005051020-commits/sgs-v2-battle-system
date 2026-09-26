@@ -19,13 +19,13 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 | ID | Question / evidence | Status | Candidate owner and required next decision | Dependencies / acceptance discriminator |
 |---|---|---|---|---|
 | DQ-SF-01 | Who admits incoming state? Lifecycle.apply mutates, Stage11 policy only checks conflict | DESIGN_REQUIRED | State admission policy queried by Lifecycle; define validation vs immunity vs conflict order; mutation only Lifecycle | 02,03,14,22; rejection changes no old instance/timer and emits no applied/removed pair; source RNG preserved |
-| DQ-SF-02 | Who answers effective state across Stage9/11/12? | DESIGN_REQUIRED | Shared StateEffectivenessPolicy candidate; Stage9/11 delegate common truth while retaining domain arbitration | 05,08,15,20; suppressed Insight cannot suppress Taunt; no policy in Registry |
-| DQ-SF-03 | How represent Resident / Effective / Suppressed / Removed? | DESIGN_REQUIRED | Residency from Registry; minimal typed decision with reason(s), state/provider identity only when useful; operation-inadmissible distinct | 02,08; removal of one reason cannot restore while another remains; expired state never resumes |
+| DQ-SF-02 | Who answers effective state across Stage9/11/12? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `StateEffectivenessPolicy` is the single canonical owner for current gameplay authority of a resident state. Registry remains storage; Lifecycle remains writer; Stage9/11 delegate shared truth while retaining domain arbitration. | 05,08,15,20; suppressed Insight cannot suppress protected controls; removed instances are not query results |
+| DQ-SF-03 | How represent Resident / Effective / Suppressed / Removed? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Residency is a Registry fact; `StateEffectivenessDecision` is returned only for resident instances and distinguishes EFFECTIVE / SUPPRESSED / INACTIVE with stable typed blockers. Removal is absence from Registry, never a decision status. | 02,08; independent causes compose; final cause removal resumes only still-live instances; suppression never pauses lifecycle by default |
 | DQ-SF-04 | Minimal SkillType, preparation characteristic, and ProviderCategory? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | SkillDefinition metadata: SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION + PreparationMode NONE/REQUIRED; PREPARATION_ACTIVE = ACTIVE+REQUIRED; NORMAL_ATTACK remains operation; equipment special remains separate ProviderCategory | See STAGE12_SKILLTYPE_PROVIDER_IDENTITY_DESIGN.md; legacy compatibility default RD-SF-001; no execution chain |
 | DQ-SF-05 | Stable provider identity and enumeration? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Typed ProviderRef union: SkillProviderRef(owner_id, slot, skill_id) + EquipmentProviderRef(owner_id, provider_key); Registry resolves skill key and expected ID; deterministic enumeration RD-SF-002 | 04,21; same skill on two owners/slots distinct; slot 0 valid; serialization/replay; missing vs mismatch explicit |
 | DQ-SF-06 | Skill permission API and canonical admission point? | DESIGN_REQUIRED | SkillPermissionPolicy.can_admit candidate, invoked by explicit operation admission before observable activation; do not recheck activated child chain as new skill | 04,08,12,13; one holder-level Exhaustion block, no-active silent, Basic/Assault unaffected; no Stage14 loop |
 | DQ-SF-07 | Preparation interruption port and state ownership? | DESIGN_REQUIRED | Future preparation owner stores progress; Stage12 requests unit-wide Active or selected Provider interruption through a minimal injected port; define no-op/fake and synchronously triggered transitions | 05,06,08,20; effective Exhaustion interrupts now, selected Intimidation interrupts only that provider, no missed progress replay; no Stage15 scheduler |
-| DQ-SF-08 | Provider validity query and dependency propagation? | DESIGN_REQUIRED | ProviderValidityPolicy.evaluate candidate; compose baseline enabled and independent suppression causes; ongoing dependencies explicit, never infer all from source_id | 02,04,05,20,21; A suppressed/B holder vs B suppressed/A effective; final cause removal only resumes future live behavior |
+| DQ-SF-08 | Provider validity query and dependency propagation? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `ProviderValidityPolicy.evaluate(context, ProviderRef)` owns current Provider validity after identity resolution. Statuses: VALID / SUPPRESSED / BASELINE_DISABLED / MISSING / IDENTITY_MISMATCH. Independent suppression causes are derived; live state dependencies are explicit `ProviderDependency`, never inferred from provenance. | 02,04,05,20,21; Provider/Holder separation; final cause removal resumes future-only behavior; no missed-trigger replay |
 | DQ-SF-09 | Target Operation model? | DESIGN_REQUIRED | TargetSystem primitives + Skill target policy seam; model relation, cardinality, selector, legal context and target provenance as separate dimensions | 04,05,10; single/random/deterministic/Choose-N/Fixed-All, friendly/healing/self; closed Duel admissibility |
 | DQ-SF-10 | What creates a new target operation? | DESIGN_REQUIRED | SkillResolver/explicit operation producer declares fresh independent query; inherited/derived targets carry prior resolution identity and no implicit recheck | 09,12,23; locked multihit vs independent multi-query; source inclusion never reduces N |
 | DQ-SF-11 | Minimal equipment effectiveness abstraction? | DESIGN_REQUIRED | New minimal EquipmentEffectivenessPolicy; existing AttributeSystem/DamageRuleProvider/RecoveryModifierProvider/TriggerSystem consume owner-bound contributions | 05,08,20; static attributes, damage/recovery modifiers, deterministic/scheduled trigger, local/remote live effects, object retained/no replay |
@@ -42,7 +42,7 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 | ID | Question | Status | Owner / next decision | Acceptance boundary |
 |---|---|---|---|---|
 | DQ-SF-19 | Capture composite action/damage/recovery/target permission | DESIGN_REQUIRED | ActionSystem, DamageSystem stack, RecoverySystem, target policy, ProviderValidityPolicy own separate decisions; decide result topology and concurrent reason reporting | Counter blocked vs attached Active DOT continues; free proxy actor remains legal; friendly single/2-target excluded; self recovery arrives but zero; equipment attributes only proven scope |
-| DQ-SF-20 | Cyclic dependencies and immediate transitions | DESIGN_REQUIRED | Shared effective/provider query graph must define bounded evaluation and synchronous transition application; detect cycles rather than recurse indefinitely or invent fixed-point truth | Example source-provider suppression→Intimidation ineffective→selected Provider resumes→provider-derived Insight changes; overlapping causes stable; no replay; cycle fallback requires ledger if needed |
+| DQ-SF-20 | Cyclic dependencies and immediate transitions | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Evaluation uses an explicit consumer→prerequisite dependency graph with per-evaluation memoization and cycle detection. `EffectivenessTransitionCoordinator` is a non-authoritative propagation coordinator. Cycles are unsupported: raise `DependencyCycleError`, produce no guessed allow/deny truth, and require topology validation before committing dependency-changing transitions. | No fixed point; reverse dependency closure drives synchronous re-evaluation; cycle path explicit; no replay; no Runtime Default needed because no gameplay fallback is chosen |
 | DQ-SF-21 | Existing JIT source-gate migration and slot 0 | DESIGN_REQUIRED | Identity obligation is fixed by DQ-SF-05: explicit slot is-not-None, expected skill ID validation, missing/mismatch distinction; implementation must delegate current effectiveness to ProviderValidityPolicy | INHERENT=0 lookup, mismatch, missing, suppression and no-RNG rejection remain implementation discriminators |
 | DQ-SF-22 | Application result, refresh transaction, binding atomicity | DESIGN_REQUIRED | Lifecycle sole physical writer; admission/conflict decisions pure where possible; binding resolver consumes RNG only after allowed path | No half-released old binding on failure; refresh selects one, resume preserves binding; direct refresh cannot bypass policy; old API ValueError vs rejected outcome adapter explicit |
 | DQ-SF-23 | Admitted/queued work vs JIT recheck | CONTRACT_DEPENDENT | Owning operation + execution-right system preserve admission identity; distinguish new operation from continuation | Exhaustion in-flight Active no rollback; Stage9 Counter admitted-entry invariant; Capture Q16/Q44/Q45 and Sabotage B-SAB-07 remain bounded until default/authority disposition |
@@ -118,3 +118,35 @@ Shared Foundation Design Freeze remains NOT PASSED.
 
 NEXT: DQ-SF-02 / DQ-SF-03 / DQ-SF-08 / DQ-SF-20:
 State Effectiveness + Suppression Composition + Provider Validity + Dependency Cycle Design.
+
+
+## 5. SF Round 3 closure — State Effectiveness / Provider Validity / Dependency Composition
+
+Authority record: [STAGE12_STATE_EFFECTIVENESS_PROVIDER_VALIDITY_DESIGN.md](STAGE12_STATE_EFFECTIVENESS_PROVIDER_VALIDITY_DESIGN.md)
+
+Closed in `STAGE12_SF_ROUND3_EFFECTIVENESS_PROVIDER_VALIDITY_DESIGN`:
+
+- DQ-SF-02 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+- DQ-SF-03 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+- DQ-SF-08 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+- DQ-SF-20 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+
+Frozen design facts:
+
+1. `StateEffectivenessPolicy` is the only canonical answer to whether a resident state currently owns its gameplay authority.
+2. `ProviderValidityPolicy` is the only canonical answer to current Provider validity; Provider identity remains owned by its registry/resolver.
+3. `StateRegistry` answers residency only. `StateLifecycleSystem` remains the only physical state writer.
+4. Removed instances are not represented as an effectiveness enum member. Querying a removed/non-resident instance is an explicit not-resident error/boundary.
+5. Canonical suppression composition is derived/query-time, using stable value-object causes. Target/provider objects do not own a mutable list of suppressors.
+6. State/provider dependencies are explicit. `EffectSourceRef` remains attribution and never becomes liveness dependency by implication.
+7. State lifetime continues while suppressed unless a specific future contract explicitly freezes a pause rule.
+8. Multiple independent causes compose as set semantics. Removing one cause cannot resume authority while another blocker remains.
+9. `EffectivenessTransitionCoordinator` coordinates dependent decision changes and synchronous transition notifications but owns no storage, permission, damage, target, recovery, RNG, or EventBus truth.
+10. Dependency cycles are not solved by fixed point. They raise `DependencyCycleError`; no silent ALLOW/DENY fallback exists.
+11. Stage9 and Stage11 effective-state readers migrate by delegation; their domain-specific arbitration remains local.
+12. No Stage11 reopen is required by this design round.
+13. No gameplay implementation is authorized or performed here.
+
+Shared Foundation Design Freeze remains NOT YET.
+Stage12 Runtime Frozen remains 0 / 7.
+Stage13 Active remains NO.

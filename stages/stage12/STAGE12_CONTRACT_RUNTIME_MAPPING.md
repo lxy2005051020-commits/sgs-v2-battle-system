@@ -79,3 +79,33 @@ These rows are DESIGN_FROZEN_FOUNDATION, not GREEN. GREEN still requires impleme
 | Intimidation × Insight provenance | AR-SF-02 / DQ-SF-28 | use Intimidation §§5/11 as positive outcome authority; preserve Insight DIRECT_OVERLAP_UNOBSERVED evidence label | DESIGN AUTHORITY CLOSED |
 
 Future mapping work must not move these rows to GREEN until code and discriminating tests exist.
+
+
+## SF Round 3 frozen design bindings — effectiveness / Provider validity
+
+These bindings are `DESIGN_FROZEN_FOUNDATION`, not GREEN.
+
+| State / concern | Resident model | Effective dependency | Provider dependency | Suppression / authority target | Concrete shared hook |
+|---|---|---|---|---|---|
+| INSIGHT | physical StateInstance remains in Registry until Lifecycle removes it | suppressed if an explicit live Provider dependency is non-valid; otherwise effective subject to local lifecycle facts | explicit `ProviderDependency` only when the Insight contract/source requires live provider validity | protected-control StateEffectiveness decisions | `StateEffectivenessPolicy.evaluate_state` → protected-control rule |
+| EXHAUSTION | resident timed control | effective unless independently suppressed/inactive; Insight can suppress existing Exhaustion | none inferred from source provenance | ACTIVE skill admission authority | shared state decision consumed later by SkillPermissionPolicy |
+| FALSE_REPORT | resident control | own effectiveness is shared-state truth; ordinary Insight does not suppress it | none inferred globally | PASSIVE/COMMAND Provider validity; tested equipment boundary remains DQ-SF-11 | `ProviderValidityPolicy.evaluate_provider` |
+| PROVOCATION | resident even when it cannot currently force a legal Source | shared policy may expose SOURCE_INADMISSIBLE/local inactivity; fine-grained operation admissibility remains DQ-SF-09 | none inferred globally | eligible skill target-operation authority only | state decision + future target policy |
+| INTIMIDATION | resident control with stable selected ProviderRef binding | if Intimidation itself is ineffective, binding is preserved and produces no suppression | binding targets exactly one ProviderRef; any live dependency of Intimidation itself must be explicit | exactly selected Provider | state decision → ProviderValidityPolicy cause |
+| SABOTAGE | resident protected control | Insight may suppress existing Sabotage under frozen protected-control rules | equipment linkage is explicit, not EffectSourceRef inference | tested equipment contributions/effects | StateEffectivenessPolicy; DQ-SF-11 equipment policy remains open |
+| CAPTURE | resident control; source death does not remove established Capture | own current effectiveness from shared policy; ordinary Insight does not suppress Capture | none inferred from source survival | verified PASSIVE/COMMAND Providers; other composite restrictions remain domain-owned | ProviderValidityPolicy + later DQ-SF-19 consumers |
+
+### Shared method-level migration map
+
+| Existing method / consumer | Round 3 migration binding |
+|---|---|
+| Stage9StateRuntime.has_operational_insight | delegate to `StateEffectivenessPolicy.has_effective(owner, INSIGHT)` |
+| Stage9StateRuntime.get_operational_confusion | resident read stays local; return only instance whose shared decision is EFFECTIVE |
+| Stage9StateRuntime.get_taunt_suppressors | obtain effective Insight/shared suppression causes from StateEffectivenessPolicy; no `Registry.has(INSIGHT)` authority |
+| Stage9StateRuntime.get_taunt_lifecycle_state / is_taunt_operational | shared state decision first; target/source domain checks remain Stage9 |
+| Stage11StateRuntime.is_effective | thin delegate to StateEffectivenessPolicy |
+| Stage11StateRuntime.effective_instances / has_effective | derive from delegated shared decisions |
+| Stage11 remaining-use/source-dependent checks | migrate as local rule adapters consumed by StateEffectivenessPolicy; do not remain a second canonical truth |
+| RecoveryOpportunitySystem JIT source skill gate | future DQ-SF-21 implementation resolves SkillProviderRef then delegates current validity to ProviderValidityPolicy before RNG |
+
+No row is GREEN until production code and discriminating tests exist.
