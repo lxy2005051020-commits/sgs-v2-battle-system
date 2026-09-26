@@ -231,3 +231,29 @@ DQ-SF-04 + DQ-SF-05 SkillType Taxonomy and Provider Identity Design. Data-model 
 while the migration blocker is resolved, but must not presume it closed. Next deliverables must
 identify enum/metadata candidates, serializable provider keys, legacy compatibility and slot-0 tests.
 No gameplay implementation, no state Runtime Freeze, no Stage13+ activation.
+
+
+## 8. SF Round 2 follow-up — Authority and Identity Design
+
+Round 2 completed the assigned authority and identity scope without gameplay changes.
+
+Closed:
+- AR-SF-01 by STAGE12_INSIGHT_CONFUSION_AUTHORITY_MIGRATION.md.
+- DQ-SF-15 by authority migration.
+- DQ-SF-16 by narrow scoped supersession.
+- AR-SF-02 / DQ-SF-28 by cross-contract provenance qualification.
+- DQ-SF-04 by STAGE12_SKILLTYPE_PROVIDER_IDENTITY_DESIGN.md.
+- DQ-SF-05 by STAGE12_SKILLTYPE_PROVIDER_IDENTITY_DESIGN.md.
+
+Runtime defaults actually required by this design are recorded in STAGE12_RUNTIME_DEFAULT_LEDGER.md:
+- RD-SF-001 legacy SkillDefinition ACTIVE/NONE compatibility.
+- RD-SF-002 deterministic loaded Skill Provider enumeration.
+
+The RecoveryOpportunitySystem slot-0 truthiness defect remains intentionally unfixed and is now a formal DQ-SF-21 implementation obligation.
+
+Stage11 Reopen Required = NO.
+Shared Foundation Design Freeze = NOT YET.
+Stage12 Runtime Frozen = 0 / 7.
+Stage13 Active = NO.
+
+NEXT: DQ-SF-02 / DQ-SF-03 / DQ-SF-08 / DQ-SF-20.
