@@ -12,7 +12,7 @@
     Stage12 Readiness: READY
     Stage12 Active: NO
 
-    Stage12 Research FROZEN: 4 / 7
+    Stage12 Research FROZEN: 5 / 7
     Stage12 Runtime Frozen: 0 / 7
 
 这里的 Stage12 Active = NO 指生产 Runtime 阶段尚未正式激活；不妨碍 Research Wave 4 提前完成机制研究。项目终于学会把“研究完成”和“代码写完”分成两件事了。
@@ -59,10 +59,22 @@
 - Next: contract-aligned Runtime Design
 - Battle mirror: [690108 research authority sync](STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md)
 
+### 690222 威慑 INTIMIDATION
+- Research FROZEN
+- Contract v1.0-frozen
+- Repaired adversarial falsification: PASS
+- Canonical Q1–Q80 governance: PASS
+- OPEN_BLOCKING = 0
+- Runtime NOT_INTEGRATED
+- 21 minimum Runtime contract tests defined
+- Counter semantics separated from 690222 State Stack
+- Next: contract-aligned Runtime Design
+- Battle mirror: [690222 research authority sync](STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)
+
 ## Remaining research queue
 
 Wave 4:
-- 690222 威慑 INTIMIDATION
+- COMPLETE
 
 Wave 5:
 - 690109 破坏 SABOTAGE
