@@ -78,17 +78,17 @@
 
 ```text
 Research Discovery: COMPLETE
-Candidate Mechanism Contract: v0.1-candidate
-Contract Draft Self-Audit: PASS
-Research Maturity: READY_FOR_FREEZE_AUDIT
-Research FROZEN: NO
-Runtime Maturity: PARTIAL
-PD-INS-001: APPROVED_PROJECT_DEFAULT
-PD-INS-002: APPROVED_PROJECT_DEFAULT
-Next: Independent Mechanism Contract Freeze Audit
+Mechanism Contract: v0.2-frozen
+Independent Freeze Audit: PASSED
+Research Maturity: FROZEN
+Research FROZEN: YES
+Runtime Maturity: PARTIAL / NOT FROZEN
+PD-INS-001: FROZEN_PROJECT_DEFAULT
+PD-INS-002: FROZEN_PROJECT_DEFAULT
+Next: Stage12 contract-aligned Runtime Design
 ```
 
-当前候选合同明确区分：受保护控制集合、incoming admission rejection、existing-control suppression/resume、FALSE_REPORT 特殊边界，以及 690109/690110/690222 的 bounded debt / non-claim。Stage12 不得在独立 Freeze Audit 前把 690089 视为 Research FROZEN。
+当前冻结合同明确区分：受保护控制集合、incoming admission rejection、existing-control suppression/resume、FALSE_REPORT 特殊边界，以及 690109/690110/690222 的 bounded debt / non-claim。Research Freeze 已完成，但 Runtime 仍为 PARTIAL；Stage12 不得把 Research Freeze 等同于 Runtime Freeze。
 
 ### 计穷
 
