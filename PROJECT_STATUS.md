@@ -58,7 +58,7 @@ Governance:
     Stage12 Active: NO
 
     Research Wave 4: IN PROGRESS
-    Research FROZEN: 3 / 7
+    Research FROZEN: 4 / 7
     Runtime Frozen: 0 / 7
 
 The Active = NO flag refers to production Stage12 Runtime activation. Mechanism research is already progressing.
@@ -97,10 +97,22 @@ Battle-side mirror:
 Battle-side mirror:
 [stages/stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md](stages/stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md)
 
+### 690108 PROVOCATION
+
+    Research: FROZEN
+    Contract: v1.0-frozen
+    Adversarial Falsification: PASS
+    Final Contract Correction Audit: PASS
+    Freeze Gate: 20 / 20 PASS
+    Runtime: NOT_INTEGRATED
+    Next: contract-aligned Runtime Design
+
+Battle-side mirror:
+[stages/stage12/STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md](stages/stage12/STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md)
+
 ## 5. Remaining Stage12 research
 
 Wave 4:
-- 690108 PROVOCATION
 - 690222 INTIMIDATION
 
 Wave 5:
