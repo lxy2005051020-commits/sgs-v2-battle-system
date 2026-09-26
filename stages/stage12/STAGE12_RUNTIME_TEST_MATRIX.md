@@ -173,3 +173,68 @@ test_stage11_remaining_uses_behavior_preserved_through_local_rule_adapter
 ```
 
 Round 3 adds design coverage only. It adds zero production tests in this commit because gameplay implementation is explicitly forbidden.
+
+## SF Round 4 planned discriminator suite
+
+Status: **DESIGN_FROZEN / NOT IMPLEMENTED**.
+
+### Admission
+
+```text
+test_insight_rejects_incoming_protected_control
+test_rejected_candidate_never_becomes_resident
+test_rejected_candidate_preserves_existing_state_exactly
+test_source_rng_consumed_before_insight_admission_when_required
+test_deterministic_control_adds_no_rng
+test_rejected_child_does_not_abort_sibling_effect
+```
+
+### Conflict / refresh transaction
+
+```text
+test_insight_reapply_rejected_no_refresh
+test_suppressed_insight_reapply_rejected_PD_INS_002
+test_false_report_equal_reapply_no_refresh
+test_refresh_transaction_is_atomic
+test_intimidation_refresh_changes_binding_only_on_commit
+test_intimidation_resume_preserves_binding_and_timer
+test_refresh_keeps_instance_id_and_advances_generation
+test_rejected_conflict_allocates_no_generation
+```
+
+### Clock
+
+```text
+test_suppressed_control_clock_continues
+test_suppressed_control_expires_and_never_resumes
+test_stun_suppression_does_not_consume_behavior_block
+test_intimidation_can_expire_while_suppressed
+test_false_report_expiry_restores_provider_future_only
+test_stage12_lifetime_metadata_does_not_enter_stage10_persistence
+test_same_envelope_due_state_does_not_transiently_resume
+```
+
+### Removal
+
+```text
+test_capture_rejects_ordinary_cleanse
+test_intimidation_generic_removal_boundary
+test_intimidation_specialized_removal_is_explicit_unsupported_boundary
+test_source_death_does_not_remove_capture
+test_source_death_does_not_remove_provocation
+test_holder_defeat_cleanup_not_synthetic_expiry_cascade
+test_remove_insight_resumes_live_control
+test_remove_false_report_propagates_provider_resume
+```
+
+### Failure / compatibility
+
+```text
+test_cycle_validation_failure_commits_nothing
+test_refresh_failure_preserves_old_instance
+test_refresh_failure_preserves_old_binding
+test_rejected_removal_preserves_instance_and_timer
+test_legacy_apply_failure_adapter_preserved
+```
+
+Round 4 adds design coverage only. It changes zero production tests and zero gameplay code.
