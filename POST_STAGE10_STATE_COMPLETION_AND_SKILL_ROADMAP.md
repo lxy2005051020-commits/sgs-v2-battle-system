@@ -93,13 +93,13 @@ Current state:
 ```text
 Stage12 Activation Gate: CLEARED
 Stage12 Readiness: READY
-Stage12 Active: NO
+Stage12 Active: YES
 Stage12 Research FROZEN: 7 / 7
 Stage12 Runtime Frozen: 0 / 7
 ```
 
 Research FROZEN:
-- 690089 INSIGHT — v0.2-frozen; Runtime PARTIAL.
+- 690089 INSIGHT — v0.4-frozen; Runtime PARTIAL.
 - 690101 EXHAUSTION — v0.2-frozen; full-corpus adversarial audit PASS; Runtime NOT_INTEGRATED.
 - 690107 FALSE_REPORT — v1.0.1-frozen; final falsification + coverage repair PASS; Runtime NOT_INTEGRATED.
 - 690108 PROVOCATION — v1.0-frozen; Round 1–6 + final adversarial falsification PASS; final contract correction audit 20/20 PASS; Runtime NOT_INTEGRATED.
@@ -119,3 +119,26 @@ Stage15 = preparation skill runtime
 ## 6. Governance rule
 
 A green CI is necessary but not sufficient. Required Runtime owners must exist and be covered by discriminating tests. Research debt remains explicit rather than being relabeled as empirical game truth.
+
+
+## Stage12 Runtime Entry Activation — 2026-09-27
+
+```text
+STAGE12_RUNTIME_ENTRY_GATE: PASS
+Stage12 Active: YES
+Stage12 Research FROZEN: 7 / 7
+Stage12 Runtime Frozen: 0 / 7
+Battle Entry Baseline SHA: b4c27511824001210f781bf8e750c74c9107da72
+Research Entry Baseline SHA: e18ae56a4db5662b87458dfa8fdff25dcdd8053b
+Current Battle Baseline CI: 36259315839 / success
+pytest: 913 passed
+demo: PASS
+```
+
+Entry authority and architecture records:
+- `stages/stage12/STAGE12_RUNTIME_ENTRY_AUDIT.md`
+- `stages/stage12/STAGE12_RUNTIME_OWNER_MATRIX.md`
+- `stages/stage12/STAGE12_CONTRACT_RUNTIME_MAPPING.md`
+- `stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md`
+
+This activation authorizes Stage12 contract-aligned Runtime Integration Design only. It does not declare any of the seven states Runtime Frozen, does not reopen Stage11, and does not activate Stage13/14/15 gameplay runtimes.

@@ -1,6 +1,6 @@
 # 第十二阶段 · 官方状态补全（二）
 
-> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME NOT ACTIVE**
+> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / NOT FROZEN**
 > Canonical Scope：**7 states**
 > Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 > Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）
@@ -10,18 +10,18 @@
     Stage11 Runtime: FROZEN
     Stage12 Activation Gate: CLEARED
     Stage12 Readiness: READY
-    Stage12 Active: NO
+    Stage12 Active: YES
 
     Stage12 Research FROZEN: 7 / 7
     Stage12 Runtime Frozen: 0 / 7
 
-这里的 Stage12 Active = NO 指生产 Runtime 阶段尚未正式激活。Research 已经 7 / 7 FROZEN，下一工作是 contract-aligned Runtime Integration Design。研究完成和代码写完终于被当成两件不同的事，世界短暂恢复理智。
+这里的 Stage12 Active = YES 指生产 Runtime 阶段尚未正式激活。Research 已经 7 / 7 FROZEN，下一工作是 contract-aligned Runtime Integration Design。研究完成和代码写完终于被当成两件不同的事，世界短暂恢复理智。
 
 ## 已冻结研究
 
 ### 690089 洞察 INSIGHT
 - Research FROZEN
-- Contract v0.2-frozen
+- Contract v0.4-frozen
 - Runtime PARTIAL / NOT FROZEN
 - Next: contract-aligned Runtime Design
 
@@ -108,8 +108,8 @@ It may establish the minimum permission-layer capability needed by these states,
 
 ## Exit target
 
-    40 / 40 official-state research complete
-    40 / 40 official-state runtime complete
+    Research FROZEN = 39 / 40 until 690086 DSTS9-B02 is independently resolved
+    Official-state Runtime coverage target = 40 / 40 (contract/default explicitly distinguished)
     final combined regression PASS
     final independent audit PASS
     official state system frozen
@@ -117,3 +117,26 @@ It may establish the minimum permission-layer capability needed by these states,
 Planning:
 - [STAGE12_PLANNING.md](STAGE12_PLANNING.md)
 - [Canonical State Planning Matrix](../../CANONICAL_STATE_PLANNING_MATRIX.md)
+
+
+## Stage12 Runtime Entry Activation — 2026-09-27
+
+```text
+STAGE12_RUNTIME_ENTRY_GATE: PASS
+Stage12 Active: YES
+Stage12 Research FROZEN: 7 / 7
+Stage12 Runtime Frozen: 0 / 7
+Battle Entry Baseline SHA: b4c27511824001210f781bf8e750c74c9107da72
+Research Entry Baseline SHA: e18ae56a4db5662b87458dfa8fdff25dcdd8053b
+Current Battle Baseline CI: 36259315839 / success
+pytest: 913 passed
+demo: PASS
+```
+
+Entry authority and architecture records:
+- `stages/stage12/STAGE12_RUNTIME_ENTRY_AUDIT.md`
+- `stages/stage12/STAGE12_RUNTIME_OWNER_MATRIX.md`
+- `stages/stage12/STAGE12_CONTRACT_RUNTIME_MAPPING.md`
+- `stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md`
+
+This activation authorizes Stage12 contract-aligned Runtime Integration Design only. It does not declare any of the seven states Runtime Frozen, does not reopen Stage11, and does not activate Stage13/14/15 gameplay runtimes.

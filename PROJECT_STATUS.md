@@ -55,13 +55,13 @@ Governance:
 
     Stage12 Activation Gate: CLEARED
     Stage12 Readiness: READY
-    Stage12 Active: NO
+    Stage12 Active: YES
 
     Research Wave 4: COMPLETE
     Research FROZEN: 7 / 7
     Runtime Frozen: 0 / 7
 
-The Active = NO flag refers to production Stage12 Runtime activation. Mechanism research is already progressing.
+Stage12 production Runtime is now ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; Runtime remains 0 / 7 FROZEN TO CONTRACT until implementation and freeze audit complete.
 
 ### 690089 INSIGHT
 
@@ -153,7 +153,7 @@ Wave 5: COMPLETE
 Stage12 Research: 7 / 7 FROZEN
 
 Next owner: Stage12 contract-aligned Runtime Integration Design.
-Stage12 production Runtime remains NOT ACTIVE / NOT FROZEN.
+Stage12 production Runtime is ACTIVE / NOT FROZEN. Entry Gate passed; contract-aligned Runtime Integration Design is the current owner.
 
 ## 6. Later stages
 
@@ -163,3 +163,26 @@ Stage12 production Runtime remains NOT ACTIVE / NOT FROZEN.
     Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
 
 Stage13 is not activated.
+
+
+## Stage12 Runtime Entry Activation — 2026-09-27
+
+```text
+STAGE12_RUNTIME_ENTRY_GATE: PASS
+Stage12 Active: YES
+Stage12 Research FROZEN: 7 / 7
+Stage12 Runtime Frozen: 0 / 7
+Battle Entry Baseline SHA: b4c27511824001210f781bf8e750c74c9107da72
+Research Entry Baseline SHA: e18ae56a4db5662b87458dfa8fdff25dcdd8053b
+Current Battle Baseline CI: 36259315839 / success
+pytest: 913 passed
+demo: PASS
+```
+
+Entry authority and architecture records:
+- `stages/stage12/STAGE12_RUNTIME_ENTRY_AUDIT.md`
+- `stages/stage12/STAGE12_RUNTIME_OWNER_MATRIX.md`
+- `stages/stage12/STAGE12_CONTRACT_RUNTIME_MAPPING.md`
+- `stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md`
+
+This activation authorizes Stage12 contract-aligned Runtime Integration Design only. It does not declare any of the seven states Runtime Frozen, does not reopen Stage11, and does not activate Stage13/14/15 gameplay runtimes.

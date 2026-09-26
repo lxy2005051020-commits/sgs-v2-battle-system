@@ -8,7 +8,7 @@
 >
 > Research Maturity and Mechanism Authority source: `lxy2005051020-commits/sgs-state-mechanics-research`.
 
-> **2026-09-26 Stage11 final authority:** Share × 倒戈/攻心 authority conflict is resolved; Stage11 Runtime is **FROZEN** and independent Post-Freeze Acceptance is **PASS / CONFIRMED**. Acceptance Audit SHA `5a0a4164e7624c28eae2c7aa28f66061ef3c9313`, CI `36170063365`; Research post-acceptance mirror `9ad990da544ad87047e74a664cc1984f890bb274`. Stage12 Activation Gate is **CLEARED**, while Stage12 Active remains **NO**.
+> **2026-09-26 Stage11 final authority:** Share × 倒戈/攻心 authority conflict is resolved; Stage11 Runtime is **FROZEN** and independent Post-Freeze Acceptance is **PASS / CONFIRMED**. Acceptance Audit SHA `5a0a4164e7624c28eae2c7aa28f66061ef3c9313`, CI `36170063365`; Research post-acceptance mirror `9ad990da544ad87047e74a664cc1984f890bb274`. Stage12 Activation Gate is **CLEARED**, while Stage12 Active remains **YES**.
 
 ## 1. Canonical baseline
 
@@ -107,7 +107,7 @@ Acceptance CI: 36170063365 / 913 passed / demo PASS
 Research post-acceptance mirror: 9ad990da544ad87047e74a664cc1984f890bb274
 Stage12 Activation Gate: CLEARED
 Stage12 Readiness: READY
-Stage12 Active: NO
+Stage12 Active: YES
 ```
 
 Residual debt remains explicit and does not block the confirmed Stage11 Runtime Freeze.
@@ -149,5 +149,28 @@ Authority:
 - Runtime default with research debt does not count as Strict Complete.
 - 690069, 690095 and 690091 retain their Project-Frozen Mirror distinction.
 - 690099 and 690221 are Research FROZEN and Runtime FROZEN TO CONTRACT; bounded debt remains explicit and non-blocking.
-- Stage12 Research is COMPLETE at 7 / 7 FROZEN: 690089, 690101, 690107, 690108, 690109, 690110 and 690222. Stage12 Active remains NO because contract-aligned production Runtime Integration has not yet been activated/frozen.
-- Stage12 Activation Gate is CLEARED and Stage12 Readiness is READY; Stage12 Active remains NO. Stage13 is not activated.
+- Stage12 Research is COMPLETE at 7 / 7 FROZEN: 690089, 690101, 690107, 690108, 690109, 690110 and 690222. Stage12 Active remains YES because contract-aligned production Runtime Integration has not yet been activated/frozen.
+- Stage12 Activation Gate is CLEARED and Stage12 Readiness is READY; Stage12 Active remains YES. Stage13 is not activated.
+
+
+## Stage12 Runtime Entry Activation — 2026-09-27
+
+```text
+STAGE12_RUNTIME_ENTRY_GATE: PASS
+Stage12 Active: YES
+Stage12 Research FROZEN: 7 / 7
+Stage12 Runtime Frozen: 0 / 7
+Battle Entry Baseline SHA: b4c27511824001210f781bf8e750c74c9107da72
+Research Entry Baseline SHA: e18ae56a4db5662b87458dfa8fdff25dcdd8053b
+Current Battle Baseline CI: 36259315839 / success
+pytest: 913 passed
+demo: PASS
+```
+
+Entry authority and architecture records:
+- `stages/stage12/STAGE12_RUNTIME_ENTRY_AUDIT.md`
+- `stages/stage12/STAGE12_RUNTIME_OWNER_MATRIX.md`
+- `stages/stage12/STAGE12_CONTRACT_RUNTIME_MAPPING.md`
+- `stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md`
+
+This activation authorizes Stage12 contract-aligned Runtime Integration Design only. It does not declare any of the seven states Runtime Frozen, does not reopen Stage11, and does not activate Stage13/14/15 gameplay runtimes.

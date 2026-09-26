@@ -1,12 +1,12 @@
 # 第十二阶段规划 · 官方状态补全（二）
 
-> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME NOT ACTIVE**  
+> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / NOT FROZEN**  
 > Canonical Scope：**7 states**  
 > Project Stage ownership：Stage12  
 > Research mapping：Wave 4 + Wave 5；研究波次只是执行顺序，不是 Project Stage13/14。  
 > Canonical authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 
-> 状态：Research Wave 4 / 5 已全部完成；Stage12 production Runtime 尚未激活  
+> 状态：Research Wave 4 / 5 已全部完成；Stage12 production Runtime 已通过 Runtime Entry Gate 激活，但尚未冻结  
 > 目标：完成剩余复杂控制状态并收口官方 40 状态
 
 ## 1. 阶段责任
@@ -78,7 +78,7 @@
 
 ```text
 Research Discovery: COMPLETE
-Mechanism Contract: v0.2-frozen
+Mechanism Contract: v0.4-frozen
 Independent Freeze Audit: PASSED
 Research Maturity: FROZEN
 Research FROZEN: YES
@@ -285,7 +285,7 @@ Research phase is complete. The next owner is contract-aligned Runtime Integrati
 最终目标：
 
 ```text
-40 / 40 机制研究完成
+Research FROZEN = 39 / 40（除非 690086 DSTS9-B02 被独立研究关闭）
 40 / 40 运行时完成
 0 个关键研究债务
 0 个无所有者状态
@@ -312,7 +312,7 @@ Research phase is complete. The next owner is contract-aligned Runtime Integrati
 只有全部满足：
 
 ```text
-40 / 40 状态严格完成
+Strict Complete = 39 / 40（除非 690086 研究债务被独立解决）
 最终全量状态组合回归通过
 演示场景覆盖关键状态族
 最终独立审计通过
@@ -333,3 +333,26 @@ Research phase is complete. The next owner is contract-aligned Runtime Integrati
 第十五阶段：准备战法
 第十六阶段以后：被动 / 指挥 / 阵法 / 兵种战法等
 ```
+
+
+## Stage12 Runtime Entry Activation — 2026-09-27
+
+```text
+STAGE12_RUNTIME_ENTRY_GATE: PASS
+Stage12 Active: YES
+Stage12 Research FROZEN: 7 / 7
+Stage12 Runtime Frozen: 0 / 7
+Battle Entry Baseline SHA: b4c27511824001210f781bf8e750c74c9107da72
+Research Entry Baseline SHA: e18ae56a4db5662b87458dfa8fdff25dcdd8053b
+Current Battle Baseline CI: 36259315839 / success
+pytest: 913 passed
+demo: PASS
+```
+
+Entry authority and architecture records:
+- `stages/stage12/STAGE12_RUNTIME_ENTRY_AUDIT.md`
+- `stages/stage12/STAGE12_RUNTIME_OWNER_MATRIX.md`
+- `stages/stage12/STAGE12_CONTRACT_RUNTIME_MAPPING.md`
+- `stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md`
+
+This activation authorizes Stage12 contract-aligned Runtime Integration Design only. It does not declare any of the seven states Runtime Frozen, does not reopen Stage11, and does not activate Stage13/14/15 gameplay runtimes.
