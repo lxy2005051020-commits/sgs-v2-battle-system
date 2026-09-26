@@ -1,6 +1,6 @@
 # 第十二阶段 · 官方状态补全（二）
 
-> 状态：**RESEARCH IN PROGRESS / PRODUCTION RUNTIME NOT ACTIVE**
+> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME NOT ACTIVE**
 > Canonical Scope：**7 states**
 > Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 > Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）
@@ -12,10 +12,10 @@
     Stage12 Readiness: READY
     Stage12 Active: NO
 
-    Stage12 Research FROZEN: 5 / 7
+    Stage12 Research FROZEN: 7 / 7
     Stage12 Runtime Frozen: 0 / 7
 
-这里的 Stage12 Active = NO 指生产 Runtime 阶段尚未正式激活；不妨碍 Research Wave 4 提前完成机制研究。项目终于学会把“研究完成”和“代码写完”分成两件事了。
+这里的 Stage12 Active = NO 指生产 Runtime 阶段尚未正式激活。Research 已经 7 / 7 FROZEN，下一工作是 contract-aligned Runtime Integration Design。研究完成和代码写完终于被当成两件不同的事，世界短暂恢复理智。
 
 ## 已冻结研究
 
@@ -71,14 +71,34 @@
 - Next: contract-aligned Runtime Design
 - Battle mirror: [690222 research authority sync](STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)
 
-## Remaining research queue
+### 690109 破坏 SABOTAGE
+- Research FROZEN
+- Contract v1.0-frozen
+- Freeze Audit: PASS
+- Runtime NOT_INTEGRATED
+- Next: contract-aligned Runtime Design
 
-Wave 4:
-- COMPLETE
+### 690110 捕获 CAPTURE
+- Research FROZEN
+- Contract v1.0-frozen
+- Final adversarial falsification: PASS
+- Freeze Audit: PASS
+- Counterattack / Active-origin DOT / Insight discriminators resolved
+- Restoration: RST1 Resume; missed-trigger replay = NO
+- Source-death lifecycle: independent
+- Q70-Q74: SOURCE_SKILL_BOUNDED_UNKNOWN
+- Runtime NOT_INTEGRATED
+- Next: contract-aligned Runtime Design
+- Battle mirror: [690110 research authority sync](STAGE12_690110_CAPTURE_RESEARCH_SYNC.md)
 
-Wave 5:
-- 690109 破坏 SABOTAGE
-- 690110 捕获 CAPTURE
+## Research queue
+
+Wave 4: COMPLETE
+Wave 5: COMPLETE
+Stage12 Research: 7 / 7 FROZEN
+
+Next project task:
+Stage12 contract-aligned Runtime Integration Design
 
 ## Stage12 responsibility
 
