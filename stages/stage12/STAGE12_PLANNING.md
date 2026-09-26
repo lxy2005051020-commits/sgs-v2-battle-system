@@ -74,6 +74,22 @@
 
 应作为“控制免疫 / 控制绕过”的统一规则事实，而不是在每个控制状态里复制特殊判断。
 
+当前研究镜像（2026-09-26）：
+
+```text
+Research Discovery: COMPLETE
+Candidate Mechanism Contract: v0.1-candidate
+Contract Draft Self-Audit: PASS
+Research Maturity: READY_FOR_FREEZE_AUDIT
+Research FROZEN: NO
+Runtime Maturity: PARTIAL
+PD-INS-001: APPROVED_PROJECT_DEFAULT
+PD-INS-002: APPROVED_PROJECT_DEFAULT
+Next: Independent Mechanism Contract Freeze Audit
+```
+
+当前候选合同明确区分：受保护控制集合、incoming admission rejection、existing-control suppression/resume、FALSE_REPORT 特殊边界，以及 690109/690110/690222 的 bounded debt / non-claim。Stage12 不得在独立 Freeze Audit 前把 690089 视为 Research FROZEN。
+
 ### 计穷
 
 应由统一战法权限系统解释“哪些战法类别被禁止”。
