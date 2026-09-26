@@ -32,7 +32,7 @@ Stage13  = NOT ACTIVE
 
 ```text
 Official States            = 40
-Research FROZEN            = 35
+Research FROZEN            = 36
 Runtime FROZEN TO CONTRACT = 33
 Strict Complete            = 32
 
@@ -41,7 +41,7 @@ Stage11 Research FROZEN    = 16
 Stage11 Runtime FROZEN     = 17
 
 Stage12 Scope              = 7
-Stage12 Research FROZEN    = 3
+Stage12 Research FROZEN    = 4
 Stage12 Runtime FROZEN     = 0
 ```
 
@@ -66,17 +66,18 @@ Research FROZEN:
 - 690089 INSIGHT
 - 690101 EXHAUSTION
 - 690107 FALSE_REPORT
+- 690108 PROVOCATION
 
 Battle research mirrors:
 
 - [690101 EXHAUSTION](stage12/STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md)
 - [690107 FALSE_REPORT](stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md)
+- [690108 PROVOCATION](stage12/STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md)
 
 Remaining research queue:
 
 ```text
 Wave 4:
-  690108 PROVOCATION
   690222 INTIMIDATION
 
 Wave 5:
@@ -109,7 +110,7 @@ Research Wave 是研究顺序，不得覆盖项目阶段编号。
 
 ```text
 Continue Stage12 Research Wave 4
-→ 690108 PROVOCATION
+→ 690222 INTIMIDATION
 → Mechanism Contract
 → Freeze Audit
 → Research FROZEN
