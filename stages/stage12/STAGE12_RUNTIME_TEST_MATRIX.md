@@ -1,6 +1,6 @@
 # Stage12 Runtime Test Matrix Skeleton
 
-> Status: **ROUND 10 FINAL TEST ARCHITECTURE COMPLETE / PRE-INDEPENDENT-AUDIT / NOT IMPLEMENTED**  
+> Status: **SHARED FOUNDATION COMPLETE / 690089 + 690101 + 690107 + 690108 RUNTIME FROZEN / STAGE12 4 OF 7**  
 > Baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.
 
 | State / Foundation | Positive Case | Negative Case | Primary Discriminator | Cross-State Required | Minimum |
@@ -964,3 +964,29 @@ CI = 36333059532 / success
 ```
 
 Runtime Freeze is not claimed by this integration checkpoint.
+
+
+## 690108 PROVOCATION Independent Runtime Freeze Audit — 2026-09-28
+
+Executable audit file: `tests/test_stage12_690108_provocation_runtime_freeze_audit.py`.
+
+```text
+Independent freeze-audit tests = 33 passed
+690108 integration + freeze-audit = 78 passed
+RD-SF-005 dedicated regression = 15 passed
+Stage9 regression = 427 passed
+Stage10 regression = 145 passed
+Stage11 regression = 12 passed
+690089 regression = 52 passed
+690101 regression = 58 passed
+690107 regression = 54 passed
+Shared Foundation regression = 222 passed
+Full pytest = 1392 passed
+Demo = PASS
+Fresh audit CI = 36334810169 / success
+Audit code/test SHA = e0f9e0c24a4c379918c3b9389a67dcfea138ac13
+```
+
+Coverage includes NEW_QUERY-only freshness, immutable resolved history, legal Source filtering, SINGLE/CHOOSE_N/FIXED_ALL, exact RD-SF-005 sample topology/downstream RNG state, all five production producer mappings, NormalAttack/Taunt/Confusion separation, INSIGHT/EXHAUSTION/FALSE_REPORT interactions, explicit ProviderDependency versus attribution, source death/lifetime/resume, event silence, canonical wiring, BU-P06 and BU-P09 unsupported-boundary preservation, and Stage12 leakage guards.
+
+Freeze authority: `STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`.

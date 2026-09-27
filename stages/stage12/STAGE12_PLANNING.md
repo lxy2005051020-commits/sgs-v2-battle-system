@@ -372,3 +372,26 @@ before design freeze or migration. Existing gameplay and tests are preserved.
 Stage11 Runtime FROZEN / Reopen Required NO in this documentation-only phase; Stage12 Active YES;
 Stage12 Runtime Frozen 0 / 7; Stage13 Active NO; Research FROZEN 39 / 40; DSTS9-B02 OPEN / UNOBSERVED.
 NEXT: DQ-SF-15/16 authority reconciliation, then DQ-SF-04/05 taxonomy and Provider identity design.
+
+
+## Current Runtime Freeze Snapshot — 2026-09-28
+
+```text
+Stage12 Research = 7 / 7 FROZEN
+Stage12 Shared Foundation Design = FROZEN
+Stage12 Shared Foundation Implementation = COMPLETE
+690089 INSIGHT Runtime = FROZEN
+690101 EXHAUSTION Runtime = FROZEN
+690107 FALSE_REPORT Runtime = FROZEN
+690108 PROVOCATION Gameplay = IMPLEMENTED
+690108 PROVOCATION Runtime = FROZEN TO CONTRACT
+Audit code/test SHA = e0f9e0c24a4c379918c3b9389a67dcfea138ac13
+Fresh audit CI = 36334810169 / success / 1392 passed / demo PASS
+Stage12 Gameplay Implementation = 4 / 7
+Stage12 Runtime Frozen = 4 / 7
+Stage11 Reopen Required = NO
+Stage13 / Stage14 / Stage15 Active = NO
+NEXT = 690222 INTIMIDATION Runtime Integration
+```
+
+690108 authority: `STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`. Earlier research/runtime-entry snapshots in this planning document remain historical and are not retroactively rewritten.
