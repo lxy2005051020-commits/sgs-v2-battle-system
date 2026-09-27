@@ -50,6 +50,7 @@ from sgs_v2.battle_core import (
     register_official_state_definitions,
 )
 from sgs_v2.battle_core.official_state_catalog import OfficialStateId
+from sgs_v2.battle_core.stage11_state_params import StunStateParams
 
 
 def make_context(seed: int = 1202) -> BattleContext:
@@ -160,7 +161,7 @@ def make_skill_runtime() -> SkillRuntime:
             skill_id="skill-provider",
             name="skill-provider",
             activation_rate=1.0,
-            target_mode=SkillTargetMode.SELF,
+            target_mode=SkillTargetMode.SINGLE_RANDOM_ENEMY,
             effect_specs=(),
         ),
         owner_id="a",
