@@ -1,6 +1,6 @@
 # 第十二阶段 · 官方状态补全（二）
 
-> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690089 RUNTIME FROZEN / 690101 IMPLEMENTED PENDING AUDIT**
+> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690089 + 690101 RUNTIME FROZEN**
 > Canonical Scope：**7 states**
 > Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 > Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）
@@ -13,9 +13,9 @@
     Stage12 Active: YES
 
     Stage12 Research FROZEN: 7 / 7
-    Stage12 Runtime Frozen: 1 / 7
+    Stage12 Runtime Frozen: 2 / 7
 
-Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 与 Implementation 已完成；690089 INSIGHT 已通过独立 Runtime Freeze Audit，因此 Stage12 Runtime Frozen 当前为 1 / 7，其余六状态仍未完成 gameplay integration / Runtime Freeze。
+Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 与 Implementation 已完成；690089 INSIGHT 与 690101 EXHAUSTION 均已通过独立 Runtime Freeze Audit，因此 Stage12 Runtime Frozen 当前为 2 / 7，其余五状态仍未完成 gameplay integration / Runtime Freeze。
 
 ## 已冻结研究
 
@@ -26,7 +26,7 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - Runtime FROZEN TO CONTRACT
 - Independent Runtime Freeze Audit: PASS
 - Authority: [690089 Runtime Freeze Audit](STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md)
-- Next: 690101 EXHAUSTION Runtime Integration
+- Next: Maintain 690089 freeze; current integration owner is 690107 FALSE_REPORT
 
 ### 690101 计穷 EXHAUSTION
 - Research FROZEN
@@ -35,8 +35,11 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - 23,002 structured battle reports
 - 18,487 observed EXHAUSTION executions
 - TRUE_COUNTEREXAMPLE = 0
-- Gameplay IMPLEMENTED_PENDING_RUNTIME_AUDIT
-- Runtime NOT YET FROZEN
+- Gameplay IMPLEMENTED
+- Runtime FROZEN TO CONTRACT
+- Independent Runtime Freeze Audit: PASS
+- Audit SHA: `9b8dba66f2add324d26512f82e54aa4c628b92da`
+- Fresh audit CI: `36326173066 / success / 1244 passed / demo PASS`
 - ACTIVE permission integration: IMPLEMENTED
 - RD-SF-004 pre-RNG short circuit: IMPLEMENTED
 - INSIGHT suppression/resume permission interaction: IMPLEMENTED
@@ -45,8 +48,9 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - First effective CREATE interruption: IMPLEMENTED
 - Resident SUPPRESSED -> EFFECTIVE interruption: IMPLEMENTED
 - BLOCKER-690101-PREP-001 / 002: CLOSED
-- Stage12 Runtime Frozen remains 1 / 7
-- Next: 690101 Independent Runtime Freeze Audit; do not enter 690107 yet
+- Stage12 Runtime Frozen: 2 / 7
+- Next: 690107 FALSE_REPORT Runtime Integration
+- Freeze authority: [690101 Runtime Freeze Audit](STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md)
 - Dependency authority: [690101 Preparation Integration Dependency Resolution](STAGE12_690101_PREPARATION_INTEGRATION_DEPENDENCY.md)
 - Integration record: [690101 Runtime Integration](STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md)
 - Battle mirror: [690101 research authority sync](STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md)
@@ -113,7 +117,7 @@ Wave 5: COMPLETE
 Stage12 Research: 7 / 7 FROZEN
 
 Next project task:
-Shared Foundation Implementation Round 2 — State Transaction + Transition Runtime
+690107 FALSE_REPORT Runtime Integration
 
 ## Stage12 responsibility
 
@@ -376,3 +380,26 @@ Stage15 Active = NO
 ```
 
 NEXT: `690101 EXHAUSTION Independent Runtime Freeze Audit`.
+
+
+## 690101 EXHAUSTION Runtime Freeze — 2026-09-27
+
+```text
+690101 Research = FROZEN
+690101 Gameplay = IMPLEMENTED
+690101 Runtime = FROZEN
+Independent Runtime Freeze Audit = PASS
+Adversarial audit SHA = 9b8dba66f2add324d26512f82e54aa4c628b92da
+Fresh audit CI = 36326173066 / success
+pytest = 1244 passed
+demo = PASS
+BLOCKER = 0
+unresolved MAJOR = 0
+Stage12 Runtime Frozen = 2 / 7
+Stage11 Reopen Required = NO
+Stage13 / Stage14 / Stage15 Active = NO
+```
+
+Audit authority: `STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md`.
+
+NEXT = `690107 FALSE_REPORT Runtime Integration`.
