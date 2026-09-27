@@ -261,19 +261,21 @@ Coverage includes application/effectiveness, ACTIVE/non-ACTIVE taxonomy, legacy 
 
 ## R. RNG Regression
 
-Pending GitHub Actions verification.
+PASS under the full regression suite.
+
+Denied NEW ACTIVE EXHAUSTION coverage proves zero activation RNG, zero TargetOperation allocation and zero target-selection RNG under RD-SF-004.
 
 ## S. Stage9 Regression
 
-Pending GitHub Actions verification.
+PASS under the full regression suite.
 
 ## T. Stage10 Regression
 
-Pending GitHub Actions verification.
+PASS under the full regression suite.
 
 ## U. Stage11 Regression
 
-Pending GitHub Actions verification.
+PASS under the full regression suite.
 
 Expected governance remains:
 
@@ -283,7 +285,7 @@ Stage11 Reopen Required = NO
 
 ## V. 690089 Regression
 
-Pending GitHub Actions verification.
+PASS under the full regression suite, including the existing 690089 dedicated tests and the new EXHAUSTION pair coverage.
 
 690089 remains:
 
@@ -293,7 +295,7 @@ Runtime = FROZEN
 
 ## W. Shared Foundation Regression
 
-Pending GitHub Actions verification.
+PASS under the full regression suite.
 
 ## X. Static Architecture Audit
 
@@ -326,7 +328,16 @@ first-application PREPARING interruption completion
 
 ## Z. pytest / demo / CI
 
-Pending GitHub Actions verification.
+Validated implementation snapshot:
+
+```text
+SHA    = d8dbfa1537cb93a77505b4da5be5240c814193c6
+CI     = 36313725482 / success
+pytest = 1215 passed
+demo   = PASS
+```
+
+Baseline was 1186 passed, so this integration adds 29 executable tests while preserving the prior suite.
 
 ## AA. Files Created / Updated
 
@@ -348,7 +359,15 @@ PROJECT_STATUS.md
 
 ## AB. Commit SHA
 
-Pending final integration branch head / CI.
+```text
+Tested implementation snapshot:
+d8dbfa1537cb93a77505b4da5be5240c814193c6
+
+Pull Request:
+#14
+```
+
+The final documentation-only evidence commit is expected to differ from the tested implementation snapshot; no production code changes occur after the snapshot above.
 
 ## AC. Implementation Blockers
 
