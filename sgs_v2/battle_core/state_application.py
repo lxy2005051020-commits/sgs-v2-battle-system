@@ -174,6 +174,31 @@ ConflictRuleAdapter: TypeAlias = Callable[
 ]
 
 
+@dataclass(frozen=True, slots=True)
+class StateApplicationDependencyDelta:
+    """Mechanism-owned dependency edges committed with one state application."""
+
+    additions: tuple[tuple[DependencyNode, DependencyNode], ...] = ()
+
+    def __post_init__(self) -> None:
+        normalized = tuple(self.additions)
+        for edge in normalized:
+            if not isinstance(edge, tuple) or len(edge) != 2:
+                raise TypeError("dependency additions must be (consumer, prerequisite) pairs")
+            consumer, prerequisite = edge
+            if not isinstance(consumer, (StateNode, ProviderNode)):
+                raise TypeError("dependency consumer must be a DependencyNode")
+            if not isinstance(prerequisite, (StateNode, ProviderNode)):
+                raise TypeError("dependency prerequisite must be a DependencyNode")
+        object.__setattr__(self, "additions", normalized)
+
+
+ApplicationDependencyRuleAdapter: TypeAlias = Callable[
+    [object, StateCandidate, tuple[StateInstance, ...], StateNode],
+    StateApplicationDependencyDelta | None,
+]
+
+
 class StateConflictPolicy:
     """Pure post-admission state conflict decision owner."""
 
@@ -296,6 +321,7 @@ class StateApplicationCoordinator:
         "_lifecycle",
         "_dependencies",
         "_transition_coordinator",
+        "_dependency_rule_adapters",
     )
 
     def __init__(
@@ -318,6 +344,16 @@ class StateApplicationCoordinator:
         self._lifecycle = lifecycle
         self._dependencies = dependencies
         self._transition_coordinator = transition_coordinator
+        self._dependency_rule_adapters: list[ApplicationDependencyRuleAdapter] = []
+
+    def register_dependency_rule_adapter(
+        self,
+        adapter: ApplicationDependencyRuleAdapter,
+    ) -> None:
+        if not callable(adapter):
+            raise TypeError("dependency rule adapter must be callable")
+        if adapter not in self._dependency_rule_adapters:
+            self._dependency_rule_adapters.append(adapter)
 
     @property
     def admission_policy(self) -> StateAdmissionPolicy:
@@ -391,6 +427,40 @@ class StateApplicationCoordinator:
             sorted(
                 {ProviderNode(item.provider_ref) for item in candidate.provider_dependencies},
                 key=repr,
+            )
+        )
+
+    def _dependency_replacements(
+        self,
+        context,
+        *,
+        candidate: StateCandidate,
+        residents: tuple[StateInstance, ...],
+        prospective_node: StateNode,
+        candidate_prerequisites: tuple[DependencyNode, ...],
+    ) -> tuple[tuple[DependencyNode, tuple[DependencyNode, ...]], ...]:
+        replacement_map: dict[DependencyNode, set[DependencyNode]] = {
+            prospective_node: set(candidate_prerequisites)
+        }
+        for adapter in self._dependency_rule_adapters:
+            delta = adapter(context, candidate, residents, prospective_node)
+            if delta is None:
+                continue
+            if not isinstance(delta, StateApplicationDependencyDelta):
+                raise TypeError("application dependency adapter returned invalid delta")
+            for consumer, prerequisite in delta.additions:
+                if consumer not in replacement_map:
+                    replacement_map[consumer] = set(
+                        self._dependencies.prerequisites(consumer)
+                    )
+                replacement_map[consumer].add(prerequisite)
+        return tuple(
+            (
+                consumer,
+                tuple(sorted(prerequisites, key=repr)),
+            )
+            for consumer, prerequisites in sorted(
+                replacement_map.items(), key=lambda item: repr(item[0])
             )
         )
 
@@ -495,9 +565,15 @@ class StateApplicationCoordinator:
             assert existing is not None
             removed_nodes = (StateNode(existing.instance_id),)
 
-        self._dependencies.validate_dependency_replacement(
-            prospective_node,
-            prerequisites,
+        dependency_replacements = self._dependency_replacements(
+            context,
+            candidate=candidate,
+            residents=residents,
+            prospective_node=prospective_node,
+            candidate_prerequisites=prerequisites,
+        )
+        self._dependencies.validate_dependency_replacements(
+            dependency_replacements,
             remove_nodes=removed_nodes,
         )
         self._assert_preconditions(
@@ -509,10 +585,24 @@ class StateApplicationCoordinator:
         )
 
         transition_snapshot = None
+        transition_roots = tuple(
+            sorted(
+                {
+                    prospective_node,
+                    *removed_nodes,
+                    *(
+                        node
+                        for consumer, dependency_values in dependency_replacements
+                        for node in (consumer, *dependency_values)
+                    ),
+                },
+                key=repr,
+            )
+        )
         if self._transition_coordinator is not None:
             transition_snapshot = self._transition_coordinator.capture(
                 context,
-                (prospective_node, *removed_nodes, *prerequisites),
+                transition_roots,
             )
 
         allocator = getattr(context, "generation_allocator", None)
@@ -536,18 +626,16 @@ class StateApplicationCoordinator:
 
         instance = self._lifecycle.commit_application_transaction(context, transaction)
 
-        if conflict.disposition is ApplicationDisposition.REPLACE:
-            assert existing is not None
-            self._dependencies.remove_node(StateNode(existing.instance_id))
-        self._dependencies.replace_dependencies(
-            StateNode(instance.instance_id), prerequisites
+        self._dependencies.replace_dependencies_many(
+            dependency_replacements,
+            remove_nodes=removed_nodes,
         )
 
         if self._transition_coordinator is not None and transition_snapshot is not None:
             self._transition_coordinator.settle(
                 context,
                 transition_snapshot,
-                (StateNode(instance.instance_id), *removed_nodes, *prerequisites),
+                transition_roots,
             )
 
         status_map = {
