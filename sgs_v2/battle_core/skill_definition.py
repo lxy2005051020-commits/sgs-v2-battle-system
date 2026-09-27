@@ -20,6 +20,7 @@ class SkillType(str, Enum):
     COMMAND = "COMMAND"
     TROOP = "TROOP"
     FORMATION = "FORMATION"
+    TALENT = "TALENT"
 
 
 class PreparationMode(str, Enum):
