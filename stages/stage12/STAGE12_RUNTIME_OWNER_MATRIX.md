@@ -1,6 +1,6 @@
 # Stage12 Runtime Owner Matrix
 
-> Status: **ENTRY-AUDITED / DESIGN INPUT**  
+> Status: **ENTRY-AUDITED / ROUND 9 RNG-EVENT-DEFAULT GOVERNANCE CLOSED / DESIGN INPUT**  
 > Date: **2026-09-27**  
 > Canonical constraint: one responsibility may not have two competing canonical owners.
 
@@ -52,8 +52,8 @@ The following remain open after Round 4:
 - DQ-SF-07 CLOSED in Round 5: PreparationInterruptionPort + synchronous transition timing; concrete preparation owner remains an integration dependency;
 - DQ-SF-09 / 10 CLOSED in Round 6: TargetOperation + explicit producer-declared query boundary + SkillTargetPolicy;
 - DQ-SF-11 CLOSED in Round 7: EquipmentContributionRef + EquipmentEffectivenessPolicy + domain filter/JIT seams;
-- DQ-SF-12 final RNG signatures / ordering outside the Round 4 candidate and refresh boundaries;
-- DQ-SF-13 public event model;
+- DQ-SF-12 CLOSED in Round 9: sole RNG service + per-domain random-decision ownership + zero-RNG policy matrix + rejection/refresh/resume/replay rules;
+- DQ-SF-13 CLOSED in Round 9: query/event split + domain event ownership + post-decision/commit publication + idempotence;
 - DQ-SF-17 composition-root wiring;
 - DQ-SF-19 CLOSED in Round 8: Capture composite owner matrix + action/damage/recovery/provider/target/equipment boundaries;
 - DQ-SF-21 CLOSED_BY_SHARED_FOUNDATION_DESIGN in Round 5: RecoveryOpportunitySystem Gate 4 migration contract frozen; implementation remains pending;
@@ -234,7 +234,7 @@ Owner invariants:
 - Equipment suppression is contribution ineligibility, never unequip/delete/reinstall.
 - Domain owners retain calculation, ordering, CEIL, scheduling and trigger RNG.
 - FalseReport/Capture bounded categories surface as unsupported rather than being generalized.
-- Public transition events remain DQ-SF-13.
+- Public transition events are governed by the Round 9 Event Model; domain owners publish post-decision/commit facts and pure queries emit none.
 
 ## SF Round 8 owner closure — Capture composite + work execution rights
 
@@ -250,7 +250,7 @@ Authority record:
 | New Skill admission | existing ProviderValidity + SkillPermission composition where contract applies | provider/holder state facts only | no Capture-owned skill engine |
 | PASSIVE / COMMAND Provider suppression | ProviderValidityPolicy | effective-CAPTURE suppression cause | no physical provider deletion; resume future-only |
 | New actor-driven damage | Damage domain admission/execution-right seam | current-actor CAPTURE denial fact | no Weakness reuse; no universal source_id gate |
-| Counter damage | CounterSystem owns admitted batch; Damage domain owns local damage permission | current counter actor CAPTURE fact | batch semantics preserved; no counter damage; public trigger/event topology deferred to DQ-SF-13 |
+| Counter damage | CounterSystem owns admitted batch; Damage domain owns local damage permission | current counter actor CAPTURE fact | batch semantics preserved; no counter damage; public damage-denial fact follows Round 9 Damage-domain event ownership |
 | Existing Active-origin DOT | existing attached/persistent effect owner + Damage domain | no Capture actor denial for admitted continuation | explicit ProviderDependency, if any, remains independently live |
 | Received recovery | RecoverySystem | CAPTURE prevention cause | after modifier/second CEIL, before troop restore/capacity; target selection remains separate |
 | Friendly SINGLE / CHOOSE_N eligibility | SkillTargetPolicy | CAPTURE target-ineligibility fact | ALL_ALLIES and locked/delayed remain bounded |
@@ -270,7 +270,7 @@ Authority record:
 | TARGET_ELIGIBILITY final decision | SkillTargetPolicy when the work contract requests recheck | existing canonical owner; LOCKED != NEW_QUERY |
 | EQUIPMENT_CONTRIBUTION final decision | EquipmentEffectivenessPolicy | existing canonical owner |
 | STATE_EFFECTIVENESS final decision | StateEffectivenessPolicy | existing canonical owner |
-| public event publication | deciding domain owner -> EventBus | DQ-SF-13 remains open |
+| public event publication | deciding domain owner -> EventBus | Round 9 event governance CLOSED; query != event and publication follows the canonical decision/commit |
 
 Owner invariants:
 
@@ -280,3 +280,89 @@ Owner invariants:
 - UNSUPPORTED_BOUNDARY must surface rather than silently ALLOW/DENY.
 - A JIT failure skips the current execution only; no automatic requeue/replay.
 - Current actor, origin Provider, historical source, effect holder, damage source and damage target are distinct roles.
+
+
+## SF Round 9 owner closure — RNG / Event / Runtime Default governance
+
+Authority record:
+- STAGE12_RNG_EVENT_DEFAULT_GOVERNANCE.md
+
+### RNG service and decision ownership
+
+| Responsibility | Canonical owner | Non-owner collaborators | Frozen Round 9 boundary |
+|---|---|---|---|
+| PRNG service | BattleContext.random / RandomSystem | every randomized domain consumer | sole random service; no direct random module use by gameplay owners |
+| source state/effect proc | originating source/effect-generation owner | StateAdmissionPolicy consumes only the resulting candidate | source proc draw, if any, occurs before Insight admission |
+| state admission / effectiveness / conflict | StateAdmissionPolicy / StateEffectivenessPolicy / StateConflictPolicy | application coordinator | zero RNG |
+| skill Provider validity | ProviderValidityPolicy | SkillOperationAdmissionCoordinator | zero RNG; non-VALID rejects before activation RNG |
+| holder Skill permission | SkillPermissionPolicy | SkillOperationAdmissionCoordinator | zero RNG; denial rejects before activation RNG |
+| Skill activation probability | Skill activation owner / SkillResolver-equivalent | admission coordinator authorizes attempt | draw only after final admission ALLOW |
+| target policy | SkillTargetPolicy | TargetSystem provides candidates | zero RNG |
+| target sampling | TargetSystem / selector | consumes TargetPolicyDecision | sole target-sampling RNG owner |
+| Intimidation binding | mechanism-specific binding selector | StateApplicationCoordinator carries prepared binding transaction | random selection only after admitted initial/refresh path; coordinator itself remains zero-RNG except explicit delegated selection result |
+| RecoveryOpportunity probability | RecoveryOpportunitySystem | ProviderValidityPolicy JIT gate | Provider validity before recovery probability RNG |
+| equipment trigger RNG | trigger/opportunity owner | EquipmentEffectivenessPolicy JIT gate | contribution validity before downstream trigger RNG |
+| execution-right evaluation | owning domain + ExecutionRightSpec | canonical policy owners per dimension | evaluation zero RNG; DENY skips downstream work RNG |
+| replay trace | test instrumentation around RandomSystem seam | domain tests | assert owner/path/API decision order; no new production RNG owner |
+
+### Zero-RNG owner set
+
+These owners never consume RNG as a consequence of being queried:
+
+- StateAdmissionPolicy
+- StateEffectivenessPolicy
+- StateConflictPolicy
+- ProviderValidityPolicy
+- SkillPermissionPolicy
+- SkillOperationAdmissionCoordinator
+- SkillTargetPolicy
+- EquipmentEffectivenessPolicy
+- StateRemovalPolicy
+- EffectivenessTransitionCoordinator
+- ExecutionRightSpec evaluation
+
+StateApplicationCoordinator remains transaction preparation/orchestration, not a hidden RNG policy.
+The only Intimidation randomness is an explicit binding-selection operation authorized by an admitted initial/refresh path.
+
+### Event ownership matrix
+
+| Observable fact | Canonical deciding/publishing owner | Policy/helper role | Round 9 design |
+|---|---|---|---|
+| STATE_APPLIED / STATE_REFRESHED / STATE_REMOVED / STATE_EXPIRED | StateLifecycleSystem after physical commit | policies decide eligibility/conflict only | reuse current event ownership |
+| state application rejection | final state application orchestrator | admission/conflict policy supplies typed reason | future STATE_APPLICATION_REJECTED with ADMISSION/CONFLICT discriminator |
+| state becomes suppressed/resumed | committed dependency/effectiveness transition path | StateEffectivenessPolicy supplies truth; coordinator detects transition | future STATE_SUPPRESSED / STATE_RESUMED only for contract-observable transitions |
+| Provider validity changed | internal EffectivenessTransitionCoordinator fact | ProviderValidityPolicy supplies truth | internal by default; no generic public Provider event required |
+| blocked Skill attempt | Skill operation admission/execution owner | Provider/permission policies supply blockers | future SKILL_OPERATION_BLOCKED only for an actual attempt |
+| preparation interrupted | true preparation owner after successful interruption | PreparationInterruptionPort is boundary | future PREPARATION_INTERRUPTED; NOT_PREPARING emits none |
+| natural action blocked | ActionSystem | Capture/STUN facts consumed by Action owner | reuse ACTION_BLOCKED; state handler never duplicates it |
+| damage denied | Damage domain | Capture execution-right fact consumed by Damage owner | reuse DAMAGE_PREVENTED; distinct from Weakness legal-zero |
+| recovery prevented | RecoverySystem | internal prevention cause set may include HealingBlock/Capture | one RECOVERY_PREVENTED public fact; compatibility primary reason |
+| target constraint evaluated | none | SkillTargetPolicy pure query | no event |
+| actual target-set change, if future report surface requires it | target-operation resolution owner | policy supplies constraint | not required as a new EventType in Round 9 |
+| EventBus dispatch/history | EventBus | receives already-decided fact | never permission/ordering authority |
+
+### Event ordering invariants
+
+- query != event;
+- successful mutation publishes after canonical commit;
+- dependency recomputation and internal transition dispatch precede public transition facts;
+- rejected/failed transactions never emit committed-state events;
+- repeated query emits nothing;
+- same effective/valid state with no transition emits nothing;
+- EventBus listeners do not decide gameplay.
+
+### Default ownership
+
+Runtime Default authority stays in STAGE12_RUNTIME_DEFAULT_LEDGER.md.
+
+Battle-owned defaults remain RD-SF-001 / RD-SF-002 / RD-SF-003.
+Research-owned PD-INS-001 / PD-INS-002 remain inherited approved project defaults with their original provenance.
+Round 9 adds no new default and creates no new gameplay owner.
+
+Owner invariants after Round 9:
+
+- RandomSystem is the sole RNG service, but it is not a gameplay-decision owner.
+- Policy queries are deterministic and side-effect free with respect to RNG and EventBus.
+- EventBus is the sole event dispatch/history service, but it is not a gameplay-decision owner.
+- Domain systems publish only facts they canonically own.
+- PROJECT_RUNTIME_DEFAULT is governance metadata, not a substitute policy engine.

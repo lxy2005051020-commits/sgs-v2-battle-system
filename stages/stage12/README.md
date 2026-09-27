@@ -155,7 +155,7 @@ before design freeze or migration. Existing gameplay and tests are preserved.
 
 Stage11 Runtime FROZEN / Reopen Required NO in this documentation-only phase; Stage12 Active YES;
 Stage12 Runtime Frozen 0 / 7; Stage13 Active NO; Research FROZEN 39 / 40; DSTS9-B02 OPEN / UNOBSERVED.
-Rounds 2-8 have now closed the shared owner/identity/effectiveness/lifecycle/permission/target/equipment/Capture-composition architecture. Round 8 closes DQ-SF-19 and closes DQ-SF-23 at the architecture layer while preserving Q16/Q44/Q45/B-SAB-07 as explicit bounded gameplay edges. Shared Foundation Design remains NOT FROZEN. NEXT: DQ-SF-12 RNG Governance + DQ-SF-13 Event Model + DQ-SF-14 Runtime Default finalization, followed by DQ-SF-17 wiring, DQ-SF-18 final test architecture and DQ-SF-26 independent design audit.
+Rounds 2-9 have now closed the shared owner/identity/effectiveness/lifecycle/permission/target/equipment/Capture-composition architecture plus RNG/Event/Runtime-Default governance. Round 9 closes DQ-SF-12 and DQ-SF-13, and closes DQ-SF-14 at the architecture layer while preserving named mechanism unknowns as inherited defaults, DEFERRED decisions or UNSUPPORTED_BOUNDARY rather than invented gameplay. Shared Foundation Design remains NOT FROZEN. NEXT: DQ-SF-17 Composition Wiring + DQ-SF-18 Final Test Architecture, followed by DQ-SF-26 independent design audit.
 
 ## Shared Foundation Round 8 — Capture composite execution boundary
 
@@ -181,4 +181,56 @@ Stage12 Runtime Frozen = 0 / 7
 Stage13/14/15 Active = NO
 ~~~
 
-The next governance round is DQ-SF-12 / 13 / 14.
+The DQ-SF-12 / 13 / 14 governance round is complete; see the Round 9 section below.
+
+
+## Shared Foundation Round 9 — RNG / Event / Runtime Default governance
+
+Design authority:
+- STAGE12_RNG_EVENT_DEFAULT_GOVERNANCE.md
+
+Verdicts:
+
+~~~text
+DQ-SF-12 = CLOSED_BY_SHARED_FOUNDATION_DESIGN
+DQ-SF-13 = CLOSED_BY_SHARED_FOUNDATION_DESIGN
+DQ-SF-14 = CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED
+
+BattleContext.random / RandomSystem = sole RNG service
+Policy queries = zero RNG
+Source-generation RNG before Insight admission = preserved by PD-INS-001
+Denied Skill / Recovery / Equipment opportunity = zero downstream owned RNG
+Intimidation refresh = new binding selection
+Intimidation resume = zero binding RNG
+Provocation CHOOSE_N RNG micro-order = DEFERRED / NOT DEFAULTED
+
+EventBus = fact recording / dispatch only
+Query = no event
+Committed transition = publish after decision/commit
+Failed transaction = no false committed event
+STATE_SUPPRESSED / STATE_RESUMED = future public state-transition vocabulary where contract-observable
+STATE_APPLICATION_REJECTED = future single rejection fact with ADMISSION / CONFLICT discriminator
+Provider transition = internal by default
+ACTION_BLOCKED / DAMAGE_PREVENTED / RECOVERY_PREVENTED remain domain-owned
+
+Battle Runtime Defaults = RD-SF-001 / RD-SF-002 / RD-SF-003
+Inherited Research project defaults = PD-INS-001 / PD-INS-002
+New Round 9 Runtime Defaults = NONE
+
+Research repository = READ ONLY / UNCHANGED
+Gameplay Implementation = NONE
+Stage11 Reopen Required = NO
+Stage12 Runtime Frozen = 0 / 7
+Stage13/14/15 Active = NO
+~~~
+
+Round 9 also freezes the explicit risks and mitigations for RNG drift, event duplication/phantom facts and default laundering.
+
+NEXT:
+
+~~~text
+DQ-SF-17 Composition Wiring
+DQ-SF-18 Final Test Architecture
+then
+DQ-SF-26 Independent Design Audit
+~~~
