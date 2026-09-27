@@ -2,6 +2,11 @@ from __future__ import annotations
 
 from .context import BattleContext
 from .events import EventType
+from .execution_right_runtime import (
+    CurrentActorPermissionPolicy,
+    CurrentActorPermissionRequest,
+    CurrentActorPermissionStatus,
+)
 from .execution_right_system import ActionExecutionState, ActionScope, ComboActionGrant, ComboGrantState
 from .normal_attack_system import NormalAttackResult, NormalAttackSystem
 from .official_state_catalog import OfficialStateId
@@ -19,11 +24,13 @@ class ActionSystem:
         stage9_state_runtime: Stage9StateRuntime | None = None,
         state_lifecycle_system: StateLifecycleSystem | None = None,
         stage11_state_runtime=None,
+        current_actor_permission_policy: CurrentActorPermissionPolicy | None = None,
     ) -> None:
         self._normal_attack = normal_attack_system
         self._stage9_state_runtime = stage9_state_runtime
         self._state_lifecycle_system = state_lifecycle_system
         self._stage11_state_runtime = stage11_state_runtime
+        self._current_actor_permission_policy = current_actor_permission_policy
 
     def execute(
         self,
@@ -80,6 +87,32 @@ class ActionSystem:
                     state=ComboGrantState.VALID,
                 )
                 action_scope.combo_grant = grant
+
+        if self._current_actor_permission_policy is not None:
+            permission = self._current_actor_permission_policy.evaluate(
+                context,
+                CurrentActorPermissionRequest(
+                    actor_id=actor.unit_id,
+                    operation_kind="NATURAL_ACTION",
+                ),
+            )
+            if permission.status is CurrentActorPermissionStatus.UNSUPPORTED_BOUNDARY:
+                raise RuntimeError(
+                    "natural-action current-actor permission reached unsupported boundary"
+                )
+            if permission.status is CurrentActorPermissionStatus.DENY:
+                context.event_bus.publish(
+                    event_type=EventType.ACTION_BLOCKED,
+                    phase=context.current_phase,
+                    round_no=context.current_round,
+                    actor_id=actor.unit_id,
+                    payload={
+                        "action_type": "ALL",
+                        "reason": "CURRENT_ACTOR_PERMISSION",
+                        "blocker_keys": permission.blocker_keys,
+                    },
+                )
+                return None
 
         stun_state_id = OfficialStateId.STUN.value
         if self._stage11_state_runtime is not None:

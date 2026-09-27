@@ -6,6 +6,17 @@ from enum import Enum
 
 from .context import BattleContext
 from .events import EventType
+from .equipment_effectiveness import (
+    EquipmentContributionRef,
+    EquipmentEffectivenessBoundaryError,
+    EquipmentEffectivenessPolicy,
+    EquipmentEffectivenessStatus,
+)
+from .execution_right_runtime import (
+    RecoveryExecutionPreventionPolicy,
+    RecoveryExecutionPreventionRequest,
+    RecoveryExecutionPreventionStatus,
+)
 from .official_state_catalog import OfficialStateId
 from .stage9_integerization import ExactRatio
 from .state_generation import StateApplicationGenerationId
@@ -81,12 +92,30 @@ class RecoveryRequest:
         return self.amount
 
 
-RecoveryModifierProvider = Callable[[BattleContext, RecoveryRequest], ExactRatio]
+@dataclass(frozen=True, slots=True)
+class RecoveryModifierContribution:
+    ratio: ExactRatio
+    equipment_contribution_ref: EquipmentContributionRef | None = None
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.ratio, ExactRatio):
+            raise TypeError("ratio must be ExactRatio")
+        if self.equipment_contribution_ref is not None and not isinstance(
+            self.equipment_contribution_ref, EquipmentContributionRef
+        ):
+            raise TypeError("equipment_contribution_ref must be EquipmentContributionRef or None")
+
+
+RecoveryModifierProvider = Callable[
+    [BattleContext, RecoveryRequest],
+    ExactRatio | RecoveryModifierContribution,
+]
 
 
 class RecoveryPreventionReason(str, Enum):
     HEALING_BAN = "HEALING_BAN"
     TARGET_DEFEATED = "TARGET_DEFEATED"
+    FOUNDATION_POLICY = "FOUNDATION_POLICY"
 
 
 @dataclass(frozen=True, slots=True)
@@ -127,6 +156,8 @@ class RecoveryPreventedResult:
     reason_state_id: str | None
     source_generation_id: StateApplicationGenerationId | None = None
     modified_recovery: int | None = None
+    reason_key: str | None = None
+    internal_reason_keys: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.request, RecoveryRequest):
@@ -142,6 +173,10 @@ class RecoveryPreventedResult:
                 raise TypeError("modified_recovery must be an int or None")
             if self.modified_recovery < 0:
                 raise ValueError("modified_recovery must be >= 0")
+        keys = tuple(self.internal_reason_keys)
+        if any(not isinstance(key, str) or not key.strip() for key in keys):
+            raise ValueError("internal_reason_keys must contain non-empty strings")
+        object.__setattr__(self, "internal_reason_keys", keys)
 
         healing_ban_id = OfficialStateId.HEALING_BAN.value
         if self.reason is RecoveryPreventionReason.HEALING_BAN:
@@ -153,6 +188,15 @@ class RecoveryPreventedResult:
             if self.reason_state_id is not None:
                 raise ValueError(
                     "TARGET_DEFEATED prevention cannot include reason_state_id"
+                )
+        elif self.reason is RecoveryPreventionReason.FOUNDATION_POLICY:
+            if self.reason_state_id is not None:
+                raise ValueError(
+                    "FOUNDATION_POLICY prevention cannot include reason_state_id"
+                )
+            if not isinstance(self.reason_key, str) or not self.reason_key.strip():
+                raise ValueError(
+                    "FOUNDATION_POLICY prevention requires a non-empty reason_key"
                 )
 
     @property
@@ -171,12 +215,24 @@ class RecoverySystem:
         troop_system: TroopSystem,
         stage11_state_runtime=None,
         recovery_modifier_provider: RecoveryModifierProvider | None = None,
+        equipment_effectiveness_policy: EquipmentEffectivenessPolicy | None = None,
+        execution_prevention_policy: RecoveryExecutionPreventionPolicy | None = None,
     ) -> None:
         if recovery_modifier_provider is not None and not callable(recovery_modifier_provider):
             raise TypeError("recovery_modifier_provider must be callable or None")
         self._troops = troop_system
         self._stage11 = stage11_state_runtime
         self._recovery_modifier_provider = recovery_modifier_provider
+        self._equipment_effectiveness_policy = equipment_effectiveness_policy
+        self._execution_prevention_policy = execution_prevention_policy
+
+    @property
+    def equipment_effectiveness_policy(self) -> EquipmentEffectivenessPolicy | None:
+        return self._equipment_effectiveness_policy
+
+    @property
+    def execution_prevention_policy(self) -> RecoveryExecutionPreventionPolicy | None:
+        return self._execution_prevention_policy
 
     @staticmethod
     def _ceil_ratio(base: int, ratio: ExactRatio) -> int:
@@ -202,11 +258,30 @@ class RecoverySystem:
         if request.amount == 0 or request.modifier_policy is RecoveryModifierPolicy.NONE:
             return request.amount
 
-        ratio = (
+        contribution = (
             ExactRatio(1, 1)
             if self._recovery_modifier_provider is None
             else self._recovery_modifier_provider(context, request)
         )
+        if isinstance(contribution, RecoveryModifierContribution):
+            ref = contribution.equipment_contribution_ref
+            if ref is not None:
+                if self._equipment_effectiveness_policy is None:
+                    raise RuntimeError(
+                        "equipment-owned recovery modifier has no effectiveness policy"
+                    )
+                decision = self._equipment_effectiveness_policy.evaluate_contribution(
+                    context, ref
+                )
+                if decision.status is EquipmentEffectivenessStatus.UNSUPPORTED_BOUNDARY:
+                    raise EquipmentEffectivenessBoundaryError(
+                        f"unsupported equipment recovery-modifier boundary: {ref!r}"
+                    )
+                if not decision.effective:
+                    return request.amount
+            ratio = contribution.ratio
+        else:
+            ratio = contribution
         return self._ceil_ratio(request.amount, ratio)
 
     def resolve(
@@ -230,6 +305,21 @@ class RecoverySystem:
 
         modified_recovery = self._apply_recovery_modifier(context, request)
 
+        prevention = None
+        if self._execution_prevention_policy is not None:
+            prevention = self._execution_prevention_policy.evaluate(
+                context,
+                RecoveryExecutionPreventionRequest(
+                    source_id=request.source_id,
+                    target_id=request.target_id,
+                    modified_recovery=modified_recovery,
+                ),
+            )
+            if prevention.status is RecoveryExecutionPreventionStatus.UNSUPPORTED_BOUNDARY:
+                raise RuntimeError(
+                    "recovery execution prevention reached unsupported boundary"
+                )
+
         healing_ban_id = OfficialStateId.HEALING_BAN.value
         if self._stage11 is not None:
             healing_banned = self._stage11.healing_block_active(
@@ -240,13 +330,35 @@ class RecoverySystem:
                 owner_id=target.unit_id, state_id=healing_ban_id
             )
 
-        if modified_recovery > 0 and healing_banned:
+        foundation_keys = (
+            ()
+            if prevention is None
+            else tuple(cause.reason_key for cause in prevention.causes)
+        )
+        healing_block_applies = modified_recovery > 0 and healing_banned
+
+        if healing_block_applies:
             return self._prevent(
                 context,
                 request,
                 RecoveryPreventionReason.HEALING_BAN,
                 reason_state_id=healing_ban_id,
                 modified_recovery=modified_recovery,
+                internal_reason_keys=foundation_keys + ("HEALING_BAN",),
+            )
+
+        if (
+            prevention is not None
+            and prevention.status is RecoveryExecutionPreventionStatus.PREVENT
+        ):
+            return self._prevent(
+                context,
+                request,
+                RecoveryPreventionReason.FOUNDATION_POLICY,
+                reason_state_id=None,
+                modified_recovery=modified_recovery,
+                reason_key=prevention.causes[0].reason_key,
+                internal_reason_keys=foundation_keys,
             )
 
         troop_change = self._troops.restore(target, modified_recovery)
@@ -293,6 +405,8 @@ class RecoverySystem:
         *,
         reason_state_id: str | None,
         modified_recovery: int | None,
+        reason_key: str | None = None,
+        internal_reason_keys: tuple[str, ...] = (),
     ) -> RecoveryPreventedResult:
         result = RecoveryPreventedResult(
             request=request,
@@ -300,6 +414,8 @@ class RecoverySystem:
             reason_state_id=reason_state_id,
             source_generation_id=request.source_generation_id,
             modified_recovery=modified_recovery,
+            reason_key=reason_key,
+            internal_reason_keys=internal_reason_keys,
         )
         settled_request = request.amount if modified_recovery is None else modified_recovery
         context.event_bus.publish(
@@ -324,6 +440,7 @@ class RecoverySystem:
                 "requested_recovery": settled_request,
                 "reason": reason.value,
                 "reason_state_id": reason_state_id,
+                "reason_key": reason_key,
             },
         )
         return result

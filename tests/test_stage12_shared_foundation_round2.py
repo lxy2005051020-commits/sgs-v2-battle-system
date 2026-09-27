@@ -1071,7 +1071,10 @@ def test_resume_transition_is_not_refresh() -> None:
     assert current.instance_id == suppressed.instance_id
     assert current.current_generation_id == generation_before
     assert current.lifetime_spec == lifetime_before
-    assert context.event_bus.history == events_before
+    new_events = context.event_bus.history[len(events_before):]
+    assert len(new_events) == 1
+    assert new_events[0].event_type is EventType.STATE_RESUMED
+    assert new_events[0].payload["state_instance_id"] == target.instance_id
 
 
 def test_duplicate_query_no_transition() -> None:

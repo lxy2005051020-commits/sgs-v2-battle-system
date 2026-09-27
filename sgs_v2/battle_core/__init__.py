@@ -10,6 +10,51 @@ from .enums import (
     TroopType,
 )
 from .events import BattleEvent, EventBus, EventType
+from .equipment_effectiveness import (
+    EquipmentAttributeContribution,
+    EquipmentContributionDependency,
+    EquipmentContributionKind,
+    EquipmentContributionRecord,
+    EquipmentContributionRef,
+    EquipmentContributionRegistry,
+    EquipmentContributionResolution,
+    EquipmentContributionResolutionStatus,
+    EquipmentEffectivenessBoundaryError,
+    EquipmentEffectivenessContribution,
+    EquipmentEffectivenessDecision,
+    EquipmentEffectivenessPolicy,
+    EquipmentEffectivenessStatus,
+    EquipmentProviderRecord,
+    EquipmentTriggerGate,
+    EquipmentTriggerGateDecision,
+    EquipmentTriggerGateStatus,
+)
+from .execution_right_runtime import (
+    CurrentActorPermissionDecision,
+    CurrentActorPermissionPolicy,
+    CurrentActorPermissionRequest,
+    CurrentActorPermissionStatus,
+    DamageExecutionRightPort,
+    DamageExecutionWork,
+    DamageWorkKind,
+    ExecutionRightDimension,
+    ExecutionRightDimensionDecision,
+    ExecutionRightEvaluation,
+    ExecutionRightEvaluationStatus,
+    ExecutionRightMode,
+    ExecutionRightRequest,
+    ExecutionRightSpec,
+    ExecutionRightSupport,
+    ExecutionTargetEligibilityDecision,
+    ExecutionTargetEligibilityPolicy,
+    ExecutionTargetEligibilityRequest,
+    ExecutionTargetEligibilityStatus,
+    RecoveryExecutionPreventionContribution,
+    RecoveryExecutionPreventionDecision,
+    RecoveryExecutionPreventionPolicy,
+    RecoveryExecutionPreventionRequest,
+    RecoveryExecutionPreventionStatus,
+)
 from .random_system import RandomSystem
 from .unit import UnitRuntime
 from .action_order_system import ActionOrderSystem
@@ -169,6 +214,7 @@ from .operation_identity import (
 )
 from .reaction_permission_policy import ReactionPermissionPolicy
 from .recovery_system import (
+    RecoveryModifierContribution,
     RecoveryModifierPolicy,
     RecoveryModifierProvider,
     RecoveryPreventionReason,
@@ -728,3 +774,5 @@ __all__ = [
     "DamageZeroLossCause",
     "RecoveryOpportunitySystem",
 ]
+
+from .effectiveness_transition_events import StateEffectivenessEventAdapter

@@ -5,6 +5,7 @@ from enum import Enum
 
 from .damage_rule_models import RuleContributionSource
 from .enums import DamageSourceType, DamageType
+from .equipment_effectiveness import EquipmentContributionRef
 from .numeric_validation import validate_nonnegative_finite, validate_probability
 
 
@@ -90,6 +91,7 @@ class DamageModifierContribution:
     probability: float = 1.0
     damage_types: frozenset[DamageType] | None = None
     source_types: frozenset[DamageSourceType] | None = None
+    equipment_contribution_ref: EquipmentContributionRef | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(
@@ -121,6 +123,10 @@ class DamageModifierContribution:
         _validate_nonempty_string(self.order_key, "order_key")
         _validate_canonical_enum_scope(self.damage_types, DamageType, "damage_types")
         _validate_canonical_enum_scope(self.source_types, DamageSourceType, "source_types")
+        if self.equipment_contribution_ref is not None and not isinstance(
+            self.equipment_contribution_ref, EquipmentContributionRef
+        ):
+            raise TypeError("equipment_contribution_ref must be EquipmentContributionRef or None")
         operand = validate_nonnegative_finite(self.operand, "modifier operand")
         validate_probability(self.probability)
 

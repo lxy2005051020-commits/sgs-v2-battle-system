@@ -29,6 +29,11 @@ from .direct_troop_loss_system import (
 )
 from .enums import DamageSourceType
 from .execution_right_system import DamageSettlementPermit
+from .execution_right_runtime import (
+    DamageExecutionRightPort,
+    DamageExecutionWork,
+    ExecutionRightEvaluation,
+)
 from .operation_identity import (
     ReactionBatchId,
     DamageInstanceId,
@@ -111,6 +116,7 @@ class DamageInstanceCoordinator:
         damage_aftermath_port: Any = None,
         defeat_cleanup_port: Any = None,
         attacker_recovery_system: Any = None,
+        execution_right_port: DamageExecutionRightPort | None = None,
     ) -> None:
         if not isinstance(damage_system, DamageSystem):
             raise TypeError(
@@ -142,6 +148,11 @@ class DamageInstanceCoordinator:
         self._damage_aftermath_port = damage_aftermath_port
         self._defeat_cleanup = defeat_cleanup_port
         self._attacker_recovery = attacker_recovery_system
+        if execution_right_port is not None and not isinstance(
+            execution_right_port, DamageExecutionRightPort
+        ):
+            raise TypeError("execution_right_port must be DamageExecutionRightPort or None")
+        self._execution_right_port = execution_right_port
         self._active_instances: dict[tuple[int, DamageInstanceId], _ActiveDamageInstanceRecord] = {}
         self._permits: dict[tuple[int, str], _PermitRecord] = {}
         self._damage_resolution.bind_coordinator(self)
@@ -166,6 +177,19 @@ class DamageInstanceCoordinator:
     @property
     def finalization_coordinator(self) -> BattleFinalizationCoordinator | None:
         return self._finalization
+
+    @property
+    def execution_right_port(self) -> DamageExecutionRightPort | None:
+        return self._execution_right_port
+
+    def evaluate_execution_right(
+        self,
+        context: BattleContext,
+        work: DamageExecutionWork,
+    ) -> ExecutionRightEvaluation:
+        if self._execution_right_port is None:
+            raise RuntimeError("damage execution-right port is not configured")
+        return self._execution_right_port.evaluate(context, work)
 
     def allocate_damage_instance_id(self, context: BattleContext) -> DamageInstanceId:
         if context is None or not isinstance(context, BattleContext):

@@ -51,6 +51,7 @@ class EffectivenessTransitionCoordinator:
         "_state_policy",
         "_provider_policy",
         "_state_ports",
+        "_state_public_fact_ports",
         "_provider_ports",
     )
 
@@ -71,6 +72,7 @@ class EffectivenessTransitionCoordinator:
         self._state_policy = state_policy
         self._provider_policy = provider_policy
         self._state_ports: list[StateTransitionPort] = []
+        self._state_public_fact_ports: list[StateTransitionPort] = []
         self._provider_ports: list[ProviderTransitionPort] = []
 
     @property
@@ -82,6 +84,13 @@ class EffectivenessTransitionCoordinator:
             raise TypeError("port must be callable")
         if port not in self._state_ports:
             self._state_ports.append(port)
+
+    def register_state_public_fact_port(self, port: StateTransitionPort) -> None:
+        """Register post-internal-transition public fact publication."""
+        if not callable(port):
+            raise TypeError("port must be callable")
+        if port not in self._state_public_fact_ports:
+            self._state_public_fact_ports.append(port)
 
     def register_provider_transition_port(self, port: ProviderTransitionPort) -> None:
         if not callable(port):
@@ -150,6 +159,8 @@ class EffectivenessTransitionCoordinator:
                 )
                 transitions.append(transition)
                 for port in tuple(self._state_ports):
+                    port(context, transition)
+                for port in tuple(self._state_public_fact_ports):
                     port(context, transition)
                 continue
 
