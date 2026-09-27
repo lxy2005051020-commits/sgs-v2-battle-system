@@ -620,12 +620,13 @@ def test_resolved_continuations_do_not_reenter_provocation(
 def test_independent_new_query_reevaluates_source_admissibility() -> None:
     context, systems = make_context(seed=20), BattleSystems()
     apply_provocation(systems, context, source="b")
+    item = runtime()
     context.get_unit("b").troops = 0
-    first = resolve_skill(systems, context, runtime())
+    first = resolve_skill(systems, context, item)
     assert first.target_ids[0] in {"c", "d"}
 
     context.get_unit("b").troops = 1000
-    second = resolve_skill(systems, context, runtime())
+    second = resolve_skill(systems, context, item)
     assert second.target_ids == ("b",)
 
 
@@ -649,7 +650,8 @@ def test_later_insight_suppresses_then_resume_affects_future_query_only() -> Non
     ).instance
     assert provoke is not None
     captured = capture_operation(systems)
-    first = resolve_skill(systems, context, runtime())
+    item = runtime()
+    first = resolve_skill(systems, context, item)
     selected = TargetSelectionResult(
         operation_id=captured[-1].operation_id,
         target_ids=first.target_ids,
@@ -684,7 +686,7 @@ def test_later_insight_suppresses_then_resume_affects_future_query_only() -> Non
     assert systems.state_effectiveness_policy.evaluate_state(
         context, current
     ).effective
-    future = resolve_skill(systems, context, runtime())
+    future = resolve_skill(systems, context, item)
     assert future.target_ids == ("b",)
 
 
