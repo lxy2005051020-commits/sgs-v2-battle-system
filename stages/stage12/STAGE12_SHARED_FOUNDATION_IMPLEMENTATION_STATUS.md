@@ -356,7 +356,7 @@ The current 690089 integration static/semantic checks confirm:
 - there is no `Stage12InsightRuntime`;
 - one production `BattleSystems` graph still owns exactly one `StateEffectivenessPolicy`;
 - state-to-state Insight suppression dependencies use the frozen Shared Foundation dependency graph and pre-commit cycle validation;
-- Shared Foundation itself still adds no mechanism-specific gameplay for the remaining 690108, 690222, 690109 or 690110; 690101 and 690107 are integrated only through their mechanism-owned adapters.
+- Shared Foundation itself still adds no mechanism-specific gameplay for 690222, 690109 or 690110. 690101, 690107 and now 690108 are integrated only through mechanism-owned adapters registered into the frozen canonical owners.
 
 The pre-existing Round 4 equipment/execution-right static guards remain covered by the full regression suite.
 
@@ -368,12 +368,12 @@ Stage12 individual-state gameplay currently frozen to contract:
 690089 INSIGHT = IMPLEMENTED / RUNTIME_FROZEN
 690101 EXHAUSTION = IMPLEMENTED / RUNTIME_FROZEN
 690107 FALSE_REPORT = IMPLEMENTED / RUNTIME_FROZEN
+690108 PROVOCATION = IMPLEMENTED / PENDING_RUNTIME_AUDIT
 ```
 
 Not gameplay-integrated yet:
 
 ```text
-690108 PROVOCATION
 690222 INTIMIDATION
 690109 SABOTAGE
 690110 CAPTURE
@@ -405,8 +405,10 @@ Stage12 Shared Foundation Implementation = COMPLETE
 690101 EXHAUSTION Runtime = FROZEN
 690107 FALSE_REPORT Gameplay = IMPLEMENTED
 690107 FALSE_REPORT Runtime = FROZEN
+690108 PROVOCATION Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690108 PROVOCATION Runtime = NOT_YET_FROZEN
 
-Stage12 Gameplay Implementation = 3 / 7 IMPLEMENTED
+Stage12 Gameplay Implementation = 4 / 7 IMPLEMENTED
 Stage12 Runtime Frozen = 3 / 7
 
 Stage13 Active = NO
@@ -425,10 +427,12 @@ Authority:
 - adversarial audit SHA `155119456e1a3fc3b225f701d00aa49dc5455b93`
 - fresh audit CI `36312467358` / 1186 passed / demo PASS
 
-The next authorized gameplay integration is:
+The next authorized action is:
 
 ```text
-690108 PROVOCATION Runtime Integration
+690108 PROVOCATION Independent Runtime Freeze Audit
 ```
 
-Do not mark any other Stage12 mechanism Runtime FROZEN until its own integration and independent freeze gate pass.
+690108 integration checkpoint: `d420e8130dff1b3b9cc2545f0a832eccf58abd75` / CI `36333059532` / 1359 passed / demo PASS.
+
+Do not enter 690222 integration or mark 690108 Runtime FROZEN until the independent 690108 freeze gate passes.
