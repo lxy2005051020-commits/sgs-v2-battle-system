@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from sgs_v2.battle_core import (
     BattleContext,
     EventBus,
@@ -277,3 +279,20 @@ def test_no_post_selector_replacement() -> None:
         "c",
         *target_system.returned[0],
     )
+
+
+def test_rd_sf_005_provocation_choose_n_reserve_first_has_project_default_provenance() -> None:
+    ledger = (
+        Path(__file__).parents[1]
+        / "stages"
+        / "stage12"
+        / "STAGE12_RUNTIME_DEFAULT_LEDGER.md"
+    ).read_text(encoding="utf-8")
+    section = ledger.split(
+        "### RD-SF-005 — PROVOCATION CHOOSE_N required-target reserve-first topology",
+        1,
+    )[1]
+    assert "PROJECT_RUNTIME_DEFAULT" in section
+    assert "NOT_EMPIRICALLY_FROZEN" in section
+    assert "Reserve-first" in section
+    assert "does **not** claim empirical evidence" in section
