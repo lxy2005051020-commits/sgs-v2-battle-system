@@ -1,12 +1,12 @@
 # Stage12 · 690107 FALSE_REPORT Research Authority Sync
 
-> Sync Date: **2026-09-26**
+> Sync Date: **2026-09-27**
 >
-> Battle Runtime Status: **NOT_INTEGRATED**
+> Battle Runtime Status: **IMPLEMENTED_PENDING_RUNTIME_AUDIT**
 >
 > Research Status: **FROZEN**
 >
-> Purpose: mirror the frozen research authority into the Battle repository without treating Research Freeze as Runtime completion.
+> Purpose: preserve the frozen research authority while recording completed gameplay integration without treating implementation as Runtime Freeze.
 
 ## 1. Research authority
 
@@ -98,21 +98,32 @@ B-U04 untested Equipment Special subtypes
 
 These are non-blocking for current standard Stage12 design.
 
-## 5. Runtime non-claims
+## 5. Runtime status after integration
 
-This sync does not mean:
+The implementation round is now complete, but the independent freeze gate remains deliberately separate.
+
+What is now true:
 
 - Stage12 production Runtime is active;
-- 690107 Runtime is implemented;
-- 690107 Runtime is tested;
+- 690107 gameplay integration is implemented;
+- 690107 has 40 dedicated executable tests;
+- final integration CI run 36328457017 passed with 1284 total tests and demo PASS;
+- contract bounded unknowns remain explicit rather than guessed.
+
+What is still not true:
+
 - 690107 Runtime is frozen to contract;
-- Strict Complete increased.
+- Strict Complete increased;
+- Stage12 Runtime Frozen increased beyond 2 / 7;
+- Stage13 / Stage14 / Stage15 are activated.
 
 Current Battle disposition:
 
 ```text
-Research FROZEN            = YES
-Runtime FROZEN TO CONTRACT = NO
-Strict Complete            = NO
-Next                       = Stage12 contract-aligned Runtime Design
+Research FROZEN                         = YES
+Gameplay                                = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+Runtime FROZEN TO CONTRACT              = NO
+Strict Complete                         = NO
+Stage12 Runtime Frozen                  = 2 / 7
+Next                                    = 690107 Independent Runtime Freeze Audit
 ```
