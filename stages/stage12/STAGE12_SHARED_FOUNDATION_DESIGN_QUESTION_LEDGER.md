@@ -27,8 +27,8 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 | DQ-SF-06 | Skill permission API and canonical admission point? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | SkillPermissionPolicy is the canonical holder-level permission owner. SkillOperationAdmissionCoordinator composes ProviderValidityPolicy + SkillPermissionPolicy before observable activation/RNG; already-admitted continuation is not re-admitted. | 04,08,12,13; Exhaustion denies only new ACTIVE admission; Normal Attack outside domain; standard ASSAULT not denied by Exhaustion; skip-preparation stays ACTIVE |
 | DQ-SF-07 | Preparation interruption port and state ownership? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | PreparationInterruptionPort is the minimal Stage12-facing protocol; the future Stage15 preparation owner stores progress. EffectivenessTransitionCoordinator synchronously issues holder-wide ACTIVE or selected-Provider requests on relevant effectiveness/validity transitions. | 05,06,08,20; interruption occurs before later gameplay, old progress never resumes, Fake port is testable, production placeholder cannot imply contract completion |
 | DQ-SF-08 | Provider validity query and dependency propagation? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `ProviderValidityPolicy.evaluate(context, ProviderRef)` owns current Provider validity after identity resolution. Statuses: VALID / SUPPRESSED / BASELINE_DISABLED / MISSING / IDENTITY_MISMATCH. Independent suppression causes are derived; live state dependencies are explicit `ProviderDependency`, never inferred from provenance. | 02,04,05,20,21; Provider/Holder separation; final cause removal resumes future-only behavior; no missed-trigger replay |
-| DQ-SF-09 | Target Operation model? | DESIGN_REQUIRED | TargetSystem primitives + Skill target policy seam; model relation, cardinality, selector, legal context and target provenance as separate dimensions | 04,05,10; single/random/deterministic/Choose-N/Fixed-All, friendly/healing/self; closed Duel admissibility |
-| DQ-SF-10 | What creates a new target operation? | DESIGN_REQUIRED | SkillResolver/explicit operation producer declares fresh independent query; inherited/derived targets carry prior resolution identity and no implicit recheck | 09,12,23; locked multihit vs independent multi-query; source inclusion never reduces N |
+| DQ-SF-09 | Target Operation model? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `TargetOperation` is the explicit fresh Skill-target query value object; `SkillTargetPolicy` is the canonical operation-local eligibility/constraint owner; `TargetSystem` remains raw candidate/RNG primitive owner and Normal Attack remains separate. | See STAGE12_TARGET_OPERATION_POLICY_DESIGN.md; relation ENEMY/ALLY/SELF, SINGLE/CHOOSE_N/FIXED_ALL, selector boundary, TargetOperationId, provenance, Provocation and Capture mappings frozen; implementation pending |
+| DQ-SF-10 | What creates a new target operation? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | The skill/effect operation producer explicitly declares `NEW_QUERY`; only that declaration allocates a new `TargetOperationId` and re-enters target policy. INHERITED / DERIVED / LOCKED continuations reuse the prior resolution identity and are not automatically rechecked. | 09,12,23; same-target multi-hit = one operation; explicit independent re-query = distinct operation; delayed/locked Capture work remains DQ-SF-23 |
 | DQ-SF-11 | Minimal equipment effectiveness abstraction? | DESIGN_REQUIRED | New minimal EquipmentEffectivenessPolicy; existing AttributeSystem/DamageRuleProvider/RecoveryModifierProvider/TriggerSystem consume owner-bound contributions | 05,08,20; static attributes, damage/recovery modifiers, deterministic/scheduled trigger, local/remote live effects, object retained/no replay |
 | DQ-SF-12 | Who consumes RNG, when and for what? | DESIGN_REQUIRED | RNG owner already closed: context.random/RandomSystem. Source operation owns application probability, selector owns target sampling, accepted Intimidation binding owns selection; signatures/ordering/defaults unresolved | 01,06,09,14,22; PD-INS-001 parity; refresh actual reroll vs same result; resume zero reroll; rejected immunity no binding selection |
 | DQ-SF-13 | Minimal events and explicit decisions? | DESIGN_REQUIRED | Domain owners publish after decision; reuse ACTION_BLOCKED/RECOVERY_PREVENTED where truthful; evaluate rejection and transition facts, don't emit on every query | 01,03,06,07,20; duplicate read produces no repeated transition; Provocation execution not automatically TARGET_FORCED |
@@ -240,3 +240,44 @@ Stage12 Runtime Frozen remains **0 / 7**.
 Stage13 / Stage14 / Stage15 Active remain **NO**.
 
 NEXT: DQ-SF-09 / DQ-SF-10 — Skill Target Operation / Provocation / Capture Target Eligibility Design.
+
+
+## SF Round 6 closure — Target Operation / Target Policy — 2026-09-27
+
+Authority record:
+- STAGE12_TARGET_OPERATION_POLICY_DESIGN.md
+
+Round 6 closes DQ-SF-09 and DQ-SF-10 at Shared Foundation design level only.
+
+Frozen downstream representation:
+
+~~~text
+ProviderValidity / SkillPermission admission
+→ producer explicitly declares NEW_QUERY
+→ TargetOperationId + TargetOperation
+→ TargetSystem raw candidates
+→ operation-local eligibility
+→ SkillTargetPolicy constraints
+→ selector (sole target-sampling RNG owner)
+→ TargetSelectionResult
+→ inherited / derived / locked continuations carry provenance
+~~~
+
+Key closure facts:
+
+- Relation = ENEMY / ALLY / SELF; ANY is not introduced without a current contract need.
+- Cardinality = SINGLE / CHOOSE_N / FIXED_ALL; CHOOSE_N carries an explicit requested N.
+- TargetOperationId is typed value identity, never Python object identity and never a gameplay ordering key.
+- only producer-declared NEW_QUERY creates a new operation and can re-evaluate Provocation;
+- inherited, derived and locked reuse do not create an implicit query;
+- same-target multi-hit is one target operation; explicit multi-query produces distinct operation IDs;
+- SkillTargetPolicy is pure and consumes zero RNG;
+- Provocation applies only to eligible fresh enemy-directed Skill operations and never owns Normal Attack;
+- Provocation SINGLE forces an admissible Source, CHOOSE_N preserves N and requires Source once, FIXED_ALL preserves the all-target set;
+- Capture excludes captured holders only from the verified friendly SINGLE / CHOOSE_N target-eligibility scope;
+- Capture does not mutate TargetSystem.allies(), create a global untargetable flag, or replace RecoverySystem's recovery denial;
+- Capture ALL_ALLIES and delayed/already-locked friendly work remain explicit bounded boundaries;
+- exact Provocation CHOOSE_N RNG micro-order, insufficient-candidate micro-policy and multi-source precedence remain bounded for DQ-SF-12 / DQ-SF-14 rather than becoming silent defaults.
+
+Round 6 adds no gameplay implementation and no production tests.
+Stage11 Reopen Required = NO.

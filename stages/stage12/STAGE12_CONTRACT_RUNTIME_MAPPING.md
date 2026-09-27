@@ -17,10 +17,10 @@
 | FALSE_REPORT | PASSIVE/COMMAND Provider suppression | provider-validity policy | Provider suppressed vs Holder-only model | DESIGN_MAPPING |
 | FALSE_REPORT | tested equipment specials boundary | equipment effectiveness policy | tested provider dependent effect inactive vs physical deletion | DESIGN_MAPPING |
 | FALSE_REPORT | restoration | provider-validity + lifecycle | future behavior resumes; no missed-trigger replay | DESIGN_MAPPING |
-| PROVOCATION | eligible skill target operation/query | SkillResolver target policy seam | operation-level forcing vs blanket target overwrite | DESIGN_MAPPING |
-| PROVOCATION | Source admissibility | target policy + state effective query | live/admissible source vs dead source | DESIGN_MAPPING |
+| PROVOCATION | eligible skill target operation/query | `TargetOperation` producer → `SkillTargetPolicy` | fresh operation-level constraint vs blanket target overwrite | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
+| PROVOCATION | Source admissibility | `SkillTargetPolicy` operation-local eligibility after raw candidates | admissible Source required; illegal/dead Source never forced and State is not physically removed | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | PROVOCATION | Resident != Effective | Stage12 effective-state policy | source death leaves state resident | DESIGN_MAPPING |
-| PROVOCATION | Taunt/Confusion boundaries | existing NormalAttack/target arbitration + Stage12 skill target policy | Confusion pre-emption; Provocation does not own Normal Attack | DESIGN_MAPPING |
+| PROVOCATION | Taunt/Confusion boundaries | `TargetResolutionSystem` remains Normal Attack owner; SkillTargetPolicy only handles eligible Skill operations | Confusion-controlled operation pre-empts Provocation; Taunt stays Basic Attack domain | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | INTIMIDATION | single selected Provider binding | provider-validity policy + Stage12 params | one provider disabled vs all skills disabled | DESIGN_MAPPING |
 | INTIMIDATION | refresh reroll | provider-validity policy + RandomSystem | release old → exactly one reroll → no multi-disable stack | DESIGN_MAPPING |
 | INTIMIDATION | resume preserves binding | provider-validity + lifecycle | resume does not reroll; lifetime continues | DESIGN_MAPPING |
@@ -32,7 +32,7 @@
 | CAPTURE | actor-driven new damage denial | DamageSystem admission seam | counterattack no damage vs attached Active-origin DOT continues | DESIGN_MAPPING |
 | CAPTURE | PASSIVE/COMMAND invalidation | provider-validity policy | provider behavior suspended vs historical effect deletion | DESIGN_MAPPING |
 | CAPTURE | recovery to zero | RecoverySystem | Capture recovery denial vs HealingBlock regression/order | DESIGN_MAPPING |
-| CAPTURE | friendly target exclusion | SkillResolver target eligibility policy | friendly selector excludes captured holder | DESIGN_MAPPING |
+| CAPTURE | friendly target exclusion | `SkillTargetPolicy` eligibility phase | verified friendly SINGLE / CHOOSE_N excludes captured holder; enemy targetability and raw allies query unchanged | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | CAPTURE | restoration | composed owners + lifecycle | RESUME / future-only; no replay | DESIGN_MAPPING |
 | CAPTURE | source death independence | lifecycle | applied Capture remains after source death | DESIGN_MAPPING |
 
@@ -182,3 +182,39 @@ provider identity resolution
 ~~~
 
 The two policy reads may both be evaluated so that the composed internal decision retains all blockers. Any presentation ordering of blockers is diagnostic/serialization only and has no gameplay authority. Public event vocabulary remains DQ-SF-13.
+
+
+## SF Round 6 frozen target-operation bindings
+
+These rows are DESIGN_FROZEN_FOUNDATION, not GREEN.
+
+| Concern | Frozen runtime mapping | Required observable discriminator | Preserved boundary |
+|---|---|---|---|
+| fresh Skill target query | producer creates a new TargetOperationId and TargetOperation only for explicit NEW_QUERY | independent second query gets a distinct ID | no call-stack/call-count inference |
+| inherited target | reuse prior target result with INHERITED provenance | Provocation is not automatically rechecked | continuation is not a new query |
+| derived target | derive from prior result with DERIVED provenance | no recheck unless producer explicitly starts a new query | adjacency/link derivation does not imply selection |
+| locked target | reuse resolved/locked target with LOCKED provenance | later state changes do not silently create a target query | Capture delayed/locked final semantics remain DQ-SF-23 |
+| Provocation SINGLE | required target = admissible Provocation Source; exact cardinality = 1 | final target is Source | Source inadmissible => no illegal force |
+| Provocation CHOOSE_N | preserve N; Source appears exactly once; original selector owns remaining selection | Source included and N unchanged | exact random micro-order remains DQ-SF-12 / bounded BU-P02 |
+| Provocation FIXED_ALL | preserve all eligible targets | operation does not collapse to one target | Source absent because illegal is not inserted |
+| Capture friendly SINGLE | remove captured holder from eligible candidates | zero remaining candidates => NO_LEGAL_TARGET / existing SkillResolution NO_VALID_TARGET adapter | no fallback-self invention |
+| Capture friendly CHOOSE_N | remove captured holder before selection | captured holder absent from verified multi-target selection | insufficient eligible count remains bounded, not inherited from TargetSystem truncation |
+| Capture ALL_ALLIES | no generalized rule added | explicit boundary remains visible | Capture Q42 bounded |
+| Capture self recovery | target eligibility does not simulate recovery denial | self target may remain resolved while RecoverySystem returns zero | RecoverySystem remains authority |
+| Normal Attack | never routed through SkillTargetPolicy | Stage9 target-resolution regressions unchanged | Confusion / Taunt / Guard owner retained |
+
+Canonical target subpipeline:
+
+~~~text
+Skill operation admitted
+→ explicit NEW_QUERY
+→ TargetOperation
+→ TargetSystem raw candidate construction
+→ operation-local legality / Capture eligibility
+→ arbitration authority discriminator
+→ Provocation constraint (when eligible)
+→ selector
+→ TargetSelectionResult
+~~~
+
+Round 6 does not freeze activation-RNG placement relative to pure candidate construction. It freezes only that denied skill admission creates no TargetOperation and consumes no target-selection RNG.

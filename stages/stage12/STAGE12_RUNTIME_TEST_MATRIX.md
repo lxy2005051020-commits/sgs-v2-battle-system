@@ -312,3 +312,63 @@ test_event_handlers_do_not_decide_preparation_interruption
 ~~~
 
 Round 5 changes zero production tests and zero gameplay code.
+
+
+## SF Round 6 planned discriminator suite
+
+Status: **DESIGN_FROZEN / NOT IMPLEMENTED**.
+
+### Provocation target policy
+
+~~~text
+test_provocation_single_forces_source
+test_provocation_choose_n_includes_source_and_preserves_n
+test_provocation_fixed_all_preserves_all
+test_source_already_selected_no_duplicate
+test_friendly_operation_not_redirected
+test_self_operation_not_redirected
+test_normal_attack_not_redirected
+test_confusion_preempts_provocation
+test_exhaustion_blocked_skill_creates_no_target_operation
+test_provider_invalid_skill_creates_no_target_operation
+test_policy_cannot_force_illegal_source
+~~~
+
+### Query granularity / provenance
+
+~~~text
+test_inherited_target_not_rechecked
+test_derived_target_not_rechecked_without_explicit_new_query
+test_independent_second_query_rechecks_provocation
+test_multi_hit_same_target_one_operation
+test_multi_query_creates_distinct_operation_ids
+test_target_operation_producer_must_explicitly_mark_new_query
+test_target_operation_id_is_value_identity_not_object_identity
+~~~
+
+### Capture target eligibility
+
+~~~text
+test_captured_holder_excluded_from_friendly_single
+test_captured_holder_excluded_from_verified_friendly_choose_n
+test_capture_does_not_remove_enemy_targetability
+test_capture_does_not_mutate_global_allies_query
+test_self_recovery_not_reimplemented_as_target_exclusion
+test_all_allies_boundary_remains_explicit
+test_locked_delayed_friendly_target_remains_DQ_SF_23_boundary
+test_friendly_single_empty_after_capture_maps_to_no_legal_target
+test_choose_n_insufficient_pool_does_not_silently_claim_min_count_contract
+~~~
+
+### Architecture / RNG ownership
+
+~~~text
+test_target_policy_consumes_zero_rng
+test_selector_remains_rng_owner
+test_normal_attack_target_resolution_unchanged_without_stage12_skill_operation
+test_fixed_all_target_policy_does_not_add_rng
+test_source_already_selected_does_not_add_policy_rng
+test_target_resolution_id_not_reused_as_skill_target_operation_id
+~~~
+
+These are future production-test names/obligations. Round 6 adds no executable test code and changes no existing Stage9/11 assertions.

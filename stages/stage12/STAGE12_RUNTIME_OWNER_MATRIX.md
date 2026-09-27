@@ -22,7 +22,7 @@
 | Skill operation admission composition | SkillResolver local enabled gate | SkillOperationAdmissionCoordinator composes ProviderValidityPolicy + SkillPermissionPolicy before observable activation/RNG | EXHAUSTION + all skill Providers | NEW THIN COORDINATOR; DESIGN FIXED |
 | Preparation interruption request | none | PreparationInterruptionPort implemented later by the true preparation owner | EXHAUSTION, INTIMIDATION | NEW MINIMAL PORT; DESIGN FIXED / IMPLEMENTATION DEPENDENCY |
 | Skill Provider validity | none canonical | `ProviderValidityPolicy` after ProviderRef identity resolution | FALSE_REPORT, INTIMIDATION, CAPTURE; explicit provider-dependent effects | NEW CANONICAL SHARED OWNER |
-| Skill target candidate construction | SkillResolver + TargetSystem | same + Stage12 eligibility/forcing policy seam | PROVOCATION, CAPTURE | EXTEND |
+| Skill target operation / eligibility / constraints | SkillResolver + TargetSystem | producer creates `TargetOperation`; `TargetSystem` supplies raw candidates/RNG primitives; `SkillTargetPolicy` owns operation-local eligibility and constraints | PROVOCATION, CAPTURE | NEW CANONICAL POLICY SEAM; DESIGN FIXED / NOT IMPLEMENTED |
 | Normal Attack target arbitration | TargetResolutionSystem | TargetResolutionSystem | TAUNT/CONFUSION regression, Provocation non-domain | REUSE |
 | Damage permission | DamageSystem / existing prevention seams | canonical damage admission seam in DamageSystem stack | CAPTURE | EXTEND |
 | Recovery | RecoverySystem | RecoverySystem | CAPTURE | EXTEND |
@@ -50,7 +50,7 @@ The following remain open after Round 4:
 
 - DQ-SF-06 CLOSED in Round 5: SkillPermissionPolicy + pre-RNG SkillOperationAdmissionCoordinator;
 - DQ-SF-07 CLOSED in Round 5: PreparationInterruptionPort + synchronous transition timing; concrete preparation owner remains an integration dependency;
-- DQ-SF-09 / 10 target-operation policy and query granularity;
+- DQ-SF-09 / 10 CLOSED in Round 6: TargetOperation + explicit producer-declared query boundary + SkillTargetPolicy;
 - DQ-SF-11 minimal equipment-effectiveness runtime abstraction;
 - DQ-SF-12 final RNG signatures / ordering outside the Round 4 candidate and refresh boundaries;
 - DQ-SF-13 public event model;
@@ -178,3 +178,30 @@ Owner invariants:
 - SkillOperationAdmissionCoordinator may aggregate blockers, but it may not invent a second permission/validity truth.
 - Provider resume means only future behavior may become eligible; it never auto-activates a skill or resumes old preparation.
 - EventBus records committed/decided facts and does not decide interruption.
+
+
+## SF Round 6 owner closure — target operations
+
+Authority record:
+- STAGE12_TARGET_OPERATION_POLICY_DESIGN.md
+
+| Responsibility | Canonical owner | Non-owner collaborators | Frozen boundary |
+|---|---|---|---|
+| declare a fresh independent Skill target query | skill/effect operation producer | SkillResolver is the current migration site | producer must explicitly declare NEW_QUERY; policy never guesses from call count |
+| fresh target-operation identity | future typed TargetOperationId allocated by the battle operation-ID facility | producer owns allocation timing | value identity only; no pointer identity and no priority ordering |
+| raw team/candidate primitives | TargetSystem | producer supplies operation relation/context | physical allies/enemies remain unfiltered primitives |
+| operation-local target eligibility and Stage12 constraints | SkillTargetPolicy | StateEffectivenessPolicy supplies effective-state facts; TargetSystem supplies raw candidates | zero RNG; no state lifecycle, Provider validity or Normal Attack authority |
+| random/deterministic target selection | existing selector / TargetSystem primitives | consumes TargetPolicyDecision | selector remains sole target-sampling RNG owner |
+| Normal Attack target arbitration | TargetResolutionSystem | TargetSystem + Stage9StateRuntime | unchanged Confusion > Taunt > default > Guard domain |
+| Capture friendly exclusion | SkillTargetPolicy eligibility phase | Capture effectiveness fact | verified ALLY SINGLE / CHOOSE_N only; no global targetable flag |
+| Provocation forcing/inclusion | SkillTargetPolicy constraint phase | operation-local Source admissibility | enemy Skill operations only; cardinality preserved; no illegal Source forcing |
+
+Owner invariants:
+
+- candidate construction, eligibility, policy constraints and selector are distinct responsibilities;
+- TargetSystem.allies() / enemies() keep physical membership semantics;
+- SkillTargetPolicy never calls RNG and never returns a random target merely because a constraint exists;
+- Confusion pre-emption is represented by domain/arbitration authority, not a numeric priority integer;
+- Taunt remains Normal Attack authority and is not folded into a universal ForceTargetPolicy;
+- TargetResolutionSystem is not reused as the Skill target-operation owner;
+- Capture recovery denial remains RecoverySystem-owned.

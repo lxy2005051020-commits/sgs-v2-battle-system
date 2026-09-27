@@ -159,3 +159,18 @@ Round 5 closes architecture without inventing original-game behavior:
 4. Provider resume does not auto-activate or restore old preparation. This is contract-derived future-only semantics, not a project default.
 
 Therefore RD-SF-001, RD-SF-002 and RD-SF-003 remain the complete Shared Foundation Runtime Default set after Round 5.
+
+
+## SF Round 6 default disposition — 2026-09-27
+
+New Runtime Defaults added: **NONE**.
+
+Round 6 closes target architecture without converting bounded Provocation/Capture evidence into guessed gameplay:
+
+1. Provocation CHOOSE_N freezes the observable target-set contract only: preserve N and include an admissible Source exactly once. Whether Runtime eventually implements that as reserve-Source-then-sample or sample-then-replace is intentionally not selected here because it can change the RNG stream; DQ-SF-12 / BU-P02 retains that decision.
+2. Provocation insufficient-target behavior remains BU-P09 / bounded. The current TargetSystem.random_units() implementation truncates count to the candidate pool, but Round 6 explicitly does not promote that legacy helper behavior into the Stage12 CHOOSE_N contract.
+3. Simultaneous multi-source Provocation / reapplication precedence remains BU-P06 / bounded. No latest-wins, lowest-id-wins or random-source rule is invented.
+4. Capture ALL_ALLIES remains Q42 / bounded; verified friendly single/multi exclusion is not generalized to an all-allies contract.
+5. Capture delayed/already-locked friendly work remains Q44/Q45 + DQ-SF-23; no JIT recheck default is invented.
+
+Therefore RD-SF-001, RD-SF-002 and RD-SF-003 remain the complete Shared Foundation Runtime Default set after Round 6.
