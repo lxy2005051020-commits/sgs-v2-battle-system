@@ -8,6 +8,16 @@ Every RD-SF entry in this ledger is PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FR
 
 This ledger is intentionally small. Round 2 does not pre-fill future unknowns merely to make the table look productive.
 
+Current Battle-owned Runtime Default set after BU-P02 governance resolution:
+
+```text
+RD-SF-001
+RD-SF-002
+RD-SF-003
+RD-SF-004
+RD-SF-005
+```
+
 ## RD-SF-001 — Legacy SkillDefinition classification compatibility
 
 Mechanism: Shared Skill Taxonomy
@@ -432,7 +442,117 @@ PD-INS-001
 PD-INS-002
 ```
 
-Earlier statements that Round 9 added no new Runtime Default remain historical Round 9 records. The **current** complete Battle-owned set is RD-SF-001 through RD-SF-004.
+Earlier statements that Round 9 added no new Runtime Default remain historical Round 9 records. At the Round 11 checkpoint, the complete Battle-owned set was RD-SF-001 through RD-SF-004; BU-P02 governance later adds RD-SF-005.
 
 Audit finding: `SF-AUD-11-001`  
 Resolution: `CLOSED_BY_AUDIT_DRIVEN_CORRECTION`
+
+
+## BU-P02 Runtime Governance Resolution — 2026-09-27
+
+The 690108 PROVOCATION integration reached a point where BU-P02 could no longer remain deferred: CHOOSE_N must be implemented without laundering the hidden original-game slot/RNG micro-order into Research fact. The governance decision below closes only that simulator implementation gap. The 690108 Research contract remains FROZEN and BU-P02 remains empirically bounded.
+
+### RD-SF-005 — PROVOCATION CHOOSE_N required-target reserve-first topology
+
+Mechanism: 690108 PROVOCATION / CHOOSE_N required-target enforcement  
+Question: For a supported fresh RANDOM CHOOSE_N(N) Skill target operation with one admissible Provocation Source that must appear exactly once, does Runtime reserve the required Source before sampling the remaining slots, or sample N first and replace a sampled target if the Source is absent?
+
+Research status:
+
+```text
+BU-P02 exact hidden selection / RNG micro-order
+= CLOSED_WITH_BOUNDED_UNKNOWN
+```
+
+The frozen observable rule is only:
+
+```text
+admissible Source
++ CHOOSE_N(N)
+-> Source included exactly once
+-> total cardinality N preserved
+```
+
+Why Runtime must decide: deterministic replay requires one stable random-call topology before 690108 gameplay integration can proceed. The existing Shared Foundation separates zero-RNG policy constraints from the canonical selector/TargetSystem RNG owner and already represents required targets as cardinality-consuming slots.
+
+Chosen Runtime default:
+
+1. **Reserve-first.** Deduplicated legal `required_target_ids` consume target-cardinality slots before the selector fills the remainder.
+2. For the supported ordinary Provocation case, `required_count = 1` and `remaining_slots = N - 1`.
+3. The required Source is removed from the selector population. The selector receives only `eligible - required`.
+4. The final target list is `required + selector_fill`; there is no post-selector replacement/mutation step.
+5. `SkillTargetPolicy` and the Provocation adapter consume zero RNG. Target sampling remains owned by `TargetSystem -> BattleContext.random / RandomSystem`.
+6. The selector call is `TargetSystem.random_units(context, remaining, count=remaining_slots)`. For supported sufficient-candidate cases:
+   - `remaining_slots == 0` -> zero `RandomSystem.sample` call;
+   - `len(remaining) == remaining_slots` -> zero `RandomSystem.sample` call and deterministic all-candidate ordering through the existing TargetSystem rule;
+   - `0 < remaining_slots < len(remaining)` -> exactly one `RandomSystem.sample(remaining, remaining_slots)` API call.
+7. This default does **not** authorize the legacy truncation behavior when legal candidates are insufficient. BU-P09 remains `UNSUPPORTED_BOUNDARY` until separately governed or evidenced.
+8. This default is scoped to `NEW_QUERY + CHOOSE_N + TargetSelectorKind.RANDOM` where the supported target operation has an admissible required Provocation Source. SINGLE and FIXED_ALL keep their already-frozen semantics.
+9. DETERMINISTIC selectors continue to use the generic required-slot architecture but acquire no invented RNG semantics from RD-SF-005. EXPLICIT selection is outside this BU-P02 RNG default and must remain fully specified/validated by its own boundary.
+10. `INHERIT_RESOLVED`, `DERIVE_FROM_RESOLVED`, and `LOCK_RESOLVED` never re-run this selection. A committed `TargetSelectionResult` remains historical fact.
+
+Candidate comparison:
+
+| Dimension | Reserve-first | Sample-then-replace |
+|---|---|---|
+| Shared Foundation topology | Reuses required-slot -> selector pipeline | Requires post-selector result mutation |
+| RNG owner | TargetSystem remains sole target RNG owner | TargetSystem samples, then another layer must mutate |
+| Policy RNG | 0 | 0 only if replacement victim is deterministic |
+| Random population | `eligible - required` | full eligible pool |
+| Random sample size | `N - required_count` | `N` |
+| Secondary rule needed | none for supported single required Source | replacement-victim rule if Source absent |
+| Replay contract | one explicit selector topology | extra mutation rule can alter replay semantics |
+| Existing generic code | already matches | requires redesign/reopen pressure |
+| Governance cost | minimal explicit default | creates a second unresolved micro-policy |
+
+Decision rationale: reserve-first is adopted **not because the implementation happens to do it**, but because it preserves the frozen owner topology, introduces no new RNG owner, needs no post-resolution mutation rule, and yields the smallest deterministic replay contract consistent with the frozen observable target-set rule.
+
+Evidence classification:
+
+```text
+PROJECT_RUNTIME_DEFAULT
+NOT_EMPIRICALLY_FROZEN
+```
+
+This decision does **not** claim empirical evidence for the game's hidden target-selection micro-order.
+
+Replay consequence:
+
+Given the same seed, battle state, `TargetOperation`, Provocation effectiveness, legal candidate order and required Source identity, Runtime must produce the same TargetSystem API-call topology, same final `TargetSelectionResult`, and same subsequent RNG stream position.
+
+Reopen trigger:
+
+- Tier-A/model-separating battle evidence or official-client evidence establishes a different observable CHOOSE_N micro-order;
+- a stronger deterministic replay trace from authoritative runtime evidence distinguishes a different topology;
+- a later higher-authority Shared Foundation redesign supersedes the required-target selector contract.
+
+Required executable tests:
+
+```text
+test_choose_n_required_target_preserves_n
+test_choose_n_required_target_exactly_once
+test_choose_n_required_target_rng_owner_is_target_system
+test_choose_n_policy_consumes_zero_rng
+test_choose_n_new_query_replay_deterministic
+test_choose_n_subsequent_rng_stream_stable
+test_choose_n_n_equals_one_zero_target_draw_if_required_fills_slot
+test_inherited_result_does_not_reselect
+test_derived_result_does_not_reselect
+test_locked_result_does_not_reselect
+test_required_target_reserved_before_random_fill
+test_random_fill_excludes_required_target
+test_random_fill_count_is_n_minus_required_count
+test_no_post_selector_replacement
+```
+
+Current Battle-owned Runtime Defaults after this resolution:
+
+```text
+RD-SF-001
+RD-SF-002
+RD-SF-003
+RD-SF-004
+RD-SF-005
+```
+
+690108 Research remains FROZEN. BU-P02 empirical status remains bounded. RD-SF-005 exists only to give the simulator a deterministic, traceable and reversible implementation rule.
