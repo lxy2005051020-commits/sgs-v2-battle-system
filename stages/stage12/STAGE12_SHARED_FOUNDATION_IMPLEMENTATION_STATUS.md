@@ -1,10 +1,12 @@
 # Stage12 Shared Foundation Implementation Status
 
 Date: 2026-09-27  
-Current round: `STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_COMPLETION_AUDIT`  
+Current round: `STAGE12_690089_INSIGHT_RUNTIME_INTEGRATION`  
 Round 4 implementation code/test SHA: `af9c70148075ef00614946ee797297c2aa1b622a`  
 Round 4 validation CI run: `36306780864` / success  
-Status: **COMPLETION AUDIT PASS / SHARED FOUNDATION IMPLEMENTATION COMPLETE**
+690089 integration validation checkpoint SHA: `ae213863a52a8e4c19b5169939fecb700ac8bfd8`  
+690089 validation CI run: `36310190828` / **1174 passed + demo PASS**  
+Status: **SHARED FOUNDATION IMPLEMENTATION COMPLETE / 690089 INSIGHT IMPLEMENTED_PENDING_RUNTIME_AUDIT**
 
 ## 1. Repository lock
 
@@ -143,7 +145,7 @@ base/request amount
 -> capacity / troop restore
 ```
 
-With no real Stage12 gameplay adapter registered, existing Stage11 recovery behavior is unchanged.
+The Round 4 completion baseline had no real Stage12 gameplay adapter registered. The current 690089 integration now registers only INSIGHT adapters; Recovery ordering remains unchanged, while HEALING_BAN prevention reads the canonical state-effectiveness truth through the existing Stage11 runtime seam.
 
 The recovery owner can also retain multiple internal prevention reasons while keeping one compatibility public primary reason. A synthetic coexistence regression verifies a generic future prevention cause can coexist with HealingBlock without changing HealingBlock's established public primary reason.
 
@@ -292,6 +294,8 @@ The same canonical equipment policy is injected into Attribute, DamageModifier, 
 
 Round 1-3 canonical `StateEffectivenessPolicy`, `ProviderValidityPolicy`, `SkillPermissionPolicy`, `SkillTargetPolicy` and `DependencyEvaluationSupport` remain shared; no shadow owner is created.
 
+The 690089 integration registers admission, conflict, effectiveness and application-dependency adapters into this same canonical graph. There is no `Stage12InsightRuntime` and no second `StateEffectivenessPolicy`.
+
 ## 13. RNG and Event governance
 
 Round 4 preserves:
@@ -301,7 +305,10 @@ EquipmentContributionRegistry = 0 RNG
 EquipmentEffectivenessPolicy = 0 RNG
 ExecutionRightSpec / evaluator = 0 RNG
 generic composite seams = 0 RNG
+690089 INSIGHT admission/effectiveness/dependency adapters = 0 RNG
 ```
+
+PD-INS-001 preserves source-owned RNG: probabilistic source resolution happens before the protected-control candidate reaches Insight admission. Deterministic source controls receive no synthetic draw from Insight.
 
 Equipment denial/filtering occurs before downstream contribution/work probability draws where Round 4 owns the seam.
 
@@ -320,30 +327,50 @@ Round 4 code/test SHA `af9c70148075ef00614946ee797297c2aa1b622a`:
 - demo smoke test: **PASS**;
 - GitHub Actions run: **36306780864 / success**.
 
-The full suite includes Stage9, Stage10, Stage11 and Round1/2/3 Shared Foundation regressions.
+The Shared Foundation completion audit later corrected the local baseline to **1134 passed** before 690089 integration began.
 
-A dedicated regression locks public state facts after internal transition ports.
+690089 integration validation checkpoint `ae213863a52a8e4c19b5169939fecb700ac8bfd8`:
+
+- pytest: **1174 passed**;
+- delta over the corrected pre-690089 baseline: **+40 test nodes**;
+- demo smoke test: **PASS**;
+- GitHub Actions run: **36310190828 / success**;
+- Research repository mutation: **NONE**.
+
+The full suite includes Stage9, Stage10, Stage11 and Round1-4 Shared Foundation regressions.
+
+Dedicated 690089 tests cover the complete ordinary protected set, explicit negative exclusions, PD-INS-001, PD-INS-002 (including a PRESENT-but-SUPPRESSED Insight discriminator), admission-before-conflict behavior, suppression/resume identity, lifetime continuation, same-envelope expiry, multiple suppression causes, Stage9 Confusion/Taunt authority migration, Stage11 DISARM/STUN/WEAKNESS/HEALING_BAN consumption, real Damage/Recovery domain behavior, event idempotence, dependency cleanup and static architecture guards.
 
 ## 15. Static architecture audit
 
-Round 4 static/semantic checks confirm:
+The current 690089 integration static/semantic checks confirm:
 
-- no `random` module import in the new pure policy/runtime modules;
-- no `context.random` use in pure equipment/execution-right evaluation;
-- no transient `equipment.enabled = False/True` mutation model;
-- no implicit `EffectSourceRef -> EquipmentContributionDependency` conversion;
-- no `GlobalExecutionRightManager`;
-- no fallback `EquipmentEffectivenessPolicy()` construction in consumers;
-- no production decision switch for Stage12 state IDs `690089`, `690101`, `690107`, `690108`, `690222`, `690109`, `690110`.
+- INSIGHT does not mutate `StateRegistry` directly;
+- INSIGHT adapters use no random source and add no synthetic RNG;
+- INSIGHT suppression does not call lifecycle removal;
+- INSIGHT resume does not call lifecycle refresh or reapplication;
+- INSIGHT adapters do not publish directly to `EventBus`;
+- ordinary protected controls are an explicit canonical set, not `all_negative_states`, `all_control_states` or `all_debuffs`;
+- FALSE_REPORT, INTIMIDATION and CAPTURE remain explicit ordinary-Insight negative exclusions;
+- Stage9 production Confusion/Taunt operational queries consume canonical effectiveness truth;
+- there is no `Stage12InsightRuntime`;
+- one production `BattleSystems` graph still owns exactly one `StateEffectivenessPolicy`;
+- state-to-state Insight suppression dependencies use the frozen Shared Foundation dependency graph and pre-commit cycle validation;
+- no real gameplay rule was added for 690101, 690107, 690108, 690222, 690109 or 690110.
+
+The pre-existing Round 4 equipment/execution-right static guards remain covered by the full regression suite.
 
 ## 16. Gameplay boundary
 
-Stage12 individual-state gameplay implemented in Round 4: **NONE**.
-
-No production adapter implements:
+Stage12 individual-state gameplay implemented in the current round:
 
 ```text
-690089 INSIGHT
+690089 INSIGHT = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+```
+
+Not gameplay-integrated in this round:
+
+```text
 690101 EXHAUSTION
 690107 FALSE_REPORT
 690108 PROVOCATION
@@ -352,7 +379,9 @@ No production adapter implements:
 690110 CAPTURE
 ```
 
-Stage12 Runtime Frozen remains **0 / 7**.
+Synthetic/resident instances of those state IDs are used only to verify the INSIGHT side of frozen admission/suppression boundaries. That does not constitute their gameplay implementation.
+
+Stage12 Runtime Frozen remains **0 / 7** until the independent 690089 Runtime Freeze Audit passes.
 
 ## 17. Current gates
 
@@ -361,6 +390,7 @@ STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND1 = PASS
 STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND2_STATE_TRANSACTION_TRANSITION = PASS
 STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND3_SKILL_PERMISSION_PREPARATION_TARGET = PASS
 STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND4_EQUIPMENT_EXECUTIONRIGHT_REMAINING_RUNTIME = PASS
+STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_COMPLETION_AUDIT = PASS
 
 Stage11 Runtime = FROZEN
 Stage11 Reopen Required = NO
@@ -369,14 +399,10 @@ Stage12 Research = 7 / 7 FROZEN
 Stage12 Shared Foundation Design = FROZEN
 Stage12 Shared Foundation Implementation = COMPLETE
 
-EquipmentContribution Runtime = IMPLEMENTED
-EquipmentEffectivenessPolicy = IMPLEMENTED
-ExecutionRight Runtime = IMPLEMENTED
-Generic Capture Composite Seams = IMPLEMENTED
-Remaining Trigger / Equipment JIT = IMPLEMENTED
-Committed Transition/Event Seam = IMPLEMENTED
+690089 INSIGHT Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690089 INSIGHT Runtime = NOT YET FROZEN
 
-Stage12 Gameplay Implementation = NONE
+Stage12 Gameplay Implementation = 1 / 7 IMPLEMENTED_PENDING_RUNTIME_AUDIT
 Stage12 Runtime Frozen = 0 / 7
 
 Stage13 Active = NO
@@ -384,14 +410,19 @@ Stage14 Active = NO
 Stage15 Active = NO
 ```
 
-`COMPLETE` is authorized by `STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_COMPLETION_AUDIT.md` after the teardown dependency-cleanup correction, full regression, demo and static audit.
+No Research reopen is required by the implementation checkpoint.
 
 ## 18. Next
 
-The Completion Audit is now PASS. The only authorized next step is:
+The only authorized next step is:
 
 ```text
-690089 INSIGHT Runtime Integration
+690089 INSIGHT Independent Runtime Freeze Audit
 ```
 
-The completion authority is `STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_COMPLETION_AUDIT.md`. Stage12 gameplay remains `NONE` until the Insight integration round actually begins.
+Do not enter 690101 EXHAUSTION Runtime Integration until that independent audit passes and explicitly advances:
+
+```text
+690089 Runtime = FROZEN
+Stage12 Runtime Frozen = 1 / 7
+```
