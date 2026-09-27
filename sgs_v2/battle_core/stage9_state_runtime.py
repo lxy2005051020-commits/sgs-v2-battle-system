@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from .insight_integration import INSIGHT_SUPPRESSION_RULE_ID
 from .official_state_catalog import OfficialStateId
 from .stage9_state_params import (
     ComboStateParams,
@@ -159,17 +160,21 @@ class Stage9StateRuntime:
         context: BattleContext,
         unit_id: str,
     ) -> StateInstance | None:
-        """Return operational Confusion StateInstance on unit_id if active, else None.
-
-        Insight is application immunity only, not runtime suppression of existing instances (Confusion P0).
-        """
+        """Return Confusion only when the shared effective truth says it is active."""
         instances = context.states.find(
             owner_id=unit_id,
             state_id=OfficialStateId.CONFUSION.value,
         )
         if not instances:
             return None
-        return instances[0]
+        instance = instances[0]
+        if self._state_effectiveness_policy is not None:
+            decision = self._state_effectiveness_policy.evaluate_state(
+                context, instance
+            )
+            if not decision.effective:
+                return None
+        return instance
 
     def get_taunt_suppressors(
         self,
@@ -179,7 +184,17 @@ class Stage9StateRuntime:
         suppressors: set[SuppressionReason] = set()
         if isinstance(taunt_instance.runtime_params, TauntStateParams):
             suppressors.update(taunt_instance.runtime_params.suppressors)
-        if self.has_operational_insight(context, taunt_instance.owner_id):
+        if self._state_effectiveness_policy is not None:
+            decision = self._state_effectiveness_policy.evaluate_state(
+                context, taunt_instance
+            )
+            if any(
+                cause.rule_id == INSIGHT_SUPPRESSION_RULE_ID
+                for cause in decision.suppression_causes
+            ):
+                suppressors.add(SuppressionReason.INSIGHT)
+        elif self.has_operational_insight(context, taunt_instance.owner_id):
+            # Isolated legacy Stage9 fixtures have no shared policy injected.
             suppressors.add(SuppressionReason.INSIGHT)
         return frozenset(suppressors)
 
@@ -188,6 +203,12 @@ class Stage9StateRuntime:
         context: BattleContext,
         taunt_instance: StateInstance,
     ) -> TauntLifecycleState:
+        if self._state_effectiveness_policy is not None:
+            decision = self._state_effectiveness_policy.evaluate_state(
+                context, taunt_instance
+            )
+            if not decision.effective:
+                return TauntLifecycleState.SUPPRESSED
         suppressors = self.get_taunt_suppressors(context, taunt_instance)
         if suppressors:
             return TauntLifecycleState.SUPPRESSED
