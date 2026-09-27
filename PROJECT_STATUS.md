@@ -82,10 +82,19 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     Structured Reports: 23,002
     Observed EXHAUSTION Executions: 18,487
     True Counterexamples: 0
-    Runtime: NOT_INTEGRATED
-    Next: contract-aligned Runtime Design
+    Gameplay: PARTIAL
+    Runtime: FREEZE_BLOCKED
+    ACTIVE Permission Integration: IMPLEMENTED
+    RD-SF-004 Pre-RNG Short Circuit: IMPLEMENTED
+    INSIGHT Permission Interaction: IMPLEMENTED
+    Preparation Interruption: BLOCKED
+    Stage12 Runtime Frozen: 1 / 7
+    Next: resolve Concrete PREPARING owner + first-application interruption seam
 
-Battle-side mirror:
+Integration authority:
+[stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md)
+
+Battle-side research mirror:
 [stages/stage12/STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md](stages/stage12/STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md)
 
 ### 690107 FALSE_REPORT
@@ -297,4 +306,4 @@ demo = PASS
 
 Audit authority: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`
 
-NEXT: `690101 EXHAUSTION Runtime Integration`.
+NEXT: resolve the explicit `690101 EXHAUSTION` preparation integration dependency. Do not enter 690107 before 690101 can reach its Runtime Freeze Audit gate.
