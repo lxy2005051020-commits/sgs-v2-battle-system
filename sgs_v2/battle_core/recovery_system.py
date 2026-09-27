@@ -157,6 +157,7 @@ class RecoveryPreventedResult:
     source_generation_id: StateApplicationGenerationId | None = None
     modified_recovery: int | None = None
     reason_key: str | None = None
+    internal_reason_keys: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.request, RecoveryRequest):
@@ -172,6 +173,10 @@ class RecoveryPreventedResult:
                 raise TypeError("modified_recovery must be an int or None")
             if self.modified_recovery < 0:
                 raise ValueError("modified_recovery must be >= 0")
+        keys = tuple(self.internal_reason_keys)
+        if any(not isinstance(key, str) or not key.strip() for key in keys):
+            raise ValueError("internal_reason_keys must contain non-empty strings")
+        object.__setattr__(self, "internal_reason_keys", keys)
 
         healing_ban_id = OfficialStateId.HEALING_BAN.value
         if self.reason is RecoveryPreventionReason.HEALING_BAN:
@@ -300,6 +305,7 @@ class RecoverySystem:
 
         modified_recovery = self._apply_recovery_modifier(context, request)
 
+        prevention = None
         if self._execution_prevention_policy is not None:
             prevention = self._execution_prevention_policy.evaluate(
                 context,
@@ -313,15 +319,6 @@ class RecoverySystem:
                 raise RuntimeError(
                     "recovery execution prevention reached unsupported boundary"
                 )
-            if prevention.status is RecoveryExecutionPreventionStatus.PREVENT:
-                return self._prevent(
-                    context,
-                    request,
-                    RecoveryPreventionReason.FOUNDATION_POLICY,
-                    reason_state_id=None,
-                    modified_recovery=modified_recovery,
-                    reason_key=prevention.causes[0].reason_key,
-                )
 
         healing_ban_id = OfficialStateId.HEALING_BAN.value
         if self._stage11 is not None:
@@ -333,13 +330,35 @@ class RecoverySystem:
                 owner_id=target.unit_id, state_id=healing_ban_id
             )
 
-        if modified_recovery > 0 and healing_banned:
+        foundation_keys = (
+            ()
+            if prevention is None
+            else tuple(cause.reason_key for cause in prevention.causes)
+        )
+        healing_block_applies = modified_recovery > 0 and healing_banned
+
+        if healing_block_applies:
             return self._prevent(
                 context,
                 request,
                 RecoveryPreventionReason.HEALING_BAN,
                 reason_state_id=healing_ban_id,
                 modified_recovery=modified_recovery,
+                internal_reason_keys=foundation_keys + ("HEALING_BAN",),
+            )
+
+        if (
+            prevention is not None
+            and prevention.status is RecoveryExecutionPreventionStatus.PREVENT
+        ):
+            return self._prevent(
+                context,
+                request,
+                RecoveryPreventionReason.FOUNDATION_POLICY,
+                reason_state_id=None,
+                modified_recovery=modified_recovery,
+                reason_key=prevention.causes[0].reason_key,
+                internal_reason_keys=foundation_keys,
             )
 
         troop_change = self._troops.restore(target, modified_recovery)
@@ -387,6 +406,7 @@ class RecoverySystem:
         reason_state_id: str | None,
         modified_recovery: int | None,
         reason_key: str | None = None,
+        internal_reason_keys: tuple[str, ...] = (),
     ) -> RecoveryPreventedResult:
         result = RecoveryPreventedResult(
             request=request,
@@ -395,6 +415,7 @@ class RecoverySystem:
             source_generation_id=request.source_generation_id,
             modified_recovery=modified_recovery,
             reason_key=reason_key,
+            internal_reason_keys=internal_reason_keys,
         )
         settled_request = request.amount if modified_recovery is None else modified_recovery
         context.event_bus.publish(

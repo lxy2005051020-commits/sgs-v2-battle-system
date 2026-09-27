@@ -954,3 +954,34 @@ def test_committed_public_state_fact_runs_after_internal_transition_ports() -> N
     assert observations == [("internal", 0)]
     assert len(ctx.event_bus.history) == 1
     assert ctx.event_bus.history[0].event_type is EventType.STATE_SUPPRESSED
+
+
+def test_generic_recovery_prevention_can_coexist_with_healing_block_internal_causes() -> None:
+    class HealingBlockActive:
+        @staticmethod
+        def healing_block_active(_context, _target_id):
+            return True
+
+    prevention = RecoveryExecutionPreventionPolicy()
+    prevention.register_rule_adapter(
+        lambda _c, _r: RecoveryExecutionPreventionContribution(
+            "synthetic.capture-like",
+            priority=10,
+        )
+    )
+    system = RecoverySystem(
+        TroopSystem(),
+        stage11_state_runtime=HealingBlockActive(),
+        execution_prevention_policy=prevention,
+    )
+    ctx = make_context()
+    ctx.units["b"].troops = 900
+    result = system.resolve(ctx, RecoveryRequest("a", "b", 10))
+
+    assert result.reason is RecoveryPreventionReason.HEALING_BAN
+    assert result.reason_state_id is not None
+    assert result.internal_reason_keys == (
+        "synthetic.capture-like",
+        "HEALING_BAN",
+    )
+    assert ctx.event_bus.history[-1].payload["reason"] == RecoveryPreventionReason.HEALING_BAN.value

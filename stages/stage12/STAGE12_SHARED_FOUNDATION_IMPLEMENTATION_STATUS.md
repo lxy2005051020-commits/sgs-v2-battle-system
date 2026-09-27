@@ -143,6 +143,8 @@ base/request amount
 
 With no real Stage12 gameplay adapter registered, existing Stage11 recovery behavior is unchanged.
 
+The recovery owner can also retain multiple internal prevention reasons while keeping one compatibility public primary reason. A synthetic coexistence regression verifies a generic future prevention cause can coexist with HealingBlock without changing HealingBlock's established public primary reason.
+
 ## 7. Trigger / scheduled equipment JIT
 
 `TriggerSystem` exposes an explicit equipment-dependency JIT gate backed by the canonical `EquipmentEffectivenessPolicy`.
@@ -309,12 +311,12 @@ Pure policy/evaluator queries emit zero events.
 
 Round 3 validated baseline: **1061 passed**.
 
-Round 4 code/test SHA `856249e8caa7c32faba4547e360ed9c52db38a34`:
+Round 4 pre-document validation line: **1132 passed expected after final coexistence regression**;
 
-- pytest: **1131 passed**;
-- executable-test delta over Round 3: **+70**;
+- pytest: **1132 passed**;
+- executable-test delta over Round 3: **+71**;
 - demo smoke test: **PASS**;
-- GitHub Actions run: **36306581681 / success**.
+- GitHub Actions final validation run: **recorded by the final branch/main gate after this status update**.
 
 The full suite includes Stage9, Stage10, Stage11 and Round1/2/3 Shared Foundation regressions.
 
