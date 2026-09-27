@@ -143,10 +143,20 @@ Battle-side mirror:
     Adversarial Falsification: PASS
     Final Contract Correction Audit: PASS
     Freeze Gate: 20 / 20 PASS
-    Runtime: NOT_INTEGRATED
-    Next: contract-aligned Runtime Design
+    Gameplay: NOT_INTEGRATED
+    Runtime: NOT_FROZEN
+    Integration: BLOCKED
+    IMPLEMENTATION_BLOCKER-690108-001: OPEN
+    Blocker: CHOOSE_N BU-P02 / DQ-SF-12 selector-RNG topology has no formally frozen Runtime implementation rule
+    Research Reopen Required: NO
+    Shared Foundation Owner Redesign Required: NO
+    Stage11 Reopen Required: NO
+    Next: resolve BU-P02 as an explicitly governed Runtime implementation rule, then resume 690108 Runtime Integration
 
-Battle-side mirror:
+Integration authority / blocker record:
+[stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md)
+
+Battle-side research mirror:
 [stages/stage12/STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md](stages/stage12/STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md)
 
 ### 690222 INTIMIDATION
