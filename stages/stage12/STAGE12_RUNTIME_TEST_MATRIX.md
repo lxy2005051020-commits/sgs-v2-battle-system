@@ -1,6 +1,6 @@
 # Stage12 Runtime Test Matrix Skeleton
 
-> Status: **SKELETON / ENTRY GATE OUTPUT**  
+> Status: **SHARED FOUNDATION TEST DESIGN / ROUNDS 2-9 EXPANDED / NOT IMPLEMENTED**  
 > Baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.
 
 | State / Foundation | Positive Case | Negative Case | Primary Discriminator | Cross-State Required | Minimum |
