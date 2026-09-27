@@ -116,7 +116,7 @@ Battle-side research mirror:
     Final Adversarial Falsification: PASS
     Coverage Repair: PASS
     Runtime: NOT_INTEGRATED
-    Next: contract-aligned Runtime Design
+    Next: 690107 FALSE_REPORT Runtime Integration
 
 Battle-side mirror:
 [stages/stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md](stages/stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md)
