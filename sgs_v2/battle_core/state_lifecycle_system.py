@@ -32,7 +32,9 @@ from .state_generation import (
     StateApplicationGenerationId,
     StateGenerationAllocator,
 )
+from .state_application import ApplicationDisposition, StateApplicationTransaction
 from .state_instance import StateInstance
+from .state_lifetime import StateLifetimeDomain, StateLifetimeSpec
 from .state_runtime_params import (
     EmptyStateRuntimeParams,
     StateRuntimeParams,
@@ -105,6 +107,161 @@ class StateLifecycleSystem:
     ) -> None:
         self._allocator = allocator or StateGenerationAllocator()
         self._basis_producer = basis_producer
+
+    def commit_application_transaction(
+        self,
+        context: BattleContext,
+        transaction: StateApplicationTransaction,
+    ) -> StateInstance:
+        """Commit one fully-authorized Shared Foundation application transaction."""
+        if not isinstance(transaction, StateApplicationTransaction):
+            raise TypeError("transaction must be StateApplicationTransaction")
+
+        candidate = transaction.candidate
+        current_residents = tuple(
+            sorted(
+                context.states.find(
+                    owner_id=candidate.owner_id,
+                    state_id=candidate.state_id,
+                ),
+                key=lambda item: item.instance_id,
+            )
+        )
+        current_snapshot = tuple(
+            (item.instance_id, item.current_generation_id)
+            for item in current_residents
+        )
+        if current_snapshot != transaction.expected_resident_generations:
+            raise RuntimeError(
+                "state application transaction precondition mismatch at physical commit"
+            )
+
+        existing = None
+        if transaction.expected_existing_instance_id is not None:
+            if transaction.expected_existing_instance_id not in context.states:
+                raise RuntimeError(
+                    "expected existing instance disappeared before physical commit"
+                )
+            existing = context.states.get(
+                transaction.expected_existing_instance_id
+            )
+            if (
+                existing.current_generation_id
+                != transaction.expected_existing_generation_id
+            ):
+                raise RuntimeError(
+                    "expected existing generation changed before physical commit"
+                )
+
+        if transaction.disposition in (
+            ApplicationDisposition.CREATE,
+            ApplicationDisposition.REPLACE,
+        ):
+            planned = transaction.planned_new_instance_id
+            if planned is None:
+                raise RuntimeError(
+                    "create/replace transaction has no planned physical instance id"
+                )
+            if context.states.peek_next_instance_id() != planned:
+                raise RuntimeError(
+                    "planned physical instance id no longer matches registry sequence"
+                )
+
+        if transaction.disposition is ApplicationDisposition.REFRESH:
+            if existing is None:
+                raise RuntimeError("refresh transaction has no existing instance")
+            updated = dataclasses.replace(
+                existing,
+                source_id=candidate.source_id,
+                source_skill_id=candidate.source_skill_id,
+                source_skill_slot=candidate.source_skill_slot,
+                applied_round=context.current_round,
+                applied_phase=context.current_phase,
+                runtime_params=transaction.final_runtime_params,
+                current_generation_id=transaction.new_generation_id,
+                lifetime_spec=transaction.final_lifetime_spec,
+            )
+            context.states.replace(updated)
+            payload = {
+                "physical_instance_id": existing.instance_id,
+                "state_id": existing.state_id,
+                "owner_id": existing.owner_id,
+                "old_application_generation_id": str(
+                    existing.current_generation_id
+                ),
+                "new_application_generation_id": str(
+                    transaction.new_generation_id
+                ),
+                "application_generation_id": str(
+                    transaction.new_generation_id
+                ),
+                "old_source_id": existing.source_id,
+                "new_source_id": candidate.source_id,
+                "old_runtime_params_type": type(existing.runtime_params).__name__,
+                "new_runtime_params_type": type(
+                    transaction.final_runtime_params
+                ).__name__,
+                "transaction_path": "SHARED_FOUNDATION",
+            }
+            context.event_bus.publish(
+                event_type=EventType.STATE_REFRESHED,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=candidate.source_id,
+                target_id=candidate.owner_id,
+                payload=payload,
+            )
+            return updated
+
+        new_instance_id = context.states.next_instance_id()
+        if new_instance_id != transaction.planned_new_instance_id:
+            raise RuntimeError("registry returned an unexpected physical instance id")
+        new_instance = StateInstance(
+            instance_id=new_instance_id,
+            state_id=candidate.state_id,
+            owner_id=candidate.owner_id,
+            source_id=candidate.source_id,
+            source_skill_id=candidate.source_skill_id,
+            source_skill_slot=candidate.source_skill_slot,
+            applied_round=context.current_round,
+            applied_phase=context.current_phase,
+            runtime_params=transaction.final_runtime_params,
+            current_generation_id=transaction.new_generation_id,
+            lifetime_spec=transaction.final_lifetime_spec,
+        )
+
+        replaced = None
+        if transaction.disposition is ApplicationDisposition.REPLACE:
+            if existing is None:
+                raise RuntimeError("replace transaction has no existing instance")
+            replaced = context.states.remove(existing.instance_id)
+
+        context.states.add(new_instance)
+
+        if replaced is not None:
+            removed_payload = self._event_payload(replaced)
+            removed_payload["removal_reason"] = "REPLACED"
+            removed_payload["reason"] = "REPLACED"
+            context.event_bus.publish(
+                event_type=EventType.STATE_REMOVED,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=replaced.source_id,
+                target_id=replaced.owner_id,
+                payload=removed_payload,
+            )
+
+        applied_payload = self._event_payload(new_instance)
+        applied_payload["transaction_path"] = "SHARED_FOUNDATION"
+        context.event_bus.publish(
+            event_type=EventType.STATE_APPLIED,
+            phase=context.current_phase,
+            round_no=context.current_round,
+            actor_id=new_instance.source_id,
+            target_id=new_instance.owner_id,
+            payload=applied_payload,
+        )
+        return new_instance
 
     def calculate_lifecycle_window(
         self,
@@ -488,7 +645,7 @@ class StateLifecycleSystem:
 
         definition = context.states.get_definition(instance.state_id)
         if not isinstance(runtime_params, definition.runtime_params_type):
-            if self._is_stage10_persistent_state(instance.state_id):
+            if _is_stage10_persistent_state(instance.state_id):
                 expected_stage10_type = get_stage10_persistent_params_type(instance.state_id)
                 if not isinstance(runtime_params, expected_stage10_type):
                     raise TypeError(
@@ -808,27 +965,134 @@ class StateLifecycleSystem:
             reason=reason,
         )
 
+    def _commit_expiry_batch(
+        self,
+        context: BattleContext,
+        instances,
+        *,
+        phase: str | None = None,
+        round_no: int | None = None,
+        include_duration_reason: bool = False,
+    ) -> list[StateInstance]:
+        due = tuple(
+            sorted(
+                (
+                    instance
+                    for instance in instances
+                    if instance.instance_id in context.states
+                ),
+                key=lambda item: item.instance_id,
+            )
+        )
+        if not due:
+            return []
+
+        # RD-SF-003: complete the physical due-removal set before any event can
+        # observe the envelope. Transition recomputation is orchestrated outside
+        # Lifecycle after this physical commit returns.
+        for instance in due:
+            context.states.remove(instance.instance_id)
+
+        effective_phase = phase if phase is not None else context.current_phase
+        effective_round = round_no if round_no is not None else context.current_round
+        for instance in due:
+            payload = self._event_payload(instance)
+            if include_duration_reason:
+                payload["application_generation_id"] = str(
+                    instance.current_generation_id
+                )
+                payload["reason"] = "DURATION_EXPIRED"
+            context.event_bus.publish(
+                event_type=EventType.STATE_EXPIRED,
+                phase=effective_phase,
+                round_no=effective_round,
+                actor_id=instance.source_id,
+                target_id=instance.owner_id,
+                payload=payload,
+            )
+        return list(due)
+
     def expire_eligible_states(
         self,
         context: BattleContext,
         owner_id: str,
     ) -> list[StateInstance]:
-        expired: list[StateInstance] = []
-        owner_instances = [
+        due = [
             inst
             for inst in context.states.find(owner_id=owner_id)
             if inst.lifecycle_window is not None
+            and context.current_round >= inst.lifecycle_window.last_eligible_round
         ]
-        for inst in owner_instances:
-            if context.current_round >= inst.lifecycle_window.last_eligible_round:
-                res = self.expire_state(
-                    context,
-                    inst.instance_id,
-                    expected_generation_id=inst.current_generation_id,
+        return self._commit_expiry_batch(
+            context,
+            due,
+            include_duration_reason=True,
+        )
+
+    def settle_action_start_lifetimes(
+        self,
+        context: BattleContext,
+        owner_id: str,
+    ) -> list[StateInstance]:
+        """Settle one holder action-start lifetime envelope.
+
+        Legacy Stage10 eligible expiry and typed holder-action lifetime share one
+        deterministic due-removal snapshot. Effectiveness never pauses this clock.
+        """
+        legacy_due = [
+            inst
+            for inst in context.states.find(owner_id=owner_id)
+            if inst.lifecycle_window is not None
+            and context.current_round >= inst.lifecycle_window.last_eligible_round
+        ]
+        typed = [
+            inst
+            for inst in context.states.find(owner_id=owner_id)
+            if inst.lifetime_spec is not None
+            and inst.lifetime_spec.domain is StateLifetimeDomain.HOLDER_ACTION_WINDOW
+        ]
+        typed_due: list[StateInstance] = []
+        survivor_updates: list[StateInstance] = []
+        for inst in typed:
+            assert inst.lifetime_spec is not None
+            next_spec, due = inst.lifetime_spec.advance_holder_action_window()
+            if due:
+                typed_due.append(inst)
+            else:
+                survivor_updates.append(
+                    dataclasses.replace(inst, lifetime_spec=next_spec)
                 )
-                if res is not None:
-                    expired.append(res)
-        return expired
+
+        due_by_id = {
+            inst.instance_id: inst for inst in (*legacy_due, *typed_due)
+        }
+        due = tuple(
+            sorted(due_by_id.values(), key=lambda item: item.instance_id)
+        )
+
+        for inst in due:
+            context.states.remove(inst.instance_id)
+        for updated in sorted(
+            survivor_updates, key=lambda item: item.instance_id
+        ):
+            if updated.instance_id in context.states:
+                context.states.replace(updated)
+
+        for inst in due:
+            payload = self._event_payload(inst)
+            payload["application_generation_id"] = str(
+                inst.current_generation_id
+            )
+            payload["reason"] = "DURATION_EXPIRED"
+            context.event_bus.publish(
+                event_type=EventType.STATE_EXPIRED,
+                phase=context.current_phase,
+                round_no=context.current_round,
+                actor_id=inst.source_id,
+                target_id=inst.owner_id,
+                payload=payload,
+            )
+        return list(due)
 
     def clear_owner_on_defeat(
         self,
@@ -935,6 +1199,36 @@ class StateLifecycleSystem:
         )
         return instance
 
+    def due_at(
+        self,
+        context: BattleContext,
+        *,
+        round_no: int,
+        phase: str,
+    ) -> tuple[StateInstance, ...]:
+        if round_no < 0:
+            raise ValueError("round_no must be >= 0")
+        if phase not in _AUTO_EXPIRE_PHASES:
+            raise ValueError("phase must be ROUND_START or ROUND_END")
+
+        due_by_id: dict[str, StateInstance] = {}
+        for instance in context.states.find():
+            legacy_due = (
+                instance.expires_round == round_no
+                and instance.expires_phase == phase
+            )
+            typed_due = (
+                instance.lifetime_spec is not None
+                and instance.lifetime_spec.is_due_at(
+                    round_no=round_no, phase=phase
+                )
+            )
+            if legacy_due or typed_due:
+                due_by_id[instance.instance_id] = instance
+        return tuple(
+            sorted(due_by_id.values(), key=lambda item: item.instance_id)
+        )
+
     def expire_at(
         self,
         context: BattleContext,
@@ -942,30 +1236,13 @@ class StateLifecycleSystem:
         round_no: int,
         phase: str,
     ) -> list[StateInstance]:
-        if round_no < 0:
-            raise ValueError("round_no must be >= 0")
-        if phase not in _AUTO_EXPIRE_PHASES:
-            raise ValueError("phase must be ROUND_START or ROUND_END")
-
-        expired = [
-            instance
-            for instance in context.states.find()
-            if instance.expires_round == round_no
-            and instance.expires_phase == phase
-        ]
-
-        for instance in expired:
-            context.states.remove(instance.instance_id)
-            context.event_bus.publish(
-                event_type=EventType.STATE_EXPIRED,
-                phase=phase,
-                round_no=round_no,
-                actor_id=instance.source_id,
-                target_id=instance.owner_id,
-                payload=self._event_payload(instance),
-            )
-
-        return expired
+        due = self.due_at(context, round_no=round_no, phase=phase)
+        return self._commit_expiry_batch(
+            context,
+            due,
+            phase=phase,
+            round_no=round_no,
+        )
 
     @staticmethod
     def _validate_expiration(
@@ -1026,6 +1303,13 @@ class StateLifecycleSystem:
         }
         if instance.source_skill_slot is not None:
             payload["source_skill_slot"] = instance.source_skill_slot
+        if instance.lifetime_spec is not None:
+            payload["lifetime_domain"] = instance.lifetime_spec.domain.value
+            payload["lifetime_expires_round"] = instance.lifetime_spec.expires_round
+            payload["lifetime_expires_phase"] = instance.lifetime_spec.expires_phase
+            payload["remaining_holder_action_windows"] = (
+                instance.lifetime_spec.remaining_holder_action_windows
+            )
         if instance.lifecycle_window is not None:
             if instance.current_generation_id is not None:
                 gen_str = str(instance.current_generation_id)
