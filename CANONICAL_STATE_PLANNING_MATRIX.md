@@ -85,7 +85,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690094 | 倒戈 LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | Share assigned-damage basis + double-stage CEIL integrated; B11-FRZ-001 CLOSED |
 | 690095 | 攻心 STRATEGY_LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research strategy_life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | PROJECT-FROZEN MIRROR CONTRACT; shared RecoverySystem second-CEIL owner |
 | 690089 | 洞察 INSIGHT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/functional/insight/MECHANISM_CONTRACT.md | Maintain 690089 freeze; proceed 690101 Runtime Integration | Contract v0.4-frozen; independent Runtime Freeze Audit PASS; 690109 protected-overlap amendment PASS; 690110 CAPTURE exclusion preserved; PD-INS-001/002 preserved |
-| 690101 | 计穷 EXHAUSTION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/exhaustion/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v0.2-frozen; full-corpus falsification PASS; 23,002 reports / 18,487 EXHAUSTION executions / TRUE_COUNTEREXAMPLE=0; B-EXH-01..05 preserved |
+| 690101 | 计穷 EXHAUSTION | FROZEN | IMPLEMENTED_PENDING_RUNTIME_AUDIT | NO | Stage12 | Research Wave 4 | Research states/control/exhaustion/MECHANISM_CONTRACT.md | 690101 Independent Runtime Freeze Audit | Contract v0.2-frozen; Preparation blockers CLOSED; concrete PREPARING owner + first-effective CREATE interruption implemented; full-corpus falsification PASS; 23,002 reports / 18,487 EXHAUSTION executions / TRUE_COUNTEREXAMPLE=0; B-EXH-01..05 preserved |
 | 690107 | 伪报 FALSE_REPORT | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/false_report/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0.1-frozen; final falsification + coverage repair PASS; stronger-vs-weaker / unseen immunity / special NPC / untested Equipment subtype debt bounded and non-blocking |
 | 690108 | 挑拨 PROVOCATION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/provocation/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; Round 1–6 + adversarial falsification PASS; final correction audit 20/20 PASS; Q43 restored; bounded unknowns explicit; cfg_71 excluded from state core |
 | 690222 | 威慑 INTIMIDATION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/intimidation/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; repaired adversarial falsification PASS; Q1-Q80 canonical governance PASS; OPEN_BLOCKING=0; source-skill counter separated; BU-01..10 explicit/non-blocking |
@@ -96,9 +96,13 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 
 ```text
 690089 INSIGHT Runtime = FROZEN
+690101 EXHAUSTION Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690101 EXHAUSTION Runtime = NOT YET FROZEN
+690101 Preparation Blockers = CLOSED
 Stage12 Runtime Frozen = 1 / 7
 Stage11 Reopen Required = NO
-NEXT = 690101 EXHAUSTION Runtime Integration
+Stage15 Active = NO
+NEXT = 690101 EXHAUSTION Independent Runtime Freeze Audit
 ```
 
 Authority: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`
