@@ -13,8 +13,11 @@ from sgs_v2.battle_core import (
     EventType,
     LineupPosition,
     OfficialStateId,
+    ProviderDependency,
+    ProviderNode,
     RandomSystem,
     RemovalOperation,
+    SkillProviderRef,
     SkillSlot,
     StateApplicationResultStatus,
     StateCandidate,
@@ -125,15 +128,36 @@ def test_insight_dependency_cycle_rejects_atomically() -> None:
 
     prospective_insight = StateNode(context.states.peek_next_instance_id())
     protected_node = StateNode(protected.instance_id)
+    provider_ref = SkillProviderRef(
+        "a0", SkillSlot.LEARNED_1, "audit-cycle-provider"
+    )
+    provider_node = ProviderNode(provider_ref)
     systems.dependency_evaluation_support.add_dependency(
-        prospective_insight, protected_node
+        provider_node, protected_node
     )
 
     generation_before = context.generation_allocator._generation_seq
     events_before = context.event_bus.history
 
+    insight_candidate = candidate(OfficialStateId.INSIGHT.value)
+    insight_candidate = StateCandidate(
+        state_id=insight_candidate.state_id,
+        owner_id=insight_candidate.owner_id,
+        source_id=insight_candidate.source_id,
+        source_skill_id=insight_candidate.source_skill_id,
+        source_skill_slot=insight_candidate.source_skill_slot,
+        runtime_params_candidate=insight_candidate.runtime_params_candidate,
+        lifetime_spec=insight_candidate.lifetime_spec,
+        provider_dependencies=(
+            ProviderDependency(provider_ref, "AUDIT_CYCLE_PROVIDER"),
+        ),
+        application_provenance=insight_candidate.application_provenance,
+    )
+
     with pytest.raises(DependencyCycleError):
-        apply(systems, context, OfficialStateId.INSIGHT.value)
+        systems.state_application_coordinator.apply_candidate(
+            context, insight_candidate
+        )
 
     assert not context.states.has(
         owner_id="a0", state_id=OfficialStateId.INSIGHT.value
@@ -144,8 +168,11 @@ def test_insight_dependency_cycle_rejects_atomically() -> None:
         protected_node
     ) == ()
     assert systems.dependency_evaluation_support.prerequisites(
-        prospective_insight
+        provider_node
     ) == (protected_node,)
+    assert systems.dependency_evaluation_support.prerequisites(
+        prospective_insight
+    ) == ()
 
 
 def test_insight_dependency_cleanup_on_natural_expiry() -> None:
