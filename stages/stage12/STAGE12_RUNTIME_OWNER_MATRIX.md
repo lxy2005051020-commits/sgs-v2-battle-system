@@ -26,7 +26,7 @@
 | Normal Attack target arbitration | TargetResolutionSystem | TargetResolutionSystem | TAUNT/CONFUSION regression, Provocation non-domain | REUSE |
 | Damage permission | DamageSystem / existing prevention seams | canonical damage admission seam in DamageSystem stack | CAPTURE | EXTEND |
 | Recovery | RecoverySystem | RecoverySystem | CAPTURE | EXTEND |
-| Equipment effectiveness | no canonical production owner | minimal equipment-effectiveness query policy | SABOTAGE (+ tested FalseReport equipment boundary) | NEW MINIMAL OWNER |
+| Equipment contribution effectiveness | no canonical production owner | EquipmentEffectivenessPolicy after EquipmentProviderRef/ContributionRef resolution and generic ProviderValidityPolicy | SABOTAGE; tested FalseReport equipment scope; verified Capture equipment-attribute scope | NEW CANONICAL MINIMAL OWNER; DESIGN FIXED |
 | Trigger collection | TriggerSystem | TriggerSystem querying provider/equipment policy | FALSE_REPORT, SABOTAGE, CAPTURE | EXTEND |
 | RNG | BattleContext.random / RandomSystem | same | PROVOCATION, INTIMIDATION, any randomized application/selection | REUSE |
 | Event facts | domain owner → EventBus | same | all 7 | REUSE |
@@ -51,7 +51,7 @@ The following remain open after Round 4:
 - DQ-SF-06 CLOSED in Round 5: SkillPermissionPolicy + pre-RNG SkillOperationAdmissionCoordinator;
 - DQ-SF-07 CLOSED in Round 5: PreparationInterruptionPort + synchronous transition timing; concrete preparation owner remains an integration dependency;
 - DQ-SF-09 / 10 CLOSED in Round 6: TargetOperation + explicit producer-declared query boundary + SkillTargetPolicy;
-- DQ-SF-11 minimal equipment-effectiveness runtime abstraction;
+- DQ-SF-11 CLOSED in Round 7: EquipmentContributionRef + EquipmentEffectivenessPolicy + domain filter/JIT seams;
 - DQ-SF-12 final RNG signatures / ordering outside the Round 4 candidate and refresh boundaries;
 - DQ-SF-13 public event model;
 - DQ-SF-17 composition-root wiring;
@@ -205,3 +205,33 @@ Owner invariants:
 - Taunt remains Normal Attack authority and is not folded into a universal ForceTargetPolicy;
 - TargetResolutionSystem is not reused as the Skill target-operation owner;
 - Capture recovery denial remains RecoverySystem-owned.
+
+
+## SF Round 7 owner closure — equipment effectiveness
+
+Authority record:
+- STAGE12_EQUIPMENT_EFFECTIVENESS_DESIGN.md
+
+| Responsibility | Canonical owner | Non-owner collaborators | Frozen boundary |
+|---|---|---|---|
+| equipment Provider stable identity | EquipmentProviderRef / minimal contribution registry adapter | ProviderValidityPolicy consumes resolution | owner_id + stable provider_key; never pointer identity |
+| concrete contribution identity | EquipmentContributionRef | domain adapter supplies contribution_key/kind | stable value identity; Equipment != Skill |
+| generic equipment Provider validity | ProviderValidityPolicy | equipment baseline resolver | existing Provider validity status space |
+| final concrete contribution effectiveness | EquipmentEffectivenessPolicy | ProviderValidityPolicy + StateEffectivenessPolicy + scoped rule adapters | one final truth; unsupported evidence stays explicit |
+| contribution enumeration | minimal read-only EquipmentContributionRegistry/adapter | domain consumer asks only its kind | no inventory/slot/loadout mutation system |
+| static attribute calculation | AttributeSystem + AttributeModifierProvider | EquipmentEffectivenessPolicy only filters | no base-stat mutation |
+| equipment damage modifier order/math | DamageRuleProvider / Damage pipeline | equipment adapter filters per request | phase/order_key unchanged |
+| equipment recovery modifier order/math | RecoveryModifierProvider + RecoverySystem | adapter filters before ratio | RecoverySystem retains second CEIL |
+| deterministic equipment trigger execution | trigger/opportunity owner | EquipmentEffectivenessPolicy JIT gate | suppressed window skipped/no replay |
+| tested scheduled due window | scheduler/trigger owner | EquipmentEffectivenessPolicy due-time gate | broader queued micro-order remains DQ-SF-23 |
+| remote live-effect authority | effect/state owner | explicit EquipmentContributionDependency | Holder != Equipment Owner; attribution != dependency |
+| suppression cause composition | EquipmentEffectivenessPolicy | effective SABOTAGE / scoped FALSE_REPORT / scoped CAPTURE facts | causes are a set |
+| equipment RNG | existing domain RNG owner | policy/registry | Equipment policy and registry consume zero RNG |
+
+Owner invariants:
+- EquipmentEffectivenessPolicy is a policy, never an equipment god object.
+- ProviderValidityPolicy and EquipmentEffectivenessPolicy are one ordered decision path, not caller-selectable truths.
+- Equipment suppression is contribution ineligibility, never unequip/delete/reinstall.
+- Domain owners retain calculation, ordering, CEIL, scheduling and trigger RNG.
+- FalseReport/Capture bounded categories surface as unsupported rather than being generalized.
+- Public transition events remain DQ-SF-13.

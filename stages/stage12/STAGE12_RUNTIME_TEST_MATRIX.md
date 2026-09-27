@@ -372,3 +372,104 @@ test_target_resolution_id_not_reused_as_skill_target_operation_id
 ~~~
 
 These are future production-test names/obligations. Round 6 adds no executable test code and changes no existing Stage9/11 assertions.
+
+
+## SF Round 7 planned discriminator suite
+
+Status: DESIGN_FROZEN / NOT IMPLEMENTED.
+
+### Equipment identity / retention
+
+~~~text
+test_equipment_provider_ref_is_stable_value_identity
+test_equipment_contribution_ref_is_serializable
+test_equipment_provider_is_not_skill_provider
+test_sabotage_does_not_remove_equipment_provider
+test_resume_uses_same_equipment_provider_identity
+test_zero_equipment_contributions_is_safe
+~~~
+
+### Static attributes / Insight x Sabotage
+
+~~~text
+test_equipment_attribute_active_before_sabotage
+test_sabotage_suppresses_equipment_attribute_without_mutating_base_stat
+test_insight_suppresses_sabotage_and_same_attribute_resumes
+test_insight_end_reactivates_same_sabotage_and_attribute_suppresses_again
+test_sabotage_end_restores_attribute_without_cumulative_drift
+~~~
+
+### Damage / recovery modifiers
+
+~~~text
+test_sabotage_excludes_equipment_damage_modifier_per_request
+test_damage_modifier_order_key_unchanged_by_equipment_filter
+test_settled_damage_never_rolls_back
+test_sabotage_excludes_equipment_recovery_modifier
+test_recovery_second_ceil_owner_unchanged
+test_healing_block_order_unchanged_without_stage12_equipment_cause
+test_past_recovery_not_replayed_on_resume
+~~~
+
+### Trigger / scheduled trigger
+
+~~~text
+test_equipment_trigger_fires_before_sabotage
+test_equipment_trigger_window_skipped_while_sabotaged
+test_equipment_trigger_fires_on_future_window_after_resume
+test_skipped_trigger_window_never_replays
+test_scheduled_due_window_suppressed_at_execution
+test_scheduled_resume_does_not_backfill
+test_collected_then_queued_trigger_remains_DQ_SF_23_boundary
+~~~
+
+### Remote live effect / dependency
+
+~~~text
+test_remote_equipment_effect_requires_explicit_contribution_dependency
+test_owner_equipment_suppression_makes_remote_effect_ineffective
+test_remote_holder_unrelated_provider_unaffected
+test_remote_effect_resume_uses_same_live_effect
+test_remote_effect_expired_while_suppressed_never_resurrects
+test_effect_source_ref_alone_does_not_create_equipment_dependency
+~~~
+
+### Evidence-scope guards / multi-reason
+
+~~~text
+test_false_report_tested_equipment_special_is_suppressed
+test_false_report_untested_equipment_category_is_explicit_boundary
+test_capture_verified_equipment_attribute_is_suppressed
+test_capture_equipment_reactive_damage_is_explicit_boundary
+test_sabotage_plus_false_report_remove_sabotage_still_suppressed
+test_sabotage_plus_false_report_reverse_removal_order
+test_capture_plus_sabotage_remove_capture_still_suppressed
+test_final_known_cause_removed_with_unresolved_boundary_does_not_silently_allow
+test_final_cause_removal_resumes_future_only
+~~~
+
+### No replay / no reinitialize / RNG
+
+~~~text
+test_resume_does_not_rerun_equipment_setup
+test_resume_does_not_reregister_trigger_as_new
+test_resume_does_not_reroll_equipment_rng
+test_resume_does_not_recreate_remote_live_effect
+test_already_settled_damage_and_recovery_unchanged
+test_equipment_effectiveness_policy_consumes_zero_rng
+test_equipment_contribution_registry_consumes_zero_rng
+test_equipment_policy_does_not_emit_event_on_query
+~~~
+
+### Architecture / Stage11 regression
+
+~~~text
+test_equipment_policy_is_filter_not_domain_calculator
+test_equipment_policy_does_not_reorder_damage_modifiers
+test_equipment_policy_does_not_own_recovery_ceil
+test_no_equipment_inventory_or_slot_runtime_required_for_policy
+test_no_stage11_behavior_changes_without_stage12_equipment_cause
+test_existing_attribute_damage_recovery_trigger_paths_unchanged_without_equipment_adapter
+~~~
+
+These are future production-test obligations only. Round 7 changes zero executable test code and zero gameplay code.

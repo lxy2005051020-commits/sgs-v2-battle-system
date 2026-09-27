@@ -15,7 +15,7 @@
 | EXHAUSTION | already-activated instance | admission boundary | in-flight activated skill not rolled back | DESIGN_MAPPING |
 | FALSE_REPORT | admission exceptions | Stage12 state-admission policy | ordinary Insight does not reject | DESIGN_MAPPING |
 | FALSE_REPORT | PASSIVE/COMMAND Provider suppression | provider-validity policy | Provider suppressed vs Holder-only model | DESIGN_MAPPING |
-| FALSE_REPORT | tested equipment specials boundary | equipment effectiveness policy | tested provider dependent effect inactive vs physical deletion | DESIGN_MAPPING |
+| FALSE_REPORT | tested equipment specials boundary | EquipmentEffectivenessPolicy evidence-scoped rule adapter | tested persistent equipment special suppressed; untested category remains UNSUPPORTED_BOUNDARY | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | FALSE_REPORT | restoration | provider-validity + lifecycle | future behavior resumes; no missed-trigger replay | DESIGN_MAPPING |
 | PROVOCATION | eligible skill target operation/query | `TargetOperation` producer → `SkillTargetPolicy` | fresh operation-level constraint vs blanket target overwrite | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | PROVOCATION | Source admissibility | `SkillTargetPolicy` operation-local eligibility after raw candidates | admissible Source required; illegal/dead Source never forced and State is not physically removed | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
@@ -25,9 +25,9 @@
 | INTIMIDATION | refresh reroll | provider-validity policy + RandomSystem | release old → exactly one reroll → no multi-disable stack | DESIGN_MAPPING |
 | INTIMIDATION | resume preserves binding | provider-validity + lifecycle | resume does not reroll; lifetime continues | DESIGN_MAPPING |
 | INTIMIDATION | source-skill counter separation | source-skill boundary ledger | no counter/damage branch inside state core | DESIGN_MAPPING |
-| SABOTAGE | equipment effectiveness suppression | equipment-effectiveness policy | suppressed contribution vs physical unequip/delete | DESIGN_MAPPING |
-| SABOTAGE | existing effects/remote ownership | provider/equipment validity seam | tested dependent effect ineffective vs universal deletion | DESIGN_MAPPING |
-| SABOTAGE | restoration | equipment policy + lifecycle | resume vs full reinitialize / replay | DESIGN_MAPPING |
+| SABOTAGE | equipment effectiveness suppression | EquipmentEffectivenessPolicy.evaluate_contribution | target-owned tested contribution suppressed vs physical unequip/delete | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
+| SABOTAGE | existing effects/remote ownership | explicit EquipmentContributionDependency -> EquipmentEffectivenessPolicy | Equipment Owner suppression affects dependent remote live effect; unrelated Holder Provider remains valid | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
+| SABOTAGE | restoration | EquipmentEffectivenessPolicy + existing lifecycle/domain owners | final-cause removal resumes future eligibility; no reinitialize/replay | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | CAPTURE | natural action denial | ActionSystem | action denied independently of skill permission | DESIGN_MAPPING |
 | CAPTURE | actor-driven new damage denial | DamageSystem admission seam | counterattack no damage vs attached Active-origin DOT continues | DESIGN_MAPPING |
 | CAPTURE | PASSIVE/COMMAND invalidation | provider-validity policy | provider behavior suspended vs historical effect deletion | DESIGN_MAPPING |
@@ -218,3 +218,39 @@ Skill operation admitted
 ~~~
 
 Round 6 does not freeze activation-RNG placement relative to pure candidate construction. It freezes only that denied skill admission creates no TargetOperation and consumes no target-selection RNG.
+
+
+## SF Round 7 frozen equipment-effectiveness bindings
+
+These rows are DESIGN_FROZEN_FOUNDATION, not GREEN.
+
+| Concern | Frozen runtime mapping | Required discriminator | Preserved boundary |
+|---|---|---|---|
+| equipment identity | EquipmentProviderRef(owner_id, provider_key) | suppression/resume keeps same Provider identity | no pointer identity; Equipment != Skill |
+| contribution identity | EquipmentContributionRef(provider_ref, contribution_key, kind) | same Provider can expose distinct contributions | no speculative full equipment model |
+| generic provider validity | ProviderValidityPolicy | missing/mismatch/baseline-disabled typed | not a competing final equipment truth |
+| final contribution truth | EquipmentEffectivenessPolicy.evaluate_contribution | one canonical decision | unsupported evidence explicit |
+| SABOTAGE scope | effective Sabotage on owner contributes cause to tested owner-owned contributions | all tested owner contributions suppress; object remains | untested future topology bounded |
+| Insight x Sabotage | StateEffectivenessPolicy controls whether resident Sabotage contributes cause | Insight removes Sabotage cause without removing state | no reapply on resume |
+| FalseReport equipment | tested-persistent-special adapter | tested special suppresses | B-U04 untested = UNSUPPORTED_BOUNDARY |
+| Capture equipment | verified ATTRIBUTE adapter | attribute contribution suppresses/resumes | Q63 reactive/damage = UNSUPPORTED_BOUNDARY |
+| static attribute | query-time modifier adapter | no cumulative drift | no base-stat mutation |
+| damage modifier | per-request DamageRuleProvider filter | phase/order_key unchanged | settled damage unchanged |
+| recovery modifier | RecoveryModifierProvider filter before ExactRatio | second CEIL unchanged | no hard-coded Sabotage in RecoverySystem |
+| deterministic trigger | JIT opportunity gate | suppressed window no behavior; future window works | queued micro-slice stays DQ-SF-23 if unproven |
+| scheduled trigger | due/execution JIT | suppressed due window missed/no replay | other creation/execution topology bounded |
+| remote live effect | explicit EquipmentContributionDependency | owner A suppression affects A-dependent effect on B only | EffectSourceRef alone insufficient |
+| multi-reason | cause-set composition | remove one cause still suppressed | no mutable equipment.enabled truth |
+| initialization | outside ongoing effectiveness | resume does not rerun setup/register/reroll | no replay/reinitialize |
+| RNG | policy/registry = 0 RNG | query leaves RNG stream unchanged | trigger-owned RNG stays domain-owned |
+| events | query emits none | duplicate query no event effect | public event vocabulary remains DQ-SF-13 |
+
+JIT mapping:
+- ATTRIBUTE -> query-time
+- DAMAGE_MODIFIER -> per damage-request collection
+- RECOVERY_MODIFIER -> per recovery-modifier collection
+- TRIGGER -> opportunity execution/admission
+- SCHEDULED_TRIGGER -> due/execution JIT
+- LIVE_EFFECT -> live authority/use query through explicit dependency
+
+Round 7 does not close DQ-SF-23. The tested scheduled due-window outcome is frozen; broader admitted/queued/in-flight micro-order is the next design problem.

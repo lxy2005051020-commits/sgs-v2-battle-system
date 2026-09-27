@@ -29,7 +29,7 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 | DQ-SF-08 | Provider validity query and dependency propagation? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `ProviderValidityPolicy.evaluate(context, ProviderRef)` owns current Provider validity after identity resolution. Statuses: VALID / SUPPRESSED / BASELINE_DISABLED / MISSING / IDENTITY_MISMATCH. Independent suppression causes are derived; live state dependencies are explicit `ProviderDependency`, never inferred from provenance. | 02,04,05,20,21; Provider/Holder separation; final cause removal resumes future-only behavior; no missed-trigger replay |
 | DQ-SF-09 | Target Operation model? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `TargetOperation` is the explicit fresh Skill-target query value object; `SkillTargetPolicy` is the canonical operation-local eligibility/constraint owner; `TargetSystem` remains raw candidate/RNG primitive owner and Normal Attack remains separate. | See STAGE12_TARGET_OPERATION_POLICY_DESIGN.md; relation ENEMY/ALLY/SELF, SINGLE/CHOOSE_N/FIXED_ALL, selector boundary, TargetOperationId, provenance, Provocation and Capture mappings frozen; implementation pending |
 | DQ-SF-10 | What creates a new target operation? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | The skill/effect operation producer explicitly declares `NEW_QUERY`; only that declaration allocates a new `TargetOperationId` and re-enters target policy. INHERITED / DERIVED / LOCKED continuations reuse the prior resolution identity and are not automatically rechecked. | 09,12,23; same-target multi-hit = one operation; explicit independent re-query = distinct operation; delayed/locked Capture work remains DQ-SF-23 |
-| DQ-SF-11 | Minimal equipment effectiveness abstraction? | DESIGN_REQUIRED | New minimal EquipmentEffectivenessPolicy; existing AttributeSystem/DamageRuleProvider/RecoveryModifierProvider/TriggerSystem consume owner-bound contributions | 05,08,20; static attributes, damage/recovery modifiers, deterministic/scheduled trigger, local/remote live effects, object retained/no replay |
+| DQ-SF-11 | Minimal equipment effectiveness abstraction? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | EquipmentEffectivenessPolicy.evaluate_contribution is the sole final truth for a concrete EquipmentContributionRef; generic ProviderValidityPolicy is an input, while Attribute/Damage/Recovery/Trigger owners keep domain calculation. | See STAGE12_EQUIPMENT_EFFECTIVENESS_DESIGN.md; stable EquipmentProviderRef + contribution kind/key, object retained, multi-reason suppression, explicit remote dependency, no replay/reinitialize; FalseReport untested equipment and Capture reactive/damage stay bounded/unsupported; queued micro-order remains DQ-SF-23 |
 | DQ-SF-12 | Who consumes RNG, when and for what? | DESIGN_REQUIRED | RNG owner already closed: context.random/RandomSystem. Source operation owns application probability, selector owns target sampling, accepted Intimidation binding owns selection; signatures/ordering/defaults unresolved | 01,06,09,14,22; PD-INS-001 parity; refresh actual reroll vs same result; resume zero reroll; rejected immunity no binding selection |
 | DQ-SF-13 | Minimal events and explicit decisions? | DESIGN_REQUIRED | Domain owners publish after decision; reuse ACTION_BLOCKED/RECOVERY_PREVENTED where truthful; evaluate rejection and transition facts, don't emit on every query | 01,03,06,07,20; duplicate read produces no repeated transition; Provocation execution not automatically TARGET_FORCED |
 | DQ-SF-14 | Which runtime defaults are required and where recorded? | CONTRACT_DEPENDENT | Runtime Default Ledger required before choices are frozen; carry exact research labels and section IDs; inherit PD-INS-001/002 verbatim in substance | All DQs; every necessary unsupported choice gets reason, chosen value, scope, reopen trigger, tests; no silent default |
@@ -281,3 +281,35 @@ Key closure facts:
 
 Round 6 adds no gameplay implementation and no production tests.
 Stage11 Reopen Required = NO.
+
+
+## 5. SF Round 7 closure — equipment effectiveness
+
+DQ-SF-11 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+
+Authority:
+- STAGE12_EQUIPMENT_EFFECTIVENESS_DESIGN.md
+
+Frozen Shared Foundation facts:
+
+- EquipmentProviderRef(owner_id, provider_key) remains stable equipment Provider identity.
+- EquipmentContributionRef(provider_ref, contribution_key, kind) is the concrete contribution identity.
+- Kinds: ATTRIBUTE / DAMAGE_MODIFIER / RECOVERY_MODIFIER / TRIGGER / SCHEDULED_TRIGGER / LIVE_EFFECT.
+- ProviderValidityPolicy supplies generic Provider validity; EquipmentEffectivenessPolicy owns final contribution truth.
+- Status preserves EFFECTIVE / SUPPRESSED / BASELINE_DISABLED / MISSING / IDENTITY_MISMATCH / UNSUPPORTED_BOUNDARY.
+- SABOTAGE is owner-wide across its tested contribution scope; only EFFECTIVE Sabotage contributes a cause.
+- FALSE_REPORT equipment behavior remains tested-persistent-special scoped.
+- CAPTURE equipment behavior remains verified-attribute scoped; reactive/damage remains Q63 bounded.
+- Attribute is query-time; damage/recovery are domain-collection filters; tested scheduled due windows use execution-time JIT gating.
+- Remote live effects require explicit EquipmentContributionDependency; attribution alone is insufficient.
+- suppression never means unequip/delete; resume never means reinitialize/replay.
+- independent causes compose as a set.
+- EquipmentEffectivenessPolicy consumes zero RNG and never reorders domain contributions.
+
+Preserved mechanism-specific debt:
+- DQ-SF-23 / B-SAB-07 queued/in-flight micro-order;
+- FalseReport B-U04 untested equipment special subtypes;
+- Capture Q63 equipment reactive/damage special;
+- Sabotage B-SAB-09 dynamic equipment-change / empty-equipment semantics where a gameplay answer would be required.
+
+These are evidence boundaries, not an open owner/architecture question.

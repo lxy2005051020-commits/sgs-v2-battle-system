@@ -174,3 +174,17 @@ Round 6 closes target architecture without converting bounded Provocation/Captur
 5. Capture delayed/already-locked friendly work remains Q44/Q45 + DQ-SF-23; no JIT recheck default is invented.
 
 Therefore RD-SF-001, RD-SF-002 and RD-SF-003 remain the complete Shared Foundation Runtime Default set after Round 6.
+
+
+## SF Round 7 default disposition — 2026-09-27
+
+New Runtime Defaults added: NONE.
+
+1. Contribution ordering remains domain-owned; EquipmentEffectivenessPolicy only filters.
+2. Tested SABOTAGE scheduled due-window behavior is contract-derived. Broader queued/in-flight micro-order remains DQ-SF-23 / B-SAB-07.
+3. FALSE_REPORT untested equipment categories remain explicit UNSUPPORTED_BOUNDARY.
+4. CAPTURE equipment reactive/damage remains Q63 UNSUPPORTED_BOUNDARY.
+5. Dynamic equipment change / empty-equipment behavior remains bounded where not frozen.
+6. Policy/registry consume zero RNG; no new RNG ordering/signature default is introduced.
+
+RD-SF-001, RD-SF-002 and RD-SF-003 remain the complete Shared Foundation Runtime Default set after Round 7.
