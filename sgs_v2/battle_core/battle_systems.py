@@ -44,10 +44,8 @@ from .normal_attack_system import NormalAttackSystem
 from .recovery_opportunity_system import RecoveryOpportunitySystem
 from .recovery_system import RecoveryModifierProvider, RecoverySystem
 from .provider_validity import ProviderValidityPolicy
-from .preparation_interruption import (
-    NoopPreparationInterruptionPort,
-    PreparationInterruptionPort,
-)
+from .preparation_interruption import PreparationInterruptionPort
+from .preparation_state import PreparationStateOwner
 from .skill_operation_admission import SkillOperationAdmissionCoordinator
 from .skill_permission import SkillPermissionPolicy
 from .skill_target_policy import SkillTargetPolicy
@@ -158,6 +156,7 @@ class BattleSystems:
     effectiveness_transition_coordinator: EffectivenessTransitionCoordinator = field(init=False)
     state_application_coordinator: StateApplicationCoordinator = field(init=False)
     state_removal_coordinator: StateRemovalCoordinator = field(init=False)
+    preparation_state_owner: PreparationStateOwner = field(init=False)
 
     def __post_init__(self) -> None:
         self.dependency_evaluation_support = DependencyEvaluationSupport()
@@ -198,8 +197,11 @@ class BattleSystems:
             self.skill_permission_policy,
         )
         self.skill_target_policy = SkillTargetPolicy()
+        self.preparation_state_owner = PreparationStateOwner()
         if self.preparation_interruption_port is None:
-            self.preparation_interruption_port = NoopPreparationInterruptionPort()
+            # Production now has a concrete minimal PREPARING owner. This is
+            # interruption storage only, not the Stage15 preparation scheduler.
+            self.preparation_interruption_port = self.preparation_state_owner
         self.dependency_evaluation_support.bind_evaluators(
             state_evaluator=self.state_effectiveness_policy.evaluate_node,
             provider_evaluator=self.provider_validity_policy.evaluate_node,
@@ -222,6 +224,7 @@ class BattleSystems:
             lifecycle=self.state_lifecycle_system,
             dependencies=self.dependency_evaluation_support,
             transition_coordinator=self.effectiveness_transition_coordinator,
+            state_effectiveness_policy=self.state_effectiveness_policy,
         )
         self.state_removal_coordinator = StateRemovalCoordinator(
             policy=self.state_removal_policy,
@@ -239,6 +242,7 @@ class BattleSystems:
             skill_permission_policy=self.skill_permission_policy,
             effectiveness_transition_coordinator=self.effectiveness_transition_coordinator,
             preparation_interruption_port=self.preparation_interruption_port,
+            state_application_coordinator=self.state_application_coordinator,
         )
 
         self.stage11_state_runtime = Stage11StateRuntime(

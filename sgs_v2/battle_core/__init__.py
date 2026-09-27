@@ -261,6 +261,12 @@ from .preparation_interruption import (
     PreparationInterruptionScope,
     PreparationInterruptionStatus,
     PreparationInterruptionTransitionAdapter,
+    PreparationInterruptionActivationAdapter,
+)
+from .preparation_state import (
+    PreparationRecord,
+    PreparationStateOwner,
+    PreparationStatus,
 )
 from .target_operation import (
     TargetCardinality,
@@ -417,6 +423,7 @@ from .state_application import (
     AdmissionStatus,
     ApplicationDisposition,
     StateAdmissionPolicy,
+    CommittedEffectiveStateActivation,
     StateApplicationCoordinator,
     StateApplicationResult,
     StateApplicationResultStatus,
@@ -478,6 +485,7 @@ __all__ = [
     "StateApplicationResultStatus",
     "StateApplicationResult",
     "StateTransactionPreconditionError",
+    "CommittedEffectiveStateActivation",
     "StateApplicationCoordinator",
     "RemovalOperation",
     "RemovalDecisionStatus",
@@ -627,6 +635,10 @@ __all__ = [
     "PreparationInterruptionPort",
     "NoopPreparationInterruptionPort",
     "PreparationInterruptionTransitionAdapter",
+    "PreparationInterruptionActivationAdapter",
+    "PreparationStatus",
+    "PreparationRecord",
+    "PreparationStateOwner",
     "TargetRelation",
     "TargetCardinality",
     "TargetSelectorKind",

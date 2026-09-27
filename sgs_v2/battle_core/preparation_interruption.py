@@ -10,6 +10,10 @@ from .effectiveness_transition import (
     StateEffectivenessChanged,
 )
 from .provider_identity import SkillProviderRef
+from .state_application import (
+    CommittedEffectiveStateActivation,
+    StateApplicationCoordinator,
+)
 
 
 class PreparationInterruptionScope(str, Enum):
@@ -103,6 +107,45 @@ ProviderPreparationRequestFactory = Callable[
     [object, ProviderValidityChanged],
     PreparationInterruptionRequest | None,
 ]
+ActivationPreparationRequestFactory = Callable[
+    [object, CommittedEffectiveStateActivation],
+    PreparationInterruptionRequest | None,
+]
+
+
+class PreparationInterruptionActivationAdapter:
+    """Generic bridge from committed effective CREATE activation to interruption."""
+
+    __slots__ = ("_port", "_factory")
+
+    def __init__(
+        self,
+        port: PreparationInterruptionPort,
+        *,
+        request_factory: ActivationPreparationRequestFactory,
+    ) -> None:
+        if not hasattr(port, "interrupt"):
+            raise TypeError("port must implement interrupt")
+        if not callable(request_factory):
+            raise TypeError("request_factory must be callable")
+        self._port = port
+        self._factory = request_factory
+
+    def bind(self, coordinator: StateApplicationCoordinator) -> None:
+        if not isinstance(coordinator, StateApplicationCoordinator):
+            raise TypeError("coordinator must be StateApplicationCoordinator")
+        coordinator.register_effective_activation_port(self.on_activation)
+
+    def on_activation(
+        self,
+        context: object,
+        activation: CommittedEffectiveStateActivation,
+    ) -> None:
+        if not isinstance(activation, CommittedEffectiveStateActivation):
+            raise TypeError("activation must be CommittedEffectiveStateActivation")
+        request = self._factory(context, activation)
+        if request is not None:
+            self._port.interrupt(context, request)
 
 
 class PreparationInterruptionTransitionAdapter:

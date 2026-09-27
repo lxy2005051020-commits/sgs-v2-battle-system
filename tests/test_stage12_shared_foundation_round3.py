@@ -759,7 +759,11 @@ def test_battle_systems_wires_single_round3_foundation_graph() -> None:
     assert systems.skill_resolver._admission_coordinator is systems.skill_operation_admission_coordinator
     assert systems.skill_resolver._target_policy is systems.skill_target_policy
     assert systems.recovery_opportunity_system._provider_validity_policy is systems.provider_validity_policy
-    assert isinstance(systems.preparation_interruption_port, NoopPreparationInterruptionPort)
+    assert systems.preparation_interruption_port is systems.preparation_state_owner
+    assert not isinstance(
+        systems.preparation_interruption_port,
+        NoopPreparationInterruptionPort,
+    )
 
 
 def test_normal_attack_domain_does_not_depend_on_skill_target_policy() -> None:

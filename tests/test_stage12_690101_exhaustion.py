@@ -576,7 +576,7 @@ def test_same_envelope_insight_and_exhaustion_expiry_has_no_ghost_denial() -> No
 
 def test_resident_exhaustion_resume_drives_preparation_interruption_port() -> None:
     ref = SkillProviderRef("a", SkillSlot.INHERENT, "preparing.active")
-    port = FakePreparationInterruptionPort((ref,))
+    port = FakePreparationInterruptionPort()
     context = make_context()
     systems = BattleSystems(preparation_interruption_port=port)
     exhaustion = apply_state(
@@ -586,7 +586,11 @@ def test_resident_exhaustion_resume_drives_preparation_interruption_port() -> No
         systems, context, OfficialStateId.INSIGHT.value
     ).instance
     assert exhaustion is not None and insight is not None
-    assert port.requests == []
+    # The initial effective CREATE lawfully issued one interruption request,
+    # but no preparation existed yet. This test isolates the later resume path.
+    assert len(port.requests) == 1
+    port.requests.clear()
+    port.preparing.append(ref)
 
     systems.state_removal_coordinator.remove(
         context,
@@ -677,7 +681,7 @@ def _second_exhaustion_suppressor(context, instance, _session):
 
 def test_removing_insight_does_not_false_resume_with_second_suppressor() -> None:
     ref = SkillProviderRef("a", SkillSlot.INHERENT, "preparing.active")
-    port = FakePreparationInterruptionPort((ref,))
+    port = FakePreparationInterruptionPort()
     context = make_context()
     systems = BattleSystems(preparation_interruption_port=port)
     systems.state_effectiveness_policy.register_rule_adapter(
@@ -695,6 +699,10 @@ def test_removing_insight_does_not_false_resume_with_second_suppressor() -> None
     assert not systems.state_effectiveness_policy.evaluate_state(
         context, exhaustion
     ).effective
+    # Initial CREATE was effective before the synthetic second suppressor was
+    # installed, so isolate this test from that already-completed command.
+    port.requests.clear()
+    port.preparing.append(ref)
 
     systems.state_removal_coordinator.remove(
         context,
