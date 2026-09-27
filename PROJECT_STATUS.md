@@ -61,7 +61,7 @@ Governance:
     Research FROZEN: 7 / 7
     Runtime Frozen: 3 / 7
 
-Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT, 690101 EXHAUSTION and 690107 FALSE_REPORT have passed independent Runtime Freeze Audits, so Stage12 Runtime Frozen is now 3 / 7.
+Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT, 690101 EXHAUSTION and 690107 FALSE_REPORT have passed independent Runtime Freeze Audits. 690108 PROVOCATION gameplay integration is now complete and awaits its independent Runtime Freeze Audit, so Stage12 Runtime Frozen correctly remains 3 / 7.
 
 ### 690089 INSIGHT
 
@@ -71,7 +71,7 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     Runtime: FROZEN TO CONTRACT
     Runtime Freeze Audit: PASS
     Audit Authority: stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md
-    Next: Maintain 690089 freeze; current integration owner is 690108 PROVOCATION
+    Next: Maintain 690089 freeze; current independent-audit owner is 690108 PROVOCATION
 
 ### 690101 EXHAUSTION
 
@@ -98,7 +98,7 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     pytest: 1244 passed
     demo: PASS
     Stage12 Runtime Frozen: 3 / 7
-    Next: Maintain 690101 freeze; proceed 690108 PROVOCATION Runtime Integration
+    Next: Maintain 690101 freeze; 690108 PROVOCATION awaits Independent Runtime Freeze Audit
 
 Integration authority:
 [stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md)
@@ -125,7 +125,7 @@ Battle-side research mirror:
     Contract-focused tests: 54 passed across integration + independent audit suites
     Stage12 Runtime Frozen: 3 / 7
     Stage11 Reopen Required: NO
-    Next: 690108 PROVOCATION Runtime Integration
+    Next: 690108 PROVOCATION Independent Runtime Freeze Audit
 
 Runtime Freeze authority:
 [stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md](stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md)
@@ -143,17 +143,21 @@ Battle-side mirror:
     Adversarial Falsification: PASS
     Final Contract Correction Audit: PASS
     Freeze Gate: 20 / 20 PASS
-    Gameplay: NOT_INTEGRATED
-    Runtime: NOT_FROZEN
-    Integration: READY_TO_RESUME
+    Gameplay: IMPLEMENTED_PENDING_RUNTIME_AUDIT
+    Runtime: NOT_YET_FROZEN
+    Integration: COMPLETE
+    Independent Runtime Freeze Audit: PENDING
     IMPLEMENTATION_BLOCKER-690108-001: CLOSED
     Runtime Default: RD-SF-005 / reserve-first CHOOSE_N required-target topology
     Runtime Default Provenance: PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
     Research BU-P02: remains BOUNDED UNKNOWN
+    BU-P06 / BU-P09: UNSUPPORTED_BOUNDARY
+    Production producer mapping: SINGLE / CHOOSE_N / FIXED_ALL IMPLEMENTED
+    Contract-focused integration checkpoint: 1359 passed / demo PASS / CI 36333059532
     Research Reopen Required: NO
     Shared Foundation Owner Redesign Required: NO
     Stage11 Reopen Required: NO
-    Next: resume 690108 Runtime Integration; implement SINGLE / CHOOSE_N / FIXED_ALL producer mapping and production target-policy adapter
+    Next: 690108 PROVOCATION Independent Runtime Freeze Audit
 
 Integration authority / blocker record:
 [stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md)
@@ -427,3 +431,33 @@ Authority:
 - `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md`
 
 NEXT: Resume 690108 PROVOCATION Runtime Integration. Blocker closure is not gameplay completion and does not increment Stage12 Runtime Frozen.
+
+
+## Stage12 690108 PROVOCATION Runtime Integration Resume — 2026-09-28
+
+```text
+690108 Research = FROZEN
+690108 Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690108 Runtime = NOT_YET_FROZEN
+Integration Exit Gate = PASS
+Independent Runtime Freeze Audit = PENDING
+
+RD-SF-005 = PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+BU-P06 = UNSUPPORTED_BOUNDARY
+BU-P09 = UNSUPPORTED_BOUNDARY
+
+Validated code/test checkpoint = d420e8130dff1b3b9cc2545f0a832eccf58abd75
+CI = 36333059532 / success
+pytest = 1359 passed
+demo = PASS
+
+Stage12 Gameplay Implementation = 4 / 7
+Stage12 Runtime Frozen = 3 / 7
+Stage11 Reopen Required = NO
+Research repository mutation = NONE
+
+NEXT = 690108 PROVOCATION Independent Runtime Freeze Audit
+```
+
+Authority:
+- `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION_RESUME.md`
