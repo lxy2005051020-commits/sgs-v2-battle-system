@@ -258,6 +258,7 @@ Governance sync targets:
 - `stages/stage12/STAGE12_CONTRACT_RUNTIME_MAPPING.md`
 - `stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md`
 - `stages/stage12/STAGE12_PLANNING.md`
+- `stages/stage12/STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_STATUS.md`
 
 Historical snapshots remain historical and are not rewritten.
 

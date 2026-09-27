@@ -368,7 +368,7 @@ Stage12 individual-state gameplay currently frozen to contract:
 690089 INSIGHT = IMPLEMENTED / RUNTIME_FROZEN
 690101 EXHAUSTION = IMPLEMENTED / RUNTIME_FROZEN
 690107 FALSE_REPORT = IMPLEMENTED / RUNTIME_FROZEN
-690108 PROVOCATION = IMPLEMENTED / PENDING_RUNTIME_AUDIT
+690108 PROVOCATION = IMPLEMENTED / RUNTIME_FROZEN
 ```
 
 Not gameplay-integrated yet:
@@ -381,7 +381,7 @@ Not gameplay-integrated yet:
 
 The 690107 independent Runtime Freeze Audit also closed the frozen-contract TALENT negative discriminator by adding `SkillType.TALENT` to the shared taxonomy without adding TALENT to FALSE_REPORT's suppression set or to Intimidation eligibility.
 
-Stage12 Runtime Frozen is now **3 / 7**.
+Stage12 Runtime Frozen is now **4 / 7**.
 
 ## 17. Current gates
 
@@ -405,11 +405,11 @@ Stage12 Shared Foundation Implementation = COMPLETE
 690101 EXHAUSTION Runtime = FROZEN
 690107 FALSE_REPORT Gameplay = IMPLEMENTED
 690107 FALSE_REPORT Runtime = FROZEN
-690108 PROVOCATION Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
-690108 PROVOCATION Runtime = NOT_YET_FROZEN
+690108 PROVOCATION Gameplay = IMPLEMENTED
+690108 PROVOCATION Runtime = FROZEN TO CONTRACT
 
 Stage12 Gameplay Implementation = 4 / 7 IMPLEMENTED
-Stage12 Runtime Frozen = 3 / 7
+Stage12 Runtime Frozen = 4 / 7
 
 Stage13 Active = NO
 Stage14 Active = NO
@@ -430,9 +430,9 @@ Authority:
 The next authorized action is:
 
 ```text
-690108 PROVOCATION Independent Runtime Freeze Audit
+690222 INTIMIDATION Runtime Integration
 ```
 
 690108 integration checkpoint: `d420e8130dff1b3b9cc2545f0a832eccf58abd75` / CI `36333059532` / 1359 passed / demo PASS.
 
-Do not enter 690222 integration or mark 690108 Runtime FROZEN until the independent 690108 freeze gate passes.
+690108 independent freeze checkpoint: `e0f9e0c24a4c379918c3b9389a67dcfea138ac13` / CI `36334810169` / 1392 passed / demo PASS. Runtime is FROZEN TO CONTRACT; next authorized integration is 690222 INTIMIDATION.
