@@ -25,8 +25,12 @@ class StateRegistry:
         except KeyError as exc:
             raise KeyError(f"unknown state_id: {state_id}") from exc
 
+    def peek_next_instance_id(self) -> str:
+        """Return the next physical id without reserving or mutating storage state."""
+        return f"state-{self._next_instance_sequence:06d}"
+
     def next_instance_id(self) -> str:
-        instance_id = f"state-{self._next_instance_sequence:06d}"
+        instance_id = self.peek_next_instance_id()
         self._next_instance_sequence += 1
         return instance_id
 

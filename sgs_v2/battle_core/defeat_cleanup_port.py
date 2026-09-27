@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
+from .dependency_evaluation import StateNode
 from .state_instance import StateInstance
 
 if TYPE_CHECKING:
@@ -45,10 +46,16 @@ class DefeatCleanupPort:
     3. Returns typed DefeatCleanupResult.
     """
 
-    __slots__ = ("_lifecycle_system",)
+    __slots__ = ("_lifecycle_system", "_transition_coordinator")
 
-    def __init__(self, lifecycle_system: StateLifecycleSystem | None = None) -> None:
+    def __init__(
+        self,
+        lifecycle_system: StateLifecycleSystem | None = None,
+        *,
+        transition_coordinator=None,
+    ) -> None:
         self._lifecycle_system = lifecycle_system
+        self._transition_coordinator = transition_coordinator
 
     def commit_defeat(
         self,
@@ -68,7 +75,31 @@ class DefeatCleanupPort:
 
             lifecycle = StateLifecycleSystem()
 
+        resident_before = tuple(
+            sorted(
+                context.states.find(owner_id=defeated_unit_id),
+                key=lambda item: item.instance_id,
+            )
+        )
+        transition_snapshot = None
+        if self._transition_coordinator is not None and resident_before:
+            transition_snapshot = self._transition_coordinator.capture(
+                context,
+                tuple(StateNode(item.instance_id) for item in resident_before),
+            )
+
         removed = lifecycle.clear_owner_on_defeat(context, defeated_unit_id)
+
+        if (
+            self._transition_coordinator is not None
+            and transition_snapshot is not None
+            and removed
+        ):
+            self._transition_coordinator.complete_removed_nodes(
+                context,
+                transition_snapshot,
+                tuple(StateNode(item.instance_id) for item in removed),
+            )
 
         return DefeatCleanupResult(
             defeated_unit_id=defeated_unit_id,
