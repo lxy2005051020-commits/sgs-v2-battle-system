@@ -14,6 +14,8 @@ from sgs_v2.battle_core import (
     BattleSystems,
     ComboStateParams,
     DependencyCycleError,
+    DamageSkillEffectSpec,
+    DamageType,
     EmptyStateRuntimeParams,
     EventBus,
     EventType,
@@ -161,7 +163,12 @@ def make_skill_runtime() -> SkillRuntime:
             name="skill-provider",
             activation_rate=1.0,
             target_mode=SkillTargetMode.SINGLE_RANDOM_ENEMY,
-            effect_specs=(),
+            effect_specs=(
+                DamageSkillEffectSpec(
+                    damage_type=DamageType.WEAPON,
+                    coefficient=1.0,
+                ),
+            ),
         ),
         owner_id="a",
         skill_slot=SkillSlot.LEARNED_1,
