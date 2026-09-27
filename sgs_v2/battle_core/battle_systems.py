@@ -33,6 +33,13 @@ from .recovery_opportunity_system import RecoveryOpportunitySystem
 from .recovery_system import RecoveryModifierProvider, RecoverySystem
 from .provider_validity import ProviderValidityPolicy
 from .state_effectiveness import StateEffectivenessPolicy
+from .state_application import (
+    StateAdmissionPolicy,
+    StateApplicationCoordinator,
+    StateConflictPolicy,
+)
+from .state_removal import StateRemovalCoordinator, StateRemovalPolicy
+from .effectiveness_transition import EffectivenessTransitionCoordinator
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .stage9_state_runtime import Stage9StateRuntime
@@ -111,6 +118,12 @@ class BattleSystems:
     dependency_evaluation_support: DependencyEvaluationSupport = field(init=False)
     state_effectiveness_policy: StateEffectivenessPolicy = field(init=False)
     provider_validity_policy: ProviderValidityPolicy = field(init=False)
+    state_admission_policy: StateAdmissionPolicy = field(init=False)
+    state_conflict_policy: StateConflictPolicy = field(init=False)
+    state_removal_policy: StateRemovalPolicy = field(init=False)
+    effectiveness_transition_coordinator: EffectivenessTransitionCoordinator = field(init=False)
+    state_application_coordinator: StateApplicationCoordinator = field(init=False)
+    state_removal_coordinator: StateRemovalCoordinator = field(init=False)
 
     def __post_init__(self) -> None:
         self.dependency_evaluation_support = DependencyEvaluationSupport()
@@ -126,6 +139,26 @@ class BattleSystems:
         self.dependency_evaluation_support.bind_evaluators(
             state_evaluator=self.state_effectiveness_policy.evaluate_node,
             provider_evaluator=self.provider_validity_policy.evaluate_node,
+        )
+        self.state_admission_policy = StateAdmissionPolicy()
+        self.state_conflict_policy = StateConflictPolicy()
+        self.state_removal_policy = StateRemovalPolicy()
+        self.effectiveness_transition_coordinator = EffectivenessTransitionCoordinator(
+            dependencies=self.dependency_evaluation_support,
+            state_policy=self.state_effectiveness_policy,
+            provider_policy=self.provider_validity_policy,
+        )
+        self.state_application_coordinator = StateApplicationCoordinator(
+            admission_policy=self.state_admission_policy,
+            conflict_policy=self.state_conflict_policy,
+            lifecycle=self.state_lifecycle_system,
+            dependencies=self.dependency_evaluation_support,
+            transition_coordinator=self.effectiveness_transition_coordinator,
+        )
+        self.state_removal_coordinator = StateRemovalCoordinator(
+            policy=self.state_removal_policy,
+            lifecycle=self.state_lifecycle_system,
+            transition_coordinator=self.effectiveness_transition_coordinator,
         )
 
         self.stage11_state_runtime = Stage11StateRuntime(
@@ -150,7 +183,10 @@ class BattleSystems:
         )
 
         if self.defeat_cleanup_port is None:
-            self.defeat_cleanup_port = DefeatCleanupPort(self.state_lifecycle_system)
+            self.defeat_cleanup_port = DefeatCleanupPort(
+                self.state_lifecycle_system,
+                transition_coordinator=self.effectiveness_transition_coordinator,
+            )
 
         self.damage_system = DamageSystem(
             self.attribute_system,
