@@ -2,9 +2,9 @@
 
 > Date: **2026-09-27**  
 > Research Contract: **v0.2-frozen**  
-> Battle baseline: **6374f528d6db8af2df34ea6a4d012ffe7529fde1**  
+> Dependency-resolution baseline: **b1937c553a3d35ab0ee5afe8b3c8652c8e56cf36**  
 > Research baseline: **e18ae56a4db5662b87458dfa8fdff25dcdd8053b**  
-> Integration status: **PARTIAL / FREEZE_BLOCKED**  
+> Integration status: **IMPLEMENTED_PENDING_RUNTIME_AUDIT / NOT YET FROZEN**  
 > Stage12 Runtime Frozen: **1 / 7**
 
 ## A. Repository Lock
@@ -13,7 +13,7 @@ Battle repository:
 
 ```text
 lxy2005051020-commits/sgs-v2-battle-system
-baseline main = 6374f528d6db8af2df34ea6a4d012ffe7529fde1
+dependency-resolution baseline main = b1937c553a3d35ab0ee5afe8b3c8652c8e56cf36
 ```
 
 Research repository:
@@ -152,30 +152,47 @@ A denied ACTIVE operation returns before target operation construction. No Provo
 
 ## K. Preparation Interruption
 
-Shared Foundation currently provides:
+The former integration dependency is now resolved by the dedicated dependency-resolution round.
+
+Production now provides:
 
 ```text
-PreparationInterruptionPort = IMPLEMENTED
-PreparationInterruptionTransitionAdapter = IMPLEMENTED
-Concrete PREPARING owner = NOT AVAILABLE
-BattleSystems default port = NoopPreparationInterruptionPort
+PreparationStateOwner = canonical minimal PREPARING truth owner
+BattleSystems default PreparationInterruptionPort = PreparationStateOwner
+NoopPreparationInterruptionPort = non-production/test compatibility only
 ```
 
-This integration wires resident EXHAUSTION `SUPPRESSED/INACTIVE -> EFFECTIVE` transitions into the canonical interruption bridge. With an injected concrete/fake port, the transition synchronously issues a `HOLDER_ACTIVE` interruption request.
+First effective CREATE uses a separate generic post-commit seam:
 
-However, two required production facts are still unavailable:
+```text
+physical CREATE commit
+-> dependency commit
+-> canonical effectiveness evaluation
+-> CommittedEffectiveStateActivation
+-> PreparationInterruptionActivationAdapter
+-> HOLDER_ACTIVE interruption
+```
 
-1. There is no concrete PREPARING owner to interrupt.
-2. A first state `CREATE` is not represented by the current transition coordinator as `ABSENT -> EFFECTIVE`; therefore first-application EXHAUSTION cannot yet command a production preparation owner through the existing transition seam.
+Resident resume remains:
 
-No Stage15 scheduler, preparation queue, progress engine or fake production owner was created.
+```text
+SUPPRESSED -> EFFECTIVE
+-> EffectivenessTransitionCoordinator
+-> PreparationInterruptionTransitionAdapter
+-> HOLDER_ACTIVE interruption
+```
+
+The two paths converge on the same typed `PreparationInterruptionPort` without inventing an `ABSENT` effectiveness status. Initial SUPPRESSED CREATE, rejected application, same-envelope expiry and non-final suppression removal do not interrupt preparation.
+
+Detailed authority:
+`STAGE12_690101_PREPARATION_INTEGRATION_DEPENDENCY.md`.
 
 Verdict:
 
 ```text
-INTEGRATION_DEPENDENCY_BLOCKER
-Concrete Preparation Owner required
-First-application PREPARING interruption command seam required
+BLOCKER-690101-PREP-001 = CLOSED
+BLOCKER-690101-PREP-002 = CLOSED
+Stage15 Active = NO
 ```
 
 ## L. INSIGHT × EXHAUSTION
@@ -232,32 +249,26 @@ No query-time EventBus publication was added, and no new public vocabulary was i
 
 ## P. BattleSystems Wiring
 
-Added exactly one mechanism registration:
+Production `BattleSystems` now constructs one minimal `PreparationStateOwner` and uses it as the default `PreparationInterruptionPort`. It passes the canonical `StateEffectivenessPolicy` into `StateApplicationCoordinator` and binds both EXHAUSTION interruption routes:
 
 ```text
-register_exhaustion_integration(...)
+effective first CREATE -> generic committed activation adapter
+resident resume       -> effectiveness transition adapter
 ```
 
-It registers:
-
-```text
-SkillPermissionPolicy rule adapter
-EffectivenessTransitionCoordinator
-  -> PreparationInterruptionTransitionAdapter
-  -> existing PreparationInterruptionPort
-```
-
-No `ExhaustionRuntime` facade was created.
+No preparation scheduler, queue, progress engine or Stage15 execution runtime was introduced.
 
 ## Q. Tests Added
 
-New file:
+Existing `tests/test_stage12_690101_exhaustion.py` remains the permission/lifecycle contract suite.
+
+Added:
 
 ```text
-tests/test_stage12_690101_exhaustion.py
+tests/test_stage12_690101_preparation_integration.py
 ```
 
-Coverage includes application/effectiveness, ACTIVE/non-ACTIVE taxonomy, legacy Active compatibility, preparation-mode boundary, continuation, enabled-state immutability, pre-RNG denial, target short-circuit, ProviderValidity precedence, natural action/normal attack, INSIGHT admission/suppression/resume/expiry, same-envelope expiry, preparation resume bridge, reapplication unsupported boundary and static architecture guards.
+It covers canonical preparation identity, holder/provider interruption, duplicate interruption prevention, production non-Noop binding, first effective CREATE, initial SUPPRESSED CREATE, INSIGHT rejection, resident resume, multiple suppression causes, same-envelope expiry, zero-RNG/query-event behavior and Stage15 leakage/static architecture guards.
 
 ## R. RNG Regression
 
@@ -316,28 +327,31 @@ Implemented:
 
 ```text
 effective EXHAUSTION denies NEW ACTIVE skill operation admission
-resident EXHAUSTION resume can command the canonical preparation interruption port
+real PREPARING identity has a minimal production owner
+effective EXHAUSTION first CREATE interrupts existing holder Active preparation
+resident EXHAUSTION resume interrupts existing holder Active preparation
 ```
 
 Not implemented:
 
 ```text
-concrete PREPARING state/progress owner
-first-application PREPARING interruption completion
+preparation round progression
+prepared-skill completion/execution
+Stage15 scheduler/queue/runtime
 ```
 
 ## Z. pytest / demo / CI
 
-Validated implementation snapshot:
+Latest pre-documentation dependency-resolution validation:
 
 ```text
-SHA    = d8dbfa1537cb93a77505b4da5be5240c814193c6
-CI     = 36313725482 / success
-pytest = 1215 passed
+SHA    = 9dd4affbbacf75f8145da537d20dd3417cac0654
+CI     = 36314683277 / success
+pytest = 1229 passed
 demo   = PASS
 ```
 
-Baseline was 1186 passed, so this integration adds 29 executable tests while preserving the prior suite.
+A fresh documentation-complete CI and post-merge `main` CI remain mandatory before final round closure.
 
 ## AA. Files Created / Updated
 
@@ -372,16 +386,11 @@ The final documentation-only evidence commit is expected to differ from the test
 ## AC. Implementation Blockers
 
 ```text
-BLOCKER-690101-PREP-001
-Concrete Preparation Owner does not exist.
-
-BLOCKER-690101-PREP-002
-Current EffectivenessTransitionCoordinator does not emit a first CREATE
-as ABSENT -> EFFECTIVE, so first-application preparation interruption
-has no lawful existing command seam.
+BLOCKER-690101-PREP-001 = CLOSED
+BLOCKER-690101-PREP-002 = CLOSED
 ```
 
-These are external architecture dependencies. They are not permission-layer defects.
+There is no remaining preparation architecture blocker for 690101. Runtime Freeze itself still requires an independent audit.
 
 ## AD. Current Gates
 
@@ -394,9 +403,11 @@ Stage12 Shared Foundation Design = FROZEN
 Stage12 Shared Foundation Implementation = COMPLETE
 690089 Runtime = FROZEN
 
-690101 Gameplay = PARTIAL
-690101 Runtime = FREEZE_BLOCKED
+690101 Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690101 Runtime = NOT YET FROZEN
 Stage12 Runtime Frozen = 1 / 7
+
+690107 Runtime Integration = NOT STARTED
 
 Stage13 Active = NO
 Stage14 Active = NO
@@ -405,13 +416,8 @@ Stage15 Active = NO
 
 ## AE. NEXT
 
-Do **not** enter 690107 yet.
-
-Required next governance action:
-
 ```text
-resolve explicit 690101 preparation integration dependency
-without activating Stage15 as a whole
+690101 EXHAUSTION Independent Runtime Freeze Audit
 ```
 
-Only after the concrete preparation requirement is lawfully closed may 690101 proceed to Independent Runtime Freeze Audit.
+Do not enter 690107 before that audit passes. Only an audit PASS may change 690101 Runtime to FROZEN and Stage12 Runtime Frozen to 2 / 7.
