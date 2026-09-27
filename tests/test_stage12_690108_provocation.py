@@ -300,6 +300,22 @@ def capture_operation(systems: BattleSystems):
     return captured
 
 
+def resolve_skill(
+    systems: BattleSystems,
+    context: BattleContext,
+    item: SkillRuntime,
+):
+    """Resolve through the production provider registry/admission path."""
+
+    assert item.skill_slot is not None
+    existing = context.skill_runtimes.get(item.owner_id, item.skill_slot)
+    if existing is None:
+        context.skill_runtimes.register(item)
+    elif existing is not item:
+        raise ValueError("test fixture attempted to replace an occupied skill slot")
+    return resolve_skill(systems, context, item)
+
+
 def test_provocation_application_and_effective_truth() -> None:
     context, systems = make_context(), BattleSystems()
     result = apply_provocation(systems, context)
@@ -352,7 +368,7 @@ def test_single_admissible_source_is_forced_with_zero_target_rng() -> None:
     rng = CountingRandomSystem()
     context, systems = make_context(random_system=rng), BattleSystems()
     apply_provocation(systems, context, source="b")
-    result = systems.skill_resolver.resolve(context, runtime())
+    result = resolve_skill(systems, context, runtime())
     assert result.status is SkillResolutionStatus.RESOLVED
     assert result.target_ids == ("b",)
     assert rng.sample_calls == 0
@@ -362,7 +378,7 @@ def test_single_deterministic_selector_is_also_forced() -> None:
     rng = CountingRandomSystem()
     context, systems = make_context(random_system=rng), BattleSystems()
     apply_provocation(systems, context, source="d")
-    result = systems.skill_resolver.resolve(
+    result = resolve_skill(systems, 
         context,
         runtime(mode=SkillTargetMode.SINGLE_DETERMINISTIC_ENEMY),
     )
@@ -374,7 +390,7 @@ def test_illegal_source_not_in_raw_candidates_does_not_force_and_state_remains()
     context, systems = make_context(seed=7), BattleSystems()
     item = apply_provocation(systems, context, source="x").instance
     assert item is not None
-    result = systems.skill_resolver.resolve(context, runtime())
+    result = resolve_skill(systems, context, runtime())
     assert result.target_ids[0] in {"b", "c", "d"}
     assert context.states.has_instance(item.instance_id)
 
@@ -384,7 +400,7 @@ def test_dead_source_does_not_force_and_state_remains() -> None:
     item = apply_provocation(systems, context, source="b").instance
     assert item is not None
     context.get_unit("b").troops = 0
-    result = systems.skill_resolver.resolve(context, runtime())
+    result = resolve_skill(systems, context, runtime())
     assert result.target_ids[0] in {"c", "d"}
     assert context.states.has_instance(item.instance_id)
 
@@ -409,7 +425,7 @@ def test_explicit_exclusion_makes_source_illegal_without_consuming_state() -> No
         return TargetPolicyContribution(excluded_target_ids=("b",))
 
     systems.skill_target_policy.register_rule_adapter(exclude_b)
-    result = systems.skill_resolver.resolve(context, runtime())
+    result = resolve_skill(systems, context, runtime())
     assert result.target_ids[0] in {"c", "d"}
     assert context.states.has_instance(item.instance_id)
 
@@ -417,7 +433,7 @@ def test_explicit_exclusion_makes_source_illegal_without_consuming_state() -> No
 def test_choose_n_includes_source_exactly_once_and_preserves_cardinality() -> None:
     context, systems = make_context(seed=12), BattleSystems()
     apply_provocation(systems, context, source="b")
-    result = systems.skill_resolver.resolve(
+    result = resolve_skill(systems, 
         context,
         runtime(
             mode=SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES,
@@ -432,7 +448,7 @@ def test_choose_n_reserve_first_excludes_source_and_samples_n_minus_one() -> Non
     rng = CountingRandomSystem(13)
     context, systems = make_context(random_system=rng), BattleSystems()
     apply_provocation(systems, context, source="b")
-    systems.skill_resolver.resolve(
+    resolve_skill(systems, 
         context,
         runtime(
             mode=SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES,
@@ -448,7 +464,7 @@ def test_choose_n_n_equals_one_consumes_zero_sample_rng() -> None:
     rng = CountingRandomSystem(14)
     context, systems = make_context(random_system=rng), BattleSystems()
     apply_provocation(systems, context, source="b")
-    result = systems.skill_resolver.resolve(
+    result = resolve_skill(systems, 
         context,
         runtime(
             mode=SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES,
@@ -463,7 +479,7 @@ def test_choose_n_full_remaining_fill_consumes_zero_sample_rng() -> None:
     rng = CountingRandomSystem(15)
     context, systems = make_context(random_system=rng), BattleSystems()
     apply_provocation(systems, context, source="b")
-    result = systems.skill_resolver.resolve(
+    result = resolve_skill(systems, 
         context,
         runtime(
             mode=SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES,
@@ -479,7 +495,7 @@ def test_choose_n_deterministic_selector_preserves_source_and_uses_zero_rng() ->
     rng = CountingRandomSystem(16)
     context, systems = make_context(random_system=rng), BattleSystems()
     apply_provocation(systems, context, source="d")
-    result = systems.skill_resolver.resolve(
+    result = resolve_skill(systems, 
         context,
         runtime(
             mode=SkillTargetMode.CHOOSE_N_DETERMINISTIC_ENEMIES,
@@ -497,7 +513,7 @@ def test_choose_n_replay_preserves_result_rng_topology_and_downstream_stream() -
         rng = CountingRandomSystem(17)
         context, systems = make_context(random_system=rng), BattleSystems()
         apply_provocation(systems, context, source="b")
-        result = systems.skill_resolver.resolve(
+        result = resolve_skill(systems, 
             context,
             runtime(
                 mode=SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES,
@@ -520,7 +536,7 @@ def test_choose_n_insufficient_candidates_is_explicit_unsupported_boundary() -> 
     context, systems = make_context(), BattleSystems()
     apply_provocation(systems, context, source="b")
     with pytest.raises(ValueError, match="unsupported Skill target-policy boundary"):
-        systems.skill_resolver.resolve(
+        resolve_skill(systems, 
             context,
             runtime(
                 mode=SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES,
@@ -536,7 +552,7 @@ def test_choose_n_illegal_source_preserves_original_selector_behavior() -> None:
         context, systems = make_context(random_system=rng), BattleSystems()
         if with_provocation:
             apply_provocation(systems, context, source="x")
-        result = systems.skill_resolver.resolve(
+        result = resolve_skill(systems, 
             context,
             runtime(
                 mode=SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES,
@@ -551,7 +567,7 @@ def test_fixed_all_is_unchanged_when_source_is_legal() -> None:
     rng = CountingRandomSystem(19)
     context, systems = make_context(random_system=rng), BattleSystems()
     apply_provocation(systems, context, source="b")
-    result = systems.skill_resolver.resolve(
+    result = resolve_skill(systems, 
         context,
         runtime(mode=SkillTargetMode.FIXED_ALL_ENEMIES),
     )
@@ -562,7 +578,7 @@ def test_fixed_all_is_unchanged_when_source_is_legal() -> None:
 def test_fixed_all_does_not_insert_illegal_source() -> None:
     context, systems = make_context(), BattleSystems()
     apply_provocation(systems, context, source="x")
-    result = systems.skill_resolver.resolve(
+    result = resolve_skill(systems, 
         context,
         runtime(mode=SkillTargetMode.FIXED_ALL_ENEMIES),
     )
@@ -585,7 +601,7 @@ def test_resolved_continuations_do_not_reenter_provocation(
     context, systems = make_context(), BattleSystems()
     apply_provocation(systems, context, source="b")
     captured = capture_operation(systems)
-    fresh = systems.skill_resolver.resolve(context, runtime())
+    fresh = resolve_skill(systems, context, runtime())
     assert fresh.target_ids == ("b",)
     assert len(captured) == 1
 
@@ -605,11 +621,11 @@ def test_independent_new_query_reevaluates_source_admissibility() -> None:
     context, systems = make_context(seed=20), BattleSystems()
     apply_provocation(systems, context, source="b")
     context.get_unit("b").troops = 0
-    first = systems.skill_resolver.resolve(context, runtime())
+    first = resolve_skill(systems, context, runtime())
     assert first.target_ids[0] in {"c", "d"}
 
     context.get_unit("b").troops = 1000
-    second = systems.skill_resolver.resolve(context, runtime())
+    second = resolve_skill(systems, context, runtime())
     assert second.target_ids == ("b",)
 
 
@@ -633,7 +649,7 @@ def test_later_insight_suppresses_then_resume_affects_future_query_only() -> Non
     ).instance
     assert provoke is not None
     captured = capture_operation(systems)
-    first = systems.skill_resolver.resolve(context, runtime())
+    first = resolve_skill(systems, context, runtime())
     selected = TargetSelectionResult(
         operation_id=captured[-1].operation_id,
         target_ids=first.target_ids,
@@ -668,7 +684,7 @@ def test_later_insight_suppresses_then_resume_affects_future_query_only() -> Non
     assert systems.state_effectiveness_policy.evaluate_state(
         context, current
     ).effective
-    future = systems.skill_resolver.resolve(context, runtime())
+    future = resolve_skill(systems, context, runtime())
     assert future.target_ids == ("b",)
 
 
@@ -711,7 +727,7 @@ def test_exhaustion_denial_short_circuits_before_target_policy() -> None:
         return None
 
     systems.skill_target_policy.register_rule_adapter(counter)
-    result = systems.skill_resolver.resolve(context, runtime())
+    result = resolve_skill(systems, context, runtime())
     assert result.status is SkillResolutionStatus.DISABLED
     assert invocations == []
 
@@ -752,7 +768,7 @@ def test_false_report_source_provider_dependency_suppresses_and_restores_provoca
     assert systems.state_effectiveness_policy.evaluate_state(
         context, current
     ).effective
-    assert systems.skill_resolver.resolve(context, runtime()).target_ids == ("b",)
+    assert resolve_skill(systems, context, runtime()).target_ids == ("b",)
 
 
 @pytest.mark.parametrize(
@@ -845,7 +861,7 @@ def test_confusion_preempts_only_when_operation_marks_confusion_as_target_owner(
 def test_skill_definition_maps_confusion_arbitration_metadata_to_operation() -> None:
     context, systems = make_context(), BattleSystems()
     captured = capture_operation(systems)
-    systems.skill_resolver.resolve(
+    resolve_skill(systems, 
         context,
         runtime(
             restriction_keys=(PROVOCATION_CONFUSION_PREEMPTION_KEY,),
@@ -866,7 +882,7 @@ def test_taunt_does_not_influence_skill_target_policy() -> None:
         source="c",
         runtime_params=TauntStateParams(taunt_target_id="c"),
     )
-    result = systems.skill_resolver.resolve(context, runtime())
+    result = resolve_skill(systems, context, runtime())
     assert result.target_ids == ("b",)
 
 
@@ -938,7 +954,7 @@ def test_production_skill_definition_maps_to_frozen_target_operation(
 ) -> None:
     context, systems = make_context(seed=23), BattleSystems()
     captured = capture_operation(systems)
-    systems.skill_resolver.resolve(
+    resolve_skill(systems, 
         context,
         runtime(mode=mode, target_count=target_count),
     )
@@ -956,7 +972,7 @@ def test_legacy_single_random_enemy_behavior_has_no_drift() -> None:
     for _ in range(2):
         rng = CountingRandomSystem(24)
         context, systems = make_context(random_system=rng), BattleSystems()
-        result = systems.skill_resolver.resolve(
+        result = resolve_skill(systems, 
             context,
             runtime(mode=SkillTargetMode.SINGLE_RANDOM_ENEMY),
         )
