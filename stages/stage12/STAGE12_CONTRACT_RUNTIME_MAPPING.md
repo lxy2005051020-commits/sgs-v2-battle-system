@@ -1,6 +1,6 @@
 # Stage12 Contract → Runtime Mapping Skeleton
 
-> Status: **SKELETON / ENTRY GATE OUTPUT**  
+> Status: **SHARED FOUNDATION DESIGN MAPPING / ROUNDS 2-9 GOVERNED / NOT IMPLEMENTED**  
 > Date: **2026-09-27**  
 > Rule-level expansion is mandatory before each state's implementation begins.
 
@@ -181,7 +181,7 @@ provider identity resolution
 -> observable activation / activation RNG / target RNG
 ~~~
 
-The two policy reads may both be evaluated so that the composed internal decision retains all blockers. Any presentation ordering of blockers is diagnostic/serialization only and has no gameplay authority. Public event vocabulary remains DQ-SF-13.
+The two policy reads may both be evaluated so that the composed internal decision retains all blockers. Any presentation ordering of blockers is diagnostic/serialization only and has no gameplay authority. Public event vocabulary is governed by Round 9: final domain owner publishes canonical facts; diagnostic blocker ordering has no gameplay authority.
 
 
 ## SF Round 6 frozen target-operation bindings
@@ -195,7 +195,7 @@ These rows are DESIGN_FROZEN_FOUNDATION, not GREEN.
 | derived target | derive from prior result with DERIVED provenance | no recheck unless producer explicitly starts a new query | adjacency/link derivation does not imply selection |
 | locked target | reuse resolved/locked target with LOCKED provenance | later state changes do not silently create a target query | Capture delayed/locked final semantics remain DQ-SF-23 |
 | Provocation SINGLE | required target = admissible Provocation Source; exact cardinality = 1 | final target is Source | Source inadmissible => no illegal force |
-| Provocation CHOOSE_N | preserve N; Source appears exactly once; original selector owns remaining selection | Source included and N unchanged | exact random micro-order remains DQ-SF-12 / bounded BU-P02 |
+| Provocation CHOOSE_N | preserve N; Source appears exactly once; original selector owns remaining selection | Source included and N unchanged | exact random micro-order remains bounded BU-P02 and is Round 9 DEFERRED, not defaulted |
 | Provocation FIXED_ALL | preserve all eligible targets | operation does not collapse to one target | Source absent because illegal is not inserted |
 | Capture friendly SINGLE | remove captured holder from eligible candidates | zero remaining candidates => NO_LEGAL_TARGET / existing SkillResolution NO_VALID_TARGET adapter | no fallback-self invention |
 | Capture friendly CHOOSE_N | remove captured holder before selection | captured holder absent from verified multi-target selection | insufficient eligible count remains bounded, not inherited from TargetSystem truncation |
@@ -243,7 +243,7 @@ These rows are DESIGN_FROZEN_FOUNDATION, not GREEN.
 | multi-reason | cause-set composition | remove one cause still suppressed | no mutable equipment.enabled truth |
 | initialization | outside ongoing effectiveness | resume does not rerun setup/register/reroll | no replay/reinitialize |
 | RNG | policy/registry = 0 RNG | query leaves RNG stream unchanged | trigger-owned RNG stays domain-owned |
-| events | query emits none | duplicate query no event effect | public event vocabulary remains DQ-SF-13 |
+| events | query emits none | duplicate query no event effect | Round 9 freezes post-decision/commit public facts; policy query remains event-free |
 
 JIT mapping:
 - ATTRIBUTE -> query-time
@@ -332,9 +332,9 @@ The same work may snapshot one dimension and JIT another.
 
 ExecutionRightSpec evaluation consumes zero RNG.
 
-Where a frozen contract explicitly requires a JIT gate before owned RNG, that order is mandatory, e.g. Provider-dependent RecoveryOpportunity validity before recovery probability RNG. Final RNG signature/order governance remains DQ-SF-12.
+Where a frozen contract explicitly requires a JIT gate before owned RNG, that order is mandatory, e.g. Provider-dependent RecoveryOpportunity validity before recovery probability RNG. Round 9 closes final RNG signature/order governance; this JIT-before-owned-RNG rule is part of that closure.
 
-Public ACTION_BLOCKED / damage-denial / recovery-prevention reason presentation remains DQ-SF-13. Round 8 freezes the deciding owner and internal reason topology, not the final public event schema.
+Round 9 closes public event governance: ACTION_BLOCKED remains ActionSystem-owned, damage denial remains Damage-domain-owned, and recovery prevention remains RecoverySystem-owned. Round 8's deciding owner and internal reason topology are preserved.
 
 
 ## SF Round 9 frozen RNG / Event / Default mappings
