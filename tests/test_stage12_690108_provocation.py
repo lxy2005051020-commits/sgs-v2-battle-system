@@ -313,7 +313,7 @@ def resolve_skill(
         context.skill_runtimes.register(item)
     elif existing is not item:
         raise ValueError("test fixture attempted to replace an occupied skill slot")
-    return resolve_skill(systems, context, item)
+    return systems.skill_resolver.resolve(context, item)
 
 
 def test_provocation_application_and_effective_truth() -> None:
