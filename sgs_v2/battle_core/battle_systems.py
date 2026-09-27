@@ -288,6 +288,7 @@ class BattleSystems:
         self.finalization_coordinator = BattleFinalizationCoordinator(
             victory_system=self.victory_system,
             state_lifecycle_system=self.state_lifecycle_system,
+            effectiveness_transition_coordinator=self.effectiveness_transition_coordinator,
         )
         self.future_admission_gate = FutureAdmissionGate(
             coordinator=self.finalization_coordinator,
