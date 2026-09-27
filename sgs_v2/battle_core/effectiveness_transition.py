@@ -51,6 +51,7 @@ class EffectivenessTransitionCoordinator:
         "_state_policy",
         "_provider_policy",
         "_state_ports",
+        "_state_public_fact_ports",
         "_provider_ports",
     )
 
