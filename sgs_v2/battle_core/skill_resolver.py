@@ -121,7 +121,7 @@ class SkillResolver:
         candidates = self._candidate_units(
             context,
             owner,
-            definition.target_mode,
+            definition,
         )
         if not candidates:
             return self._empty_result(
@@ -210,7 +210,7 @@ class SkillResolver:
             selected = self._select_targets(
                 context,
                 candidates,
-                runtime.definition.target_mode,
+                runtime.definition,
             )
             if not selected:
                 return None
@@ -252,6 +252,53 @@ class SkillResolver:
             provenance=TargetSelectionProvenance.FRESH_SELECTED,
         )
 
+    @staticmethod
+    def _target_contract(definition):
+        """Canonicalize SkillDefinition producer intent into TargetOperation metadata."""
+
+        mode = definition.target_mode
+        if mode is SkillTargetMode.SINGLE_RANDOM_ENEMY:
+            return (
+                TargetRelation.ENEMY,
+                TargetCardinality.SINGLE,
+                TargetSelectorKind.RANDOM,
+                TargetPurpose.HOSTILE,
+                None,
+            )
+        if mode is SkillTargetMode.SINGLE_DETERMINISTIC_ENEMY:
+            return (
+                TargetRelation.ENEMY,
+                TargetCardinality.SINGLE,
+                TargetSelectorKind.DETERMINISTIC,
+                TargetPurpose.HOSTILE,
+                None,
+            )
+        if mode is SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES:
+            return (
+                TargetRelation.ENEMY,
+                TargetCardinality.CHOOSE_N,
+                TargetSelectorKind.RANDOM,
+                TargetPurpose.HOSTILE,
+                definition.target_count,
+            )
+        if mode is SkillTargetMode.CHOOSE_N_DETERMINISTIC_ENEMIES:
+            return (
+                TargetRelation.ENEMY,
+                TargetCardinality.CHOOSE_N,
+                TargetSelectorKind.DETERMINISTIC,
+                TargetPurpose.HOSTILE,
+                definition.target_count,
+            )
+        if mode is SkillTargetMode.FIXED_ALL_ENEMIES:
+            return (
+                TargetRelation.ENEMY,
+                TargetCardinality.FIXED_ALL,
+                TargetSelectorKind.DETERMINISTIC,
+                TargetPurpose.HOSTILE,
+                None,
+            )
+        raise ValueError(f"unsupported target mode: {mode}")
+
     def _new_target_operation(
         self,
         context: BattleContext,
@@ -261,13 +308,13 @@ class SkillResolver:
         if runtime.skill_slot is None:
             raise ValueError("canonical TargetOperation requires a SkillSlot")
 
-        if definition.target_mode is SkillTargetMode.SINGLE_RANDOM_ENEMY:
-            relation = TargetRelation.ENEMY
-            cardinality = TargetCardinality.SINGLE
-            selector_kind = TargetSelectorKind.RANDOM
-            purpose = TargetPurpose.HOSTILE
-        else:
-            raise ValueError(f"unsupported target mode: {definition.target_mode}")
+        (
+            relation,
+            cardinality,
+            selector_kind,
+            purpose,
+            requested_count,
+        ) = self._target_contract(definition)
 
         provider_ref = SkillProviderRef(
             owner_id=runtime.owner_id,
@@ -288,36 +335,60 @@ class SkillResolver:
             eligibility_context=TargetEligibilityContext(
                 domain=TargetOperationDomain.SKILL,
                 purpose=purpose,
+                restriction_keys=definition.target_restriction_keys,
             ),
+            requested_count=requested_count,
         )
 
     def _candidate_units(
         self,
         context: BattleContext,
         owner: UnitRuntime,
-        target_mode: SkillTargetMode,
+        definition,
     ) -> list[UnitRuntime]:
-        if target_mode is SkillTargetMode.SINGLE_RANDOM_ENEMY:
+        relation, _, _, _, _ = self._target_contract(definition)
+        if relation is TargetRelation.ENEMY:
             return self._target_system.enemies(
                 context,
                 owner,
                 alive_only=True,
             )
-        raise ValueError(f"unsupported target mode: {target_mode}")
+        if relation is TargetRelation.ALLY:
+            return self._target_system.allies(
+                context,
+                owner,
+                alive_only=True,
+                include_self=False,
+            )
+        if relation is TargetRelation.SELF:
+            return [owner] if owner.is_alive else []
+        raise ValueError(f"unsupported target relation: {relation}")
 
     def _select_targets(
         self,
         context: BattleContext,
         candidates: list[UnitRuntime],
-        target_mode: SkillTargetMode,
+        definition,
     ) -> list[UnitRuntime]:
-        if target_mode is SkillTargetMode.SINGLE_RANDOM_ENEMY:
+        _, cardinality, selector_kind, _, requested_count = self._target_contract(
+            definition
+        )
+        if cardinality is TargetCardinality.FIXED_ALL:
+            return list(candidates)
+
+        count = 1 if cardinality is TargetCardinality.SINGLE else requested_count
+        assert count is not None
+        if selector_kind is TargetSelectorKind.RANDOM:
             return self._target_system.random_units(
                 context,
                 candidates,
-                count=1,
+                count=count,
             )
-        raise ValueError(f"unsupported target mode: {target_mode}")
+        if selector_kind is TargetSelectorKind.DETERMINISTIC:
+            return list(candidates[:count])
+        raise ValueError(
+            f"unsupported producer selector without explicit target ids: {selector_kind}"
+        )
 
     def _select_policy_targets(
         self,
@@ -342,6 +413,17 @@ class SkillResolver:
             else operation.requested_count
         )
         assert count is not None
+
+        # BU-P09 remains an explicit unsupported boundary for canonical
+        # CHOOSE_N production operations. Do not silently promote the legacy
+        # TargetSystem min(count, legal_count) fallback into the Stage12 law.
+        if (
+            operation.cardinality is TargetCardinality.CHOOSE_N
+            and len(candidates) < count
+        ):
+            raise ValueError(
+                "unsupported Skill target-policy boundary: insufficient candidates"
+            )
 
         if len(required) > count:
             raise ValueError("required targets exceed target cardinality")
