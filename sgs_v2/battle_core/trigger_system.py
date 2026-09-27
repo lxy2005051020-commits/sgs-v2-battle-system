@@ -168,7 +168,11 @@ class TriggerSystem:
                     "continuous damage state requires source_id for DamageSystem attribution"
                 )
             source_skill_id = basis.source_skill_id or instance.source_skill_id
-            source_skill_slot = basis.source_skill_slot or instance.source_skill_slot
+            source_skill_slot = (
+                basis.source_skill_slot
+                if basis.source_skill_slot is not None
+                else instance.source_skill_slot
+            )
             source_ref = EffectSourceRef(
                 stage9_source_type=SourceType.PERIODIC_DAMAGE,
                 source_unit_id=source_id,

@@ -20,6 +20,7 @@ from .state_lifecycle_system import StateLifecycleSystem
 
 if TYPE_CHECKING:
     from .context import BattleContext
+    from .state_effectiveness import StateEffectivenessPolicy
 
 __all__ = [
     "Stage9StateRuntime",
@@ -40,6 +41,7 @@ class Stage9StateRuntime:
         self,
         state_lifecycle_system: StateLifecycleSystem,
         counter_operationality=None,
+        state_effectiveness_policy: "StateEffectivenessPolicy | None" = None,
     ) -> None:
         if not isinstance(state_lifecycle_system, StateLifecycleSystem):
             raise TypeError(
@@ -47,6 +49,7 @@ class Stage9StateRuntime:
             )
         self._lifecycle = state_lifecycle_system
         self._counter_operationality = counter_operationality
+        self._state_effectiveness_policy = state_effectiveness_policy
 
     @property
     def lifecycle(self) -> StateLifecycleSystem:
@@ -267,6 +270,10 @@ class Stage9StateRuntime:
         context: BattleContext,
         unit_id: str,
     ) -> bool:
+        if self._state_effectiveness_policy is not None:
+            return self._state_effectiveness_policy.has_effective(
+                context, unit_id, OfficialStateId.INSIGHT.value
+            )
         return context.states.has(
             owner_id=unit_id,
             state_id=OfficialStateId.INSIGHT.value,

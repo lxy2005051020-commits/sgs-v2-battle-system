@@ -291,8 +291,60 @@ from .damage_aftermath_port import (
     create_damage_aftermath_fact,
 )
 from .recovery_opportunity_system import RecoveryOpportunitySystem
+from .provider_identity import (
+    EquipmentProviderRef,
+    ProviderRef,
+    ProviderResolutionStatus,
+    SkillProviderRef,
+    SkillProviderResolution,
+)
+from .dependency_evaluation import (
+    DependencyCycleError,
+    DependencyEvaluationSupport,
+    ProviderNode,
+    StateNode,
+)
+from .state_effectiveness import (
+    InactivityCause,
+    LocalRuleCauseRef,
+    ProviderCauseRef,
+    StateCauseRef,
+    StateEffectivenessContribution,
+    StateEffectivenessDecision,
+    StateEffectivenessPolicy,
+    StateEffectivenessStatus,
+    SuppressionCause,
+)
+from .provider_validity import (
+    ProviderDependency,
+    ProviderValidityDecision,
+    ProviderValidityPolicy,
+    ProviderValidityStatus,
+)
 
 __all__ = [
+    "SkillProviderRef",
+    "EquipmentProviderRef",
+    "ProviderRef",
+    "ProviderResolutionStatus",
+    "SkillProviderResolution",
+    "StateNode",
+    "ProviderNode",
+    "DependencyCycleError",
+    "DependencyEvaluationSupport",
+    "StateCauseRef",
+    "ProviderCauseRef",
+    "LocalRuleCauseRef",
+    "SuppressionCause",
+    "InactivityCause",
+    "StateEffectivenessContribution",
+    "StateEffectivenessStatus",
+    "StateEffectivenessDecision",
+    "StateEffectivenessPolicy",
+    "ProviderDependency",
+    "ProviderValidityStatus",
+    "ProviderValidityDecision",
+    "ProviderValidityPolicy",
     "BattleContext",
     "BattleResult",
     "BattleEngine",

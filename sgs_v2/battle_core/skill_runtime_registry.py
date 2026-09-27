@@ -5,6 +5,11 @@ from enum import Enum
 from typing import TYPE_CHECKING
 
 from .skill_runtime import SkillRuntime, SkillSlot
+from .provider_identity import (
+    ProviderResolutionStatus,
+    SkillProviderRef,
+    SkillProviderResolution,
+)
 
 if TYPE_CHECKING:
     pass
@@ -118,6 +123,27 @@ class SkillRuntimeRegistry:
                 )
 
         return runtime
+
+    def resolve_provider(self, provider_ref: SkillProviderRef) -> SkillProviderResolution:
+        """Resolve stable Provider identity without conflating baseline enabled state."""
+        if not isinstance(provider_ref, SkillProviderRef):
+            raise TypeError("provider_ref must be a SkillProviderRef")
+        runtime = self.get(provider_ref.owner_id, provider_ref.skill_slot)
+        if runtime is None:
+            return SkillProviderResolution(
+                provider_ref=provider_ref,
+                status=ProviderResolutionStatus.MISSING,
+            )
+        if runtime.definition.skill_id != provider_ref.skill_id:
+            return SkillProviderResolution(
+                provider_ref=provider_ref,
+                status=ProviderResolutionStatus.IDENTITY_MISMATCH,
+            )
+        return SkillProviderResolution(
+            provider_ref=provider_ref,
+            status=ProviderResolutionStatus.FOUND,
+            runtime=runtime,
+        )
 
     def get(self, owner_id: str, slot: SkillSlot) -> SkillRuntime | None:
         """Safe lookup returning None if not registered."""

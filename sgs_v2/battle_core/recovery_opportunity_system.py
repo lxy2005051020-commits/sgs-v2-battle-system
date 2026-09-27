@@ -8,6 +8,8 @@ from .effects import EffectSourceRef
 from .operation_identity import SourceType
 from .reaction_permission_policy import ReactionPermissionPolicy
 from .recovery_system import RecoveryRequest, RecoverySystem
+from .provider_identity import SkillProviderRef
+from .provider_validity import ProviderValidityPolicy, ProviderValidityStatus
 from .rule_intent import (
     RecoveryOpportunity,
     RecoveryOpportunityKind,
@@ -48,11 +50,13 @@ class RecoveryOpportunitySystem:
         self,
         recovery_system: RecoverySystem,
         skill_runtime_registry: SkillRuntimeRegistry | None = None,
+        provider_validity_policy: ProviderValidityPolicy | None = None,
     ) -> None:
         if not isinstance(recovery_system, RecoverySystem):
             raise TypeError(f"recovery_system must be a RecoverySystem, got {type(recovery_system)}")
         self._recovery_system = recovery_system
         self._skill_runtimes = skill_runtime_registry
+        self._provider_validity_policy = provider_validity_policy
 
     def execute(
         self,
@@ -169,17 +173,37 @@ class RecoveryOpportunitySystem:
             registry = self._skill_runtimes or getattr(context, "skill_runtimes", None)
             source_ref = opportunity.execution_descriptor.source_ref
             if registry is not None and source_ref is not None:
-                if source_ref.source_unit_id and source_ref.source_skill_slot:
-                    skill_rt = registry.get(
-                        source_ref.source_unit_id, source_ref.source_skill_slot
+                if (
+                    source_ref.source_unit_id
+                    and source_ref.source_skill_slot is not None
+                    and source_ref.source_skill_id
+                ):
+                    provider_ref = SkillProviderRef(
+                        owner_id=source_ref.source_unit_id,
+                        skill_slot=source_ref.source_skill_slot,
+                        skill_id=source_ref.source_skill_id,
                     )
-                    if skill_rt is not None and not skill_rt.enabled:
-                        return RecoveryOpportunityResult(
-                            opportunity=opportunity,
-                            resolution=None,
-                            executed=False,
-                            reason="SKILL_TEMPORARILY_DISABLED",
+                    if self._provider_validity_policy is not None:
+                        provider_decision = self._provider_validity_policy.evaluate_provider(
+                            context, provider_ref
                         )
+                        if provider_decision.status is not ProviderValidityStatus.VALID:
+                            return RecoveryOpportunityResult(
+                                opportunity=opportunity,
+                                resolution=None,
+                                executed=False,
+                                reason="SKILL_TEMPORARILY_DISABLED",
+                            )
+                    else:
+                        resolution = registry.resolve_provider(provider_ref)
+                        skill_rt = resolution.runtime
+                        if skill_rt is None or not skill_rt.enabled:
+                            return RecoveryOpportunityResult(
+                                opportunity=opportunity,
+                                resolution=None,
+                                executed=False,
+                                reason="SKILL_TEMPORARILY_DISABLED",
+                            )
 
         # Gate 5: Simulator RNG Probability Draw (Shared Engine Tail)
         # All pre-conditions satisfied -> Opportunity becomes ADMITTED.

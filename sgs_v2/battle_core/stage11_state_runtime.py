@@ -21,7 +21,15 @@ from .stage11_state_params import (
 from .state_instance import StateInstance
 from typing import TYPE_CHECKING
 
+from .state_effectiveness import (
+    InactivityCause,
+    LocalRuleCauseRef,
+    StateEffectivenessContribution,
+    SuppressionCause,
+)
+
 if TYPE_CHECKING:
+    from .state_effectiveness import StateEffectivenessPolicy
     from .state_lifecycle_system import StateLifecycleSystem
 
 
@@ -74,6 +82,56 @@ class AlertAdjustment:
     consumed_instance_id: str | None
 
 
+def stage11_legacy_effectiveness_adapter(
+    context: BattleContext,
+    instance: StateInstance,
+    _session,
+) -> StateEffectivenessContribution:
+    """Behavior-preserving Stage11 blockers expressed as Shared Foundation causes."""
+    params = instance.runtime_params
+    suppression: list[SuppressionCause] = []
+    inactivity: list[InactivityCause] = []
+
+    if bool(getattr(params, "is_suppressed", False)):
+        suppression.append(
+            SuppressionCause(
+                "STAGE11_LEGACY_SUPPRESSED",
+                LocalRuleCauseRef(f"{instance.instance_id}:is_suppressed"),
+            )
+        )
+
+    if bool(getattr(params, "source_dependent", False)):
+        source_id = instance.source_id
+        source = context.units.get(source_id) if source_id is not None else None
+        if source is None or not source.is_alive:
+            inactivity.append(
+                InactivityCause(
+                    "STAGE11_SOURCE_DEPENDENCY_INACTIVE",
+                    LocalRuleCauseRef(f"{instance.instance_id}:source_dependency"),
+                )
+            )
+
+    if isinstance(params, (ResistanceStateParams, AlertStateParams)) and params.remaining_uses <= 0:
+        inactivity.append(
+            InactivityCause(
+                "STAGE11_REMAINING_USES_DEPLETED",
+                LocalRuleCauseRef(f"{instance.instance_id}:remaining_uses"),
+            )
+        )
+    if isinstance(params, StunStateParams) and params.remaining_blocks <= 0:
+        inactivity.append(
+            InactivityCause(
+                "STAGE11_REMAINING_BLOCKS_DEPLETED",
+                LocalRuleCauseRef(f"{instance.instance_id}:remaining_blocks"),
+            )
+        )
+
+    return StateEffectivenessContribution(
+        suppression_causes=tuple(suppression),
+        inactivity_causes=tuple(inactivity),
+    )
+
+
 class Stage11StateRuntime:
     """Read/arbitration façade for Stage11 states.
 
@@ -82,10 +140,15 @@ class Stage11StateRuntime:
     typed instances after a gameplay decision.
     """
 
-    def __init__(self, lifecycle: "StateLifecycleSystem") -> None:
+    def __init__(
+        self,
+        lifecycle: "StateLifecycleSystem",
+        state_effectiveness_policy: "StateEffectivenessPolicy | None" = None,
+    ) -> None:
         if not hasattr(lifecycle, "update_runtime_params") or not hasattr(lifecycle, "remove"):
             raise TypeError("lifecycle must provide StateLifecycleSystem mutation seams")
         self._lifecycle = lifecycle
+        self._state_effectiveness_policy = state_effectiveness_policy
 
     @staticmethod
     def _ordered(instances: list[StateInstance] | tuple[StateInstance, ...]) -> tuple[StateInstance, ...]:
@@ -98,6 +161,12 @@ class Stage11StateRuntime:
         return self._ordered(context.states.find(owner_id=owner_id, state_id=sid))
 
     def is_effective(self, context: BattleContext, instance: StateInstance) -> bool:
+        if self._state_effectiveness_policy is not None:
+            return self._state_effectiveness_policy.evaluate_state(
+                context, instance
+            ).effective
+
+        # Explicit legacy compatibility path for isolated non-production tests.
         params = instance.runtime_params
         if bool(getattr(params, "is_suppressed", False)):
             return False

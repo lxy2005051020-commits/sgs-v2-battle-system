@@ -7,6 +7,7 @@ from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
+from .dependency_evaluation import DependencyEvaluationSupport
 from .chain_system import ChainSystem, DamageCallbackAdmissionPoint
 from .cleave_system import CleaveSystem
 from .cleave_derived_damage_system import CleaveDerivedDamageResolver
@@ -30,10 +31,15 @@ from .execution_right_system import (
 from .normal_attack_system import NormalAttackSystem
 from .recovery_opportunity_system import RecoveryOpportunitySystem
 from .recovery_system import RecoveryModifierProvider, RecoverySystem
+from .provider_validity import ProviderValidityPolicy
+from .state_effectiveness import StateEffectivenessPolicy
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .stage9_state_runtime import Stage9StateRuntime
-from .stage11_state_runtime import Stage11StateRuntime
+from .stage11_state_runtime import (
+    Stage11StateRuntime,
+    stage11_legacy_effectiveness_adapter,
+)
 from .stage11_attacker_recovery import Stage11AttackerRecoverySystem
 from .state_lifecycle_system import StateLifecycleSystem
 from .target_resolution_system import TargetResolutionSystem
@@ -102,9 +108,30 @@ class BattleSystems:
     cleave_system: CleaveSystem = field(init=False)
     counter_system: CounterSystem = field(init=False)
     continuous_damage_basis_producer: ContinuousDamageBasisProducer = field(init=False)
+    dependency_evaluation_support: DependencyEvaluationSupport = field(init=False)
+    state_effectiveness_policy: StateEffectivenessPolicy = field(init=False)
+    provider_validity_policy: ProviderValidityPolicy = field(init=False)
 
     def __post_init__(self) -> None:
-        self.stage11_state_runtime = Stage11StateRuntime(self.state_lifecycle_system)
+        self.dependency_evaluation_support = DependencyEvaluationSupport()
+        self.state_effectiveness_policy = StateEffectivenessPolicy(
+            self.dependency_evaluation_support
+        )
+        self.state_effectiveness_policy.register_rule_adapter(
+            stage11_legacy_effectiveness_adapter
+        )
+        self.provider_validity_policy = ProviderValidityPolicy(
+            self.dependency_evaluation_support
+        )
+        self.dependency_evaluation_support.bind_evaluators(
+            state_evaluator=self.state_effectiveness_policy.evaluate_node,
+            provider_evaluator=self.provider_validity_policy.evaluate_node,
+        )
+
+        self.stage11_state_runtime = Stage11StateRuntime(
+            self.state_lifecycle_system,
+            self.state_effectiveness_policy,
+        )
         self.action_order_system = ActionOrderSystem(
             self.attribute_system, self.stage11_state_runtime
         )
@@ -113,7 +140,10 @@ class BattleSystems:
             self.stage11_state_runtime,
             recovery_modifier_provider=self.recovery_modifier_provider,
         )
-        self.recovery_opportunity_system = RecoveryOpportunitySystem(self.recovery_system)
+        self.recovery_opportunity_system = RecoveryOpportunitySystem(
+            self.recovery_system,
+            provider_validity_policy=self.provider_validity_policy,
+        )
         self.stage11_attacker_recovery_system = Stage11AttackerRecoverySystem(
             self.recovery_system,
             self.stage11_state_runtime,
@@ -141,6 +171,7 @@ class BattleSystems:
         self.stage9_state_runtime = Stage9StateRuntime(
             state_lifecycle_system=self.state_lifecycle_system,
             counter_operationality=self.counter_operationality,
+            state_effectiveness_policy=self.state_effectiveness_policy,
         )
         self.damage_partition_coordinator = DamagePartitionCoordinator(
             self.stage9_state_runtime,
