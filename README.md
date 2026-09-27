@@ -94,7 +94,14 @@ Research FROZEN:
 - final adversarial falsification PASS
 - final contract correction audit PASS / FG-01..20 = 20/20
 - cfg_71 excluded from state core; event != redirect explicitly frozen
-- Runtime NOT_INTEGRATED
+- Gameplay IMPLEMENTED_PENDING_RUNTIME_AUDIT
+- Runtime NOT_YET_FROZEN
+- Integration Exit Gate PASS
+- RD-SF-005 reserve-first producer/selector topology implemented with PROJECT_RUNTIME_DEFAULT provenance preserved
+- SINGLE / CHOOSE_N / FIXED_ALL production producer mapping implemented
+- BU-P06 / BU-P09 remain UNSUPPORTED_BOUNDARY
+- CI 36333059532 / 1359 passed / demo PASS
+- Integration record: stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION_RESUME.md
 - Battle mirror: stages/stage12/STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md
 
 690222 当前状态：
@@ -125,8 +132,10 @@ Stage12 Shared Foundation Design + Implementation = FROZEN / COMPLETE.
 690089 INSIGHT Runtime = FROZEN.
 690101 EXHAUSTION Runtime = FROZEN.
 690107 FALSE_REPORT Runtime = FROZEN.
+690108 PROVOCATION Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT.
+690108 PROVOCATION Runtime = NOT_YET_FROZEN.
 Stage12 Runtime Frozen = 3 / 7.
-Next: 690108 PROVOCATION Runtime Integration.
+Next: 690108 PROVOCATION Independent Runtime Freeze Audit.
 
 ## Stage sequencing
 
