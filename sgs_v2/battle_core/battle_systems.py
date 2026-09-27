@@ -60,6 +60,7 @@ from .state_application import (
 from .state_removal import StateRemovalCoordinator, StateRemovalPolicy
 from .effectiveness_transition import EffectivenessTransitionCoordinator
 from .effectiveness_transition_events import StateEffectivenessEventAdapter
+from .insight_integration import register_insight_integration
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .stage9_state_runtime import Stage9StateRuntime
@@ -225,6 +226,12 @@ class BattleSystems:
             policy=self.state_removal_policy,
             lifecycle=self.state_lifecycle_system,
             transition_coordinator=self.effectiveness_transition_coordinator,
+        )
+        register_insight_integration(
+            state_admission_policy=self.state_admission_policy,
+            state_conflict_policy=self.state_conflict_policy,
+            state_effectiveness_policy=self.state_effectiveness_policy,
+            state_application_coordinator=self.state_application_coordinator,
         )
 
         self.stage11_state_runtime = Stage11StateRuntime(
