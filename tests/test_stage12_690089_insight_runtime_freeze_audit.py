@@ -25,6 +25,7 @@ from sgs_v2.battle_core import (
     StateEffectivenessStatus,
     StateLifetimeSpec,
     StateNode,
+    StateRemovalResultStatus,
     SuppressionCause,
     LocalRuleCauseRef,
     UnitRuntime,
@@ -387,3 +388,46 @@ def test_suppressed_insight_dependency_cascade_has_single_transitions() -> None:
     assert event_count(
         context, EventType.STATE_RESUMED
     ) == resume_before + 2
+
+
+@pytest.mark.parametrize(
+    "operation",
+    (
+        RemovalOperation.ORDINARY_CLEANSE,
+        RemovalOperation.SPECIALIZED_CLEANSE,
+        RemovalOperation.SCRIPTED_GAMEPLAY_REMOVE,
+    ),
+)
+def test_insight_unknown_gameplay_removal_is_unsupported(
+    operation: RemovalOperation,
+) -> None:
+    context = make_context()
+    systems = BattleSystems()
+    insight = apply(
+        systems, context, OfficialStateId.INSIGHT.value
+    ).instance
+    assert insight is not None
+
+    result = systems.state_removal_coordinator.remove(
+        context,
+        operation=operation,
+        instance_id=insight.instance_id,
+    )
+
+    assert result.status is StateRemovalResultStatus.UNSUPPORTED_BOUNDARY
+    assert context.states.has_instance(insight.instance_id)
+
+
+def test_external_source_defeat_does_not_universally_remove_insight() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    insight = apply(
+        systems, context, OfficialStateId.INSIGHT.value
+    ).instance
+    assert insight is not None
+    assert insight.source_id == "b0"
+
+    assert systems.defeat_cleanup_port is not None
+    systems.defeat_cleanup_port.commit_defeat(context, "b0")
+
+    assert context.states.has_instance(insight.instance_id)
