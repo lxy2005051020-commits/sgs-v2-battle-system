@@ -24,7 +24,7 @@
 | Skill Provider validity | none canonical | `ProviderValidityPolicy` after ProviderRef identity resolution | FALSE_REPORT, INTIMIDATION, CAPTURE; explicit provider-dependent effects | NEW CANONICAL SHARED OWNER |
 | Skill target operation / eligibility / constraints | SkillResolver + TargetSystem | producer creates `TargetOperation`; `TargetSystem` supplies raw candidates/RNG primitives; `SkillTargetPolicy` owns operation-local eligibility and constraints | PROVOCATION, CAPTURE | NEW CANONICAL POLICY SEAM; DESIGN FIXED / NOT IMPLEMENTED |
 | Normal Attack target arbitration | TargetResolutionSystem | TargetResolutionSystem | TAUNT/CONFUSION regression, Provocation non-domain | REUSE |
-| Damage permission | DamageSystem / existing prevention seams | canonical damage admission seam in DamageSystem stack | CAPTURE | EXTEND |
+| Damage permission / actor execution right | DamageSystem / existing prevention seams | Damage domain admission/execution-right seam, using typed work category + current actor metadata | CAPTURE | EXTEND; DESIGN FIXED |
 | Recovery | RecoverySystem | RecoverySystem | CAPTURE | EXTEND |
 | Equipment contribution effectiveness | no canonical production owner | EquipmentEffectivenessPolicy after EquipmentProviderRef/ContributionRef resolution and generic ProviderValidityPolicy | SABOTAGE; tested FalseReport equipment scope; verified Capture equipment-attribute scope | NEW CANONICAL MINIMAL OWNER; DESIGN FIXED |
 | Trigger collection | TriggerSystem | TriggerSystem querying provider/equipment policy | FALSE_REPORT, SABOTAGE, CAPTURE | EXTEND |
@@ -55,9 +55,9 @@ The following remain open after Round 4:
 - DQ-SF-12 final RNG signatures / ordering outside the Round 4 candidate and refresh boundaries;
 - DQ-SF-13 public event model;
 - DQ-SF-17 composition-root wiring;
-- DQ-SF-19 Capture composite execution;
+- DQ-SF-19 CLOSED in Round 8: Capture composite owner matrix + action/damage/recovery/provider/target/equipment boundaries;
 - DQ-SF-21 CLOSED_BY_SHARED_FOUNDATION_DESIGN in Round 5: RecoveryOpportunitySystem Gate 4 migration contract frozen; implementation remains pending;
-- DQ-SF-23 queued / in-flight semantics;
+- DQ-SF-23 ARCHITECTURE CLOSED / CONTRACT_DEPENDENT in Round 8: per-dimension ExecutionRightSpec; Q16/Q44/Q45/B-SAB-07 remain bounded;
 - DQ-SF-26 independent Shared Foundation design audit.
 
 Admission, effectiveness, Provider validity, lifecycle transaction, clock and removal-policy owner names are no longer open architecture questions.
@@ -235,3 +235,48 @@ Owner invariants:
 - Domain owners retain calculation, ordering, CEIL, scheduling and trigger RNG.
 - FalseReport/Capture bounded categories surface as unsupported rather than being generalized.
 - Public transition events remain DQ-SF-13.
+
+## SF Round 8 owner closure — Capture composite + work execution rights
+
+Authority record:
+- STAGE12_CAPTURE_COMPOSITE_EXECUTION_DESIGN.md
+
+### Capture composite owner matrix
+
+| Capture effect | Canonical owner | Capture supplies | Frozen boundary |
+|---|---|---|---|
+| Natural Action denied | ActionSystem | effective-CAPTURE rule fact | upstream of NormalAttack; no target/RNG; CAPTURE denial does not consume STUN |
+| Normal Attack attempt | ActionSystem -> NormalAttackSystem boundary | none beyond Action denial | no global Capture filter in NormalAttackSystem |
+| New Skill admission | existing ProviderValidity + SkillPermission composition where contract applies | provider/holder state facts only | no Capture-owned skill engine |
+| PASSIVE / COMMAND Provider suppression | ProviderValidityPolicy | effective-CAPTURE suppression cause | no physical provider deletion; resume future-only |
+| New actor-driven damage | Damage domain admission/execution-right seam | current-actor CAPTURE denial fact | no Weakness reuse; no universal source_id gate |
+| Counter damage | CounterSystem owns admitted batch; Damage domain owns local damage permission | current counter actor CAPTURE fact | batch semantics preserved; no counter damage; public trigger/event topology deferred to DQ-SF-13 |
+| Existing Active-origin DOT | existing attached/persistent effect owner + Damage domain | no Capture actor denial for admitted continuation | explicit ProviderDependency, if any, remains independently live |
+| Received recovery | RecoverySystem | CAPTURE prevention cause | after modifier/second CEIL, before troop restore/capacity; target selection remains separate |
+| Friendly SINGLE / CHOOSE_N eligibility | SkillTargetPolicy | CAPTURE target-ineligibility fact | ALL_ALLIES and locked/delayed remain bounded |
+| Equipment attribute contribution | EquipmentEffectivenessPolicy | CAPTURE equipment suppression cause | Q63 reactive/damage remains unsupported boundary |
+| Physical CAPTURE lifetime | StateLifecycleSystem | state metadata only | source death does not auto-remove |
+
+### Shared execution-right ownership
+
+| Responsibility | Canonical owner | Round 8 decision |
+|---|---|---|
+| future branch admission while battle is RUNNING | existing FutureAdmissionGate | REUSE unchanged; not a Capture/state-permission engine |
+| RuleIntent execution liveness | existing ExecutionRightSystem | REUSE / future typed extension only; preserve admitted persistent work and current-only rejection invariants |
+| domain operation identity | existing domain IDs and owners | REUSE; no UniversalWorkId |
+| execution-right stability metadata | ExecutionRightSpec carried by owning work | NEW SHARED DESIGN VALUE / NOT A GAMEPLAY OWNER |
+| ACTOR_PERMISSION final decision | Action/Damage/etc. owner that owns the operation | domain-owned |
+| PROVIDER_VALIDITY final decision | ProviderValidityPolicy | existing canonical owner |
+| TARGET_ELIGIBILITY final decision | SkillTargetPolicy when the work contract requests recheck | existing canonical owner; LOCKED != NEW_QUERY |
+| EQUIPMENT_CONTRIBUTION final decision | EquipmentEffectivenessPolicy | existing canonical owner |
+| STATE_EFFECTIVENESS final decision | StateEffectivenessPolicy | existing canonical owner |
+| public event publication | deciding domain owner -> EventBus | DQ-SF-13 remains open |
+
+Owner invariants:
+
+- Capture never becomes a central executor.
+- ExecutionRightSpec is metadata, not a universal is_valid boolean and not an RNG consumer.
+- Per-dimension modes can differ on the same work item.
+- UNSUPPORTED_BOUNDARY must surface rather than silently ALLOW/DENY.
+- A JIT failure skips the current execution only; no automatic requeue/replay.
+- Current actor, origin Provider, historical source, effect holder, damage source and damage target are distinct roles.

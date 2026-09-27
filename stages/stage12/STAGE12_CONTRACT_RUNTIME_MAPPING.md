@@ -28,13 +28,13 @@
 | SABOTAGE | equipment effectiveness suppression | EquipmentEffectivenessPolicy.evaluate_contribution | target-owned tested contribution suppressed vs physical unequip/delete | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | SABOTAGE | existing effects/remote ownership | explicit EquipmentContributionDependency -> EquipmentEffectivenessPolicy | Equipment Owner suppression affects dependent remote live effect; unrelated Holder Provider remains valid | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | SABOTAGE | restoration | EquipmentEffectivenessPolicy + existing lifecycle/domain owners | final-cause removal resumes future eligibility; no reinitialize/replay | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
-| CAPTURE | natural action denial | ActionSystem | action denied independently of skill permission | DESIGN_MAPPING |
-| CAPTURE | actor-driven new damage denial | DamageSystem admission seam | counterattack no damage vs attached Active-origin DOT continues | DESIGN_MAPPING |
-| CAPTURE | PASSIVE/COMMAND invalidation | provider-validity policy | provider behavior suspended vs historical effect deletion | DESIGN_MAPPING |
-| CAPTURE | recovery to zero | RecoverySystem | Capture recovery denial vs HealingBlock regression/order | DESIGN_MAPPING |
+| CAPTURE | natural action denial | ActionSystem two-phase action admission/block seam | effective Capture denies Natural Action before NormalAttack creation; Capture denial does not consume STUN | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
+| CAPTURE | actor-driven new damage denial | Damage domain typed work admission/execution-right seam | current actor + work category distinguish new/counter damage from attached DOT/free proxy | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
+| CAPTURE | PASSIVE/COMMAND invalidation | ProviderValidityPolicy | provider behavior suspended vs historical effect deletion; source death does not end established Capture | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
+| CAPTURE | recovery to zero | RecoverySystem prevention phase | Capture + HealingBlock may coexist as causes after modifier/second CEIL; self targetability remains separate | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | CAPTURE | friendly target exclusion | `SkillTargetPolicy` eligibility phase | verified friendly SINGLE / CHOOSE_N excludes captured holder; enemy targetability and raw allies query unchanged | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
-| CAPTURE | restoration | composed owners + lifecycle | RESUME / future-only; no replay | DESIGN_MAPPING |
-| CAPTURE | source death independence | lifecycle | applied Capture remains after source death | DESIGN_MAPPING |
+| CAPTURE | restoration | composed domain owners + StateLifecycleSystem | RESUME / future-only; no missed action/counter/recovery/trigger replay | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
+| CAPTURE | source death independence | StateLifecycleSystem | established Capture remains; origin source alive is never a universal future-execution gate | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 
 ## Completion rule
 
@@ -254,3 +254,84 @@ JIT mapping:
 - LIVE_EFFECT -> live authority/use query through explicit dependency
 
 Round 7 does not close DQ-SF-23. The tested scheduled due-window outcome is frozen; broader admitted/queued/in-flight micro-order is the next design problem.
+
+## SF Round 8 frozen Capture composite / execution-right bindings
+
+These bindings close architecture only. They do not upgrade bounded Capture/Sabotage evidence.
+
+### Work identity and lifecycle
+
+Minimum shared lifecycle vocabulary:
+
+~~~text
+NEW
+ADMITTED
+QUEUED
+ATTACHED
+EXECUTING
+SETTLED
+~~~
+
+TARGET_LOCKED is an orthogonal provenance qualifier and may coexist with QUEUED.
+
+Identity remains domain-specific: ActionId, NormalAttackInstanceId, DamageInstanceId, RecoveryOpportunity identity, TargetOperationId, State application generation, Counter batch/entry identity, and equivalent future domain IDs. Round 8 creates no UniversalWorkId.
+
+### ExecutionRightSpec
+
+Each admitted work category declares a per-dimension mode:
+
+~~~text
+SNAPSHOT_AT_ADMISSION
+RECHECK_AT_EXECUTION
+NOT_APPLICABLE
+UNSUPPORTED_BOUNDARY
+~~~
+
+Dimensions:
+
+~~~text
+ACTOR_PERMISSION
+PROVIDER_VALIDITY
+TARGET_ELIGIBILITY
+EQUIPMENT_CONTRIBUTION
+STATE_EFFECTIVENESS
+~~~
+
+The same work may snapshot one dimension and JIT another.
+
+### Known anchors
+
+| Work | Actor | Provider | Target | Equipment | State/effectiveness | Result |
+|---|---|---|---|---|---|---|
+| already-admitted Active under later EXHAUSTION | SNAPSHOT_AT_ADMISSION for Skill permission | contract-specific | contract-specific | N/A | contract-specific | no rollback / no re-admission |
+| Provider-dependent RecoveryOpportunity | operation-specific | RECHECK_AT_EXECUTION | operation-specific | N/A | as dependency requires | Provider validity before recovery probability RNG |
+| attached Active-origin DOT under later CAPTURE | NOT_APPLICABLE for Capture actor gate | only if explicit live dependency exists | existing attached target semantics | N/A | attachment lifecycle owner | tick continues |
+| new actor-driven damage | RECHECK_AT_EXECUTION | source-specific if declared | target liveness per Damage owner | contribution-specific | current actor CAPTURE fact | deny when current actor captured |
+| Counter local damage | RECHECK_AT_EXECUTION | source-specific if declared | existing Counter local target rules | contribution-specific | current counter actor CAPTURE fact | no counter damage; admitted batch not retroactively deleted |
+| free proxy damage | RECHECK_AT_EXECUTION against proxy B | origin A remains provenance | domain target rules | contribution-specific | B current state | historical captured A does not block B merely by provenance |
+| scheduled equipment due-window already frozen in Round 7 | operation-specific | ProviderValidity as declared | operation-specific | RECHECK_AT_EXECUTION | equipment contribution policy | suppressed due window skipped, no replay |
+
+### Explicit bounded mappings
+
+| Boundary | ExecutionRightSpec representation | Gameplay answer |
+|---|---|---|
+| Capture Q16 already-created DamageRequest | ACTOR_PERMISSION = UNSUPPORTED_BOUNDARY until authority/default resolves exact micro-slice | not chosen |
+| Capture Q44 delayed friendly work | relevant actor/provider/target modes remain UNSUPPORTED_BOUNDARY unless separately frozen | not chosen |
+| Capture Q45 already-locked friendly target | TARGET_ELIGIBILITY = UNSUPPORTED_BOUNDARY; LOCKED provenance retained | not chosen; never silently create NEW_QUERY |
+| Sabotage B-SAB-07 collected/queued work | EQUIPMENT_CONTRIBUTION = UNSUPPORTED_BOUNDARY outside tested scheduled due-window | not chosen |
+
+### Current runtime audit implications
+
+- FutureAdmissionGate is battle-finalization/future-branch admission infrastructure. It does not currently decide CAPTURE actor permission and must not be overloaded into that role.
+- ExecutionRightSystem already protects admitted persistent RuleIntent work from generic STUN suppression and uses current-only target rejection. Round 8 preserves those invariants.
+- DamageRequest currently exposes source_id but no universal current_actor field. OperationLineage contains physical_attacker / physical_skill / credit_owner. Stage12 integration therefore requires typed work metadata; source_id cannot be promoted to universal actor truth.
+- CounterSystem has an admitted CounterBatch and creates local DamageRequest per entry. CAPTURE must not retroactively delete the batch; the damage-domain seam denies the local damage opportunity.
+- RecoverySystem currently performs modifier/second CEIL before HealingBlock and troop restore. CAPTURE joins prevention topology without moving the existing modifier/CEIL or restore/capacity owners.
+
+### RNG and event boundaries
+
+ExecutionRightSpec evaluation consumes zero RNG.
+
+Where a frozen contract explicitly requires a JIT gate before owned RNG, that order is mandatory, e.g. Provider-dependent RecoveryOpportunity validity before recovery probability RNG. Final RNG signature/order governance remains DQ-SF-12.
+
+Public ACTION_BLOCKED / damage-denial / recovery-prevention reason presentation remains DQ-SF-13. Round 8 freezes the deciding owner and internal reason topology, not the final public event schema.

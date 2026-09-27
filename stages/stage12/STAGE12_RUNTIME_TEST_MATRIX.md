@@ -473,3 +473,93 @@ test_existing_attribute_damage_recovery_trigger_paths_unchanged_without_equipmen
 ~~~
 
 These are future production-test obligations only. Round 7 changes zero executable test code and zero gameplay code.
+
+## SF Round 8 planned discriminator suite
+
+Status: DESIGN_FROZEN / NOT IMPLEMENTED.
+
+### Capture Action
+
+~~~text
+test_capture_blocks_natural_action
+test_capture_block_does_not_consume_stun_block
+test_capture_action_denial_creates_no_normal_attack
+test_capture_action_denial_creates_no_normal_attack_target_rng
+test_capture_removal_allows_future_action_no_replay
+~~~
+
+### Damage / Counter / DOT
+
+~~~text
+test_capture_blocks_new_actor_driven_damage
+test_capture_blocks_counter_damage
+test_capture_does_not_block_existing_active_dot
+test_free_proxy_damage_not_blocked_by_historical_captured_origin
+test_source_id_not_equal_current_actor
+test_weakness_and_capture_remain_distinct_damage_semantics
+test_counter_batch_admission_not_retroactively_deleted_by_capture
+test_capture_damage_denial_admits_no_damage_instance
+~~~
+
+### Provider
+
+~~~text
+test_capture_suppresses_passive_command_provider
+test_capture_source_death_does_not_restore_provider
+test_capture_removal_resumes_provider_future_only
+test_capture_provider_resume_does_not_replay_trigger
+~~~
+
+### Recovery
+
+~~~text
+test_capture_received_recovery_zero
+test_capture_plus_healing_block_preserves_canonical_recovery_pipeline
+test_capture_and_healing_block_can_coexist_as_internal_causes
+test_recovery_modifier_second_ceil_precedes_capture_prevention
+test_capture_recovery_prevention_precedes_troop_restore_capacity
+test_capture_removal_does_not_replay_missed_recovery
+test_capture_self_recovery_not_reimplemented_as_target_exclusion
+~~~
+
+### Target / locked work
+
+~~~text
+test_capture_excludes_verified_friendly_new_query
+test_locked_friendly_target_carries_explicit_recheck_boundary
+test_locked_target_boundary_does_not_allocate_new_target_operation_id
+test_delayed_friendly_work_carries_per_dimension_recheck_spec
+~~~
+
+### Execution-right lifecycle
+
+~~~text
+test_new_work_and_admitted_work_are_distinct
+test_admitted_work_keeps_domain_identity_when_queued
+test_attached_work_is_continuation_not_automatic_new_actor_admission
+test_target_locked_is_orthogonal_to_queue_state
+test_already_admitted_active_permission_not_rechecked_by_exhaustion
+test_execution_right_dimensions_can_mix_snapshot_and_jit
+test_provider_jit_failure_does_not_requeue
+test_execution_jit_failure_does_not_replay_after_resume
+test_bounded_damage_request_policy_is_explicit
+test_bounded_locked_target_policy_is_explicit
+test_bounded_sabotage_queued_policy_is_explicit
+test_no_universal_jit_recheck
+test_no_universal_snapshot
+~~~
+
+### Architecture / ownership
+
+~~~text
+test_capture_has_no_universal_runtime_owner
+test_domain_owners_remain_canonical
+test_future_admission_gate_is_not_capture_permission_owner
+test_execution_right_spec_is_rng_free
+test_execution_right_system_preserves_stage10_persistent_work_invariant
+test_event_bus_does_not_decide_execution_right
+test_damage_work_metadata_separates_actor_provider_source_holder_and_target
+test_no_universal_work_id_required
+~~~
+
+These are future production-test obligations only. Round 8 changes zero executable test code and zero gameplay code.

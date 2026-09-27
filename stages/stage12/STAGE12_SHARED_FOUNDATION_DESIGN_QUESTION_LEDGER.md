@@ -42,11 +42,11 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 
 | ID | Question | Status | Owner / next decision | Acceptance boundary |
 |---|---|---|---|---|
-| DQ-SF-19 | Capture composite action/damage/recovery/target permission | DESIGN_REQUIRED | ActionSystem, DamageSystem stack, RecoverySystem, target policy, ProviderValidityPolicy own separate decisions; decide result topology and concurrent reason reporting | Counter blocked vs attached Active DOT continues; free proxy actor remains legal; friendly single/2-target excluded; self recovery arrives but zero; equipment attributes only proven scope |
+| DQ-SF-19 | Capture composite action/damage/recovery/target permission | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Capture supplies state-derived rule facts only. ActionSystem, Damage domain admission/execution seam, ProviderValidityPolicy, RecoverySystem, SkillTargetPolicy, EquipmentEffectivenessPolicy and StateLifecycleSystem remain final domain owners. | Counter damage denied while attached Active DOT continues; current actor is distinct from origin provider/source; verified friendly SINGLE/CHOOSE_N exclusion, recovery-zero and equipment-attribute scope preserved; no Capture God Object |
 | DQ-SF-20 | Cyclic dependencies and immediate transitions | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Evaluation uses an explicit consumer→prerequisite dependency graph with per-evaluation memoization and cycle detection. `EffectivenessTransitionCoordinator` is a non-authoritative propagation coordinator. Cycles are unsupported: raise `DependencyCycleError`, produce no guessed allow/deny truth, and require topology validation before committing dependency-changing transitions. | No fixed point; reverse dependency closure drives synchronous re-evaluation; cycle path explicit; no replay; no Runtime Default needed because no gameplay fallback is chosen |
 | DQ-SF-21 | Existing JIT source-gate migration and slot 0 | CLOSED_BY_SHARED_FOUNDATION_DESIGN | RecoveryOpportunitySystem Gate 4 must construct SkillProviderRef with explicit slot-is-not-None semantics and expected skill_id, then delegate all current validity to ProviderValidityPolicy before recovery RNG. SkillResolver admission must likewise stop treating runtime.enabled as the complete truth. | INHERENT=0/1/2 same path; MISSING / IDENTITY_MISMATCH / BASELINE_DISABLED / SUPPRESSED all reject before owned RNG; attribution-only source_ref does not gain liveness |
 | DQ-SF-22 | Application result, refresh transaction, binding atomicity | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `StateConflictPolicy` + immutable `StateApplicationTransaction` + non-writing coordinator prepare CREATE/REFRESH/REPLACE/REJECT; only Lifecycle commits. REFRESH keeps instance_id and creates a new application generation. | All fallible validation precedes commit; old Intimidation binding/timer stay authoritative until commit; resume preserves binding/generation/timer; legacy ValueError surface retained for old callers |
-| DQ-SF-23 | Admitted/queued work vs JIT recheck | CONTRACT_DEPENDENT | Owning operation + execution-right system preserve admission identity; distinguish new operation from continuation | Exhaustion in-flight Active no rollback; Stage9 Counter admitted-entry invariant; Capture Q16/Q44/Q45 and Sabotage B-SAB-07 remain bounded until default/authority disposition |
+| DQ-SF-23 | Admitted/queued work vs JIT recheck | CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED | Domain-specific operation identity carries an ExecutionRightSpec with per-dimension SNAPSHOT_AT_ADMISSION / RECHECK_AT_EXECUTION / NOT_APPLICABLE / UNSUPPORTED_BOUNDARY. Existing FutureAdmissionGate remains future-branch/battle-finalization authority; existing ExecutionRightSystem is extended only as shared execution-right infrastructure, never as a gameplay-domain God Object. | New != admitted; queued/attached/locked retain identity; Exhaustion admitted Active permission is stable; Recovery Provider validity can JIT; Capture Q16/Q44/Q45 and Sabotage B-SAB-07 remain explicit bounded modes, not silent defaults |
 | DQ-SF-24 | Clock continuation during suppression | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `StateLifecycleSystem` owns physical lifetime; explicit clock domains separate round/holder-action/phase lifetime from behavioral block/use counters and provider/source counters. Stage12 uses typed lifetime metadata instead of entering Stage10 merely via duration_rounds/lifecycle_window. | suppression never pauses physical lifetime; STUN block consumption requires an actually blocked opportunity; Intimidation may expire while ineffective; RD-SF-003 fixes same-envelope settlement ordering |
 | DQ-SF-25 | Cleanse eligibility, strength, reapplication and source death | CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED | `StateRemovalPolicy.evaluate_removal` owns gameplay removal eligibility; `StateLifecycleSystem.remove` remains the authorized physical primitive. Natural expiry/defeat/teardown are infrastructure, not ordinary cleanse. | Capture ordinary cleanse rejected; Intimidation generic cleanse rejected but specialized removal bounded; FR/SAB removal classes stay evidence-scoped; source death never implies global cleanup; reapplication unknowns remain unsupported, not invented |
 | DQ-SF-26 | Design Freeze audit owner and gate | DESIGN_REQUIRED | Independent audit after full design, with seven contracts, concrete API mapping, defaults, tests and risk register; no freeze audit claim in SF-0 | 17 requested audit checks; no blocking owner/conflict, no Stage13+ leakage; architecture freeze distinct from 0/7 Runtime |
@@ -313,3 +313,46 @@ Preserved mechanism-specific debt:
 - Sabotage B-SAB-09 dynamic equipment-change / empty-equipment semantics where a gameplay answer would be required.
 
 These are evidence boundaries, not an open owner/architecture question.
+
+## 6. SF Round 8 closure — Capture composite execution and admitted/queued/JIT boundary
+
+DQ-SF-19 = CLOSED_BY_SHARED_FOUNDATION_DESIGN.
+
+DQ-SF-23 = CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED.
+
+Authority:
+- STAGE12_CAPTURE_COMPOSITE_EXECUTION_DESIGN.md
+
+Frozen Shared Foundation facts:
+
+- CAPTURE is a Composite State, not a universal runtime owner.
+- Natural Action denial belongs to ActionSystem. Capture denial is upstream of NormalAttack operation creation; it creates no NormalAttack targeting or RNG.
+- CAPTURE and STUN are not represented by a first-if-wins chain. Action blocking is two-phase: non-consuming eligibility denial first, then consumable Stage11 action blockers. CAPTURE denial therefore does not consume a STUN block.
+- Damage work carries an explicit work category and current actor identity. source_id / historical provenance is never sufficient to decide CAPTURE actor permission.
+- Minimum damage categories: NEW_ACTOR_DRIVEN_DAMAGE, COUNTER_DAMAGE, ATTACHED_EXISTING_DOT, FREE_PROXY_DAMAGE, ALREADY_CREATED_DAMAGE_REQUEST, OTHER_BOUNDED.
+- New actor-driven damage and Counter damage are denied by the Damage domain when the current actor is captured.
+- Previously attached Active-origin DOT is admitted continuation. CAPTURE actor permission is NOT_APPLICABLE to that continuation; any explicit Provider dependency remains independently governed.
+- A free proxy actor is judged by the proxy's current actor identity, not by an historical captured origin Provider.
+- CAPTURE damage denial is admission/execution-right semantics and must remain distinct from WEAKNESS legal-zero output semantics.
+- Provider-linked PASSIVE / COMMAND validity remains ProviderValidityPolicy-owned.
+- Received recovery remains RecoverySystem-owned. CAPTURE participates in the prevention phase after recovery modifier/second CEIL and before troop restoration/capacity; HEALING_BLOCK and CAPTURE can coexist as internal causes without changing arithmetic order.
+- Friendly target exclusion remains SkillTargetPolicy-owned and does not become a global targetable flag.
+- Equipment attribute suppression remains EquipmentEffectivenessPolicy-owned; CAPTURE Q63 reactive/damage equipment remains bounded.
+- Physical CAPTURE lifetime/removal remains StateLifecycleSystem-owned; source death does not synthesize cleanup.
+- Work lifecycle distinguishes NEW, ADMITTED, QUEUED, ATTACHED, EXECUTING and SETTLED. TARGET_LOCKED is an orthogonal target-provenance qualifier that may coexist with queued work.
+- No UniversalWorkId is introduced. Existing domain IDs remain identity; shared metadata only describes execution-right dimensions.
+- ExecutionRightSpec modes are per dimension: SNAPSHOT_AT_ADMISSION, RECHECK_AT_EXECUTION, NOT_APPLICABLE, UNSUPPORTED_BOUNDARY.
+- Dimensions are ACTOR_PERMISSION, PROVIDER_VALIDITY, TARGET_ELIGIBILITY, EQUIPMENT_CONTRIBUTION and STATE_EFFECTIVENESS.
+- No universal JIT and no universal snapshot rule is allowed.
+- A failed execution-time recheck skips/denies the current execution opportunity. It does not requeue and does not replay after later resume unless a mechanism contract explicitly says otherwise.
+- Existing FutureAdmissionGate remains the Stage9 future-branch admission authority and is not repurposed into a current-state permission engine.
+- Existing ExecutionRightSystem retains its RuleIntent/liveness invariants and may host shared mechanical execution-right evaluation later; domain-specific truth still delegates to canonical domain owners.
+- Q16 already-created DamageRequest = UNSUPPORTED_BOUNDARY for actor-permission recheck policy.
+- Q44 delayed friendly work = UNSUPPORTED_BOUNDARY for target/provider/actor recheck dimensions not already frozen.
+- Q45 already-locked friendly target = UNSUPPORTED_BOUNDARY; LOCKED never silently becomes NEW_QUERY.
+- B-SAB-07 collected/queued equipment work remains UNSUPPORTED_BOUNDARY outside the already frozen scheduled due-window case.
+- No new PROJECT_RUNTIME_DEFAULT is required in Round 8.
+
+Stage11 Reopen Required = NO.
+Gameplay implementation = NONE.
+Stage12 Runtime Frozen = 0 / 7.

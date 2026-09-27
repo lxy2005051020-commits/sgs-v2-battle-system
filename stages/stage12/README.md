@@ -155,4 +155,30 @@ before design freeze or migration. Existing gameplay and tests are preserved.
 
 Stage11 Runtime FROZEN / Reopen Required NO in this documentation-only phase; Stage12 Active YES;
 Stage12 Runtime Frozen 0 / 7; Stage13 Active NO; Research FROZEN 39 / 40; DSTS9-B02 OPEN / UNOBSERVED.
-NEXT: DQ-SF-15/16 authority reconciliation, then DQ-SF-04/05 taxonomy and Provider identity design.
+Rounds 2-8 have now closed the shared owner/identity/effectiveness/lifecycle/permission/target/equipment/Capture-composition architecture. Round 8 closes DQ-SF-19 and closes DQ-SF-23 at the architecture layer while preserving Q16/Q44/Q45/B-SAB-07 as explicit bounded gameplay edges. Shared Foundation Design remains NOT FROZEN. NEXT: DQ-SF-12 RNG Governance + DQ-SF-13 Event Model + DQ-SF-14 Runtime Default finalization, followed by DQ-SF-17 wiring, DQ-SF-18 final test architecture and DQ-SF-26 independent design audit.
+
+## Shared Foundation Round 8 — Capture composite execution boundary
+
+Design authority:
+- STAGE12_CAPTURE_COMPOSITE_EXECUTION_DESIGN.md
+
+Verdicts:
+
+~~~text
+DQ-SF-19 = CLOSED_BY_SHARED_FOUNDATION_DESIGN
+DQ-SF-23 = CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED
+
+Capture composite owner matrix = FROZEN
+new work != admitted work = FROZEN
+admitted work != universally immutable = FROZEN
+per-dimension snapshot/JIT model = FROZEN
+
+Q16 / Q44 / Q45 / B-SAB-07 = BOUNDED / PRESERVED
+Runtime Defaults added = NONE
+Gameplay Implementation = NONE
+Stage11 Reopen Required = NO
+Stage12 Runtime Frozen = 0 / 7
+Stage13/14/15 Active = NO
+~~~
+
+The next governance round is DQ-SF-12 / 13 / 14.
