@@ -211,7 +211,7 @@ class BattleSystems:
             provider_policy=self.provider_validity_policy,
         )
         self.state_effectiveness_event_adapter = StateEffectivenessEventAdapter()
-        self.effectiveness_transition_coordinator.register_state_transition_port(
+        self.effectiveness_transition_coordinator.register_state_public_fact_port(
             self.state_effectiveness_event_adapter
         )
         self.state_application_coordinator = StateApplicationCoordinator(
