@@ -8,9 +8,17 @@ from .enums import DamageType
 
 
 class SkillTargetMode(str, Enum):
-    """Stage 6 最小技能目标意图。"""
+    """Production Skill target intent mapped into the canonical TargetOperation model."""
 
+    # Stage6 legacy mode. Its behavior remains ENEMY + SINGLE + RANDOM.
     SINGLE_RANDOM_ENEMY = "SINGLE_RANDOM_ENEMY"
+
+    # Stage12 production producer mappings. These are producer intents only;
+    # TargetOperation remains the canonical runtime contract.
+    SINGLE_DETERMINISTIC_ENEMY = "SINGLE_DETERMINISTIC_ENEMY"
+    CHOOSE_N_RANDOM_ENEMIES = "CHOOSE_N_RANDOM_ENEMIES"
+    CHOOSE_N_DETERMINISTIC_ENEMIES = "CHOOSE_N_DETERMINISTIC_ENEMIES"
+    FIXED_ALL_ENEMIES = "FIXED_ALL_ENEMIES"
 
 
 class SkillType(str, Enum):
@@ -79,6 +87,8 @@ class SkillDefinition:
     effect_specs: tuple[SkillEffectSpec, ...]
     skill_type: SkillType = SkillType.ACTIVE
     preparation_mode: PreparationMode = PreparationMode.NONE
+    target_count: int | None = None
+    target_restriction_keys: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.skill_id, str) or not self.skill_id.strip():
@@ -99,6 +109,30 @@ class SkillDefinition:
             raise TypeError("skill_type must be a SkillType")
         if not isinstance(self.preparation_mode, PreparationMode):
             raise TypeError("preparation_mode must be a PreparationMode")
+
+        choose_n_modes = {
+            SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES,
+            SkillTargetMode.CHOOSE_N_DETERMINISTIC_ENEMIES,
+        }
+        if self.target_mode in choose_n_modes:
+            if isinstance(self.target_count, bool) or not isinstance(
+                self.target_count, int
+            ):
+                raise TypeError("CHOOSE_N target_count must be an int")
+            if self.target_count <= 0:
+                raise ValueError("CHOOSE_N target_count must be > 0")
+        elif self.target_count is not None:
+            raise ValueError("target_count is only valid for CHOOSE_N target modes")
+
+        restriction_keys = tuple(self.target_restriction_keys)
+        if any(
+            not isinstance(item, str) or not item.strip()
+            for item in restriction_keys
+        ):
+            raise ValueError(
+                "target_restriction_keys must contain non-empty strings"
+            )
+        object.__setattr__(self, "target_restriction_keys", restriction_keys)
 
         specs = tuple(self.effect_specs)
         if not specs:
