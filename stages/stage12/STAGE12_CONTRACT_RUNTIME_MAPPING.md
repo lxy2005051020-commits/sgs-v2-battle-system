@@ -335,3 +335,148 @@ ExecutionRightSpec evaluation consumes zero RNG.
 Where a frozen contract explicitly requires a JIT gate before owned RNG, that order is mandatory, e.g. Provider-dependent RecoveryOpportunity validity before recovery probability RNG. Final RNG signature/order governance remains DQ-SF-12.
 
 Public ACTION_BLOCKED / damage-denial / recovery-prevention reason presentation remains DQ-SF-13. Round 8 freezes the deciding owner and internal reason topology, not the final public event schema.
+
+
+## SF Round 9 frozen RNG / Event / Default mappings
+
+Authority:
+- STAGE12_RNG_EVENT_DEFAULT_GOVERNANCE.md
+
+These mappings close Shared Foundation governance only. They do not implement a Stage12 state or convert bounded research into gameplay truth.
+
+| State | RNG obligation | Event obligation | Runtime Default / provenance | Remaining unsupported or deferred boundary |
+|---|---|---|---|---|
+| INSIGHT | PD-INS-001: originating protected-control generation keeps its normal source proc RNG before admission; deterministic source adds no RNG; Insight policies are zero-RNG | incoming protected rejection becomes finalized state-application rejection at ADMISSION stage; existing protected-control cfg204/cfg205 maps to public state suppression/resume transitions after committed recompute | PD-INS-001 and PD-INS-002 are inherited APPROVED_PROJECT_DEFAULTs and retain Research provenance | exotic source/proxy boundaries remain contract-owned; no new Battle default |
+| EXHAUSTION | SkillPermissionPolicy and admission coordinator are zero-RNG; denied ACTIVE new admission consumes zero activation and target RNG; already-admitted work is not re-admitted | actual blocked ACTIVE attempt may publish SKILL_OPERATION_BLOCKED; no attempt emits nothing; actual PREPARING interruption may publish PREPARATION_INTERRUPTED | no new default; pre-RNG denial is Shared Foundation architecture, not an empirical PRNG claim | hidden original-server blocked-attempt RNG remains empirically unobservable; Runtime architecture is fixed without laundering it into Research |
+| FALSE_REPORT | Provider suppression queries are zero-RNG; any downstream Provider-dependent opportunity is rejected before its own RNG when validity is non-VALID | Provider suppression/resume is internal by default; public facts arise from actual dependent domain behavior, not every validity query | no new default | stronger/weaker B-U01 and untested equipment categories remain UNSUPPORTED_BOUNDARY |
+| PROVOCATION | SkillTargetPolicy is zero-RNG; TargetSystem/selector owns sampling; forced legal SINGLE and all-candidate selections use zero target RNG; CHOOSE_N exact micro-order is not chosen | policy evaluation emits nothing; Round 9 requires no generic TARGET_FORCED event; a future target-change fact may exist only after final resolved set actually changes | no new default | CHOOSE_N BU-P02 = DEFERRED; insufficient candidates BU-P09 and multi-source BU-P06 remain UNSUPPORTED_BOUNDARY |
+| INTIMIDATION | rejected application consumes zero binding RNG; admitted initial application selects one eligible Provider; successful refresh authorizes a new selection; resume retains binding and uses zero selection RNG | public state apply/refresh/suppress/resume follows the canonical state event model; Provider validity transitions remain internal by default; preparation interruption event only for an actual transition | RD-SF-002 supplies deterministic enumeration only, not weights; no new Round 9 default | exact weights = DEFERRED; empty eligible pool = UNSUPPORTED_BOUNDARY; no uniform 1/N claim |
+| SABOTAGE | EquipmentEffectivenessPolicy is zero-RNG; suppressed contribution skips trigger-owned downstream RNG; tested scheduled missed window is not replayed | equipment suppression/resume need not invent a generic Provider event; public domain events come from actual trigger/effect behavior; state suppression/resume uses public state transition facts only when contract-observable | no new default | B-SAB-02 stronger/multi-source and B-SAB-07 queued/JIT outside tested due-window remain UNSUPPORTED_BOUNDARY |
+| CAPTURE | Action decision, Provider suppression, Recovery prevention, target eligibility and ExecutionRight evaluation are zero-RNG; Capture action denial creates no NormalAttack target RNG; denied damage/recovery/work consumes no downstream RNG at that denied seam | ActionSystem owns ACTION_BLOCKED; Damage domain owns DAMAGE_PREVENTED; RecoverySystem owns RECOVERY_PREVENTED; multiple internal recovery causes produce one compatibility public prevention fact; Provider transition internal by default | no new default | Q16/Q42/Q44/Q45/Q63/Q70-Q74 remain UNSUPPORTED_BOUNDARY; no silent JIT/snapshot/stack/target generalization |
+
+### INSIGHT mapping details
+
+~~~text
+source child proc RNG, iff source defines one
+-> control candidate
+-> StateAdmissionPolicy
+-> ADMISSION rejection if effective Insight protects candidate
+~~~
+
+No Insight query, rejection check, suppression check or resume check consumes RNG.
+
+State suppression/resume events are emitted only for a real effective-state transition after the underlying state/dependency commit.
+Incoming Insight reapplication rejection is CONFLICT-stage, not ADMISSION-stage.
+
+### EXHAUSTION mapping details
+
+~~~text
+ProviderValidity
+-> SkillPermission
+-> final Skill admission
+-> only then activation probability RNG
+~~~
+
+An EXHAUSTION-blocked ACTIVE attempt therefore consumes zero activation RNG in the Stage12 Runtime architecture.
+This closes the runtime decision point without rewriting the Research contract's hidden-server-RNG boundary.
+
+### FALSE_REPORT mapping details
+
+FalseReport changes Provider validity, not random ownership.
+
+~~~text
+ProviderValidityPolicy.evaluate
+= 0 RNG
+= 0 public events as a query
+~~~
+
+If the resulting Provider transition invalidates a later opportunity, that owning opportunity skips its downstream RNG.
+Stronger/weaker conflict remains outside this mapping.
+
+### PROVOCATION mapping details
+
+~~~text
+TargetOperation
+-> raw candidates
+-> SkillTargetPolicy
+-> TargetSystem / selector
+~~~
+
+SINGLE forced to one admissible Source is deterministic and adds no target draw.
+CHOOSE_N sampling topology remains deliberately unselected because reserve-first and sample/replace can alter replay streams.
+
+### INTIMIDATION mapping details
+
+Initial successful admission:
+
+~~~text
+admission ALLOW
+-> eligible Provider pool
+-> binding selection operation
+-> transaction commit
+~~~
+
+Refresh:
+
+~~~text
+refresh authorized
+-> fresh binding selection operation
+-> commit refreshed generation/binding
+~~~
+
+Resume:
+
+~~~text
+ineffective -> effective
+-> reuse existing binding
+-> zero binding selection RNG
+~~~
+
+A reroll that returns the same Provider is still a real selection operation.
+Exact distribution remains unproven.
+
+### SABOTAGE mapping details
+
+EquipmentEffectivenessPolicy and contribution registry remain zero-RNG filters.
+A deterministic scheduled due window suppressed by Sabotage is skipped and never replayed.
+If a future trigger has its own probability, only the trigger owner may draw after contribution JIT ALLOW.
+
+### CAPTURE mapping details
+
+Natural Action denial:
+
+~~~text
+ActionSystem CAPTURE eligibility DENY
+-> ACTION_BLOCKED fact
+-> no NormalAttack operation
+-> no target resolution
+-> no target RNG
+~~~
+
+Damage denial:
+
+~~~text
+Damage execution-right DENY
+-> DAMAGE_PREVENTED
+-> no denied-work downstream calculation/RNG
+~~~
+
+Recovery:
+
+~~~text
+modifier / second CEIL
+-> prevention cause evaluation
+-> one RECOVERY_PREVENTED public fact when prevented
+~~~
+
+Capture + HealingBlock may coexist internally. Existing HealingBlock remains the compatibility primary public reason when both apply;
+Capture-only prevention requires the future CAPTURE reason representation owned by RecoverySystem.
+
+### Round 9 mapping invariants
+
+- policy query never publishes an event merely because it was called;
+- policy query never consumes RNG merely because it was called;
+- a rejected/failed transaction does not emit applied/refreshed/transition facts;
+- event publishing follows gameplay order and cannot define gameplay order;
+- unsupported/deferred boundaries are not converted to PROJECT_RUNTIME_DEFAULT until Runtime truly must choose;
+- Research remains read-only.
