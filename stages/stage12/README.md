@@ -15,7 +15,7 @@
     Stage12 Research FROZEN: 7 / 7
     Stage12 Runtime Frozen: 0 / 7
 
-Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate，当前进行 Shared Foundation Architecture Design；不表示七状态已完成 gameplay integration 或 Runtime Freeze。
+Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 已 FROZEN，Implementation Round 1 Core 已 PASS / PARTIAL；这仍不表示七状态已完成 gameplay integration 或 Runtime Freeze。
 
 ## 已冻结研究
 
@@ -98,7 +98,7 @@ Wave 5: COMPLETE
 Stage12 Research: 7 / 7 FROZEN
 
 Next project task:
-Stage12 contract-aligned Runtime Integration Design
+Shared Foundation Implementation Round 2 — State Transaction + Transition Runtime
 
 ## Stage12 responsibility
 
@@ -292,3 +292,32 @@ Stage13 / Stage14 / Stage15 Active = NO
 ```
 
 NEXT = Stage12 Shared Foundation Implementation Planning / Implementation Round. Implementation must preserve the audit corrections and may not silently implement DEFERRED / UNSUPPORTED_BOUNDARY behavior.
+
+
+## Shared Foundation Implementation Round 1 — Core
+
+Authority/status ledger:
+- [STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_STATUS.md](STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_STATUS.md)
+
+```text
+STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND1 = PASS
+Implementation code SHA = 6b0043f26fd2977e480dd1ce7a79b9eb4d0ecdfd
+CI = 36301581694 / success
+pytest = 951 passed
+demo = PASS
+
+Provider Identity = IMPLEMENTED / TESTED
+DependencyEvaluationSupport = IMPLEMENTED / TESTED
+StateEffectiveness core = IMPLEMENTED / TESTED
+ProviderValidity core = IMPLEMENTED / TESTED
+BattleSystems canonical wiring = IMPLEMENTED / TESTED
+DQ-SF-21 slot-0 migration = IMPLEMENTED / TESTED
+
+Stage12 individual state gameplay = NONE
+Shared Foundation Implementation = PARTIAL
+Stage12 Runtime Frozen = 0 / 7
+Stage11 Reopen Required = NO
+Stage13 / Stage14 / Stage15 Active = NO
+```
+
+NEXT = Shared Foundation Implementation Round 2 — State Transaction + Transition Runtime.
