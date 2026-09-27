@@ -453,9 +453,18 @@ Gameplay added in this round:
 Validated code/test checkpoint:
 
 ```text
+d420e8130dff1b3b9cc2545f0a832eccf58abd75
+CI = 36333059532 / success
+pytest = 1359 passed
+demo = PASS
+```
+
+Final PR validation:
+
+```text
 PR #18
-head = d420e8130dff1b3b9cc2545f0a832eccf58abd75
-GitHub Actions = 36333059532 / success
+head = 4bf4e28a1599d80e448086efb5b7bfb46eef7206
+CI = 36333316715 / success
 pytest = 1359 passed
 demo = PASS
 audit snapshot upload = PASS
@@ -501,7 +510,17 @@ Validated code/test checkpoint:
 d420e8130dff1b3b9cc2545f0a832eccf58abd75
 ```
 
-Final merge SHA is recorded after PR merge.
+Final validated PR head:
+
+```text
+4bf4e28a1599d80e448086efb5b7bfb46eef7206
+```
+
+Merge commit:
+
+```text
+ceda9d6418f5b4ab49e7bb7cf54f7b15cebc9a17
+```
 
 ## AM. Implementation Blockers
 
