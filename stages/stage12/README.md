@@ -80,10 +80,15 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - Round 1–6 + adversarial falsification: PASS
 - Final contract correction audit: PASS
 - Freeze Gate: 20 / 20 PASS
-- Runtime NOT_INTEGRATED
-- Q43 restored; bounded unknowns explicit/non-blocking
-- 25 minimum Runtime contract tests defined
-- Next: contract-aligned Runtime Design
+- Gameplay NOT_INTEGRATED
+- Runtime NOT_FROZEN
+- BU-P02 Runtime Governance: RESOLVED
+- IMPLEMENTATION_BLOCKER-690108-001: CLOSED
+- RD-SF-005: reserve-first CHOOSE_N required-target topology
+- RD-SF-005 provenance: PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+- Q43 restored; BU-P09 / BU-P06 boundaries remain explicit
+- Next: resume 690108 Runtime Integration
+- Governance authority: [690108 BU-P02 Runtime Governance Resolution](STAGE12_690108_BU_P02_RUNTIME_GOVERNANCE_RESOLUTION.md)
 - Battle mirror: [690108 research authority sync](STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md)
 
 ### 690222 威慑 INTIMIDATION
@@ -308,6 +313,9 @@ NOTE = 1
 
 AUDIT-DRIVEN CORRECTIONS:
 RD-SF-004 = EXHAUSTION denied-ACTIVE activation-RNG placement
+
+POST-AUDIT RUNTIME GOVERNANCE:
+RD-SF-005 = PROVOCATION CHOOSE_N reserve-first required-target topology
 TriggerSystem slot-0 provenance = formal DQ-SF-21 migration obligation
 Cross-state / legacy summary matrices = synchronized
 
