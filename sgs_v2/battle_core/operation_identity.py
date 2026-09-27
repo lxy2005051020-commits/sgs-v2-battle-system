@@ -65,6 +65,34 @@ class NormalAttackInstanceId:
 
 
 @dataclass(frozen=True, slots=True, order=False)
+class TargetOperationId:
+    """Semantic identity for one fresh Skill target query."""
+
+    value: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.value, str):
+            raise TypeError("TargetOperationId value must be a str")
+        if not self.value.strip():
+            raise ValueError("TargetOperationId value cannot be empty or whitespace")
+
+    def __str__(self) -> str:
+        return self.value
+
+    def __lt__(self, other: Any) -> bool:
+        _forbid_ordering("TargetOperationId", "<")
+
+    def __le__(self, other: Any) -> bool:
+        _forbid_ordering("TargetOperationId", "<=")
+
+    def __gt__(self, other: Any) -> bool:
+        _forbid_ordering("TargetOperationId", ">")
+
+    def __ge__(self, other: Any) -> bool:
+        _forbid_ordering("TargetOperationId", ">=")
+
+
+@dataclass(frozen=True, slots=True, order=False)
 class TargetResolutionId:
     """TRACE_ONLY SUPPORTING ID: diagnostic/trace correlation only, not gameplay semantic identity."""
     value: str
@@ -360,6 +388,7 @@ class OperationIdAllocator:
         "_action_seq",
         "_normal_attack_seq",
         "_target_resolution_seq",
+        "_target_operation_seq",
         "_damage_instance_seq",
         "_partition_tx_seq",
         "_reaction_batch_seq",
@@ -375,6 +404,7 @@ class OperationIdAllocator:
         self._action_seq = 0
         self._normal_attack_seq = 0
         self._target_resolution_seq = 0
+        self._target_operation_seq = 0
         self._damage_instance_seq = 0
         self._partition_tx_seq = 0
         self._reaction_batch_seq = 0
@@ -396,6 +426,10 @@ class OperationIdAllocator:
     def allocate_target_resolution_id(self) -> TargetResolutionId:
         self._target_resolution_seq += 1
         return TargetResolutionId(f"tr_{self._target_resolution_seq}")
+
+    def allocate_target_operation_id(self) -> TargetOperationId:
+        self._target_operation_seq += 1
+        return TargetOperationId(f"top_{self._target_operation_seq}")
 
     def allocate_damage_instance_id(self) -> DamageInstanceId:
         self._damage_instance_seq += 1

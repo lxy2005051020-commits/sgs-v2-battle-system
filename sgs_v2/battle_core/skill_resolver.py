@@ -7,13 +7,32 @@ from .context import BattleContext
 from .effects import ApplyStateEffect, DamageEffect, Effect, EffectSourceRef
 from .enums import DamageSourceType
 from .operation_identity import SourceType
+from .provider_identity import SkillProviderRef
 from .skill_definition import (
     ApplyStateSkillEffectSpec,
     DamageSkillEffectSpec,
     SkillEffectSpec,
     SkillTargetMode,
 )
+from .skill_operation_admission import (
+    SkillOperationAdmissionCoordinator,
+    SkillOperationAdmissionRequest,
+)
+from .skill_permission import SkillOperationKind
 from .skill_runtime import SkillRuntime
+from .skill_target_policy import SkillTargetPolicy, TargetPolicyBoundary
+from .target_operation import (
+    TargetCardinality,
+    TargetEligibilityContext,
+    TargetOperation,
+    TargetOperationDomain,
+    TargetOperationProducer,
+    TargetPurpose,
+    TargetRelation,
+    TargetSelectionProvenance,
+    TargetSelectionResult,
+    TargetSelectorKind,
+)
 from .target_system import TargetSystem
 from .unit import UnitRuntime
 
@@ -62,8 +81,27 @@ class SkillResolutionResult:
 class SkillResolver:
     """把一次显式技能解析转换成有序 Effect，不执行任何 Effect。"""
 
-    def __init__(self, target_system: TargetSystem) -> None:
+    def __init__(
+        self,
+        target_system: TargetSystem,
+        *,
+        admission_coordinator: SkillOperationAdmissionCoordinator | None = None,
+        target_policy: SkillTargetPolicy | None = None,
+    ) -> None:
+        if not isinstance(target_system, TargetSystem):
+            raise TypeError("target_system must be a TargetSystem")
+        if (
+            admission_coordinator is not None
+            and not isinstance(admission_coordinator, SkillOperationAdmissionCoordinator)
+        ):
+            raise TypeError(
+                "admission_coordinator must be SkillOperationAdmissionCoordinator or None"
+            )
+        if target_policy is not None and not isinstance(target_policy, SkillTargetPolicy):
+            raise TypeError("target_policy must be SkillTargetPolicy or None")
         self._target_system = target_system
+        self._admission_coordinator = admission_coordinator
+        self._target_policy = target_policy
 
     def resolve(
         self,
@@ -72,10 +110,14 @@ class SkillResolver:
     ) -> SkillResolutionResult:
         definition = runtime.definition
 
-        if not runtime.enabled:
+        if not self._admitted(context, runtime):
             return self._empty_result(runtime, SkillResolutionStatus.DISABLED)
 
         owner = context.get_unit(runtime.owner_id)
+
+        # Legacy compatibility preflight: Stage6 already guaranteed that an empty
+        # raw pool short-circuits before activation RNG. It is enumeration only:
+        # no TargetOperation and no selector RNG is created here.
         candidates = self._candidate_units(
             context,
             owner,
@@ -101,12 +143,19 @@ class SkillResolver:
                 SkillResolutionStatus.ACTIVATION_FAILED,
             )
 
-        selected = self._select_targets(
+        selection = self._resolve_targets_after_activation(
             context,
+            runtime,
             candidates,
-            definition.target_mode,
         )
-        target_ids = tuple(unit.unit_id for unit in selected)
+        if selection is None or not selection.target_ids:
+            return self._empty_result(
+                runtime,
+                SkillResolutionStatus.NO_VALID_TARGET,
+            )
+
+        selected = [context.get_unit(target_id) for target_id in selection.target_ids]
+        target_ids = selection.target_ids
         effects = tuple(
             self._build_effect(
                 runtime=runtime,
@@ -123,6 +172,123 @@ class SkillResolver:
             status=SkillResolutionStatus.RESOLVED,
             target_ids=target_ids,
             effects=effects,
+        )
+
+    def _admitted(
+        self,
+        context: BattleContext,
+        runtime: SkillRuntime,
+    ) -> bool:
+        if self._admission_coordinator is None or runtime.skill_slot is None:
+            return runtime.enabled
+
+        definition = runtime.definition
+        provider_ref = SkillProviderRef(
+            owner_id=runtime.owner_id,
+            skill_slot=runtime.skill_slot,
+            skill_id=definition.skill_id,
+        )
+        decision = self._admission_coordinator.evaluate(
+            context,
+            SkillOperationAdmissionRequest(
+                actor_id=runtime.owner_id,
+                provider_ref=provider_ref,
+                skill_type=definition.skill_type,
+                preparation_mode=definition.preparation_mode,
+                operation_kind=SkillOperationKind.NEW_ADMISSION,
+            ),
+        )
+        return decision.admitted
+
+    def _resolve_targets_after_activation(
+        self,
+        context: BattleContext,
+        runtime: SkillRuntime,
+        candidates: list[UnitRuntime],
+    ) -> TargetSelectionResult | None:
+        if self._target_policy is None or runtime.skill_slot is None:
+            selected = self._select_targets(
+                context,
+                candidates,
+                runtime.definition.target_mode,
+            )
+            if not selected:
+                return None
+            return TargetSelectionResult(
+                operation_id=context.id_allocator.allocate_target_operation_id(),
+                target_ids=tuple(item.unit_id for item in selected),
+                provenance=TargetSelectionProvenance.FRESH_SELECTED,
+            )
+
+        operation = self._new_target_operation(context, runtime)
+        decision = self._target_policy.evaluate(context, operation, candidates)
+        if decision.boundary is TargetPolicyBoundary.UNSUPPORTED:
+            raise ValueError("unsupported Skill target-policy boundary")
+
+        eligible_by_id = {
+            candidate.unit_id: candidate
+            for candidate in candidates
+            if candidate.unit_id in decision.eligible_candidate_ids
+        }
+        eligible = [
+            candidate
+            for candidate in candidates
+            if candidate.unit_id in eligible_by_id
+        ]
+        if not eligible:
+            return None
+
+        selected = self._select_policy_targets(
+            context,
+            operation,
+            eligible,
+            decision.required_target_ids,
+        )
+        if not selected:
+            return None
+        return TargetSelectionResult(
+            operation_id=operation.operation_id,
+            target_ids=tuple(item.unit_id for item in selected),
+            provenance=TargetSelectionProvenance.FRESH_SELECTED,
+        )
+
+    def _new_target_operation(
+        self,
+        context: BattleContext,
+        runtime: SkillRuntime,
+    ) -> TargetOperation:
+        definition = runtime.definition
+        if runtime.skill_slot is None:
+            raise ValueError("canonical TargetOperation requires a SkillSlot")
+
+        if definition.target_mode is SkillTargetMode.SINGLE_RANDOM_ENEMY:
+            relation = TargetRelation.ENEMY
+            cardinality = TargetCardinality.SINGLE
+            selector_kind = TargetSelectorKind.RANDOM
+            purpose = TargetPurpose.HOSTILE
+        else:
+            raise ValueError(f"unsupported target mode: {definition.target_mode}")
+
+        provider_ref = SkillProviderRef(
+            owner_id=runtime.owner_id,
+            skill_slot=runtime.skill_slot,
+            skill_id=definition.skill_id,
+        )
+        return TargetOperationProducer.new_query(
+            context,
+            actor_id=runtime.owner_id,
+            producer_ref=provider_ref,
+            admitted_operation_key=(
+                f"skill:{runtime.owner_id}:{int(runtime.skill_slot)}:"
+                f"{definition.skill_id}"
+            ),
+            relation=relation,
+            cardinality=cardinality,
+            selector_kind=selector_kind,
+            eligibility_context=TargetEligibilityContext(
+                domain=TargetOperationDomain.SKILL,
+                purpose=purpose,
+            ),
         )
 
     def _candidate_units(
@@ -152,6 +318,54 @@ class SkillResolver:
                 count=1,
             )
         raise ValueError(f"unsupported target mode: {target_mode}")
+
+    def _select_policy_targets(
+        self,
+        context: BattleContext,
+        operation: TargetOperation,
+        candidates: list[UnitRuntime],
+        required_target_ids: tuple[str, ...],
+    ) -> list[UnitRuntime]:
+        by_id = {item.unit_id: item for item in candidates}
+        required = [
+            by_id[target_id]
+            for target_id in required_target_ids
+            if target_id in by_id
+        ]
+
+        if operation.cardinality is TargetCardinality.FIXED_ALL:
+            return list(candidates)
+
+        count = (
+            1
+            if operation.cardinality is TargetCardinality.SINGLE
+            else operation.requested_count
+        )
+        assert count is not None
+
+        if len(required) > count:
+            raise ValueError("required targets exceed target cardinality")
+        remaining = [
+            item for item in candidates if item.unit_id not in required_target_ids
+        ]
+        slots = count - len(required)
+
+        if operation.selector_kind is TargetSelectorKind.RANDOM:
+            tail = self._target_system.random_units(
+                context,
+                remaining,
+                count=slots,
+            )
+        elif operation.selector_kind is TargetSelectorKind.DETERMINISTIC:
+            tail = remaining[:slots]
+        elif operation.selector_kind is TargetSelectorKind.EXPLICIT:
+            if slots:
+                raise ValueError("EXPLICIT selector requires fully specified targets")
+            tail = []
+        else:
+            raise ValueError(f"unsupported selector: {operation.selector_kind}")
+
+        return required + tail
 
     @staticmethod
     def _build_effect(
