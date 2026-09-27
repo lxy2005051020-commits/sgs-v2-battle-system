@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import inspect
+
 import pytest
 
 from sgs_v2.battle_core import (
@@ -21,9 +23,17 @@ from sgs_v2.battle_core import (
     register_official_state_definitions,
 )
 from sgs_v2.battle_core.dependency_evaluation import StateNode
+from sgs_v2.battle_core.damage_system import DamageRequest
+from sgs_v2.battle_core.enums import DamageSourceType, DamageType
+from sgs_v2.battle_core import insight_integration as insight_module
 from sgs_v2.battle_core.insight_integration import (
     INSIGHT_EXPLICIT_NON_PROTECTED_STATE_IDS,
     INSIGHT_PROTECTED_STATE_IDS,
+)
+from sgs_v2.battle_core.recovery_system import (
+    RecoveryPreventedResult,
+    RecoveryRequest,
+    RecoveryResolvedResult,
 )
 from sgs_v2.battle_core.skill_runtime import SkillSlot
 from sgs_v2.battle_core.stage11_state_params import (
@@ -31,7 +41,12 @@ from sgs_v2.battle_core.stage11_state_params import (
     Stage11TimedFlagParams,
     StunStateParams,
 )
-from sgs_v2.battle_core.state_effectiveness import StateEffectivenessStatus
+from sgs_v2.battle_core.state_effectiveness import (
+    LocalRuleCauseRef,
+    StateEffectivenessContribution,
+    StateEffectivenessStatus,
+    SuppressionCause,
+)
 
 
 PROTECTED_IDS = (
@@ -484,3 +499,228 @@ def test_dependency_binding_is_explicit_and_removed_with_insight() -> None:
     assert systems.dependency_evaluation_support.prerequisites(
         StateNode(protected.instance_id)
     ) == ()
+
+
+
+def _synthetic_insight_suppressor(_context, instance, _session):
+    if instance.state_id != OfficialStateId.INSIGHT.value:
+        return StateEffectivenessContribution()
+    return StateEffectivenessContribution(
+        suppression_causes=(
+            SuppressionCause(
+                "TEST_SUPPRESS_INSIGHT",
+                LocalRuleCauseRef("synthetic-insight-suppressor"),
+            ),
+        )
+    )
+
+
+def test_pd_ins_002_suppressed_present_insight_still_rejects_reapplication() -> None:
+    context = make_context(seed=23)
+    systems = BattleSystems()
+    systems.state_effectiveness_policy.register_rule_adapter(
+        _synthetic_insight_suppressor
+    )
+    first = apply(systems, context, OfficialStateId.INSIGHT.value)
+    assert first.instance is not None
+    assert systems.state_effectiveness_policy.evaluate_state(
+        context, first.instance
+    ).status is StateEffectivenessStatus.SUPPRESSED
+    generation_before = context.generation_allocator._generation_seq
+    control = RandomSystem(23)
+
+    second = apply(systems, context, OfficialStateId.INSIGHT.value)
+
+    assert second.status is StateApplicationResultStatus.REJECTED_CONFLICT
+    assert context.generation_allocator._generation_seq == generation_before
+    assert context.random.random() == control.random()
+    assert context.states.get(first.instance.instance_id).current_generation_id == (
+        first.instance.current_generation_id
+    )
+
+
+def test_suppressed_insight_does_not_protect_incoming_control() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    systems.state_effectiveness_policy.register_rule_adapter(
+        _synthetic_insight_suppressor
+    )
+    insight = apply(systems, context, OfficialStateId.INSIGHT.value).instance
+    assert insight is not None
+    assert systems.state_effectiveness_policy.evaluate_state(
+        context, insight
+    ).status is StateEffectivenessStatus.SUPPRESSED
+
+    result = apply(systems, context, OfficialStateId.CONFUSION.value)
+
+    assert result.status is StateApplicationResultStatus.APPLIED
+    assert result.instance is not None
+    assert systems.state_effectiveness_policy.evaluate_state(
+        context, result.instance
+    ).effective
+    assert systems.dependency_evaluation_support.prerequisites(
+        StateNode(result.instance.instance_id)
+    ) == (StateNode(insight.instance_id),)
+
+
+def test_insight_rejects_same_protected_state_before_conflict_refresh() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    original = apply(
+        systems,
+        context,
+        OfficialStateId.CONFUSION.value,
+        lifetime_spec=StateLifetimeSpec.round_calendar(expires_round=4),
+    ).instance
+    assert original is not None
+    original_generation = original.current_generation_id
+    original_lifetime = original.lifetime_spec
+    apply(systems, context, OfficialStateId.INSIGHT.value)
+    generation_before = context.generation_allocator._generation_seq
+
+    result = apply(
+        systems,
+        context,
+        OfficialStateId.CONFUSION.value,
+        lifetime_spec=StateLifetimeSpec.round_calendar(expires_round=9),
+    )
+
+    assert result.status is StateApplicationResultStatus.REJECTED_ADMISSION
+    current = context.states.get(original.instance_id)
+    assert current.current_generation_id == original_generation
+    assert current.lifetime_spec == original_lifetime
+    assert context.generation_allocator._generation_seq == generation_before
+    assert event_count(context, EventType.STATE_REFRESHED) == 0
+
+
+def test_multiple_suppression_causes_compose_and_insight_removal_does_not_false_resume() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    protected = apply(
+        systems, context, OfficialStateId.CONFUSION.value
+    ).instance
+    assert protected is not None
+
+    def local_control_suppressor(_context, instance, _session):
+        if instance.instance_id != protected.instance_id:
+            return StateEffectivenessContribution()
+        return StateEffectivenessContribution(
+            suppression_causes=(
+                SuppressionCause(
+                    "TEST_SECONDARY_CONTROL_SUPPRESSOR",
+                    LocalRuleCauseRef("synthetic-control-suppressor"),
+                ),
+            )
+        )
+
+    systems.state_effectiveness_policy.register_rule_adapter(
+        local_control_suppressor
+    )
+    assert systems.state_effectiveness_policy.evaluate_state(
+        context, protected
+    ).status is StateEffectivenessStatus.SUPPRESSED
+    resume_before = event_count(context, EventType.STATE_RESUMED)
+
+    insight = apply(
+        systems, context, OfficialStateId.INSIGHT.value
+    ).instance
+    assert insight is not None
+    decision = systems.state_effectiveness_policy.evaluate_state(
+        context, protected
+    )
+    assert decision.status is StateEffectivenessStatus.SUPPRESSED
+    assert {cause.rule_id for cause in decision.suppression_causes} == {
+        "TEST_SECONDARY_CONTROL_SUPPRESSOR",
+        "690089_INSIGHT_RESIDENT_CONTROL_SUPPRESSION",
+    }
+
+    systems.state_removal_coordinator.remove(
+        context,
+        operation=RemovalOperation.NATURAL_EXPIRY,
+        instance_id=insight.instance_id,
+    )
+    after = systems.state_effectiveness_policy.evaluate_state(
+        context, protected
+    )
+    assert after.status is StateEffectivenessStatus.SUPPRESSED
+    assert {cause.rule_id for cause in after.suppression_causes} == {
+        "TEST_SECONDARY_CONTROL_SUPPRESSOR",
+    }
+    assert event_count(context, EventType.STATE_RESUMED) == resume_before
+
+
+def test_weakness_damage_pipeline_reads_effective_truth_under_insight() -> None:
+    context = make_context(seed=29)
+    systems = BattleSystems()
+    weakness = apply(
+        systems, context, OfficialStateId.WEAKNESS.value
+    ).instance
+    insight = apply(
+        systems, context, OfficialStateId.INSIGHT.value
+    ).instance
+    assert weakness is not None and insight is not None
+
+    request = DamageRequest(
+        source_id="a0",
+        target_id="b0",
+        damage_type=DamageType.WEAPON,
+        source_type=DamageSourceType.SKILL,
+        coefficient=1.0,
+    )
+    while_suppressed = systems.damage_system.calculate(context, request)
+    assert while_suppressed.final_damage > 0
+
+    systems.state_removal_coordinator.remove(
+        context,
+        operation=RemovalOperation.NATURAL_EXPIRY,
+        instance_id=insight.instance_id,
+    )
+    resumed = systems.damage_system.calculate(context, request)
+    assert resumed.final_damage == 0
+
+
+def test_healing_ban_recovery_pipeline_reads_effective_truth_under_insight() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    context.get_unit("a0").troops = 500
+    healing_ban = apply(
+        systems, context, OfficialStateId.HEALING_BAN.value
+    ).instance
+    insight = apply(
+        systems, context, OfficialStateId.INSIGHT.value
+    ).instance
+    assert healing_ban is not None and insight is not None
+
+    allowed = systems.recovery_system.resolve(
+        context,
+        RecoveryRequest(source_id="a1", target_id="a0", amount=100),
+    )
+    assert isinstance(allowed, RecoveryResolvedResult)
+    assert allowed.actual_recovery == 100
+
+    systems.state_removal_coordinator.remove(
+        context,
+        operation=RemovalOperation.NATURAL_EXPIRY,
+        instance_id=insight.instance_id,
+    )
+    blocked = systems.recovery_system.resolve(
+        context,
+        RecoveryRequest(source_id="a1", target_id="a0", amount=100),
+    )
+    assert isinstance(blocked, RecoveryPreventedResult)
+    assert blocked.reason_state_id == OfficialStateId.HEALING_BAN.value
+
+
+def test_insight_static_architecture_guards() -> None:
+    source = inspect.getsource(insight_module)
+    battle_systems_source = inspect.getsource(BattleSystems.__post_init__)
+
+    assert "event_bus.publish" not in source
+    assert "StateLifecycleSystem.remove" not in source
+    assert ".refresh(" not in source
+    assert "random." not in source
+    assert "Stage12InsightRuntime" not in source
+    assert "all_negative_states" not in source
+    assert "all_control_states" not in source
+    assert "all_debuffs" not in source
+    assert battle_systems_source.count("StateEffectivenessPolicy(") == 1
