@@ -47,6 +47,7 @@ from sgs_v2.battle_core import (
     ProviderValidityPolicy,
     RandomSystem,
     RecoveryExecutionPreventionContribution,
+    RecoveryExecutionPreventionPolicy,
     RecoveryModifierContribution,
     RecoveryModifierPolicy,
     RecoveryPreventionReason,
@@ -488,10 +489,11 @@ def test_recovery_second_ceil_order_preserved() -> None:
 
 def test_existing_healing_block_order_preserved() -> None:
     source = Path("sgs_v2/battle_core/recovery_system.py").read_text(encoding="utf-8")
-    assert source.index("modified_recovery = self._apply_recovery_modifier") < source.index(
+    resolve_body = source[source.index("    def resolve("):]
+    assert resolve_body.index("modified_recovery = self._apply_recovery_modifier") < resolve_body.index(
         "healing_ban_id = OfficialStateId.HEALING_BAN.value"
     )
-    assert source.index("self._execution_prevention_policy.evaluate") < source.index(
+    assert resolve_body.index("self._execution_prevention_policy.evaluate") < resolve_body.index(
         "healing_ban_id = OfficialStateId.HEALING_BAN.value"
     )
 
@@ -533,8 +535,11 @@ def test_suppressed_trigger_not_replayed_on_resume() -> None:
 
 def test_attribution_only_trigger_does_not_gain_equipment_dependency() -> None:
     source = Path("sgs_v2/battle_core/trigger_system.py").read_text(encoding="utf-8")
-    body = source[source.index("def evaluate_equipment_dependency"):]
+    start = source.index("    def evaluate_equipment_dependency")
+    end = source.index("    def collect(", start)
+    body = source[start:end]
     assert "EffectSourceRef" not in body
+    assert "source_ref" not in body
 
 
 def test_explicit_equipment_dependency_propagates() -> None:
