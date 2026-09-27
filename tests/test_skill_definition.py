@@ -76,6 +76,8 @@ def test_skill_definition_has_only_explicit_schema_fields() -> None:
         "effect_specs",
         "skill_type",
         "preparation_mode",
+        "target_count",
+        "target_restriction_keys",
     }
     for forbidden in (
         "metadata",
