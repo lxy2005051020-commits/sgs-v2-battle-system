@@ -234,7 +234,7 @@ Owner invariants:
 - Equipment suppression is contribution ineligibility, never unequip/delete/reinstall.
 - Domain owners retain calculation, ordering, CEIL, scheduling and trigger RNG.
 - FalseReport/Capture bounded categories surface as unsupported rather than being generalized.
-- Public transition events remain DQ-SF-13.
+- Public transition events are governed by the Round 9 Event Model; domain owners publish post-decision/commit facts and pure queries emit none.
 
 ## SF Round 8 owner closure — Capture composite + work execution rights
 
@@ -250,7 +250,7 @@ Authority record:
 | New Skill admission | existing ProviderValidity + SkillPermission composition where contract applies | provider/holder state facts only | no Capture-owned skill engine |
 | PASSIVE / COMMAND Provider suppression | ProviderValidityPolicy | effective-CAPTURE suppression cause | no physical provider deletion; resume future-only |
 | New actor-driven damage | Damage domain admission/execution-right seam | current-actor CAPTURE denial fact | no Weakness reuse; no universal source_id gate |
-| Counter damage | CounterSystem owns admitted batch; Damage domain owns local damage permission | current counter actor CAPTURE fact | batch semantics preserved; no counter damage; public trigger/event topology deferred to DQ-SF-13 |
+| Counter damage | CounterSystem owns admitted batch; Damage domain owns local damage permission | current counter actor CAPTURE fact | batch semantics preserved; no counter damage; public damage-denial fact follows Round 9 Damage-domain event ownership |
 | Existing Active-origin DOT | existing attached/persistent effect owner + Damage domain | no Capture actor denial for admitted continuation | explicit ProviderDependency, if any, remains independently live |
 | Received recovery | RecoverySystem | CAPTURE prevention cause | after modifier/second CEIL, before troop restore/capacity; target selection remains separate |
 | Friendly SINGLE / CHOOSE_N eligibility | SkillTargetPolicy | CAPTURE target-ineligibility fact | ALL_ALLIES and locked/delayed remain bounded |
@@ -270,7 +270,7 @@ Authority record:
 | TARGET_ELIGIBILITY final decision | SkillTargetPolicy when the work contract requests recheck | existing canonical owner; LOCKED != NEW_QUERY |
 | EQUIPMENT_CONTRIBUTION final decision | EquipmentEffectivenessPolicy | existing canonical owner |
 | STATE_EFFECTIVENESS final decision | StateEffectivenessPolicy | existing canonical owner |
-| public event publication | deciding domain owner -> EventBus | DQ-SF-13 remains open |
+| public event publication | deciding domain owner -> EventBus | Round 9 event governance CLOSED; query != event and publication follows the canonical decision/commit |
 
 Owner invariants:
 
