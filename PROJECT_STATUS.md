@@ -179,7 +179,7 @@ Battle-side research mirror:
     Canonical Governance: PASS
     OPEN_BLOCKING: 0
     Runtime: NOT_INTEGRATED
-    Next: contract-aligned Runtime Design
+    Next: 690222 INTIMIDATION Runtime Integration
 
 Battle-side mirror:
 [stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md](stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)
