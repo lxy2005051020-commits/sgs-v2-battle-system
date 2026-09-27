@@ -12,6 +12,11 @@ from .damage_modifiers import (
     DamageModifierResult,
 )
 from .damage_probability import resolve_probability
+from .equipment_effectiveness import (
+    EquipmentEffectivenessBoundaryError,
+    EquipmentEffectivenessPolicy,
+    EquipmentEffectivenessStatus,
+)
 from .damage_rule_provider import DamageRuleCollection
 from .numeric_validation import validate_nonnegative_finite
 
@@ -21,6 +26,33 @@ if TYPE_CHECKING:
 
 class DamageModifierSystem:
     """Apply typed damage modifiers after coefficient scaling, with deterministic order."""
+
+    def __init__(
+        self,
+        equipment_effectiveness_policy: EquipmentEffectivenessPolicy | None = None,
+    ) -> None:
+        self._equipment_effectiveness_policy = equipment_effectiveness_policy
+
+    @property
+    def equipment_effectiveness_policy(self) -> EquipmentEffectivenessPolicy | None:
+        return self._equipment_effectiveness_policy
+
+    def _equipment_contribution_effective(
+        self,
+        context: BattleContext,
+        contribution: DamageModifierContribution,
+    ) -> bool:
+        ref = contribution.equipment_contribution_ref
+        if ref is None:
+            return True
+        if self._equipment_effectiveness_policy is None:
+            raise RuntimeError("equipment-owned damage modifier has no effectiveness policy")
+        decision = self._equipment_effectiveness_policy.evaluate_contribution(context, ref)
+        if decision.status is EquipmentEffectivenessStatus.UNSUPPORTED_BOUNDARY:
+            raise EquipmentEffectivenessBoundaryError(
+                f"unsupported equipment damage-modifier boundary: {ref!r}"
+            )
+        return decision.effective
 
     def resolve(
         self,
@@ -46,7 +78,10 @@ class DamageModifierSystem:
         applicable = tuple(
             contribution
             for contribution in rules.modifier_contributions
-            if contribution.applies_to(request.damage_type, request.source_type)
+            if (
+                contribution.applies_to(request.damage_type, request.source_type)
+                and self._equipment_contribution_effective(context, contribution)
+            )
         )
 
         pierce = tuple(
@@ -138,6 +173,7 @@ class DamageModifierSystem:
             if (
                 contribution.phase in phases
                 and contribution.applies_to(request.damage_type, request.source_type)
+                and self._equipment_contribution_effective(context, contribution)
             ):
                 applicable.append(contribution)
         applicable.sort(key=lambda c: (c.phase_order, c.order_key))
