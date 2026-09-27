@@ -1,6 +1,6 @@
 # Stage12 Contract → Runtime Mapping Skeleton
 
-> Status: **ROUNDS 2-10 DESIGN TRACE COMPLETE / PRE-INDEPENDENT-AUDIT / NOT IMPLEMENTED**  
+> Status: **ROUNDS 2-10 DESIGN TRACE COMPLETE / 690108 GAMEPLAY IMPLEMENTED PENDING INDEPENDENT RUNTIME AUDIT**  
 > Date: **2026-09-27**  
 > Rule-level expansion is mandatory before each state's implementation begins.
 
@@ -17,10 +17,10 @@
 | FALSE_REPORT | PASSIVE/COMMAND Provider suppression | provider-validity policy | Provider suppressed vs Holder-only model | DESIGN_MAPPING |
 | FALSE_REPORT | tested equipment specials boundary | EquipmentEffectivenessPolicy evidence-scoped rule adapter | tested persistent equipment special suppressed; untested category remains UNSUPPORTED_BOUNDARY | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | FALSE_REPORT | restoration | provider-validity + lifecycle | future behavior resumes; no missed-trigger replay | DESIGN_MAPPING |
-| PROVOCATION | eligible skill target operation/query | `TargetOperation` producer → `SkillTargetPolicy` | fresh operation-level constraint vs blanket target overwrite | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
-| PROVOCATION | Source admissibility | `SkillTargetPolicy` operation-local eligibility after raw candidates | admissible Source required; illegal/dead Source never forced and State is not physically removed | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
-| PROVOCATION | Resident != Effective | Stage12 effective-state policy | source death leaves state resident | DESIGN_MAPPING |
-| PROVOCATION | Taunt/Confusion boundaries | `TargetResolutionSystem` remains Normal Attack owner; SkillTargetPolicy only handles eligible Skill operations | Confusion-controlled operation pre-empts Provocation; Taunt stays Basic Attack domain | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
+| PROVOCATION | eligible skill target operation/query | `SkillDefinition` → `SkillResolver` → `TargetOperation` → `SkillTargetPolicy` | fresh operation-level constraint vs blanket target overwrite | IMPLEMENTED_PENDING_RUNTIME_AUDIT |
+| PROVOCATION | Source admissibility | `SkillTargetPolicy` operation-local eligibility after raw candidates | admissible Source required; illegal/dead Source never forced and State is not physically removed | IMPLEMENTED_PENDING_RUNTIME_AUDIT |
+| PROVOCATION | Resident != Effective | `StateEffectivenessPolicy` | source death leaves state resident; Insight/Provider suppression does not remove | IMPLEMENTED_PENDING_RUNTIME_AUDIT |
+| PROVOCATION | Taunt/Confusion boundaries | `TargetResolutionSystem` remains Normal Attack owner; `SkillTargetPolicy` handles eligible Skill operations | Confusion-owned Skill target decision pre-empts Provocation via TargetEligibilityContext metadata; Taunt stays NormalAttack domain | IMPLEMENTED_PENDING_RUNTIME_AUDIT |
 | INTIMIDATION | single selected Provider binding | provider-validity policy + Stage12 params | one provider disabled vs all skills disabled | DESIGN_MAPPING |
 | INTIMIDATION | refresh reroll | provider-validity policy + RandomSystem | release old → exactly one reroll → no multi-disable stack | DESIGN_MAPPING |
 | INTIMIDATION | resume preserves binding | provider-validity + lifecycle | resume does not reroll; lifetime continues | DESIGN_MAPPING |
@@ -567,3 +567,17 @@ EXPLICIT = outside BU-P02 random topology; must be fully specified by its own bo
 ```
 
 Insufficient candidate behavior is intentionally not inherited from `TargetSystem.random_units()` truncation. BU-P09 remains `UNSUPPORTED_BOUNDARY`.
+
+
+## 690108 production integration checkpoint — 2026-09-28
+
+```text
+SkillDefinition
+-> SkillResolver
+-> TargetOperation
+-> SkillTargetPolicy
+-> TargetSystem
+-> TargetSelectionResult
+```
+
+Production mappings now cover SINGLE / CHOOSE_N / FIXED_ALL. CHOOSE_N uses RD-SF-005 reserve-first topology. `BU-P06` and `BU-P09` remain explicit unsupported boundaries. Validated checkpoint: `d420e8130dff1b3b9cc2545f0a832eccf58abd75`, CI `36333059532`, 1359 passed, demo PASS. Runtime Freeze remains pending independent audit.
