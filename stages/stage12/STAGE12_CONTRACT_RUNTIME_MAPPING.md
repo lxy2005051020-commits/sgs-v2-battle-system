@@ -195,7 +195,7 @@ These rows are DESIGN_FROZEN_FOUNDATION, not GREEN.
 | derived target | derive from prior result with DERIVED provenance | no recheck unless producer explicitly starts a new query | adjacency/link derivation does not imply selection |
 | locked target | reuse resolved/locked target with LOCKED provenance | later state changes do not silently create a target query | Capture delayed/locked final semantics remain DQ-SF-23 |
 | Provocation SINGLE | required target = admissible Provocation Source; exact cardinality = 1 | final target is Source | Source inadmissible => no illegal force |
-| Provocation CHOOSE_N | preserve N; Source appears exactly once; original selector owns remaining selection | Source included and N unchanged | exact random micro-order remains bounded BU-P02 and is Round 9 DEFERRED, not defaulted |
+| Provocation CHOOSE_N | preserve N; Source appears exactly once; required Source reserves one slot; TargetSystem fills remaining slots from eligible-minus-required | Source included exactly once, N unchanged, required Source excluded from random population | BU-P02 empirical micro-order remains bounded; Runtime topology is governed by RD-SF-005 reserve-first; BU-P09 insufficient candidates remains unsupported |
 | Provocation FIXED_ALL | preserve all eligible targets | operation does not collapse to one target | Source absent because illegal is not inserted |
 | Capture friendly SINGLE | remove captured holder from eligible candidates | zero remaining candidates => NO_LEGAL_TARGET / existing SkillResolution NO_VALID_TARGET adapter | no fallback-self invention |
 | Capture friendly CHOOSE_N | remove captured holder before selection | captured holder absent from verified multi-target selection | insufficient eligible count remains bounded, not inherited from TargetSystem truncation |
@@ -349,7 +349,7 @@ These mappings close Shared Foundation governance only. They do not implement a 
 | INSIGHT | PD-INS-001: originating protected-control generation keeps its normal source proc RNG before admission; deterministic source adds no RNG; Insight policies are zero-RNG | incoming protected rejection becomes finalized state-application rejection at ADMISSION stage; existing protected-control cfg204/cfg205 maps to public state suppression/resume transitions after committed recompute | PD-INS-001 and PD-INS-002 are inherited APPROVED_PROJECT_DEFAULTs and retain Research provenance | exotic source/proxy boundaries remain contract-owned; no new Battle default |
 | EXHAUSTION | SkillPermissionPolicy and admission coordinator are zero-RNG; denied ACTIVE new admission consumes zero activation and target RNG; already-admitted work is not re-admitted | actual blocked ACTIVE attempt may publish SKILL_OPERATION_BLOCKED; no attempt emits nothing; actual PREPARING interruption may publish PREPARATION_INTERRUPTED | no new default; pre-RNG denial is Shared Foundation architecture, not an empirical PRNG claim | hidden original-server blocked-attempt RNG remains empirically unobservable; Runtime architecture is fixed without laundering it into Research |
 | FALSE_REPORT | Provider suppression queries are zero-RNG; any downstream Provider-dependent opportunity is rejected before its own RNG when validity is non-VALID | Provider suppression/resume is internal by default; public facts arise from actual dependent domain behavior, not every validity query | no new default | stronger/weaker B-U01 and untested equipment categories remain UNSUPPORTED_BOUNDARY |
-| PROVOCATION | SkillTargetPolicy is zero-RNG; TargetSystem/selector owns sampling; forced legal SINGLE and all-candidate selections use zero target RNG; CHOOSE_N exact micro-order is not chosen | policy evaluation emits nothing; Round 9 requires no generic TARGET_FORCED event; a future target-change fact may exist only after final resolved set actually changes | no new default | CHOOSE_N BU-P02 = DEFERRED; insufficient candidates BU-P09 and multi-source BU-P06 remain UNSUPPORTED_BOUNDARY |
+| PROVOCATION | SkillTargetPolicy is zero-RNG; TargetSystem/selector owns sampling; SINGLE and required-filled/all-candidate cases use zero target RNG; supported RANDOM CHOOSE_N uses RD-SF-005 reserve-first and samples only the remaining slots | policy evaluation emits nothing; no generic TARGET_FORCED event is required; any future target-change fact may exist only after final resolved set actually changes | RD-SF-005 / PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN | BU-P02 research micro-order remains bounded; insufficient candidates BU-P09 and multi-source BU-P06 remain UNSUPPORTED_BOUNDARY |
 | INTIMIDATION | rejected application consumes zero binding RNG; admitted initial application selects one eligible Provider; successful refresh authorizes a new selection; resume retains binding and uses zero selection RNG | public state apply/refresh/suppress/resume follows the canonical state event model; Provider validity transitions remain internal by default; preparation interruption event only for an actual transition | RD-SF-002 supplies deterministic enumeration only, not weights; no new Round 9 default | exact weights = DEFERRED; empty eligible pool = UNSUPPORTED_BOUNDARY; no uniform 1/N claim |
 | SABOTAGE | EquipmentEffectivenessPolicy is zero-RNG; suppressed contribution skips trigger-owned downstream RNG; tested scheduled missed window is not replayed | equipment suppression/resume need not invent a generic Provider event; public domain events come from actual trigger/effect behavior; state suppression/resume uses public state transition facts only when contract-observable | no new default | B-SAB-02 stronger/multi-source and B-SAB-07 queued/JIT outside tested due-window remain UNSUPPORTED_BOUNDARY |
 | CAPTURE | Action decision, Provider suppression, Recovery prevention, target eligibility and ExecutionRight evaluation are zero-RNG; Capture action denial creates no NormalAttack target RNG; denied damage/recovery/work consumes no downstream RNG at that denied seam | ActionSystem owns ACTION_BLOCKED; Damage domain owns DAMAGE_PREVENTED; RecoverySystem owns RECOVERY_PREVENTED; multiple internal recovery causes produce one compatibility public prevention fact; Provider transition internal by default | no new default | Q16/Q42/Q44/Q45/Q63/Q70-Q74 remain UNSUPPORTED_BOUNDARY; no silent JIT/snapshot/stack/target generalization |
@@ -403,7 +403,18 @@ TargetOperation
 ~~~
 
 SINGLE forced to one admissible Source is deterministic and adds no target draw.
-CHOOSE_N sampling topology remains deliberately unselected because reserve-first and sample/replace can alter replay streams.
+
+For supported fresh RANDOM CHOOSE_N, RD-SF-005 now freezes the Runtime-only topology:
+
+~~~text
+reserve required Source
+-> remove Source from remaining selector population
+-> remaining_slots = N - 1
+-> TargetSystem.random_units(remaining, count=remaining_slots)
+-> no post-selector replacement
+~~~
+
+This is PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN. BU-P02 remains empirically bounded; BU-P09 insufficient candidates remains unsupported.
 
 ### INTIMIDATION mapping details
 
@@ -529,3 +540,30 @@ Round 10 owner TBD = 0; seam TBD = 0 for frozen claims; test-mapping TBD = 0 for
 - `SF-AUD-11-001`: EXHAUSTION permission remains Research-confirmed; only the hidden blocked-attempt RNG placement is project-governed by RD-SF-004.
 - `SF-AUD-11-002`: TriggerSystem's current `basis.source_skill_slot or instance.source_skill_slot` provenance merge is an explicit Stage12 migration obligation because `SkillSlot.INHERENT == 0` is valid. The repair must use explicit `is not None` precedence and must not turn provenance into Provider liveness.
 - Owner/seam/test mapping TBD for frozen claims remains 0 after these corrections.
+
+
+### PROVOCATION BU-P02 post-design governance note
+
+The target-operation architecture did not change. RD-SF-005 only resolves the previously deferred implementation micro-order required by 690108 integration.
+
+```text
+NEW_QUERY
+-> raw candidates
+-> SkillTargetPolicy (0 RNG)
+-> legal required Source
+-> reserve required slot
+-> TargetSystem fills remainder
+-> TargetSelectionResult
+```
+
+Continuation modes reuse/derive/lock the prior result and do not re-enter this pipeline.
+
+Selector-kind scope:
+
+```text
+RANDOM = RD-SF-005 governs BU-P02 random-call topology
+DETERMINISTIC = generic required-slot architecture; no RNG semantics added
+EXPLICIT = outside BU-P02 random topology; must be fully specified by its own boundary
+```
+
+Insufficient candidate behavior is intentionally not inherited from `TargetSystem.random_units()` truncation. BU-P09 remains `UNSUPPORTED_BOUNDARY`.
