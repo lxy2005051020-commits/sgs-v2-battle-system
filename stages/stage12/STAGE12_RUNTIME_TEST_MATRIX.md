@@ -942,3 +942,25 @@ Scope:
 - no 690108 gameplay adapter registration.
 
 This suite closes the executable gate for RD-SF-005 without implementing PROVOCATION gameplay.
+
+
+## 690108 Gameplay Integration executable checkpoint — 2026-09-28
+
+```text
+tests/test_stage12_690108_provocation.py
+```
+
+This is the production Gameplay Integration suite, separate from the BU-P02 governance suite. It covers effective truth, SINGLE, CHOOSE_N under RD-SF-005, FIXED_ALL, source admissibility, fresh-query reevaluation, immutable continuation results, INSIGHT, EXHAUSTION, FALSE_REPORT-source ProviderDependency, attribution negatives, Confusion arbitration metadata, Taunt/NormalAttack separation, source death, event/RNG ownership, production producer mapping, legacy compatibility and static architecture guards.
+
+Validated whole-suite checkpoint:
+
+```text
+baseline = 1314 passed
+final code/test checkpoint = 1359 passed
+delta = +45 test nodes
+PROVOCATION minimum = >= 25
+demo = PASS
+CI = 36333059532 / success
+```
+
+Runtime Freeze is not claimed by this integration checkpoint.
