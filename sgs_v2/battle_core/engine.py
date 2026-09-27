@@ -13,6 +13,7 @@ from .execution_right_system import (
     admit_action_scope,
 )
 from .rule_hooks import RoundStartHook, UnitActionStartHook
+from .dependency_evaluation import StateNode
 
 
 @dataclass(slots=True)
@@ -55,8 +56,7 @@ class BattleEngine:
             self.context.current_round = round_no
 
             self._enter_phase(BattlePhase.ROUND_START)
-            self.systems.state_lifecycle_system.expire_at(
-                self.context,
+            self._settle_phase_expiry(
                 round_no=round_no,
                 phase=BattlePhase.ROUND_START.value,
             )
@@ -110,10 +110,7 @@ class BattleEngine:
                         actor_id=actor.unit_id,
                     ),
                 )
-                self.systems.state_lifecycle_system.expire_eligible_states(
-                    self.context,
-                    actor.unit_id,
-                )
+                self._settle_action_start_lifetimes(actor.unit_id)
 
                 # Barrier 3: UNIT_ACTION_START_HOOKS_SETTLED
                 self.systems.finalization_coordinator.observe_legacy_barrier(
@@ -179,8 +176,7 @@ class BattleEngine:
                 round_no=round_no,
                 payload={"team_troops": self.context.troop_totals_by_team()},
             )
-            self.systems.state_lifecycle_system.expire_at(
-                self.context,
+            self._settle_phase_expiry(
                 round_no=round_no,
                 phase=BattlePhase.ROUND_END.value,
             )
@@ -207,6 +203,49 @@ class BattleEngine:
         permit, fin_res = claim
         self.systems.finalization_coordinator.consume_projection_permit(permit)
         return self._apply_finalized_battle_result(fin_res)
+
+    def _settle_phase_expiry(self, *, round_no: int, phase: str) -> None:
+        lifecycle = self.systems.state_lifecycle_system
+        due = lifecycle.due_at(
+            self.context,
+            round_no=round_no,
+            phase=phase,
+        )
+        if not due:
+            return
+        roots = tuple(StateNode(item.instance_id) for item in due)
+        before = self.systems.effectiveness_transition_coordinator.capture(
+            self.context, roots
+        )
+        removed = lifecycle.expire_at(
+            self.context,
+            round_no=round_no,
+            phase=phase,
+        )
+        self.systems.effectiveness_transition_coordinator.complete_removed_nodes(
+            self.context,
+            before,
+            tuple(StateNode(item.instance_id) for item in removed),
+        )
+
+    def _settle_action_start_lifetimes(self, owner_id: str) -> None:
+        lifecycle = self.systems.state_lifecycle_system
+        due = lifecycle.due_at_action_start(self.context, owner_id)
+        before = None
+        if due:
+            before = self.systems.effectiveness_transition_coordinator.capture(
+                self.context,
+                tuple(StateNode(item.instance_id) for item in due),
+            )
+        removed = lifecycle.settle_action_start_lifetimes(
+            self.context, owner_id
+        )
+        if before is not None and removed:
+            self.systems.effectiveness_transition_coordinator.complete_removed_nodes(
+                self.context,
+                before,
+                tuple(StateNode(item.instance_id) for item in removed),
+            )
 
     def _enter_phase(self, phase: BattlePhase) -> None:
         self.context.current_phase = phase.value
