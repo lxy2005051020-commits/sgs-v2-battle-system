@@ -169,7 +169,7 @@ RD-SF-003 fixes same-envelope due-removal batching before effectiveness/provider
 | state/provider resume | policy becomes permissive/valid for future admission | old interrupted preparation never resumes | DESIGN CLOSED |
 | RecoveryOpportunitySystem JIT source gate | evaluate_and_resolve Gate 4 | ProviderValidityPolicy replaces direct runtime.enabled truth; explicit slot 0 and expected skill id | DESIGN CLOSED / NOT IMPLEMENTED |
 | EffectSourceRef only | attribution | no automatic ProviderDependency | DESIGN CLOSED |
-| TriggerSystem frozen damage slot fallback | provenance identity construction | truthiness hazard recorded separately; not a liveness gate and not modified in Round 5 | AUDIT FINDING / FUTURE HYGIENE |
+| TriggerSystem frozen damage slot fallback | provenance identity construction | preserve basis.source_skill_slot when it is 0 via explicit is-not-None precedence; provenance only, never implicit ProviderDependency/liveness | AUDIT-DRIVEN MIGRATION OBLIGATION / NOT IMPLEMENTED |
 
 Canonical new-skill topology:
 
@@ -378,7 +378,7 @@ ProviderValidity
 ~~~
 
 An EXHAUSTION-blocked ACTIVE attempt therefore consumes zero activation RNG in the Stage12 Runtime architecture.
-This closes the runtime decision point without rewriting the Research contract's hidden-server-RNG boundary.
+Round 11 independent audit classifies that unobservable ordering choice under RD-SF-004 (PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN); this preserves the Research contract's hidden-server-RNG boundary instead of laundering the choice into research fact.
 
 ### FALSE_REPORT mapping details
 
@@ -492,7 +492,7 @@ Method names for not-yet-implemented Shared Foundation types are design contract
 | INSIGHT existing suppression | StateEffectivenessPolicy | evaluate_state / effective_instances | insight_suppresses_existing_confusion | resident_suppressed_not_removed | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
 | INSIGHT resume | transition coordinator + effectiveness | affected-closure recompute after commit | remove_insight_resumes_live_control | expired_control_never_resumes | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
 | INSIGHT taxonomy | StateAdmissionPolicy rule adapter | protected-control classification | insight_sabotage_protected | insight_capture_not_protected | RESEARCH_CONFIRMED / provenance-qualified | NONE | TRACE_COMPLETE |
-| EXHAUSTION Active permission | SkillPermissionPolicy | evaluate_operation in Skill admission coordinator | exhaustion_denies_active | allows_normal_attack_and_standard_assault | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| EXHAUSTION Active permission | SkillPermissionPolicy | evaluate_operation in Skill admission coordinator | exhaustion_denies_active | allows_normal_attack_and_standard_assault | RESEARCH_CONFIRMED + PROJECT_RUNTIME_DEFAULT for hidden RNG placement | RD-SF-004 | TRACE_COMPLETE |
 | EXHAUSTION preparation | transition coordinator → PreparationInterruptionPort | holder Active interruption request | effective_exhaustion_interrupts_preparation | suppressed_exhaustion_no_interrupt | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE_WITH_INTEGRATION_DEPENDENCY |
 | EXHAUSTION admitted work | ExecutionRightSpec / Skill owner | SNAPSHOT_AT_ADMISSION permission | admitted_active_not_rolled_back | new_active_attempt_denied | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
 | FALSE_REPORT admission exception | StateAdmissionPolicy | evaluate_candidate | ordinary_insight_does_not_reject_fr | special_protection_still_applies | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
@@ -521,3 +521,11 @@ Method names for not-yet-implemented Shared Foundation types are design contract
 Explicit boundaries are also test-mapped: Intimidation weights = DEFERRED; Intimidation empty pool, Provocation BU-P09/BU-P06, Sabotage B-SAB-07 and Capture Q16/Q44/Q45 = UNSUPPORTED_BOUNDARY where already ledgered. Their tests must fail/reject explicitly until evidence or an approved Runtime Default changes the boundary.
 
 Round 10 owner TBD = 0; seam TBD = 0 for frozen claims; test-mapping TBD = 0 for frozen claims. Executable Stage12 implementation/tests remain future work.
+
+## Round 11 independent-audit mapping amendment
+
+`AUDIT-DRIVEN CORRECTION`
+
+- `SF-AUD-11-001`: EXHAUSTION permission remains Research-confirmed; only the hidden blocked-attempt RNG placement is project-governed by RD-SF-004.
+- `SF-AUD-11-002`: TriggerSystem's current `basis.source_skill_slot or instance.source_skill_slot` provenance merge is an explicit Stage12 migration obligation because `SkillSlot.INHERENT == 0` is valid. The repair must use explicit `is not None` precedence and must not turn provenance into Provider liveness.
+- Owner/seam/test mapping TBD for frozen claims remains 0 after these corrections.

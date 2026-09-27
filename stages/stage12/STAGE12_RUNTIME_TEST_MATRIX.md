@@ -44,6 +44,7 @@ Provocation × Capture
 
 Intimidation × Capture
 Sabotage × Capture
+FalseReport-source × Provocation
 ```
 
 ## Mandatory Stage11 × Stage12 regressions
@@ -58,6 +59,7 @@ DISARM × INSIGHT
 STUN × INSIGHT
 existing Damage Pipeline × CAPTURE
 existing Recovery Pipeline × CAPTURE
+INSIGHT × CONFUSION
 ```
 
 ## RNG obligations
@@ -721,6 +723,7 @@ test_event_bus_listener_cannot_be_permission_owner
 test_rd_sf_001_has_required_provenance_and_deterministic_test
 test_rd_sf_002_has_required_provenance_and_deterministic_test
 test_rd_sf_003_has_required_provenance_and_deterministic_test
+test_rd_sf_004_exhaustion_denied_active_rng_placement_has_project_default_provenance
 test_pd_ins_001_retains_inherited_project_default_label
 test_pd_ins_002_retains_inherited_project_default_label
 test_no_unledgered_project_runtime_default
@@ -849,6 +852,7 @@ test_no_duplicate_random_system_construction
 test_event_handlers_do_not_own_permission
 test_no_stage12_state_id_ladder_duplicated_across_consumers
 test_no_source_skill_slot_truthiness_gate
+test_trigger_system_preserves_inherent_slot_zero_in_provenance_merge
 test_no_provider_attribution_dependency_inference
 test_no_unledgered_project_runtime_default
 test_no_stage13_stage14_stage15_gameplay_leakage
@@ -883,3 +887,18 @@ gameplay code changed = 0
 DQ-SF-18 = CLOSED_BY_SHARED_FOUNDATION_DESIGN
 DQ-SF-26 = PENDING
 ~~~
+
+## Round 11 independent-audit test correction
+
+`AUDIT-DRIVEN CORRECTION`
+
+The duplicated summary matrices at the top of this document now match the Round 10 Layer-3 authority:
+- FalseReport-source × Provocation is mandatory.
+- INSIGHT × CONFUSION is mandatory as the AR-SF-01 migration discriminator.
+
+RD-SF-004 receives explicit default-provenance and denied-path RNG tests. TriggerSystem receives a targeted slot-0 provenance discriminator in addition to the broad static truthiness audit.
+
+Contract minimums remain unchanged:
+- FALSE_REPORT >= 30
+- PROVOCATION >= 25
+- INTIMIDATION >= 21

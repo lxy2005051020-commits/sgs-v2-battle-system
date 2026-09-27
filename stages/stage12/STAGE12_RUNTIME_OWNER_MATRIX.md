@@ -94,7 +94,7 @@ Fixed for downstream Shared Foundation design:
 7. EffectSourceRef remains attribution and cannot implicitly create a live Provider dependency.
 8. Provider current validity remains a separate DQ-SF-08 owner; disabled/suppressed does not mean identity missing.
 9. Intimidation binding will store ProviderRef rather than Python object identity.
-10. RecoveryOpportunitySystem slot-0 truthiness is a formal migration obligation, not repaired in this design round.
+10. RecoveryOpportunitySystem's slot-0 JIT gate and TriggerSystem's slot-0 provenance merge are both formal migration obligations. The former is Provider-validity/liveness gating; the latter is provenance identity only. Neither is repaired in this design-only round.
 
 No gameplay implementation is authorized by these owner decisions.
 

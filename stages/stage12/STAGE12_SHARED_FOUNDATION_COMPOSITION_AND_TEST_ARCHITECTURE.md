@@ -570,3 +570,14 @@ Stage13 / Stage14 / Stage15 Active = NO
 Shared Foundation Design Freeze = NOT YET
 NEXT = DQ-SF-26 Independent Design Audit
 ~~~
+
+## Round 11 independent-audit amendment
+
+`AUDIT-DRIVEN CORRECTION`
+
+The independent audit preserves the Round 10 composition graph and adds two governance/coverage clarifications:
+
+1. EXHAUSTION denied-ACTIVE zero activation/target RNG is governed by RD-SF-004 because the Research contract leaves blocked-attempt hidden RNG unobservable.
+2. The semantic slot-0 static audit covers both RecoveryOpportunitySystem's liveness gate and TriggerSystem's provenance fallback. TriggerSystem must preserve `source_skill_slot == 0` using explicit `is not None` precedence; this does not turn provenance into a live Provider dependency.
+
+No canonical owner, construction order, fallback rule, Stage13+ boundary, or gameplay implementation changes.

@@ -383,3 +383,56 @@ NONE
 DQ-SF-14:
 CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED
 ~~~
+
+## SF Round 11 Independent Design Audit — AUDIT-DRIVEN CORRECTION
+
+The independent design audit found that the EXHAUSTION denied-ACTIVE RNG placement was already a deterministic Runtime choice but had been described only as architecture. The frozen 690101 contract explicitly leaves hidden blocked-attempt activation RNG unobservable and requires explicit project governance for any Runtime choice. That choice therefore needs a Runtime Default ID.
+
+### RD-SF-004 — EXHAUSTION denied-ACTIVE activation-RNG placement
+
+Mechanism: 690101 EXHAUSTION / Skill operation admission  
+Question: When an otherwise eligible new ACTIVE operation is denied by effective EXHAUSTION, does Runtime consume that operation's activation-probability RNG or target-selection RNG before denial?
+
+Research status: The 690101 frozen contract states that blocked-attempt hidden activation RNG consumption is UNOBSERVABLE and freezes neither mandatory consumption nor mandatory non-consumption.
+
+Why Runtime must decide: deterministic replay requires one stable placement. The Shared Foundation SkillOperationAdmission topology already places ProviderValidity + SkillPermission + operation admission before activation RNG and target-operation creation.
+
+Chosen Runtime default:
+
+1. A NEW ACTIVE admission denied by effective EXHAUSTION consumes **zero activation RNG** for that denied operation.
+2. It creates no TargetOperation and therefore consumes **zero target-selection RNG**.
+3. The rule applies only to the denied new admission. Already-admitted work is not re-admitted and is governed by its frozen ExecutionRightSpec.
+4. This default does not alter PD-INS-001 source-generation RNG parity, state-application RNG, Intimidation binding RNG, RecoveryOpportunity RNG, equipment-trigger RNG, or any other domain-owned draw.
+
+Evidence classification: `PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN`
+
+Reopen trigger:
+- direct model-separating evidence for blocked EXHAUSTION attempts establishes observable RNG-stream consequences;
+- a later authoritative skill-runtime contract fixes another ordering;
+- the project-wide deterministic replay policy is superseded by higher authority.
+
+Required tests:
+- effective EXHAUSTION denied ACTIVE -> zero activation RNG;
+- denied ACTIVE -> no TargetOperation and zero target RNG;
+- suppressed/removed EXHAUSTION -> normal ACTIVE path reaches ordinary activation RNG;
+- already-admitted ACTIVE is not re-admitted and gains no synthetic draw;
+- identical seed + identical decisions replay identically.
+
+### Round 11 current default set
+
+```text
+Battle Runtime Defaults:
+RD-SF-001
+RD-SF-002
+RD-SF-003
+RD-SF-004
+
+Inherited approved Research project defaults:
+PD-INS-001
+PD-INS-002
+```
+
+Earlier statements that Round 9 added no new Runtime Default remain historical Round 9 records. The **current** complete Battle-owned set is RD-SF-001 through RD-SF-004.
+
+Audit finding: `SF-AUD-11-001`  
+Resolution: `CLOSED_BY_AUDIT_DRIVEN_CORRECTION`

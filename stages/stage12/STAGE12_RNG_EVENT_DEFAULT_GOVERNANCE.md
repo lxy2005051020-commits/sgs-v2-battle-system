@@ -668,3 +668,32 @@ Final Test Architecture
 ~~~
 
 After those close, DQ-SF-26 receives the independent Shared Foundation design audit.
+
+## Round 11 Independent Audit Governance Amendment
+
+`AUDIT-DRIVEN CORRECTION — SF-AUD-11-001`
+
+The Round 9 Skill activation topology remains unchanged:
+
+```text
+ProviderValidity
+→ SkillPermission
+→ operation admission
+→ activation RNG
+→ target operation / target RNG
+```
+
+The independent audit corrects its **governance provenance**, not its behavior. Because 690101 EXHAUSTION explicitly leaves blocked-attempt activation RNG unobservable and requires an explicit project choice, the zero-activation-RNG / zero-target-RNG denied-ACTIVE path is now governed by **RD-SF-004** and labeled `PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN`.
+
+Current Battle-owned Runtime Defaults:
+
+```text
+RD-SF-001
+RD-SF-002
+RD-SF-003
+RD-SF-004
+```
+
+Round 9's historical statement `NEW RUNTIME DEFAULTS = NONE` remains true for Round 9 itself; it is not the current completeness statement after Round 11.
+
+No RNG owner changes. `BattleContext.random / RandomSystem` remains the sole RNG service.
