@@ -2,6 +2,12 @@ from __future__ import annotations
 
 from .context import BattleContext
 from .effects import DamageEffect, Effect, EffectSourceRef, RecoverEffect
+from .equipment_effectiveness import (
+    EquipmentContributionDependency,
+    EquipmentEffectivenessPolicy,
+    EquipmentTriggerGate,
+    EquipmentTriggerGateDecision,
+)
 from .enums import DamageCalculationBasis, DamageSourceType
 from .official_state_catalog import OfficialStateId
 from .operation_identity import SourceType
@@ -43,8 +49,33 @@ _STAGE10_DOT_STATE_IDS = frozenset({
 class TriggerSystem:
     """读取当前状态与 typed hook，只产生确定顺序的 Effect，不执行副作用。"""
 
-    def __init__(self, lifecycle_system: object | None = None) -> None:
+    def __init__(
+        self,
+        lifecycle_system: object | None = None,
+        equipment_effectiveness_policy: EquipmentEffectivenessPolicy | None = None,
+    ) -> None:
         self._lifecycle = lifecycle_system
+        self._equipment_effectiveness_policy = equipment_effectiveness_policy
+        self._equipment_trigger_gate = (
+            None
+            if equipment_effectiveness_policy is None
+            else EquipmentTriggerGate(equipment_effectiveness_policy)
+        )
+
+    @property
+    def equipment_effectiveness_policy(self) -> EquipmentEffectivenessPolicy | None:
+        return self._equipment_effectiveness_policy
+
+    def evaluate_equipment_dependency(
+        self,
+        context: BattleContext,
+        dependency: EquipmentContributionDependency,
+    ) -> EquipmentTriggerGateDecision:
+        if not isinstance(dependency, EquipmentContributionDependency):
+            raise TypeError("dependency must be EquipmentContributionDependency")
+        if self._equipment_trigger_gate is None:
+            raise RuntimeError("explicit equipment dependency has no effectiveness policy")
+        return self._equipment_trigger_gate.evaluate(context, dependency)
 
     def collect(
         self,

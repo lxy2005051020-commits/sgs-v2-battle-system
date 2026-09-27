@@ -18,11 +18,23 @@ from .defeat_cleanup_port import DefeatCleanupPort
 from .hit_resolution_system import HitResolutionSystem
 from .damage_rule_provider import StateDamageRuleProvider
 from .damage_instance_coordinator import DamageInstanceCoordinator
+from .damage_modifier_system import DamageModifierSystem
 from .damage_partition_system import DamagePartitionCoordinator
 from .damage_resolution_system import DamageResolutionSystem
 from .damage_system import DamageSystem
 from .direct_troop_loss_system import DirectTroopLossResolver
 from .effect_executor import EffectExecutor
+from .equipment_effectiveness import (
+    EquipmentContributionRegistry,
+    EquipmentEffectivenessPolicy,
+)
+from .execution_right_runtime import (
+    CurrentActorPermissionPolicy,
+    DamageExecutionRightPort,
+    ExecutionRightSupport,
+    ExecutionTargetEligibilityPolicy,
+    RecoveryExecutionPreventionPolicy,
+)
 from .execution_right_system import (
     AssaultDispatchPort,
     FutureAdmissionGate,
@@ -47,6 +59,7 @@ from .state_application import (
 )
 from .state_removal import StateRemovalCoordinator, StateRemovalPolicy
 from .effectiveness_transition import EffectivenessTransitionCoordinator
+from .effectiveness_transition_events import StateEffectivenessEventAdapter
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .stage9_state_runtime import Stage9StateRuntime
@@ -126,6 +139,14 @@ class BattleSystems:
     dependency_evaluation_support: DependencyEvaluationSupport = field(init=False)
     state_effectiveness_policy: StateEffectivenessPolicy = field(init=False)
     provider_validity_policy: ProviderValidityPolicy = field(init=False)
+    equipment_contribution_registry: EquipmentContributionRegistry = field(init=False)
+    equipment_effectiveness_policy: EquipmentEffectivenessPolicy = field(init=False)
+    current_actor_permission_policy: CurrentActorPermissionPolicy = field(init=False)
+    execution_target_eligibility_policy: ExecutionTargetEligibilityPolicy = field(init=False)
+    recovery_execution_prevention_policy: RecoveryExecutionPreventionPolicy = field(init=False)
+    execution_right_support: ExecutionRightSupport = field(init=False)
+    damage_execution_right_port: DamageExecutionRightPort = field(init=False)
+    state_effectiveness_event_adapter: StateEffectivenessEventAdapter = field(init=False)
     skill_permission_policy: SkillPermissionPolicy = field(init=False)
     skill_operation_admission_coordinator: SkillOperationAdmissionCoordinator = field(init=False)
     skill_target_policy: SkillTargetPolicy = field(init=False)
@@ -138,6 +159,7 @@ class BattleSystems:
 
     def __post_init__(self) -> None:
         self.dependency_evaluation_support = DependencyEvaluationSupport()
+        self.equipment_contribution_registry = EquipmentContributionRegistry()
         self.state_effectiveness_policy = StateEffectivenessPolicy(
             self.dependency_evaluation_support
         )
@@ -145,7 +167,28 @@ class BattleSystems:
             stage11_legacy_effectiveness_adapter
         )
         self.provider_validity_policy = ProviderValidityPolicy(
-            self.dependency_evaluation_support
+            self.dependency_evaluation_support,
+            equipment_resolver=self.equipment_contribution_registry.resolve_provider,
+        )
+        self.equipment_effectiveness_policy = EquipmentEffectivenessPolicy(
+            self.equipment_contribution_registry,
+            self.provider_validity_policy,
+        )
+        self.attribute_system.bind_equipment_effectiveness_policy(
+            self.equipment_effectiveness_policy
+        )
+        self.current_actor_permission_policy = CurrentActorPermissionPolicy()
+        self.execution_target_eligibility_policy = ExecutionTargetEligibilityPolicy()
+        self.recovery_execution_prevention_policy = RecoveryExecutionPreventionPolicy()
+        self.execution_right_support = ExecutionRightSupport(
+            actor_policy=self.current_actor_permission_policy,
+            provider_policy=self.provider_validity_policy,
+            target_policy=self.execution_target_eligibility_policy,
+            equipment_policy=self.equipment_effectiveness_policy,
+            state_policy=self.state_effectiveness_policy,
+        )
+        self.damage_execution_right_port = DamageExecutionRightPort(
+            self.execution_right_support
         )
         self.skill_permission_policy = SkillPermissionPolicy()
         self.skill_operation_admission_coordinator = SkillOperationAdmissionCoordinator(
@@ -166,6 +209,10 @@ class BattleSystems:
             dependencies=self.dependency_evaluation_support,
             state_policy=self.state_effectiveness_policy,
             provider_policy=self.provider_validity_policy,
+        )
+        self.state_effectiveness_event_adapter = StateEffectivenessEventAdapter()
+        self.effectiveness_transition_coordinator.register_state_transition_port(
+            self.state_effectiveness_event_adapter
         )
         self.state_application_coordinator = StateApplicationCoordinator(
             admission_policy=self.state_admission_policy,
@@ -191,6 +238,8 @@ class BattleSystems:
             self.troop_system,
             self.stage11_state_runtime,
             recovery_modifier_provider=self.recovery_modifier_provider,
+            equipment_effectiveness_policy=self.equipment_effectiveness_policy,
+            execution_prevention_policy=self.recovery_execution_prevention_policy,
         )
         self.recovery_opportunity_system = RecoveryOpportunitySystem(
             self.recovery_system,
@@ -216,6 +265,7 @@ class BattleSystems:
             strategy_random_percent_range=self.strategy_random_percent_range,
             strategy_low_damage_floor_range=self.strategy_low_damage_floor_range,
             rule_provider=self.damage_rule_provider,
+            modifier_system=DamageModifierSystem(self.equipment_effectiveness_policy),
             stage11_state_runtime=self.stage11_state_runtime,
         )
         self.damage_resolution_system = DamageResolutionSystem(
@@ -260,7 +310,10 @@ class BattleSystems:
             stage11_state_runtime=self.stage11_state_runtime,
         )
         self.state_lifecycle_system._basis_producer = self.continuous_damage_basis_producer
-        self.trigger_system = TriggerSystem(self.state_lifecycle_system)
+        self.trigger_system = TriggerSystem(
+            self.state_lifecycle_system,
+            self.equipment_effectiveness_policy,
+        )
 
         self.damage_aftermath_system = DamageAftermathSystem(
             self.trigger_system,
@@ -279,6 +332,7 @@ class BattleSystems:
             damage_aftermath_port=self.damage_aftermath_port,
             defeat_cleanup_port=self.defeat_cleanup_port,
             attacker_recovery_system=self.stage11_attacker_recovery_system,
+            execution_right_port=self.damage_execution_right_port,
         )
         self.cleave_derived_damage_resolver = CleaveDerivedDamageResolver(
             troops=self.troop_system,
@@ -327,6 +381,7 @@ class BattleSystems:
             stage9_state_runtime=self.stage9_state_runtime,
             state_lifecycle_system=self.state_lifecycle_system,
             stage11_state_runtime=self.stage11_state_runtime,
+            current_actor_permission_policy=self.current_actor_permission_policy,
         )
         self.legacy_action_dispatch_adapter = LegacyActionDispatchAdapter(
             action_system=lambda: self.action_system,
