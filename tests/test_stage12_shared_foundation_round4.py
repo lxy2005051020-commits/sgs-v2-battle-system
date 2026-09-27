@@ -925,3 +925,32 @@ def test_damage_coordinator_has_generic_execution_right_hook() -> None:
         ExecutionRightRequest(),
     )
     assert systems.damage_instance_coordinator.evaluate_execution_right(make_context(), work).allowed
+
+
+def test_committed_public_state_fact_runs_after_internal_transition_ports() -> None:
+    systems = BattleSystems()
+    ctx = make_context()
+    inst = add_synthetic_state(ctx)
+    systems.state_effectiveness_policy.register_rule_adapter(transition_state_adapter)
+
+    observations: list[tuple[str, int]] = []
+    systems.effectiveness_transition_coordinator.register_state_transition_port(
+        lambda context, _transition: observations.append(
+            ("internal", len(context.event_bus.history))
+        )
+    )
+
+    before = systems.effectiveness_transition_coordinator.capture(
+        ctx,
+        (StateNode(inst.instance_id),),
+    )
+    ctx.metadata["blocked_states"] = (inst.instance_id,)
+    systems.effectiveness_transition_coordinator.settle(
+        ctx,
+        before,
+        (StateNode(inst.instance_id),),
+    )
+
+    assert observations == [("internal", 0)]
+    assert len(ctx.event_bus.history) == 1
+    assert ctx.event_bus.history[0].event_type is EventType.STATE_SUPPRESSED
