@@ -1126,9 +1126,10 @@ class StateLifecycleSystem:
             context.states.find(owner_id=owner_id),
             key=lambda x: x.instance_id,
         )
-        removed: list[StateInstance] = []
         for inst in owner_instances:
-            context.states.remove(inst.instance_id)
+            if inst.instance_id in context.states:
+                context.states.remove(inst.instance_id)
+        for inst in owner_instances:
             payload = self._event_payload(inst)
             payload["application_generation_id"] = str(inst.current_generation_id)
             payload["removal_reason"] = "OWNER_DEFEATED"
@@ -1141,27 +1142,13 @@ class StateLifecycleSystem:
                 target_id=inst.owner_id,
                 payload=payload,
             )
-            removed.append(inst)
-        return removed
+        return owner_instances
 
     def clear_all_on_battle_end(
         self,
         context: BattleContext,
     ) -> list[StateInstance]:
-        """
-        Cleanses all remaining persistent, temporary, and external state instances across all units
-        strictly upon battle completion/finalization (STAGE10.md §8.1).
-
-        Guarantees:
-        1. Unique Authoritative Owner: StateLifecycleSystem is the single owner of battle teardown.
-        2. Deterministic Ordering: Clears states sorted by instance_id ascending.
-        3. Mutation Safety: Snapshots active instances before iterative removal.
-        4. Idempotency: Multiple invocations cleanly return empty list with zero duplicate events.
-        5. Zero State Leakage: context.states._instances is completely empty afterward.
-        6. Observation Purity: Emits STATE_CLEARED_ON_BATTLE_END (observation-only, non-gameplay).
-        7. Provenance Preservation: Preserves instance_id, state_id, owner_id, current_generation_id,
-           historical source provenance, round, phase, and reason="BATTLE_END".
-        """
+        """Atomically clear every resident state at battle teardown."""
         active_instances = sorted(
             context.states.find(),
             key=lambda inst: inst.instance_id,
@@ -1169,13 +1156,17 @@ class StateLifecycleSystem:
         if not active_instances:
             return []
 
-        cleared: list[StateInstance] = []
         for inst in active_instances:
-            if inst.instance_id not in context.states:
-                continue
-            context.states.remove(inst.instance_id)
+            if inst.instance_id in context.states:
+                context.states.remove(inst.instance_id)
+
+        for inst in active_instances:
             payload = self._event_payload(inst)
-            gen_str = str(inst.current_generation_id) if inst.current_generation_id is not None else None
+            gen_str = (
+                str(inst.current_generation_id)
+                if inst.current_generation_id is not None
+                else None
+            )
             payload["current_generation_id"] = gen_str
             payload["application_generation_id"] = gen_str
             payload["source_generation_id"] = gen_str
@@ -1187,7 +1178,6 @@ class StateLifecycleSystem:
             payload["clear_reason"] = "BATTLE_END"
             payload["reason"] = "BATTLE_END"
             payload["removal_reason"] = "BATTLE_END"
-
             context.event_bus.publish(
                 event_type=EventType.STATE_CLEARED_ON_BATTLE_END,
                 phase=context.current_phase,
@@ -1196,9 +1186,7 @@ class StateLifecycleSystem:
                 target_id=inst.owner_id,
                 payload=payload,
             )
-            cleared.append(inst)
-
-        return cleared
+        return active_instances
 
     def remove(
         self,
