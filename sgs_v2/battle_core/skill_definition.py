@@ -13,6 +13,20 @@ class SkillTargetMode(str, Enum):
     SINGLE_RANDOM_ENEMY = "SINGLE_RANDOM_ENEMY"
 
 
+class SkillType(str, Enum):
+    ACTIVE = "ACTIVE"
+    ASSAULT = "ASSAULT"
+    PASSIVE = "PASSIVE"
+    COMMAND = "COMMAND"
+    TROOP = "TROOP"
+    FORMATION = "FORMATION"
+
+
+class PreparationMode(str, Enum):
+    NONE = "NONE"
+    REQUIRED = "REQUIRED"
+
+
 @dataclass(frozen=True, slots=True)
 class DamageSkillEffectSpec:
     """把一次技能解析表达为伤害 Effect 的静态规格。"""
@@ -62,6 +76,8 @@ class SkillDefinition:
     activation_rate: float
     target_mode: SkillTargetMode
     effect_specs: tuple[SkillEffectSpec, ...]
+    skill_type: SkillType = SkillType.ACTIVE
+    preparation_mode: PreparationMode = PreparationMode.NONE
 
     def __post_init__(self) -> None:
         if not isinstance(self.skill_id, str) or not self.skill_id.strip():
@@ -78,6 +94,10 @@ class SkillDefinition:
             raise ValueError("activation_rate must be in [0.0, 1.0]")
         if not isinstance(self.target_mode, SkillTargetMode):
             raise TypeError("target_mode must be a SkillTargetMode")
+        if not isinstance(self.skill_type, SkillType):
+            raise TypeError("skill_type must be a SkillType")
+        if not isinstance(self.preparation_mode, PreparationMode):
+            raise TypeError("preparation_mode must be a PreparationMode")
 
         specs = tuple(self.effect_specs)
         if not specs:

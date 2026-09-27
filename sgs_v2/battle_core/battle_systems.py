@@ -32,6 +32,13 @@ from .normal_attack_system import NormalAttackSystem
 from .recovery_opportunity_system import RecoveryOpportunitySystem
 from .recovery_system import RecoveryModifierProvider, RecoverySystem
 from .provider_validity import ProviderValidityPolicy
+from .preparation_interruption import (
+    NoopPreparationInterruptionPort,
+    PreparationInterruptionPort,
+)
+from .skill_operation_admission import SkillOperationAdmissionCoordinator
+from .skill_permission import SkillPermissionPolicy
+from .skill_target_policy import SkillTargetPolicy
 from .state_effectiveness import StateEffectivenessPolicy
 from .state_application import (
     StateAdmissionPolicy,
@@ -85,6 +92,7 @@ class BattleSystems:
     defeat_cleanup_port: DefeatCleanupPort | None = None
     damage_aftermath_port: DamageAftermathPort | None = None
     recovery_modifier_provider: RecoveryModifierProvider | None = None
+    preparation_interruption_port: PreparationInterruptionPort | None = None
 
     action_order_system: ActionOrderSystem = field(init=False)
     damage_system: DamageSystem = field(init=False)
@@ -118,6 +126,9 @@ class BattleSystems:
     dependency_evaluation_support: DependencyEvaluationSupport = field(init=False)
     state_effectiveness_policy: StateEffectivenessPolicy = field(init=False)
     provider_validity_policy: ProviderValidityPolicy = field(init=False)
+    skill_permission_policy: SkillPermissionPolicy = field(init=False)
+    skill_operation_admission_coordinator: SkillOperationAdmissionCoordinator = field(init=False)
+    skill_target_policy: SkillTargetPolicy = field(init=False)
     state_admission_policy: StateAdmissionPolicy = field(init=False)
     state_conflict_policy: StateConflictPolicy = field(init=False)
     state_removal_policy: StateRemovalPolicy = field(init=False)
@@ -136,6 +147,14 @@ class BattleSystems:
         self.provider_validity_policy = ProviderValidityPolicy(
             self.dependency_evaluation_support
         )
+        self.skill_permission_policy = SkillPermissionPolicy()
+        self.skill_operation_admission_coordinator = SkillOperationAdmissionCoordinator(
+            self.provider_validity_policy,
+            self.skill_permission_policy,
+        )
+        self.skill_target_policy = SkillTargetPolicy()
+        if self.preparation_interruption_port is None:
+            self.preparation_interruption_port = NoopPreparationInterruptionPort()
         self.dependency_evaluation_support.bind_evaluators(
             state_evaluator=self.state_effectiveness_policy.evaluate_node,
             provider_evaluator=self.provider_validity_policy.evaluate_node,
@@ -318,7 +337,11 @@ class BattleSystems:
             self.state_lifecycle_system,
             self.recovery_system,
         )
-        self.skill_resolver = SkillResolver(self.target_system)
+        self.skill_resolver = SkillResolver(
+            self.target_system,
+            admission_coordinator=self.skill_operation_admission_coordinator,
+            target_policy=self.skill_target_policy,
+        )
         self.rule_hook_system = RuleHookSystem(
             self.trigger_system,
             self.effect_executor,
