@@ -1,6 +1,6 @@
 # 第十二阶段 · 官方状态补全（二）
 
-> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / NOT FROZEN**
+> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690089 RUNTIME FROZEN**
 > Canonical Scope：**7 states**
 > Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 > Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）
@@ -13,17 +13,20 @@
     Stage12 Active: YES
 
     Stage12 Research FROZEN: 7 / 7
-    Stage12 Runtime Frozen: 0 / 7
+    Stage12 Runtime Frozen: 1 / 7
 
-Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 已 FROZEN，Implementation Round 1 Core 已 PASS / PARTIAL；这仍不表示七状态已完成 gameplay integration 或 Runtime Freeze。
+Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 与 Implementation 已完成；690089 INSIGHT 已通过独立 Runtime Freeze Audit，因此 Stage12 Runtime Frozen 当前为 1 / 7，其余六状态仍未完成 gameplay integration / Runtime Freeze。
 
 ## 已冻结研究
 
 ### 690089 洞察 INSIGHT
 - Research FROZEN
 - Contract v0.4-frozen
-- Runtime PARTIAL / NOT FROZEN
-- Next: contract-aligned Runtime Design
+- Gameplay IMPLEMENTED
+- Runtime FROZEN TO CONTRACT
+- Independent Runtime Freeze Audit: PASS
+- Authority: [690089 Runtime Freeze Audit](STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md)
+- Next: 690101 EXHAUSTION Runtime Integration
 
 ### 690101 计穷 EXHAUSTION
 - Research FROZEN
@@ -321,3 +324,22 @@ Stage13 / Stage14 / Stage15 Active = NO
 ```
 
 NEXT = Shared Foundation Implementation Round 2 — State Transaction + Transition Runtime.
+
+
+## 690089 INSIGHT Runtime Freeze — 2026-09-27
+
+```text
+690089 Research = FROZEN
+690089 Gameplay = IMPLEMENTED
+690089 Runtime = FROZEN
+Stage12 Runtime Frozen = 1 / 7
+Stage11 Reopen Required = NO
+
+Adversarial audit SHA = 155119456e1a3fc3b225f701d00aa49dc5455b93
+Fresh audit CI = 36312467358 / success
+pytest = 1186 passed
+demo = PASS
+```
+
+The six remaining Stage12 mechanisms are still NOT INTEGRATED / NOT FROZEN.
+NEXT = 690101 EXHAUSTION Runtime Integration.

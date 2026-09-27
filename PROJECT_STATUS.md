@@ -20,8 +20,8 @@
 
     Official States                 = 40
     Research FROZEN                 = 39
-    Runtime FROZEN TO CONTRACT      = 33
-    Strict Complete                 = 32
+    Runtime FROZEN TO CONTRACT      = 34
+    Strict Complete                 = 33
 
 Strict Complete requires both research freeze and runtime freeze to contract.
 
@@ -59,16 +59,19 @@ Governance:
 
     Research Wave 4: COMPLETE
     Research FROZEN: 7 / 7
-    Runtime Frozen: 0 / 7
+    Runtime Frozen: 1 / 7
 
-Stage12 production Runtime is now ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; Runtime remains 0 / 7 FROZEN TO CONTRACT until implementation and freeze audit complete.
+Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT has passed its independent Runtime Freeze Audit, so Stage12 Runtime Frozen is now 1 / 7.
 
 ### 690089 INSIGHT
 
     Research: FROZEN
     Contract: v0.4-frozen
-    Runtime: PARTIAL / NOT FROZEN
-    Next: contract-aligned Runtime Design
+    Gameplay: IMPLEMENTED
+    Runtime: FROZEN TO CONTRACT
+    Runtime Freeze Audit: PASS
+    Audit Authority: stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md
+    Next: 690101 EXHAUSTION Runtime Integration
 
 ### 690101 EXHAUSTION
 
@@ -274,3 +277,24 @@ Stage13 / Stage14 / Stage15 Active = NO
 Implementation ledger: `stages/stage12/STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_STATUS.md`
 
 NEXT: Shared Foundation Implementation Round 2 — State Transaction + Transition Runtime.
+
+
+## Stage12 690089 INSIGHT Independent Runtime Freeze Audit — 2026-09-27
+
+```text
+690089 Research = FROZEN
+690089 Gameplay = IMPLEMENTED
+690089 Runtime = FROZEN
+Stage12 Runtime Frozen = 1 / 7
+Stage11 Reopen Required = NO
+Stage13 / Stage14 / Stage15 Active = NO
+
+Adversarial code/test SHA = 155119456e1a3fc3b225f701d00aa49dc5455b93
+Fresh audit CI = 36312467358 / success
+pytest = 1186 passed
+demo = PASS
+```
+
+Audit authority: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`
+
+NEXT: `690101 EXHAUSTION Runtime Integration`.

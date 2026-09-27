@@ -6,7 +6,7 @@ Round 4 implementation code/test SHA: `af9c70148075ef00614946ee797297c2aa1b622a`
 Round 4 validation CI run: `36306780864` / success  
 690089 integration validation checkpoint SHA: `ae213863a52a8e4c19b5169939fecb700ac8bfd8`  
 690089 validation CI run: `36310190828` / **1174 passed + demo PASS**  
-Status: **SHARED FOUNDATION IMPLEMENTATION COMPLETE / 690089 INSIGHT IMPLEMENTED_PENDING_RUNTIME_AUDIT**
+Status: **SHARED FOUNDATION IMPLEMENTATION COMPLETE / 690089 INSIGHT RUNTIME FROZEN**
 
 ## 1. Repository lock
 
@@ -365,7 +365,7 @@ The pre-existing Round 4 equipment/execution-right static guards remain covered 
 Stage12 individual-state gameplay implemented in the current round:
 
 ```text
-690089 INSIGHT = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690089 INSIGHT = IMPLEMENTED / RUNTIME_FROZEN
 ```
 
 Not gameplay-integrated in this round:
@@ -381,7 +381,7 @@ Not gameplay-integrated in this round:
 
 Synthetic/resident instances of those state IDs are used only to verify the INSIGHT side of frozen admission/suppression boundaries. That does not constitute their gameplay implementation.
 
-Stage12 Runtime Frozen remains **0 / 7** until the independent 690089 Runtime Freeze Audit passes.
+The independent 690089 Runtime Freeze Audit has passed. Stage12 Runtime Frozen is now **1 / 7**.
 
 ## 17. Current gates
 
@@ -399,11 +399,11 @@ Stage12 Research = 7 / 7 FROZEN
 Stage12 Shared Foundation Design = FROZEN
 Stage12 Shared Foundation Implementation = COMPLETE
 
-690089 INSIGHT Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
-690089 INSIGHT Runtime = NOT YET FROZEN
+690089 INSIGHT Gameplay = IMPLEMENTED
+690089 INSIGHT Runtime = FROZEN
 
-Stage12 Gameplay Implementation = 1 / 7 IMPLEMENTED_PENDING_RUNTIME_AUDIT
-Stage12 Runtime Frozen = 0 / 7
+Stage12 Gameplay Implementation = 1 / 7 IMPLEMENTED
+Stage12 Runtime Frozen = 1 / 7
 
 Stage13 Active = NO
 Stage14 Active = NO
@@ -414,15 +414,17 @@ No Research reopen is required by the implementation checkpoint.
 
 ## 18. Next
 
-The only authorized next step is:
+The 690089 independent Runtime Freeze Audit has passed.
+
+Authority:
+- `STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`
+- adversarial audit SHA `155119456e1a3fc3b225f701d00aa49dc5455b93`
+- fresh audit CI `36312467358` / 1186 passed / demo PASS
+
+The next authorized gameplay integration is:
 
 ```text
-690089 INSIGHT Independent Runtime Freeze Audit
+690101 EXHAUSTION Runtime Integration
 ```
 
-Do not enter 690101 EXHAUSTION Runtime Integration until that independent audit passes and explicitly advances:
-
-```text
-690089 Runtime = FROZEN
-Stage12 Runtime Frozen = 1 / 7
-```
+Do not mark any other Stage12 mechanism Runtime FROZEN until its own integration and independent freeze gate pass.

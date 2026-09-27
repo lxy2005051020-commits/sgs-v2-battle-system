@@ -15,8 +15,8 @@
 ```text
 Official States                 = 40
 Research FROZEN                 = 39
-Runtime FROZEN TO CONTRACT      = 33
-Strict Complete                 = 32
+Runtime FROZEN TO CONTRACT      = 34
+Strict Complete                 = 33
 Stage11 Scope                   = 17
 Stage11 Research FROZEN         = 16
 Stage11 Runtime FROZEN          = 17
@@ -84,13 +84,24 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690221 | 看破 DAMAGE_REDUCTION_PIERCE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | unsupported damage families remain explicit boundary |
 | 690094 | 倒戈 LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | Share assigned-damage basis + double-stage CEIL integrated; B11-FRZ-001 CLOSED |
 | 690095 | 攻心 STRATEGY_LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research strategy_life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | PROJECT-FROZEN MIRROR CONTRACT; shared RecoverySystem second-CEIL owner |
-| 690089 | 洞察 INSIGHT | FROZEN | PARTIAL | NO | Stage12 | Research Wave 4 | Research states/functional/insight/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v0.4-frozen; 690109 protected-overlap amendment PASS; 690110 direct-overlap amendment PASS and confirms CAPTURE is not protected by Insight; PD-INS-001/002 preserved; remaining special-state debts preserved |
+| 690089 | 洞察 INSIGHT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/functional/insight/MECHANISM_CONTRACT.md | Maintain 690089 freeze; proceed 690101 Runtime Integration | Contract v0.4-frozen; independent Runtime Freeze Audit PASS; 690109 protected-overlap amendment PASS; 690110 CAPTURE exclusion preserved; PD-INS-001/002 preserved |
 | 690101 | 计穷 EXHAUSTION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/exhaustion/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v0.2-frozen; full-corpus falsification PASS; 23,002 reports / 18,487 EXHAUSTION executions / TRUE_COUNTEREXAMPLE=0; B-EXH-01..05 preserved |
 | 690107 | 伪报 FALSE_REPORT | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/false_report/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0.1-frozen; final falsification + coverage repair PASS; stronger-vs-weaker / unseen immunity / special NPC / untested Equipment subtype debt bounded and non-blocking |
 | 690108 | 挑拨 PROVOCATION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/provocation/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; Round 1–6 + adversarial falsification PASS; final correction audit 20/20 PASS; Q43 restored; bounded unknowns explicit; cfg_71 excluded from state core |
 | 690222 | 威慑 INTIMIDATION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/intimidation/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; repaired adversarial falsification PASS; Q1-Q80 canonical governance PASS; OPEN_BLOCKING=0; source-skill counter separated; BU-01..10 explicit/non-blocking |
 | 690109 | 破坏 SABOTAGE | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 5 | Research `states/control/sabotage/MECHANISM_CONTRACT.md` v1.0-frozen | Stage12 contract-aligned Runtime Design | Freeze Audit PASS; 690089 cross-contract amendment PASS; bounded unknowns explicit/non-blocking |
 | 690110 | 捕获 CAPTURE | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 5 | Research states/control/capture/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; final falsification PASS; Freeze Audit PASS; source-skill boundary explicit; Q70-Q74 bounded; cross-state Runtime tests required |
+
+### Stage12 current Runtime Freeze snapshot
+
+```text
+690089 INSIGHT Runtime = FROZEN
+Stage12 Runtime Frozen = 1 / 7
+Stage11 Reopen Required = NO
+NEXT = 690101 EXHAUSTION Runtime Integration
+```
+
+Authority: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`
 
 ## 4. Stage11 Final Acceptance Snapshot
 
@@ -149,7 +160,7 @@ Authority:
 - Runtime default with research debt does not count as Strict Complete.
 - 690069, 690095 and 690091 retain their Project-Frozen Mirror distinction.
 - 690099 and 690221 are Research FROZEN and Runtime FROZEN TO CONTRACT; bounded debt remains explicit and non-blocking.
-- Stage12 Research is COMPLETE at 7 / 7 FROZEN: 690089, 690101, 690107, 690108, 690109, 690110 and 690222. Stage12 Active remains YES after Entry Gate activation; Shared Foundation Architecture Design precedes gameplay integration and Runtime Freeze.
+- Stage12 Research is COMPLETE at 7 / 7 FROZEN: 690089, 690101, 690107, 690108, 690109, 690110 and 690222. Stage12 Runtime Frozen is 1 / 7 after 690089 INSIGHT passed its independent Runtime Freeze Audit; the next integration owner is 690101 EXHAUSTION.
 - Stage12 Activation Gate is CLEARED and Stage12 Readiness is READY; Stage12 Active remains YES. Stage13 is not activated.
 
 
