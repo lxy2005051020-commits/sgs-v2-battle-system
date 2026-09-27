@@ -2,8 +2,8 @@
 
 Date: 2026-09-27  
 Current round: `STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND4_EQUIPMENT_EXECUTIONRIGHT_REMAINING_RUNTIME`  
-Round 4 implementation code/test SHA: `856249e8caa7c32faba4547e360ed9c52db38a34`  
-Round 4 validation CI run: `36306581681` / success  
+Round 4 implementation code/test SHA: `af9c70148075ef00614946ee797297c2aa1b622a`  
+Round 4 validation CI run: `36306780864` / success  
 Status: **ROUND 4 PASS / SHARED FOUNDATION IMPLEMENTATION IMPLEMENTED_PENDING_AUDIT**
 
 ## 1. Repository lock
@@ -311,12 +311,12 @@ Pure policy/evaluator queries emit zero events.
 
 Round 3 validated baseline: **1061 passed**.
 
-Round 4 pre-document validation line: **1132 passed expected after final coexistence regression**;
+Round 4 code/test SHA `af9c70148075ef00614946ee797297c2aa1b622a`:
 
 - pytest: **1132 passed**;
 - executable-test delta over Round 3: **+71**;
 - demo smoke test: **PASS**;
-- GitHub Actions final validation run: **recorded by the final branch/main gate after this status update**.
+- GitHub Actions run: **36306780864 / success**.
 
 The full suite includes Stage9, Stage10, Stage11 and Round1/2/3 Shared Foundation regressions.
 
