@@ -16,6 +16,7 @@ from .victory_system import VictorySystem
 
 if TYPE_CHECKING:
     from .context import BattleContext, BattleResult
+    from .effectiveness_transition import EffectivenessTransitionCoordinator
     from .state_lifecycle_system import StateLifecycleSystem
 
 
@@ -157,6 +158,7 @@ class BattleFinalizationCoordinator:
         victory_system: VictorySystem,
         id_allocator: OperationIdAllocator | None = None,
         state_lifecycle_system: StateLifecycleSystem | None = None,
+        effectiveness_transition_coordinator: EffectivenessTransitionCoordinator | None = None,
     ) -> None:
         if not isinstance(victory_system, VictorySystem):
             raise TypeError(
@@ -165,6 +167,7 @@ class BattleFinalizationCoordinator:
         self._victory_system = victory_system
         self._id_allocator = id_allocator
         self._state_lifecycle_system = state_lifecycle_system
+        self._effectiveness_transition_coordinator = effectiveness_transition_coordinator
         self._owning_context: BattleContext | None = None
         self._termination_state: BattleTerminationState = BattleTerminationState.RUNNING
         self._termination_generation: int = 0
@@ -182,6 +185,10 @@ class BattleFinalizationCoordinator:
     @property
     def state_lifecycle_system(self) -> StateLifecycleSystem | None:
         return self._state_lifecycle_system
+
+    @property
+    def effectiveness_transition_coordinator(self):
+        return self._effectiveness_transition_coordinator
 
     @property
     def owning_context(self) -> BattleContext | None:
@@ -712,4 +719,30 @@ class BattleFinalizationCoordinator:
         if lifecycle is None and self._owning_context is not None and hasattr(self._owning_context, "systems"):
             lifecycle = getattr(self._owning_context.systems, "state_lifecycle_system", None)
         if lifecycle is not None and self._owning_context is not None:
-            lifecycle.clear_all_on_battle_end(self._owning_context)
+            context = self._owning_context
+            transition = self._effectiveness_transition_coordinator
+            resident_before = tuple(
+                sorted(
+                    context.states.find(),
+                    key=lambda item: item.instance_id,
+                )
+            )
+            transition_snapshot = None
+            if transition is not None and resident_before:
+                from .dependency_evaluation import StateNode
+
+                transition_snapshot = transition.capture(
+                    context,
+                    tuple(StateNode(item.instance_id) for item in resident_before),
+                )
+
+            removed = lifecycle.clear_all_on_battle_end(context)
+
+            if transition is not None and transition_snapshot is not None and removed:
+                from .dependency_evaluation import StateNode
+
+                transition.complete_removed_nodes(
+                    context,
+                    transition_snapshot,
+                    tuple(StateNode(item.instance_id) for item in removed),
+                )
