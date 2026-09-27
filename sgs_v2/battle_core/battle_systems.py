@@ -60,6 +60,7 @@ from .effectiveness_transition import EffectivenessTransitionCoordinator
 from .effectiveness_transition_events import StateEffectivenessEventAdapter
 from .insight_integration import register_insight_integration
 from .exhaustion_integration import register_exhaustion_integration
+from .false_report_integration import register_false_report_integration
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .stage9_state_runtime import Stage9StateRuntime
@@ -243,6 +244,16 @@ class BattleSystems:
             effectiveness_transition_coordinator=self.effectiveness_transition_coordinator,
             preparation_interruption_port=self.preparation_interruption_port,
             state_application_coordinator=self.state_application_coordinator,
+        )
+
+        register_false_report_integration(
+            state_admission_policy=self.state_admission_policy,
+            state_conflict_policy=self.state_conflict_policy,
+            state_effectiveness_policy=self.state_effectiveness_policy,
+            provider_validity_policy=self.provider_validity_policy,
+            equipment_effectiveness_policy=self.equipment_effectiveness_policy,
+            state_application_coordinator=self.state_application_coordinator,
+            state_removal_policy=self.state_removal_policy,
         )
 
         self.stage11_state_runtime = Stage11StateRuntime(
