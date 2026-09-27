@@ -1,28 +1,29 @@
 # Stage12 Shared Foundation Implementation Status
 
 Date: 2026-09-27  
-Current round: `STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND2_STATE_TRANSACTION_TRANSITION`  
-Round 2 implementation code SHA: `7bf32c7bdb4157e9f3f17972d06f66989a5634e4`  
-Round 2 validation CI run: `36303239602` / success  
-Status: **ROUND 2 PASS / SHARED FOUNDATION IMPLEMENTATION PARTIAL**
+Current round: `STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND3_SKILL_PERMISSION_PREPARATION_TARGET`  
+Round 3 implementation code SHA: `7ed9c55bfe503b69f5e0c8bcf36a2066182310ad`  
+Round 3 validation CI run: `36304712981` / success  
+Status: **ROUND 3 PASS / SHARED FOUNDATION IMPLEMENTATION PARTIAL**
 
 ## 1. Repository lock
 
-- Battle Round 2 start: `32d029b2703d4aa3e91d1635987e8cddeb641f6e`
-- Research Round 2 start/final: `e18ae56a4db5662b87458dfa8fdff25dcdd8053b`
-- Research repository changes in Round 2: **NONE**
+- Battle Round 3 start: `c60a61346022ffb1e12141a198f1e1f3d57d029b`
+- Research Round 3 start/final: `e18ae56a4db5662b87458dfa8fdff25dcdd8053b`
+- Research repository changes in Round 3: **NONE**
 - Stage11 Reopen Required: **NO**
 
-Round 1 remains accepted production infrastructure and is not reimplemented:
+Round 1 and Round 2 remain accepted production infrastructure and are not reimplemented:
 
-- `ProviderRef` / `SkillProviderRef` / `EquipmentProviderRef`
-- `DependencyEvaluationSupport`
-- `StateEffectivenessPolicy`
-- `ProviderValidityPolicy`
-- `BattleSystems` canonical wiring
-- Stage9 behavior-preserving effectiveness seam
-- Stage11 shared-policy migration
-- DQ-SF-21 slot-0 repair
+- stable `ProviderRef` / `SkillProviderRef` / `EquipmentProviderRef`;
+- `DependencyEvaluationSupport`;
+- `StateEffectivenessPolicy`;
+- `ProviderValidityPolicy`;
+- state admission / conflict / transaction / removal / lifetime runtime;
+- `EffectivenessTransitionCoordinator`;
+- RD-SF-003 same-envelope settlement;
+- Stage9 / Stage11 shared-policy seams;
+- DQ-SF-21 slot-0 Provider migration.
 
 ## 2. Implementation matrix
 
@@ -32,246 +33,338 @@ Round 1 remains accepted production infrastructure and is not reimplemented:
 | DependencyEvaluationSupport | YES | YES | YES | YES |
 | StateEffectivenessPolicy core | YES | YES | YES | YES |
 | ProviderValidityPolicy core | YES | YES | YES | YES |
-| StateCandidate | YES | YES | YES | YES |
-| StateAdmissionPolicy | YES | YES | YES | YES |
-| StateConflictPolicy | YES | YES | YES | YES |
-| StateApplicationTransaction | YES | YES | YES | YES |
-| StateApplicationCoordinator | YES | YES | YES | YES |
-| CREATE / REFRESH / REPLACE generation semantics | YES | YES | YES | YES |
-| StateRemovalPolicy | YES | YES | YES | YES |
-| StateRemovalCoordinator | YES | YES | YES | YES |
-| StateLifetimeSpec | YES | YES | YES | YES |
+| StateCandidate / Admission / Conflict | YES | YES | YES | YES |
+| StateApplicationTransaction / Coordinator | YES | YES | YES | YES |
+| StateRemoval / Lifetime / Transition | YES | YES | YES | YES |
 | RD-SF-003 same-envelope settlement | YES | YES | YES | YES |
-| EffectivenessTransitionCoordinator | YES | YES | YES | YES |
-| State / Provider transition ports | YES | YES | YES | GENERIC INFRASTRUCTURE |
-| Pre-commit dependency cycle validation | YES | YES | YES | YES |
-| Legacy Lifecycle.apply compatibility | YES | YES | YES | PRESERVED |
-| SkillPermissionPolicy runtime | YES | NO | NO | NO |
-| SkillOperationAdmissionCoordinator full runtime | YES | NO | NO | NO |
-| PreparationInterruptionPort integration | YES | NO | NO | NO |
-| SkillTargetPolicy runtime | YES | NO | NO | NO |
+| SkillType / PreparationMode schema | YES | YES | YES | YES |
+| SkillPermissionPolicy runtime | YES | YES | YES | YES |
+| SkillOperationAdmissionCoordinator | YES | YES | YES | YES |
+| ProviderValidity / Permission pre-RNG topology | YES | YES | YES | YES |
+| PreparationInterruptionPort infrastructure | YES | YES | YES | GENERIC INFRASTRUCTURE |
+| Concrete Preparation Owner | FUTURE STAGE15 | NO | N/A | NOT YET AVAILABLE |
+| TargetOperationId | YES | YES | YES | YES |
+| TargetOperation / QueryMode | YES | YES | YES | YES |
+| TargetSelectionResult / Provenance | YES | YES | YES | YES |
+| SkillTargetPolicy runtime | YES | YES | YES | YES |
+| SkillResolver migration | YES | YES | YES | BEHAVIOR-PRESERVING |
+| BattleSystems Round3 canonical wiring | YES | YES | YES | YES |
 | EquipmentEffectivenessPolicy runtime | YES | NO | NO | NO |
+| EquipmentContributionRegistry runtime | YES | NO | NO | NO |
 | ExecutionRight remaining runtime | YES | NO | NO | PARTIAL LEGACY FOUNDATION |
-| Capture composite seams | YES | NO | NO | NO |
-| Final Stage12 RNG/Event integration | YES | PARTIAL | PARTIAL | PARTIAL |
+| Capture composite generic seams | YES | NO | NO | NO |
+| Final Stage12 Event transition integration | YES | PARTIAL | PARTIAL | PARTIAL |
 
-## 3. State application topology
+## 3. Skill permission runtime
 
-Round 2 production ingress is:
+`SkillPermissionPolicy` is now the canonical holder-level permission owner for Skill operation admission.
 
-```text
-StateCandidate validation
--> StateAdmissionPolicy
--> StateConflictPolicy
--> immutable StateApplicationTransaction preparation
--> dependency topology preflight
--> resident/generation precondition validation
--> authorized StateApplicationGenerationId allocation
--> StateLifecycleSystem physical commit
--> dependency topology commit
--> affected closure recompute
--> typed transition ports
--> typed StateApplicationResult
-```
+Typed input includes:
 
-The coordinator never calls `StateRegistry.add/remove/replace`. `StateLifecycleSystem` remains the physical state writer.
+- actor identity;
+- exact `SkillProviderRef`;
+- `SkillType`;
+- `PreparationMode`;
+- operation kind (`NEW_ADMISSION` / `CONTINUATION`).
 
-Rejected admission/conflict/unsupported/cycle paths do not allocate a candidate generation and do not emit committed state facts.
+Typed results include:
 
-## 4. Candidate and admission
+- `ALLOW`;
+- `DENY_STATE_PERMISSION`;
+- `DENY_UNSUPPORTED_BOUNDARY`;
+- `CONTINUATION_NOT_REEVALUATED`.
 
-`StateCandidate` is non-resident and contains only Shared Foundation application inputs:
+The policy is pure:
 
-- state and owner identity;
-- source attribution;
-- typed runtime parameter candidate;
-- typed physical lifetime;
-- optional strength / priority metadata;
-- explicit `ProviderDependency` records;
-- application provenance.
+- no RNG;
+- no EventBus publication;
+- no state mutation;
+- no mutation of `SkillRuntime.enabled`.
 
-It contains no physical `instance_id` and no application generation id.
+No real Stage12 state adapter is registered in Round 3. Executable tests use synthetic denial adapters only.
 
-`StateAdmissionPolicy` returns typed decisions:
+## 4. Skill operation admission
 
-- `ALLOW`
-- `REJECT_IMMUNITY`
-- `REJECT_SPECIAL_PROTECTION`
-- `REJECT_INVALID_TARGET`
-- `REJECT_UNSUPPORTED_BOUNDARY`
-
-Admission is pure: no registry write, RNG, EventBus fact, conflict resolution or generation allocation.
-
-## 5. Conflict and transaction semantics
-
-`StateConflictPolicy` returns:
-
-- `CREATE`
-- `REFRESH`
-- `REPLACE`
-- `REJECT_CONFLICT`
-- `UNSUPPORTED_BOUNDARY`
-
-With no resident match the foundation may CREATE. With a resident match and no registered contract adapter, the default is explicit `UNSUPPORTED_BOUNDARY`; there is no universal same-state refresh rule.
-
-Generation semantics are executable:
-
-| Disposition | Physical instance | Generation |
-| --- | --- | --- |
-| CREATE | new | new |
-| REFRESH | same | new |
-| REPLACE | new | new |
-| reject / unsupported | unchanged | no candidate allocation |
-
-Resume remains an effectiveness transition only. It does not invoke refresh, allocate a generation, reset lifetime or consume RNG.
-
-## 6. Dependency and cycle atomicity
-
-Round 2 extends `DependencyEvaluationSupport` with:
-
-- pure prospective topology replacement validation;
-- multi-root affected closure;
-- deterministic node cleanup after physical removal.
-
-Cycle validation happens before generation allocation and before physical mutation. The cycle discriminator test proves a rejected cycle leaves Registry, EventBus and candidate generation allocation unchanged.
-
-## 7. StateLifetimeSpec
-
-Typed physical lifetime domains now exist independently from Stage10 persistence:
-
-- `ROUND_CALENDAR`
-- `HOLDER_ACTION_WINDOW`
-- `EXPLICIT_PHASE_EXPIRY`
-
-Stage12 typed lifetime is stored in `StateInstance.lifetime_spec`; it is not encoded by passing legacy `duration_rounds/lifecycle_window` through the Stage10 persistence detector.
-
-Behavioral counters remain outside `StateLifetimeSpec`. In particular Stage11 STUN `remaining_blocks` remains a gameplay opportunity counter.
-
-Suppression does not pause physical lifetime. Holder-action and phase/round lifetime settlement does not query StateEffectiveness before advancing/removing a due state.
-
-## 8. RD-SF-003 same-envelope runtime
-
-RD-SF-003 is now production behavior:
+`SkillOperationAdmissionCoordinator` now composes:
 
 ```text
-1. snapshot complete due set
-2. deterministic instance_id ordering
-3. physically remove complete due set
-4. publish committed expiry facts
-5. remove dependency nodes / recompute affected closure
-6. invoke typed transition ports
-7. only then later gameplay continues
+SkillProviderRef
+-> ProviderValidityPolicy
+-> SkillPermissionPolicy
+-> SkillOperationAdmissionDecision
 ```
 
-The first expiry event in an envelope already observes every member of that due set as physically absent.
+Provider validity is evaluated first. A Provider decision other than `VALID` rejects admission without invoking downstream activation or target RNG.
 
-If a suppressed state and its suppression cause are both due in the same envelope, the due state cannot transiently resume because it is absent before transition recomputation.
+Typed admission results are:
 
-Owner-defeat cleanup and battle teardown also batch physical state removal before their per-state observable facts.
+- `ALLOW`;
+- `DENY_PROVIDER_INVALID`;
+- `DENY_PERMISSION`;
+- `UNSUPPORTED_BOUNDARY`.
 
-## 9. Removal architecture
+`SkillRuntime.enabled` remains only a baseline Provider fact consumed by `ProviderValidityPolicy`. Transient suppression is not written back into it.
 
-`StateRemovalPolicy` distinguishes gameplay eligibility from infrastructure lifecycle removal.
+## 5. Skill classification compatibility
 
-Gameplay operations:
+Production `SkillDefinition` now carries the frozen Shared Foundation metadata:
 
-- `ORDINARY_CLEANSE`
-- `SPECIALIZED_CLEANSE`
-- `SCRIPTED_GAMEPLAY_REMOVE`
+- `SkillType`;
+- `PreparationMode`.
 
-Infrastructure operations:
+RD-SF-001 is executable compatibility behavior:
 
-- `NATURAL_EXPIRY`
-- `OWNER_DEFEAT_CLEANUP`
-- `BATTLE_TEARDOWN`
+```text
+legacy SkillDefinition
+-> SkillType.ACTIVE
+-> PreparationMode.NONE
+```
 
-Infrastructure operations return the lifecycle allow path before gameplay cleanse adapters. Gameplay removal without an evidence-backed adapter remains explicit `UNSUPPORTED_BOUNDARY`.
+No existing caller must add metadata merely to retain pre-Stage12 behavior.
 
-Rejected gameplay removal preserves the exact resident state. Committed removal uses `StateLifecycleSystem.remove()`, then settles the affected dependency closure.
+## 6. Preparation interruption infrastructure
 
-## 10. Effectiveness transition runtime
+Round 3 implements:
 
-`EffectivenessTransitionCoordinator` is non-authoritative and owns no Registry, Lifecycle, Damage, Recovery, Target, Action, RNG or Provider identity.
+- `PreparationInterruptionPort`;
+- `PreparationInterruptionRequest`;
+- `PreparationInterruptionResult`;
+- scopes `HOLDER_ACTIVE` and `PROVIDER`;
+- results `INTERRUPTED`, `NOT_PREPARING`, `PROVIDER_NOT_MATCHED`, `UNSUPPORTED`;
+- `PreparationInterruptionTransitionAdapter` for synchronous binding to state/provider effectiveness transition ports.
 
-It:
+Production composition currently uses explicit:
 
-- captures canonical StateEffectiveness / ProviderValidity decisions for an affected reverse-dependency closure;
-- recomputes only that closure after a committed mutation;
-- emits an internal typed transition only when status actually changes;
-- invokes generic synchronous State / Provider transition ports;
-- emits no public EventBus suppression/resume event in Round 2.
+```text
+NoopPreparationInterruptionPort
+```
 
-Covered transitions include:
+with the hard invariant that the current production runtime contains no PREPARING work.
 
-- EFFECTIVE -> SUPPRESSED;
-- SUPPRESSED -> EFFECTIVE;
-- VALID -> SUPPRESSED;
-- SUPPRESSED -> VALID;
-- multi-cause removal with no false resume;
-- removed-state no-resume behavior;
-- unchanged query with no duplicate transition.
+This placeholder is **NON-COMPLETE** and is not evidence that any Stage12 state requiring real preparation interruption is Runtime Frozen.
 
-## 11. Legacy compatibility and architecture
+```text
+Concrete Preparation Owner = NOT YET AVAILABLE
+Stage15 Active = NO
+```
 
-Legacy Stage1-11 `StateLifecycleSystem.apply()/refresh()` remains available.
+No preparation scheduler, progress engine or Stage15 active-preparation runtime is implemented.
 
-The Stage9 / Stage11 existing conflict failure surface remains `ValueError` where it was already `ValueError`. A dedicated regression covers the legacy Stage9 COMBO conflict surface.
+## 7. Target operation runtime
 
-Static architecture tests enforce:
+Round 3 implements typed:
 
-- Round 2 policy/coordinator modules do not physically mutate `StateRegistry`;
-- `StateApplicationCoordinator` calls the Lifecycle transaction seam;
-- Lifecycle does not instantiate `StateApplicationCoordinator`;
-- transition coordinator does not mutate Registry;
-- Round 2 transaction modules import/use no random module and do not touch `context.random`;
-- Round 2 foundation production modules contain no seven-state gameplay switches.
+- `TargetOperationId`;
+- `TargetOperation`;
+- `TargetRelation = ENEMY / ALLY / SELF`;
+- `TargetCardinality = SINGLE / CHOOSE_N / FIXED_ALL`;
+- `TargetSelectorKind = RANDOM / DETERMINISTIC / EXPLICIT`;
+- `TargetEligibilityContext`;
+- producer Provider identity and admitted-operation key.
 
-## 12. Tests, demo and CI
+`TargetOperationId` is:
 
-Round 1 validated baseline: **951 passed**.
+- immutable;
+- deterministic per battle;
+- value-equal;
+- explicitly non-orderable for gameplay priority;
+- distinct from Stage9 `TargetResolutionId`.
 
-Round 2 validated implementation SHA `7bf32c7bdb4157e9f3f17972d06f66989a5634e4`:
+## 8. Query freshness and selection provenance
 
-- pytest: **1006 passed**
-- Round 2 delta: **+55 executable tests**
-- demo: **PASS**
-- GitHub Actions run: **36303239602 / success**
+Round 3 implements:
 
-The full suite includes Stage9, Stage10 and Stage11 regressions; this was not a Round2-only test selection.
+```text
+NEW_QUERY
+INHERIT_RESOLVED
+DERIVE_FROM_RESOLVED
+LOCK_RESOLVED
+```
 
-## 13. Gameplay change boundary
+Only an explicit `NEW_QUERY` creates a new `TargetOperation` / `TargetOperationId`.
 
-Stage12 individual state gameplay implemented in Round 2: **NONE**.
+`TargetSelectionResult` carries:
+
+- operation id;
+- target ids;
+- provenance.
+
+Provenance is:
+
+```text
+FRESH_SELECTED
+INHERITED
+DERIVED
+LOCKED
+```
+
+Inherited, derived and locked continuations reuse the original operation identity and do not allocate a fresh query merely because a new child Effect or hit exists.
+
+## 9. Skill target policy
+
+`SkillTargetPolicy` is now the canonical Shared Foundation target-constraint owner for already-admitted fresh Skill target operations.
+
+It produces a typed `TargetPolicyDecision` containing:
+
+- eligible candidate ids;
+- required target ids;
+- excluded target ids;
+- cardinality-preservation flag;
+- explicit unsupported boundary marker.
+
+The policy consumes zero RNG.
+
+`TargetSystem` remains the owner of:
+
+- raw relationship candidate primitives;
+- random selection primitives;
+- target RNG through `BattleContext.random`.
+
+Round 3 registers no real target-state adapter. Required/excluded behavior is tested with synthetic adapters only.
+
+## 10. SkillResolver migration
+
+Production `BattleSystems.skill_resolver` now receives the canonical:
+
+- `SkillOperationAdmissionCoordinator`;
+- `SkillTargetPolicy`.
+
+For slot-bearing canonical Skill providers, the runtime path is:
+
+```text
+SkillProviderRef
+-> ProviderValidityPolicy
+-> SkillPermissionPolicy
+-> admitted
+-> legacy-compatible empty-pool preflight
+-> activation RNG
+-> explicit NEW_QUERY
+-> TargetOperation
+-> SkillTargetPolicy
+-> TargetSystem selector
+-> TargetSelectionResult
+-> existing Effect construction
+```
+
+The pre-activation empty-pool check is retained because pre-Stage12 SkillResolver already guaranteed that an empty target pool consumes no activation RNG. It is enumeration-only: it creates no `TargetOperation`, evaluates no `SkillTargetPolicy`, and consumes no target RNG.
+
+Failed activation creates no `TargetOperation` and consumes no target RNG.
+
+The existing external `SkillResolutionResult` field surface is unchanged.
+
+Legacy direct slotless SkillResolver construction remains an explicit compatibility seam. It does not construct a fallback canonical `ProviderValidityPolicy`.
+
+## 11. Normal Attack boundary
+
+Normal Attack remains completely outside `SkillTargetPolicy`.
+
+Its owner remains:
+
+```text
+TargetResolutionSystem
+-> Confusion
+-> Taunt
+-> default selector
+-> Guard
+```
+
+Static architecture tests verify:
+
+- `TargetResolutionSystem` does not depend on `SkillTargetPolicy`;
+- `SkillTargetPolicy` does not depend on `TargetResolutionSystem`.
+
+## 12. BattleSystems canonical wiring
+
+One production `BattleSystems` graph constructs exactly one:
+
+- `SkillPermissionPolicy`;
+- `SkillOperationAdmissionCoordinator`;
+- `SkillTargetPolicy`;
+- explicit Preparation interruption port placeholder.
+
+`SkillResolver` and `RecoveryOpportunitySystem` continue to share the same canonical `ProviderValidityPolicy`.
+
+No consumer constructs a fallback `ProviderValidityPolicy`.
+
+## 13. RNG ownership
+
+Round 3 preserves:
+
+```text
+ProviderValidityPolicy = 0 RNG
+SkillPermissionPolicy = 0 RNG
+SkillOperationAdmissionCoordinator = 0 RNG
+PreparationInterruptionPort infrastructure = 0 RNG
+SkillTargetPolicy = 0 RNG
+```
+
+Owned draws remain:
+
+- activation probability -> SkillResolver / BattleContext.random;
+- target randomization -> TargetSystem / BattleContext.random.
+
+Executable tests prove:
+
+- missing/mismatched/baseline-disabled/suppressed Provider rejection consumes zero activation and target RNG;
+- permission denial consumes zero activation and target RNG;
+- failed activation consumes no target RNG;
+- policy evaluation consumes zero target RNG;
+- random selector remains the target RNG owner.
+
+## 14. Static architecture audit
+
+Round 3 semantic/static checks pass:
+
+- no `random` module import in permission/admission/preparation/target-policy modules;
+- no `context.random` use in those pure foundation modules;
+- no Stage12 seven-state IDs in Round 3 production modules;
+- no Stage12 state-name switch ladder in Round 3 production modules;
+- no SkillTargetPolicy / TargetResolutionSystem dependency cycle;
+- no SkillResolver fallback construction of `ProviderValidityPolicy`;
+- exactly one canonical Round 3 policy/coordinator instance in `BattleSystems`.
+
+## 15. Tests, demo and CI
+
+Round 2 validated baseline: **1006 passed**.
+
+Round 3 implementation SHA `7ed9c55bfe503b69f5e0c8bcf36a2066182310ad`:
+
+- pytest: **1061 passed**;
+- Round 3 executable-test delta: **+55**;
+- demo: **PASS**;
+- GitHub Actions run: **36304712981 / success**.
+
+The full suite includes Stage9, Stage10, Stage11 and Round1/2 Shared Foundation regressions.
+
+## 16. Gameplay change boundary
+
+Stage12 individual-state gameplay implemented in Round 3: **NONE**.
 
 No production adapter or state-id switch implements:
 
-- INSIGHT protected controls;
-- EXHAUSTION skill blocking;
+- INSIGHT gameplay;
+- EXHAUSTION Active denial or preparation interruption;
 - FALSE_REPORT Provider suppression;
 - PROVOCATION target constraints;
-- INTIMIDATION binding / RNG;
+- INTIMIDATION Provider binding/suppression;
 - SABOTAGE equipment suppression;
-- CAPTURE action/damage/recovery behavior.
+- CAPTURE target/action/damage/recovery behavior.
 
-The tests use synthetic state and suppression adapters only.
+RD-SF-004 remains a generic topology rule only:
 
-## 14. Frozen design conformance
+```text
+permission denial
+-> before activation RNG
+```
 
-Round 2 implementation was checked against:
+It does not mean EXHAUSTION gameplay is implemented.
 
-- DQ-SF-01: State Admission;
-- DQ-SF-22: State Application Transaction;
-- DQ-SF-24: Lifecycle Clock;
-- DQ-SF-25: Removal/Cleanse architecture;
-- RD-SF-003: same-envelope settlement.
-
-No implementation drift requiring a design or Stage11 reopen was found.
-
-## 15. Current gates
+## 17. Current gates
 
 ```text
 STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND1 = PASS
 STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND2_STATE_TRANSACTION_TRANSITION = PASS
+STAGE12_SHARED_FOUNDATION_IMPLEMENTATION_ROUND3_SKILL_PERMISSION_PREPARATION_TARGET = PASS
 
 Stage11 Runtime = FROZEN
 Stage11 Reopen Required = NO
@@ -279,6 +372,13 @@ Stage11 Reopen Required = NO
 Stage12 Research = 7 / 7 FROZEN
 Stage12 Shared Foundation Design = FROZEN
 Stage12 Shared Foundation Implementation = PARTIAL
+
+Skill Permission Runtime = IMPLEMENTED
+Skill Admission Coordinator = IMPLEMENTED
+Preparation Port Infrastructure = IMPLEMENTED
+Concrete Preparation Owner = NOT YET AVAILABLE
+TargetOperation / TargetSelectionResult = IMPLEMENTED
+SkillTargetPolicy = IMPLEMENTED
 
 Stage12 individual state gameplay = NONE
 Stage12 Runtime Frozen = 0 / 7
@@ -288,21 +388,22 @@ Stage14 Active = NO
 Stage15 Active = NO
 ```
 
-Round 2 does not make Shared Foundation complete. Remaining foundation work includes Skill Permission, Skill Operation Admission, Preparation interruption, target policy, equipment effectiveness, remaining ExecutionRight seams, Capture composite seams and final RNG/Event integration.
+Round 3 does not make Shared Foundation complete.
 
-## 16. Next
+Remaining foundation work includes:
 
-`Shared Foundation Implementation Round 3: Skill Permission + Preparation + Target Runtime`
+- EquipmentContributionRegistry runtime;
+- EquipmentEffectivenessPolicy runtime;
+- EquipmentContributionDependency;
+- remaining ExecutionRight runtime;
+- per-dimension SNAPSHOT / JIT runtime;
+- Capture composite generic seams;
+- remaining Trigger/equipment JIT infrastructure;
+- final committed transition/event seams;
+- remaining cross-domain wiring.
 
-Planned scope:
+## 18. Next
 
-- `SkillPermissionPolicy` runtime;
-- `SkillOperationAdmissionCoordinator`;
-- `PreparationInterruptionPort` infrastructure;
-- `SkillTargetPolicy`;
-- `TargetOperation`;
-- `TargetSelectionResult`;
-- `NEW_QUERY / INHERIT / DERIVE / LOCK`;
-- Provider-invalid / permission-denied pre-RNG topology.
+`Shared Foundation Implementation Round 4: Equipment Effectiveness + ExecutionRight + Remaining Runtime`
 
-Round 3 must continue to avoid formal gameplay integration of EXHAUSTION, PROVOCATION and CAPTURE until their registered state-specific adapters are deliberately connected.
+Round 4 must continue to avoid formal gameplay integration of SABOTAGE, equipment-linked FALSE_REPORT and CAPTURE until their registered state-specific adapters are deliberately connected.
