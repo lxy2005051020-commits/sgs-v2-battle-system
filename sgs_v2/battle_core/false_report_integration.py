@@ -68,7 +68,7 @@ FALSE_REPORT_TESTED_EQUIPMENT_SPECIAL_KEYS: frozenset[str] = frozenset(
         "踩踏",
         "刚毅",
         "天公",
-        "增气",
+        "妖气",
         "忍让",
         "躲闪",
         "祝福",
