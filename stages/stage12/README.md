@@ -1,6 +1,6 @@
 # 第十二阶段 · 官方状态补全（二）
 
-> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690089 RUNTIME FROZEN**
+> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690089 RUNTIME FROZEN / 690101 PARTIAL**
 > Canonical Scope：**7 states**
 > Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 > Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）
@@ -35,8 +35,15 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - 23,002 structured battle reports
 - 18,487 observed EXHAUSTION executions
 - TRUE_COUNTEREXAMPLE = 0
-- Runtime NOT_INTEGRATED
-- Next: contract-aligned Runtime Design
+- Gameplay PARTIAL
+- Runtime FREEZE_BLOCKED
+- ACTIVE permission integration: IMPLEMENTED
+- RD-SF-004 pre-RNG short circuit: IMPLEMENTED
+- INSIGHT suppression/resume permission interaction: IMPLEMENTED
+- Preparation interruption: BLOCKED by missing concrete PREPARING owner and first-application command seam
+- Stage12 Runtime Frozen remains 1 / 7
+- Next: resolve explicit preparation integration dependency; do not enter 690107 yet
+- Integration record: [690101 Runtime Integration](STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md)
 - Battle mirror: [690101 research authority sync](STAGE12_690101_EXHAUSTION_RESEARCH_SYNC.md)
 
 ### 690107 伪报 FALSE_REPORT
@@ -341,5 +348,5 @@ pytest = 1186 passed
 demo = PASS
 ```
 
-The six remaining Stage12 mechanisms are still NOT INTEGRATED / NOT FROZEN.
-NEXT = 690101 EXHAUSTION Runtime Integration.
+690101 EXHAUSTION is PARTIAL / FREEZE_BLOCKED by the explicit preparation dependency. The other five remaining Stage12 mechanisms are still NOT_INTEGRATED / NOT_FROZEN.
+NEXT = resolve 690101 preparation integration dependency before any 690107 integration.
