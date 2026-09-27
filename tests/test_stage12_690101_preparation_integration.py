@@ -306,6 +306,17 @@ def test_production_battle_systems_uses_concrete_owner_not_noop() -> None:
     )
 
 
+def test_production_effective_exhaustion_create_interrupts_default_owner() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    begin_admitted_preparation(systems, context)
+
+    result = apply_state(systems, context, OfficialStateId.SILENCE.value)
+
+    assert result.status is StateApplicationResultStatus.APPLIED
+    assert not systems.preparation_state_owner.is_preparing("a")
+
+
 def test_effective_exhaustion_create_interrupts_existing_preparation_once() -> None:
     context = make_context()
     owner = PreparationStateOwner()
