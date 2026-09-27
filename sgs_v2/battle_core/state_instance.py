@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from .enums import BattlePhase
 from .skill_runtime import SkillSlot
 from .state_generation import PersistentLifecycleWindow, StateApplicationGenerationId
+from .state_lifetime import StateLifetimeSpec
 from .state_runtime_params import (
     EmptyStateRuntimeParams,
     StateRuntimeParams,
@@ -54,6 +55,7 @@ class StateInstance:
     )
     current_generation_id: StateApplicationGenerationId | None = None
     lifecycle_window: PersistentLifecycleWindow | None = None
+    lifetime_spec: StateLifetimeSpec | None = None
 
     def __post_init__(self) -> None:
         if not self.instance_id:
@@ -91,6 +93,12 @@ class StateInstance:
         ):
             raise TypeError(
                 f"lifecycle_window must be a PersistentLifecycleWindow or None, got {type(self.lifecycle_window)}"
+            )
+        if self.lifetime_spec is not None and not isinstance(
+            self.lifetime_spec, StateLifetimeSpec
+        ):
+            raise TypeError(
+                f"lifetime_spec must be a StateLifetimeSpec or None, got {type(self.lifetime_spec)}"
             )
 
         validate_state_runtime_params(self.runtime_params)
