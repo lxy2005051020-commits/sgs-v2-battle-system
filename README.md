@@ -15,7 +15,7 @@
     Stage9  = FROZEN
     Stage10 = FROZEN
     Stage11 = RUNTIME FROZEN / POST-FREEZE ACCEPTED
-    Stage12 = ACTIVE / RESEARCH COMPLETE / SHARED FOUNDATION DESIGN FROZEN / RUNTIME 0 OF 7
+    Stage12 = ACTIVE / RESEARCH COMPLETE / SHARED FOUNDATION DESIGN FROZEN / RUNTIME 2 OF 7
     Stage13 = NOT ACTIVE
 
 Stage11 Runtime Tested SHA:
@@ -31,8 +31,8 @@ Acceptance CI:
 
     Official States                 = 40
     Research FROZEN                 = 39 / 40
-    Runtime FROZEN TO CONTRACT      = 34 / 40
-    Strict Complete                 = 33 / 40
+    Runtime FROZEN TO CONTRACT      = 35 / 40
+    Strict Complete                 = 34 / 40
 
 Strict Complete 仍严格要求：
 
@@ -65,12 +65,16 @@ Research FROZEN:
 
 690101 当前状态：
 - Contract v0.2-frozen
-- adversarial audit PASS
-- freeze audit PASS
+- adversarial research audit PASS
+- independent Runtime Freeze Audit PASS
 - 23,002 structured battle reports
 - 18,487 observed EXHAUSTION executions
 - TRUE_COUNTEREXAMPLE = 0
-- Runtime NOT_INTEGRATED
+- Gameplay IMPLEMENTED
+- Runtime FROZEN TO CONTRACT
+- Preparation dependency blockers CLOSED
+- Fresh adversarial Runtime audit CI 36326173066 / 1244 passed / demo PASS
+- Authority: stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md
 
 690107 当前状态：
 - Contract v1.0.1-frozen
@@ -114,8 +118,10 @@ Research FROZEN:
 
 Stage12 Research = 7 / 7 FROZEN.
 Stage12 Shared Foundation Design + Implementation = FROZEN / COMPLETE.
-690089 INSIGHT Runtime = FROZEN; Stage12 Runtime Frozen = 1 / 7.
-Next: 690101 EXHAUSTION Runtime Integration.
+690089 INSIGHT Runtime = FROZEN.
+690101 EXHAUSTION Runtime = FROZEN.
+Stage12 Runtime Frozen = 2 / 7.
+Next: 690107 FALSE_REPORT Runtime Integration.
 
 ## Stage sequencing
 
