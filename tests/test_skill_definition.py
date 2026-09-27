@@ -66,7 +66,7 @@ def test_skill_effect_specs_are_typed_immutable_and_validated() -> None:
         ApplyStateSkillEffectSpec("")
 
 
-def test_skill_definition_has_no_stage6_escape_hatch_fields() -> None:
+def test_skill_definition_has_only_explicit_schema_fields() -> None:
     field_names = {item.name for item in fields(SkillDefinition)}
     assert field_names == {
         "skill_id",
@@ -74,6 +74,8 @@ def test_skill_definition_has_no_stage6_escape_hatch_fields() -> None:
         "activation_rate",
         "target_mode",
         "effect_specs",
+        "skill_type",
+        "preparation_mode",
     }
     for forbidden in (
         "metadata",
@@ -83,7 +85,6 @@ def test_skill_definition_has_no_stage6_escape_hatch_fields() -> None:
         "custom_handler",
         "callable",
         "category",
-        "skill_type",
         "timing",
         "trigger_type",
         "cooldown",

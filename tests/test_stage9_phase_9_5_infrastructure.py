@@ -779,6 +779,7 @@ def test_p95_src_01_skill_resolver_real_path_emits_active_skill_source_ref() -> 
         skill_slot=SkillSlot.LEARNED_1,
     )
 
+    context.skill_runtimes.register(runtime)
     result = BattleSystems().skill_resolver.resolve(context, runtime)
     effect = result.effects[0]
 
@@ -797,6 +798,7 @@ def test_p95_src_02_loaded_skill_slot_survives_runtime_and_resolver() -> None:
         skill_slot=SkillSlot.LEARNED_2,
     )
     runtime = SkillRuntime.from_loaded(loaded)
+    context.skill_runtimes.register(runtime)
 
     effect = BattleSystems().skill_resolver.resolve(context, runtime).effects[0]
 

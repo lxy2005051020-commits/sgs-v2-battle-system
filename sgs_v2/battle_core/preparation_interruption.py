@@ -131,9 +131,9 @@ class PreparationInterruptionTransitionAdapter:
         if not isinstance(coordinator, EffectivenessTransitionCoordinator):
             raise TypeError("coordinator must be EffectivenessTransitionCoordinator")
         if self._state_factory is not None:
-            coordinator.register_state_port(self.on_state_transition)
+            coordinator.register_state_transition_port(self.on_state_transition)
         if self._provider_factory is not None:
-            coordinator.register_provider_port(self.on_provider_transition)
+            coordinator.register_provider_transition_port(self.on_provider_transition)
 
     def on_state_transition(
         self,
