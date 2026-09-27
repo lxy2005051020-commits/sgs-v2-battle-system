@@ -265,7 +265,7 @@ no Stage13 / Stage14 / Stage15 change
 ## U. Stage9 Regression
 
 ```text
-PENDING PR CI
+PASS via full-suite CI 36331485754
 ```
 
 No Stage9 production code changed.
@@ -273,7 +273,7 @@ No Stage9 production code changed.
 ## V. Stage10 Regression
 
 ```text
-PENDING PR CI
+PASS via full-suite CI 36331485754
 ```
 
 No Stage10 production code changed.
@@ -281,14 +281,14 @@ No Stage10 production code changed.
 ## W. Stage11 Regression
 
 ```text
-PENDING PR CI
+PASS via full-suite CI 36331485754
 Stage11 Reopen Required = NO
 ```
 
 ## X. 690089 Regression
 
 ```text
-PENDING PR CI
+PASS via full-suite CI 36331485754
 ```
 
 No 690089 production code changed.
@@ -296,7 +296,7 @@ No 690089 production code changed.
 ## Y. 690101 Regression
 
 ```text
-PENDING PR CI
+PASS via full-suite CI 36331485754
 ```
 
 No 690101 production code changed.
@@ -304,7 +304,7 @@ No 690101 production code changed.
 ## Z. 690107 Regression
 
 ```text
-PENDING PR CI
+PASS via full-suite CI 36331485754
 ```
 
 No 690107 production code changed.
@@ -312,7 +312,7 @@ No 690107 production code changed.
 ## AA. Shared Foundation Regression
 
 ```text
-PENDING PR CI
+PASS via full-suite CI 36331485754
 Owner graph unchanged
 ```
 
@@ -346,9 +346,10 @@ The existing generic reserve-first topology is governed, not rewritten.
 
 ```text
 Baseline before round = 1299 passed
-Governance suite expected to raise total above 1299
-PR CI = PENDING
-demo = PENDING
+Final pytest = 1314 passed
+Net new tests = 15
+PR CI = 36331485754 / success
+demo = PASS
 ```
 
 ## AE. Files Created / Updated
@@ -369,23 +370,46 @@ stages/stage12/STAGE12_SHARED_FOUNDATION_DESIGN_QUESTION_LEDGER.md
 stages/stage12/STAGE12_CONTRACT_RUNTIME_MAPPING.md
 stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md
 stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md
+stages/stage12/README.md
 PROJECT_STATUS.md
 ```
 
 ## AF. Commit SHA
 
-Recorded after merge.
+Validated PR head before final report-only sync:
+
+```text
+15a60413b15ee4de6b7146df774ff30215d83e0a
+```
+
+Merge commit is recorded after PR merge.
 
 ## AG. Blocker Verdict
 
-Subject to executable validation:
-
 ```text
-BU-P02 Runtime Governance = RESOLVED
+BU-P02 Runtime Governance = RESOLVED / PASS
 IMPLEMENTATION_BLOCKER-690108-001 = CLOSED
 ```
 
-If CI contradicts the executable assumptions, the branch must be repaired before merge; the Research contract still does not reopen.
+Closure gate evidence:
+
+```text
+explicit Runtime Default ID = RD-SF-005
+candidate comparison = COMPLETE
+selection topology = reserve-first
+RNG owner = TargetSystem / BattleContext.random
+RNG call topology = FROZEN
+draw / no-draw cases = FROZEN for supported sufficient-candidate scope
+freshness / selector scope = FROZEN
+replay consequence = FROZEN
+reopen trigger = FROZEN
+required tests = PASS
+pytest = 1314 passed
+demo = PASS
+CI = 36331485754 / success
+Research reopen = NO
+Shared Foundation reopen = NO
+```
 
 ## AH. Current Gates
 
