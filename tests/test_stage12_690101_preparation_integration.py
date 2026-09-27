@@ -366,6 +366,9 @@ def test_exhaustion_resume_interrupts_preparation_once() -> None:
         systems, context, OfficialStateId.INSIGHT.value
     ).instance
     assert exhaustion is not None and insight is not None
+    # Isolate the resident SUPPRESSED -> EFFECTIVE path from the earlier
+    # effective CREATE command, which correctly found no preparation.
+    port.requests.clear()
     begin_admitted_preparation(systems, context, owner=owner)
 
     systems.state_removal_coordinator.remove(
@@ -399,6 +402,8 @@ def test_remove_one_suppressor_no_interrupt_then_last_suppressor_interrupts_once
     assert not systems.state_effectiveness_policy.evaluate_state(
         context, exhaustion
     ).effective
+    # The first CREATE request predates the preparation under test.
+    port.requests.clear()
     begin_admitted_preparation(systems, context, owner=owner)
 
     systems.state_removal_coordinator.remove(
