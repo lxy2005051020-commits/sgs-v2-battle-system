@@ -61,6 +61,7 @@ from .state_removal import StateRemovalCoordinator, StateRemovalPolicy
 from .effectiveness_transition import EffectivenessTransitionCoordinator
 from .effectiveness_transition_events import StateEffectivenessEventAdapter
 from .insight_integration import register_insight_integration
+from .exhaustion_integration import register_exhaustion_integration
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .stage9_state_runtime import Stage9StateRuntime
@@ -232,6 +233,12 @@ class BattleSystems:
             state_conflict_policy=self.state_conflict_policy,
             state_effectiveness_policy=self.state_effectiveness_policy,
             state_application_coordinator=self.state_application_coordinator,
+        )
+        register_exhaustion_integration(
+            state_effectiveness_policy=self.state_effectiveness_policy,
+            skill_permission_policy=self.skill_permission_policy,
+            effectiveness_transition_coordinator=self.effectiveness_transition_coordinator,
+            preparation_interruption_port=self.preparation_interruption_port,
         )
 
         self.stage11_state_runtime = Stage11StateRuntime(
