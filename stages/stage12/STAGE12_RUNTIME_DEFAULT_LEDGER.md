@@ -1,10 +1,10 @@
 # Stage12 Runtime Default Ledger
 
 Date: 2026-09-27
-Status: OPEN / PARTIAL
+Status: CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED / COMPLETE FOR CURRENTLY REQUIRED DETERMINISTIC CHOICES
 Purpose: record only engineering choices that Runtime must make where Research does not freeze an original-game answer.
 
-Every entry in this ledger is PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN unless explicitly stated otherwise.
+Every RD-SF entry in this ledger is PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN unless explicitly stated otherwise. Inherited Research-side approved project defaults retain their original IDs and provenance instead of being relabeled as Battle empirical facts.
 
 This ledger is intentionally small. Round 2 does not pre-fill future unknowns merely to make the table look productive.
 
@@ -84,7 +84,7 @@ The following are not defaults yet:
 - Provider-validity cycle fallback: no gameplay fallback is selected. Round 3 declares dependency cycles an explicit unsupported boundary that raises `DependencyCycleError`; this is not a PROJECT_RUNTIME_DEFAULT because no allow/deny value is invented.
 - Any Stage13/14/15 execution behavior.
 
-DQ-SF-14 remains CONTRACT_DEPENDENT / OPEN. The ledger now exists so later design choices have a lawful place to live.
+At the Round 2 checkpoint DQ-SF-14 remained CONTRACT_DEPENDENT / OPEN. Round 9 later finalizes the governance classification without retroactively inventing answers for these boundaries.
 
 
 ## SF Round 3 default disposition — 2026-09-27
@@ -188,3 +188,198 @@ New Runtime Defaults added: NONE.
 6. Policy/registry consume zero RNG; no new RNG ordering/signature default is introduced.
 
 RD-SF-001, RD-SF-002 and RD-SF-003 remain the complete Shared Foundation Runtime Default set after Round 7.
+
+
+## SF Round 9 Runtime Default finalization — 2026-09-27
+
+DQ-SF-14 verdict:
+
+~~~text
+CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED
+~~~
+
+The architecture is closed because every currently known bounded/unknown candidate has an explicit governance category.
+This does not mean every gameplay question has an answer.
+
+### Governance invariant
+
+~~~text
+Research cannot determine
++
+Runtime MUST choose deterministic behavior now
+-> PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+
+Runtime can reject or defer the unsupported path
+-> UNSUPPORTED_BOUNDARY or NOT CURRENTLY IMPLEMENTED / DEFERRED
+~~~
+
+UNKNOWN is not a reason to manufacture a Default.
+
+### Current Battle-owned Runtime Default set
+
+~~~text
+RD-SF-001
+Legacy SkillDefinition classification compatibility
+
+RD-SF-002
+Loaded Skill Provider deterministic enumeration order
+
+RD-SF-003
+Same-envelope lifecycle settlement ordering
+~~~
+
+Round 9 adds:
+
+~~~text
+NEW RUNTIME DEFAULTS = NONE
+~~~
+
+RD-SF-001 / RD-SF-002 / RD-SF-003 remain the complete Battle-owned Shared Foundation Runtime Default set.
+
+### Inherited Research-side approved project defaults
+
+The following are authoritative project defaults already frozen by the INSIGHT Research contract.
+They are referenced here but are not renumbered into RD-SF entries.
+
+#### PD-INS-001 — Insight RNG consumption parity
+
+Governance/provenance:
+
+~~~text
+INHERITED PROJECT DEFAULT
+APPROVED_PROJECT_DEFAULT in 690089 INSIGHT contract
+NOT an empirical claim about hidden server PRNG internals
+~~~
+
+Runtime substance:
+
+~~~text
+if originating protected-control generation normally owns a proc RNG:
+    consume that normal source RNG
+if the control is deterministic:
+    consume no synthetic RNG
+then:
+    candidate -> Insight admission -> possible rejection
+~~~
+
+Round 9 consequence:
+Insight does not skip normal source-generation RNG and does not add extra RNG.
+
+Reopen trigger:
+- audited 690089 contract amendment;
+- direct model-separating evidence sufficient to change PD-INS-001;
+- replacement of the project-wide RNG governance with higher authority.
+
+Required tests:
+- probabilistic protected-control source keeps RNG parity under Insight;
+- deterministic protected-control source gains no draw.
+
+#### PD-INS-002 — Insight reapplication saturation
+
+Governance/provenance:
+
+~~~text
+INHERITED PROJECT DEFAULT
+APPROVED_PROJECT_DEFAULT in 690089 INSIGHT contract
+stronger replacement remains empirically unobserved
+~~~
+
+Runtime substance:
+while one canonical Insight remains PRESENT, whether ACTIVE or SUPPRESSED, incoming Insight is rejected;
+no stack, replacement, refresh, or backup queue is created.
+
+Round 9 classification:
+Insight stronger replacement is therefore not a new Battle Runtime Default. It is already governed by inherited PD-INS-002.
+
+Reopen trigger:
+- audited 690089 contract amendment;
+- direct evidence proving a stronger-priority replacement rule;
+- higher-authority cross-contract rule.
+
+Required tests:
+- ACTIVE Insight + incoming Insight rejects/no refresh;
+- SUPPRESSED-but-PRESENT Insight + incoming Insight rejects/no replacement.
+
+### Round 9 unresolved-candidate classification
+
+| Candidate | Research/contract state | Governance category | Why no new Runtime Default now | Reopen / escalation trigger |
+|---|---|---|---|---|
+| Insight stronger replacement | UNOBSERVED | INHERITED PROJECT DEFAULT | PD-INS-002 already supplies the lawful deterministic project behavior | 690089 amendment / direct stronger-replacement evidence |
+| Intimidation selection weights | exact weights unproven; uniform 1/N forbidden as research claim | NOT CURRENTLY IMPLEMENTED / DEFERRED | Stage12 design can defer the selector distribution choice until integration requires it | implementation cannot proceed without a distribution; then create a labeled default before code |
+| Intimidation empty eligible pool | unproven | UNSUPPORTED_BOUNDARY | runtime can reject/surface unsupported instead of inventing state-application semantics | direct evidence or integration requirement with explicit default proposal |
+| Provocation CHOOSE_N RNG micro-order | BU-P02 / hidden sequence unknown | NOT CURRENTLY IMPLEMENTED / DEFERRED | observable target-set contract is known while exact sampling topology can remain deferred | implementation requires reserve-first vs sample/replace; record selection topology and RNG consequences first |
+| Provocation insufficient candidates | BU-P09 | UNSUPPORTED_BOUNDARY | legacy TargetSystem truncation is not promoted to Stage12 contract truth | direct evidence or mandatory implementation case |
+| Provocation multi-source precedence | BU-P06 | UNSUPPORTED_BOUNDARY | no latest/earliest/random-source behavior is required for supported single-source path | direct evidence or mandatory overlap support |
+| FalseReport stronger/weaker | B-U01 | UNSUPPORTED_BOUNDARY | supported equal-strength behavior does not require stronger replacement semantics | direct stronger/weaker evidence or mandatory implementation case |
+| Sabotage stronger/multi-source | B-SAB-02 | UNSUPPORTED_BOUNDARY | supported cases do not require a guessed overlap model | direct overlap evidence or mandatory implementation case |
+| Sabotage queued/JIT | B-SAB-07 | UNSUPPORTED_BOUNDARY | tested scheduled due-window already has a rule; broader queued/in-flight work can remain unsupported | owning-operation evidence/default becomes necessary |
+| Capture Q16 already-created DamageRequest | bounded | UNSUPPORTED_BOUNDARY | ExecutionRightSpec can represent the unsupported micro-slice without choosing JIT/snapshot | direct evidence or mandatory support |
+| Capture Q42 ALL_ALLIES | bounded | UNSUPPORTED_BOUNDARY | verified friendly SINGLE/CHOOSE_N path functions without generalizing ALL_ALLIES | direct Q42 evidence or mandatory support |
+| Capture Q44 delayed friendly work | bounded | UNSUPPORTED_BOUNDARY | per-dimension execution-right spec can expose unsupported mode | direct evidence or mandatory delayed-work support |
+| Capture Q45 already-locked friendly target | bounded | UNSUPPORTED_BOUNDARY | LOCKED provenance can remain unsupported without becoming NEW_QUERY | direct evidence or mandatory locked-target support |
+| Capture multi-source/reapplication Q70-Q74 | SOURCE_SKILL_BOUNDED_UNKNOWN | UNSUPPORTED_BOUNDARY | State Core need not invent stack/refresh/replace semantics | direct evidence or mandatory multi-source support |
+| Capture Q63 reactive/damage equipment | bounded | UNSUPPORTED_BOUNDARY | verified ATTRIBUTE contribution scope does not require reactive/damage generalization | direct Q63 evidence or mandatory support |
+
+### Event representation is not automatically a Runtime Default
+
+Round 9 chooses event-schema compatibility such as:
+
+- one state-application rejection fact with an ADMISSION/CONFLICT discriminator;
+- one RECOVERY_PREVENTED public fact with internal multiple causes and compatibility primary reason.
+
+These are architecture/observation schema decisions when they do not alter gameplay outcome.
+They do not enter this ledger merely because engineering must choose a payload shape.
+
+### Provocation RNG/default coupling guard
+
+If the deferred CHOOSE_N micro-order ever becomes mandatory, the future default entry must record together:
+
+~~~text
+Default ID
+Mechanism / BU-P02
+selection topology
+RNG owner
+RandomSystem API call topology
+draw/no-draw rejection cases
+replay consequences
+scope
+reopen trigger
+tests
+PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+~~~
+
+Writing only "reserve Source first" without its RNG consequences is insufficient governance.
+
+### Default provenance guard
+
+No implementation may leave a project-default behavior with only its behavior and delete the provenance label.
+
+Required labels remain:
+
+~~~text
+PROJECT_RUNTIME_DEFAULT
+NOT_EMPIRICALLY_FROZEN
+~~~
+
+or the exact inherited Research project-default authority label.
+
+This prevents a deterministic engineering choice from being mistaken later for official observed mechanics.
+
+### Round 9 final ledger state
+
+~~~text
+Battle Runtime Defaults:
+RD-SF-001
+RD-SF-002
+RD-SF-003
+
+Inherited approved Research project defaults:
+PD-INS-001
+PD-INS-002
+
+New Round 9 Battle Runtime Defaults:
+NONE
+
+DQ-SF-14:
+CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED
+~~~
