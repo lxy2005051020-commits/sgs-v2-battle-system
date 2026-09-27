@@ -184,13 +184,13 @@ def test_incoming_protected_candidate_rejected_before_mutation(
     context = make_context()
     systems = BattleSystems()
     apply(systems, context, OfficialStateId.INSIGHT.value)
-    generation_before = context.generation_allocator.snapshot()
+    generation_before = context.generation_allocator._generation_seq
 
     result = apply(systems, context, protected_id)
 
     assert result.status is StateApplicationResultStatus.REJECTED_ADMISSION
     assert not context.states.has(owner_id="a0", state_id=protected_id)
-    assert context.generation_allocator.snapshot() == generation_before
+    assert context.generation_allocator._generation_seq == generation_before
     assert event_count(context, EventType.STATE_APPLIED) == 1
     assert event_count(context, EventType.STATE_REMOVED) == 0
 
@@ -252,7 +252,7 @@ def test_pd_ins_002_present_insight_rejects_reapplication_without_refresh() -> N
     old = first.instance
     old_generation = old.current_generation_id
     old_lifetime = old.lifetime_spec
-    generation_before = context.generation_allocator.snapshot()
+    generation_before = context.generation_allocator._generation_seq
 
     second = apply(
         systems,
@@ -265,7 +265,7 @@ def test_pd_ins_002_present_insight_rejects_reapplication_without_refresh() -> N
     current = context.states.get(old.instance_id)
     assert current.current_generation_id == old_generation
     assert current.lifetime_spec == old_lifetime
-    assert context.generation_allocator.snapshot() == generation_before
+    assert context.generation_allocator._generation_seq == generation_before
     assert event_count(context, EventType.STATE_REFRESHED) == 0
 
 
