@@ -145,13 +145,15 @@ Battle-side mirror:
     Freeze Gate: 20 / 20 PASS
     Gameplay: NOT_INTEGRATED
     Runtime: NOT_FROZEN
-    Integration: BLOCKED
-    IMPLEMENTATION_BLOCKER-690108-001: OPEN
-    Blocker: CHOOSE_N BU-P02 / DQ-SF-12 selector-RNG topology has no formally frozen Runtime implementation rule
+    Integration: READY_TO_RESUME
+    IMPLEMENTATION_BLOCKER-690108-001: CLOSED
+    Runtime Default: RD-SF-005 / reserve-first CHOOSE_N required-target topology
+    Runtime Default Provenance: PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+    Research BU-P02: remains BOUNDED UNKNOWN
     Research Reopen Required: NO
     Shared Foundation Owner Redesign Required: NO
     Stage11 Reopen Required: NO
-    Next: resolve BU-P02 as an explicitly governed Runtime implementation rule, then resume 690108 Runtime Integration
+    Next: resume 690108 Runtime Integration; implement SINGLE / CHOOSE_N / FIXED_ALL producer mapping and production target-policy adapter
 
 Integration authority / blocker record:
 [stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md)
@@ -393,3 +395,35 @@ Stage13 / Stage14 / Stage15 Active = NO
 Audit authority: `stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md`
 
 NEXT: `690107 FALSE_REPORT Runtime Integration`.
+
+
+## Stage12 690108 BU-P02 Runtime Governance Resolution — 2026-09-27
+
+```text
+BU-P02 Runtime Governance = RESOLVED
+Runtime Default = RD-SF-005
+Decision = reserve-first
+Classification = PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+
+SkillTargetPolicy RNG = 0
+Provocation adapter RNG = 0
+TargetSystem -> BattleContext.random = sole target-sampling RNG owner
+
+IMPLEMENTATION_BLOCKER-690108-001 = CLOSED
+
+690108 Research = FROZEN
+690108 Gameplay = NOT_INTEGRATED
+690108 Runtime = NOT_FROZEN
+Stage12 Runtime Frozen = 3 / 7
+
+Research Reopen Required = NO
+Shared Foundation Reopen Required = NO
+Stage11 Reopen Required = NO
+```
+
+Authority:
+- `stages/stage12/STAGE12_690108_BU_P02_RUNTIME_GOVERNANCE_RESOLUTION.md`
+- `stages/stage12/STAGE12_RUNTIME_DEFAULT_LEDGER.md` / RD-SF-005
+- `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md`
+
+NEXT: Resume 690108 PROVOCATION Runtime Integration. Blocker closure is not gameplay completion and does not increment Stage12 Runtime Frozen.

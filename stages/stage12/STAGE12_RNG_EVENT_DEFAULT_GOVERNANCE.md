@@ -213,16 +213,24 @@ sample N -> replace one if Source absent
 
 Those topologies can alter the RNG stream. Round 9 therefore does not choose one.
 
-Classification:
+Round 9 classification at the design-freeze checkpoint:
 
 ~~~text
 BU-P02 / exact CHOOSE_N RNG micro-order
 = NOT CURRENTLY IMPLEMENTED / DEFERRED
-= NOT A NEW RUNTIME DEFAULT
+= NOT A NEW RUNTIME DEFAULT IN ROUND 9
 ~~~
 
-If implementation later cannot remain deferred, the selected topology must first enter the Runtime Default Ledger,
-including exact RandomSystem API call topology and replay consequences.
+The later 690108 integration gate made deferral impossible. BU-P02 is now governed by **RD-SF-005** in the Runtime Default Ledger:
+
+~~~text
+reserve required Source first
+-> remove Source from remaining random population
+-> TargetSystem fills N-1 remaining slots
+-> no post-selector replacement
+~~~
+
+RD-SF-005 is `PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN`; it does not change the bounded Research conclusion.
 
 ## 9. Intimidation weighting and empty-pool boundaries
 
@@ -685,7 +693,7 @@ ProviderValidity
 
 The independent audit corrects its **governance provenance**, not its behavior. Because 690101 EXHAUSTION explicitly leaves blocked-attempt activation RNG unobservable and requires an explicit project choice, the zero-activation-RNG / zero-target-RNG denied-ACTIVE path is now governed by **RD-SF-004** and labeled `PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN`.
 
-Current Battle-owned Runtime Defaults:
+Current Battle-owned Runtime Defaults at the Round 11 checkpoint:
 
 ```text
 RD-SF-001
@@ -694,6 +702,101 @@ RD-SF-003
 RD-SF-004
 ```
 
-Round 9's historical statement `NEW RUNTIME DEFAULTS = NONE` remains true for Round 9 itself; it is not the current completeness statement after Round 11.
+Round 9's historical statement `NEW RUNTIME DEFAULTS = NONE` remains true for Round 9 itself. BU-P02 governance later adds RD-SF-005.
 
 No RNG owner changes. `BattleContext.random / RandomSystem` remains the sole RNG service.
+
+
+## BU-P02 Runtime Governance Amendment — RD-SF-005
+
+`IMPLEMENTATION_BLOCKER-690108-001` made the previously deferred BU-P02 selection topology mandatory for deterministic implementation. The owner architecture does not reopen.
+
+Current disposition:
+
+```text
+DQ-SF-12 architecture = CLOSED
+BU-P02 empirical micro-order = BOUNDED UNKNOWN
+BU-P02 Runtime implementation choice = RESOLVED_BY_RD-SF-005
+```
+
+### Frozen project topology
+
+For a supported fresh RANDOM `CHOOSE_N(N)` operation with one admissible required Provocation Source:
+
+```text
+SkillTargetPolicy
+  -> required_target_ids=(Source,)
+  -> 0 RNG
+
+SkillResolver required-target topology
+  -> reserve Source
+  -> remaining_slots = N - 1
+  -> remaining_population = eligible - Source
+
+TargetSystem.random_units(
+    remaining_population,
+    count=remaining_slots
+)
+  -> sole target RNG owner
+```
+
+No post-selector replacement is permitted by this default.
+
+### RandomSystem API topology
+
+Within the supported sufficient-candidate scope:
+
+```text
+remaining_slots == 0
+-> 0 RandomSystem.sample calls
+
+len(remaining_population) == remaining_slots
+-> 0 RandomSystem.sample calls
+-> deterministic all-candidate order
+
+0 < remaining_slots < len(remaining_population)
+-> exactly 1 RandomSystem.sample(population, remaining_slots) call
+```
+
+The `remaining_population < remaining_slots` case is **not** normalized here. BU-P09 remains `UNSUPPORTED_BOUNDARY`; legacy TargetSystem truncation is still not promoted into the 690108 contract.
+
+### Scope guard
+
+RD-SF-005 applies to:
+
+```text
+NEW_QUERY
++ TargetCardinality.CHOOSE_N
++ TargetSelectorKind.RANDOM
++ admissible required Provocation Source
++ supported sufficient-candidate case
+```
+
+It does not reselect:
+
+```text
+INHERIT_RESOLVED
+DERIVE_FROM_RESOLVED
+LOCK_RESOLVED
+```
+
+DETERMINISTIC uses the generic required-slot architecture without acquiring an RNG rule from RD-SF-005. EXPLICIT remains outside this BU-P02 random micro-order decision.
+
+### Provenance
+
+```text
+PROJECT_RUNTIME_DEFAULT
+NOT_EMPIRICALLY_FROZEN
+```
+
+This amendment does not claim to discover the original game's hidden target-selection micro-order. It freezes the simulator's replay contract only.
+
+Current Battle-owned Runtime Defaults:
+
+```text
+RD-SF-001
+RD-SF-002
+RD-SF-003
+RD-SF-004
+RD-SF-005
+```
