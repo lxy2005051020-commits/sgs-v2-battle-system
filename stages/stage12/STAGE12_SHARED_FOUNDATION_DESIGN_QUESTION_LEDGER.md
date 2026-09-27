@@ -30,9 +30,9 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 | DQ-SF-09 | Target Operation model? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | `TargetOperation` is the explicit fresh Skill-target query value object; `SkillTargetPolicy` is the canonical operation-local eligibility/constraint owner; `TargetSystem` remains raw candidate/RNG primitive owner and Normal Attack remains separate. | See STAGE12_TARGET_OPERATION_POLICY_DESIGN.md; relation ENEMY/ALLY/SELF, SINGLE/CHOOSE_N/FIXED_ALL, selector boundary, TargetOperationId, provenance, Provocation and Capture mappings frozen; implementation pending |
 | DQ-SF-10 | What creates a new target operation? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | The skill/effect operation producer explicitly declares `NEW_QUERY`; only that declaration allocates a new `TargetOperationId` and re-enters target policy. INHERITED / DERIVED / LOCKED continuations reuse the prior resolution identity and are not automatically rechecked. | 09,12,23; same-target multi-hit = one operation; explicit independent re-query = distinct operation; delayed/locked Capture work remains DQ-SF-23 |
 | DQ-SF-11 | Minimal equipment effectiveness abstraction? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | EquipmentEffectivenessPolicy.evaluate_contribution is the sole final truth for a concrete EquipmentContributionRef; generic ProviderValidityPolicy is an input, while Attribute/Damage/Recovery/Trigger owners keep domain calculation. | See STAGE12_EQUIPMENT_EFFECTIVENESS_DESIGN.md; stable EquipmentProviderRef + contribution kind/key, object retained, multi-reason suppression, explicit remote dependency, no replay/reinitialize; FalseReport untested equipment and Capture reactive/damage stay bounded/unsupported; queued micro-order remains DQ-SF-23 |
-| DQ-SF-12 | Who consumes RNG, when and for what? | CLOSED_BY_SHARED_FOUNDATION_DESIGN / AUDIT_GOVERNANCE_CORRECTED | BattleContext.random/RandomSystem is the sole RNG service; real random decisions remain domain-owned. Pure policies, transition coordination and ExecutionRight evaluation are zero-RNG. Source-generation RNG, Skill activation, target selection, Intimidation binding/refresh, RecoveryOpportunity and equipment-trigger draw points and rejection paths are frozen. EXHAUSTION denied-ACTIVE pre-RNG placement is explicitly governed by RD-SF-004. | See STAGE12_RNG_EVENT_DEFAULT_GOVERNANCE.md; PD-INS-001 source parity preserved; denied EXHAUSTION ACTIVE uses RD-SF-004 and consumes no activation/target RNG; other denied Provider/Recovery/Equipment paths retain their mapped governance; Provocation CHOOSE_N micro-order and Intimidation weights remain DEFERRED/UNSUPPORTED boundaries |
+| DQ-SF-12 | Who consumes RNG, when and for what? | CLOSED_BY_SHARED_FOUNDATION_DESIGN / RUNTIME_GOVERNANCE_COMPLETE_FOR_690108_BU_P02 | BattleContext.random/RandomSystem is the sole RNG service; real random decisions remain domain-owned. Pure policies, transition coordination and ExecutionRight evaluation are zero-RNG. Source-generation RNG, Skill activation, target selection, Intimidation binding/refresh, RecoveryOpportunity and equipment-trigger draw points and rejection paths are frozen. EXHAUSTION denied-ACTIVE pre-RNG placement is governed by RD-SF-004; PROVOCATION CHOOSE_N required-target random micro-order is governed by RD-SF-005. | See STAGE12_RNG_EVENT_DEFAULT_GOVERNANCE.md; RD-SF-005 freezes reserve-first for supported NEW_QUERY + RANDOM CHOOSE_N while keeping BU-P02 empirically bounded; Intimidation weights remain DEFERRED and Provocation BU-P09/BU-P06 remain UNSUPPORTED boundaries |
 | DQ-SF-13 | Minimal events and explicit decisions? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | EventBus remains fact recording/dispatch only. Pure queries emit nothing; domain owners publish only canonical outcomes after decision/commit. State suppression/resume and finalized application rejection receive explicit future fact vocabulary; Provider transitions remain internal by default; existing ACTION_BLOCKED / DAMAGE_PREVENTED / RECOVERY_PREVENTED stay domain-owned. | See STAGE12_RNG_EVENT_DEFAULT_GOVERNANCE.md; rejection uses one future STATE_APPLICATION_REJECTED fact with ADMISSION/CONFLICT discriminator; repeated query/same-state transition emits nothing; failed transaction emits no committed-state event; target policy no-op never fabricates forced-target facts |
-| DQ-SF-14 | Which runtime defaults are required and where recorded? | CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED / AUDIT_GOVERNANCE_CORRECTED | Runtime Default governance is frozen: only behavior Runtime must deterministically choose now may become PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN; rejectable/deferable unknowns remain UNSUPPORTED_BOUNDARY or DEFERRED. Current Battle-owned set is RD-SF-001/002/003/004; PD-INS-001/002 remain inherited research-side approved project defaults. | See STAGE12_RUNTIME_DEFAULT_LEDGER.md and STAGE12_RNG_EVENT_DEFAULT_GOVERNANCE.md; Round 11 adds RD-SF-004 because 690101 leaves denied-ACTIVE hidden activation RNG unobservable; all other named unknowns retain explicit governance classification and reopen triggers |
+| DQ-SF-14 | Which runtime defaults are required and where recorded? | CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED / CURRENT_DEFAULT_SET_RD_SF_001_TO_005 | Runtime Default governance is frozen: only behavior Runtime must deterministically choose now may become PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN; rejectable/deferable unknowns remain UNSUPPORTED_BOUNDARY or DEFERRED. Current Battle-owned set is RD-SF-001/002/003/004/005; PD-INS-001/002 remain inherited research-side approved project defaults. | See STAGE12_RUNTIME_DEFAULT_LEDGER.md and STAGE12_RNG_EVENT_DEFAULT_GOVERNANCE.md; RD-SF-004 governs 690101 denied-ACTIVE hidden RNG placement and RD-SF-005 governs 690108 BU-P02 reserve-first CHOOSE_N topology; other bounded unknowns retain explicit governance classification and reopen triggers |
 | DQ-SF-15 | How migrate actual 690089 PARTIAL? | CLOSED_BY_AUTHORITY_MIGRATION | STAGE12_INSIGHT_CONFUSION_AUTHORITY_MIGRATION.md establishes later Insight v0.4 authority and explicit future test replacement; identity/lifecycle/Taunt scope preserved | 02,16; implementation still pending, but authority blocker is closed |
 | DQ-SF-16 | Stage11 and older frozen regression boundary? | CLOSED_BY_SCOPED_SUPERSESSION | P0-CFS-P93-01/P93-B01 superseded only for existing Confusion remaining operational after later effective Insight; all enumerated unaffected Stage9 rules preserved; Stage11 Reopen Required NO | 15,24; any future clock contradiction requires a separately proven scoped reopen |
 | DQ-SF-17 | BattleSystems wiring and compatibility paths? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | BattleSystems constructs one canonical Shared Foundation graph while BattleContext retains the sole per-battle StateRegistry / SkillRuntimeRegistry / RandomSystem / EventBus resources. Shared policies/coordinators are explicit production injections; DependencyEvaluationSupport breaks evaluation cycles without becoming a gameplay owner or service locator. | See STAGE12_SHARED_FOUNDATION_COMPOSITION_AND_TEST_ARCHITECTURE.md; Stage9/11 share one StateEffectivenessPolicy, Skill/Recovery share ProviderValidityPolicy, equipment consumers share EquipmentEffectivenessPolicy, and production fallback owner construction is forbidden. |
@@ -450,4 +450,51 @@ Stage11 Reopen Required = NO
 Stage12 Runtime Frozen = 0 / 7
 Stage13 / Stage14 / Stage15 Active = NO
 Gameplay Implementation = NONE
+```
+
+
+## 10. BU-P02 Runtime Governance Resolution — 2026-09-27
+
+The Round 9 design closure intentionally left PROVOCATION BU-P02 deferred while gameplay integration did not require a concrete sampling topology. The 690108 integration gate later made that choice mandatory for deterministic replay.
+
+Current resolution:
+
+```text
+DQ-SF-12 owner architecture
+= CLOSED_BY_SHARED_FOUNDATION_DESIGN
+
+BU-P02 Research fact
+= CLOSED_WITH_BOUNDED_UNKNOWN
+
+BU-P02 Runtime implementation rule
+= RESOLVED_BY_RD-SF-005
+```
+
+RD-SF-005 freezes the project-only reserve-first topology for supported `NEW_QUERY + RANDOM + CHOOSE_N`:
+
+```text
+required Source consumes one cardinality slot
+-> Source removed from selector population
+-> TargetSystem fills N-1 slots
+-> no post-selector replacement
+```
+
+The decision changes no Research conclusion and creates no new RNG owner. `SkillTargetPolicy` remains zero-RNG; `TargetSystem -> BattleContext.random` remains the sole target-sampling path.
+
+Preserved boundaries:
+
+```text
+BU-P09 insufficient candidates = UNSUPPORTED_BOUNDARY
+BU-P06 multi-source/reapplication = UNSUPPORTED_BOUNDARY
+Intimidation exact weights = DEFERRED
+```
+
+Current Battle-owned Runtime Default set:
+
+```text
+RD-SF-001
+RD-SF-002
+RD-SF-003
+RD-SF-004
+RD-SF-005
 ```
