@@ -10,6 +10,7 @@ from .skill_runtime import SkillSlot
 from .state_generation import StateApplicationGenerationId
 from .state_instance import StateInstance
 from .state_lifetime import StateLifetimeSpec
+from .state_effectiveness import StateEffectivenessPolicy
 from .state_runtime_params import StateRuntimeParams, validate_state_runtime_params
 
 
@@ -308,6 +309,22 @@ class StateApplicationResult:
         )
 
 
+@dataclass(frozen=True, slots=True)
+class CommittedEffectiveStateActivation:
+    """Post-commit fact for a newly resident state whose canonical status is EFFECTIVE."""
+
+    state_instance_id: str
+    state_id: str
+    owner_id: str
+    application_generation_id: StateApplicationGenerationId
+
+
+CommittedEffectiveStateActivationPort: TypeAlias = Callable[
+    [object, CommittedEffectiveStateActivation],
+    None,
+]
+
+
 class StateTransactionPreconditionError(RuntimeError):
     pass
 
@@ -321,7 +338,9 @@ class StateApplicationCoordinator:
         "_lifecycle",
         "_dependencies",
         "_transition_coordinator",
+        "_state_effectiveness_policy",
         "_dependency_rule_adapters",
+        "_effective_activation_ports",
     )
 
     def __init__(
@@ -332,6 +351,7 @@ class StateApplicationCoordinator:
         lifecycle,
         dependencies: DependencyEvaluationSupport,
         transition_coordinator=None,
+        state_effectiveness_policy: StateEffectivenessPolicy | None = None,
     ) -> None:
         if not isinstance(admission_policy, StateAdmissionPolicy):
             raise TypeError("admission_policy must be StateAdmissionPolicy")
@@ -339,12 +359,27 @@ class StateApplicationCoordinator:
             raise TypeError("conflict_policy must be StateConflictPolicy")
         if not isinstance(dependencies, DependencyEvaluationSupport):
             raise TypeError("dependencies must be DependencyEvaluationSupport")
+        if state_effectiveness_policy is not None and not isinstance(
+            state_effectiveness_policy, StateEffectivenessPolicy
+        ):
+            raise TypeError("state_effectiveness_policy must be StateEffectivenessPolicy or None")
         self._admission_policy = admission_policy
         self._conflict_policy = conflict_policy
         self._lifecycle = lifecycle
         self._dependencies = dependencies
         self._transition_coordinator = transition_coordinator
+        self._state_effectiveness_policy = state_effectiveness_policy
         self._dependency_rule_adapters: list[ApplicationDependencyRuleAdapter] = []
+        self._effective_activation_ports: list[CommittedEffectiveStateActivationPort] = []
+
+    def register_effective_activation_port(
+        self,
+        port: CommittedEffectiveStateActivationPort,
+    ) -> None:
+        if not callable(port):
+            raise TypeError("effective activation port must be callable")
+        if port not in self._effective_activation_ports:
+            self._effective_activation_ports.append(port)
 
     def register_dependency_rule_adapter(
         self,
@@ -637,6 +672,29 @@ class StateApplicationCoordinator:
                 transition_snapshot,
                 transition_roots,
             )
+
+        # A newly resident state did not exist in the pre-commit effectiveness
+        # snapshot, so it cannot truthfully produce an ABSENT -> EFFECTIVE
+        # StateEffectivenessChanged transition. Publish a separate synchronous
+        # post-commit activation command only after physical + dependency commit
+        # and canonical effectiveness evaluation.
+        if (
+            conflict.disposition is ApplicationDisposition.CREATE
+            and self._state_effectiveness_policy is not None
+        ):
+            effectiveness = self._state_effectiveness_policy.evaluate_state(
+                context,
+                instance,
+            )
+            if effectiveness.effective:
+                activation = CommittedEffectiveStateActivation(
+                    state_instance_id=instance.instance_id,
+                    state_id=instance.state_id,
+                    owner_id=instance.owner_id,
+                    application_generation_id=instance.current_generation_id,
+                )
+                for port in tuple(self._effective_activation_ports):
+                    port(context, activation)
 
         status_map = {
             ApplicationDisposition.CREATE: StateApplicationResultStatus.APPLIED,
