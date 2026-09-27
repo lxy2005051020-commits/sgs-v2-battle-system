@@ -619,10 +619,30 @@ test_policy_query_repetition_does_not_shift_rng_trace
 Test instrumentation may wrap/fake the existing RandomSystem seam.
 Do not change production RNG semantics merely to expose a trace.
 
-### Provocation / Intimidation bounded RNG guards
+### Provocation BU-P02 governed RNG topology / remaining bounded guards
+
+RD-SF-005 executable discriminators:
 
 ~~~text
-test_provocation_choose_n_micro_order_marked_deferred
+test_choose_n_required_target_preserves_n
+test_choose_n_required_target_exactly_once
+test_choose_n_required_target_rng_owner_is_target_system
+test_choose_n_policy_consumes_zero_rng
+test_choose_n_new_query_replay_deterministic
+test_choose_n_subsequent_rng_stream_stable
+test_choose_n_n_equals_one_zero_target_draw_if_required_fills_slot
+test_inherited_result_does_not_reselect
+test_derived_result_does_not_reselect
+test_locked_result_does_not_reselect
+test_required_target_reserved_before_random_fill
+test_random_fill_excludes_required_target
+test_random_fill_count_is_n_minus_required_count
+test_no_post_selector_replacement
+~~~
+
+Still-bounded governance guards:
+
+~~~text
 test_provocation_insufficient_candidates_marked_unsupported
 test_provocation_multisource_precedence_marked_unsupported
 test_intimidation_weights_not_claimed_uniform
@@ -630,7 +650,7 @@ test_intimidation_empty_pool_marked_unsupported
 test_rd_sf_002_does_not_define_intimidation_weights
 ~~~
 
-These tests are governance/contract guards, not assertions of invented gameplay.
+RD-SF-005 tests assert the simulator's explicit project topology, not hidden original-game truth. BU-P09 / BU-P06 and Intimidation unknowns remain boundaries.
 
 ### Query vs Event
 
@@ -724,6 +744,7 @@ test_rd_sf_001_has_required_provenance_and_deterministic_test
 test_rd_sf_002_has_required_provenance_and_deterministic_test
 test_rd_sf_003_has_required_provenance_and_deterministic_test
 test_rd_sf_004_exhaustion_denied_active_rng_placement_has_project_default_provenance
+test_rd_sf_005_provocation_choose_n_reserve_first_has_project_default_provenance
 test_pd_ins_001_retains_inherited_project_default_label
 test_pd_ins_002_retains_inherited_project_default_label
 test_no_unledgered_project_runtime_default
@@ -902,3 +923,22 @@ Contract minimums remain unchanged:
 - FALSE_REPORT >= 30
 - PROVOCATION >= 25
 - INTIMIDATION >= 21
+
+
+## BU-P02 Runtime Governance executable suite — 2026-09-27
+
+```text
+tests/test_stage12_690108_bu_p02_runtime_governance.py
+```
+
+Scope:
+
+- generic required-target CHOOSE_N selector semantics only;
+- reserve-first discriminator;
+- policy zero-RNG and TargetSystem RNG ownership;
+- supported draw/no-draw topology;
+- replay and downstream RNG-stream stability;
+- continuation no-reselection;
+- no 690108 gameplay adapter registration.
+
+This suite closes the executable gate for RD-SF-005 without implementing PROVOCATION gameplay.
