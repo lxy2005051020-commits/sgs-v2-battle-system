@@ -48,6 +48,11 @@ from sgs_v2.battle_core.preparation_interruption import (
     PreparationInterruptionStatus,
 )
 from sgs_v2.battle_core.provider_identity import SkillProviderRef
+from sgs_v2.battle_core.state_effectiveness import (
+    LocalRuleCauseRef,
+    StateEffectivenessContribution,
+    SuppressionCause,
+)
 
 
 class CountingRandomSystem(RandomSystem):
@@ -596,6 +601,125 @@ def test_resident_exhaustion_resume_drives_preparation_interruption_port() -> No
     assert request.cause_key == EXHAUSTION_PREPARATION_INTERRUPTION_RULE_ID
     assert port.preparing == []
 
+
+
+def test_exhaustion_natural_expiry_removes_permission_denial() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    exhaustion = apply_state(
+        systems,
+        context,
+        OfficialStateId.SILENCE.value,
+        lifetime_spec=StateLifetimeSpec.round_calendar(expires_round=2),
+    ).instance
+    assert exhaustion is not None
+    assert systems.skill_permission_policy.evaluate(
+        context, permission_request()
+    ).status is SkillPermissionStatus.DENY_STATE_PERMISSION
+
+    settle_due(
+        systems,
+        context,
+        round_no=2,
+        phase=BattlePhase.ROUND_END.value,
+    )
+
+    assert not context.states.has_instance(exhaustion.instance_id)
+    assert systems.skill_permission_policy.evaluate(
+        context, permission_request()
+    ).status is SkillPermissionStatus.ALLOW
+
+
+def test_suppression_resume_preserves_instance_generation_and_lifetime() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    lifetime = StateLifetimeSpec.round_calendar(expires_round=4)
+    exhaustion = apply_state(
+        systems,
+        context,
+        OfficialStateId.SILENCE.value,
+        lifetime_spec=lifetime,
+    ).instance
+    insight = apply_state(
+        systems,
+        context,
+        OfficialStateId.INSIGHT.value,
+    ).instance
+    assert exhaustion is not None and insight is not None
+    generation = exhaustion.current_generation_id
+    instance_id = exhaustion.instance_id
+
+    systems.state_removal_coordinator.remove(
+        context,
+        operation=RemovalOperation.NATURAL_EXPIRY,
+        instance_id=insight.instance_id,
+    )
+
+    current = context.states.get(instance_id)
+    assert current.instance_id == instance_id
+    assert current.current_generation_id == generation
+    assert current.lifetime_spec == lifetime
+
+
+def _second_exhaustion_suppressor(context, instance, _session):
+    blocked = set(context.metadata.get("second_exhaustion_suppressor", ()))
+    if instance.instance_id not in blocked:
+        return StateEffectivenessContribution()
+    return StateEffectivenessContribution(
+        suppression_causes=(
+            SuppressionCause(
+                "TEST_SECOND_EXHAUSTION_SUPPRESSOR",
+                LocalRuleCauseRef(instance.instance_id),
+            ),
+        )
+    )
+
+
+def test_removing_insight_does_not_false_resume_with_second_suppressor() -> None:
+    ref = SkillProviderRef("a", SkillSlot.INHERENT, "preparing.active")
+    port = FakePreparationInterruptionPort((ref,))
+    context = make_context()
+    systems = BattleSystems(preparation_interruption_port=port)
+    systems.state_effectiveness_policy.register_rule_adapter(
+        _second_exhaustion_suppressor
+    )
+    exhaustion = apply_state(
+        systems, context, OfficialStateId.SILENCE.value
+    ).instance
+    assert exhaustion is not None
+    context.metadata["second_exhaustion_suppressor"] = (exhaustion.instance_id,)
+    insight = apply_state(
+        systems, context, OfficialStateId.INSIGHT.value
+    ).instance
+    assert insight is not None
+    assert not systems.state_effectiveness_policy.evaluate_state(
+        context, exhaustion
+    ).effective
+
+    systems.state_removal_coordinator.remove(
+        context,
+        operation=RemovalOperation.NATURAL_EXPIRY,
+        instance_id=insight.instance_id,
+    )
+
+    assert not systems.state_effectiveness_policy.evaluate_state(
+        context, exhaustion
+    ).effective
+    assert port.requests == []
+    assert systems.skill_permission_policy.evaluate(
+        context, permission_request()
+    ).status is SkillPermissionStatus.ALLOW
+
+
+def test_permission_query_emits_no_event() -> None:
+    context = make_context()
+    systems = BattleSystems()
+    apply_state(systems, context, OfficialStateId.SILENCE.value)
+    before = context.event_bus.history
+
+    systems.skill_permission_policy.evaluate(context, permission_request())
+
+    assert context.event_bus.history == before
 
 def test_exhaustion_reapplication_remains_explicit_unsupported_boundary() -> None:
     context = make_context()
