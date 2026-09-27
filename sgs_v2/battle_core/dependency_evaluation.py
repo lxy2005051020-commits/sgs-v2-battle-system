@@ -168,6 +168,70 @@ class DependencyEvaluationSupport:
     def validate_acyclic(self) -> None:
         self._validate_graph(self._prerequisites)
 
+    def validate_dependency_replacement(
+        self,
+        consumer: DependencyNode,
+        prerequisites,
+        *,
+        remove_nodes=(),
+    ) -> None:
+        """Validate a prospective topology change without mutating the live graph."""
+        proposed = {
+            node: set(values) for node, values in self._prerequisites.items()
+        }
+        removed = set(remove_nodes)
+        for node in removed:
+            proposed.pop(node, None)
+        for node, values in tuple(proposed.items()):
+            new_values = set(values) - removed
+            if new_values:
+                proposed[node] = new_values
+            else:
+                proposed.pop(node, None)
+
+        proposed.pop(consumer, None)
+        new_values = set(prerequisites)
+        if new_values:
+            proposed[consumer] = new_values
+        self._validate_graph(proposed)
+
+    def remove_node(self, node: DependencyNode) -> None:
+        """Remove one physical dependency node and every edge touching it."""
+        prerequisites = self._prerequisites.pop(node, set())
+        for prerequisite in prerequisites:
+            dependents = self._dependents.get(prerequisite)
+            if dependents is not None:
+                dependents.discard(node)
+                if not dependents:
+                    self._dependents.pop(prerequisite, None)
+
+        dependents = self._dependents.pop(node, set())
+        for dependent in dependents:
+            values = self._prerequisites.get(dependent)
+            if values is not None:
+                values.discard(node)
+                if not values:
+                    self._prerequisites.pop(dependent, None)
+
+    def affected_closure_many(
+        self,
+        prerequisites,
+    ) -> tuple[DependencyNode, ...]:
+        seen: set[DependencyNode] = set()
+        queue: list[DependencyNode] = []
+        for prerequisite in sorted(set(prerequisites), key=repr):
+            if prerequisite not in seen:
+                seen.add(prerequisite)
+                queue.append(prerequisite)
+        while queue:
+            node = queue.pop(0)
+            for dependent in self.dependents(node):
+                if dependent in seen:
+                    continue
+                seen.add(dependent)
+                queue.append(dependent)
+        return self._sort_nodes(seen)
+
     def affected_closure(self, prerequisite: DependencyNode) -> tuple[DependencyNode, ...]:
         seen: set[DependencyNode] = {prerequisite}
         queue: list[DependencyNode] = [prerequisite]
