@@ -129,7 +129,7 @@ exact internal slot / RNG micro-order
 = CLOSED_WITH_BOUNDED_UNKNOWN
 ```
 
-Current Shared Foundation Runtime governance explicitly leaves the selection topology unchosen:
+The two possible implementation topologies consume different replay streams:
 
 ```text
 reserve Source then sample N-1
@@ -137,37 +137,50 @@ vs
 sample N then replace one
 ```
 
-These alternatives can consume different RNG streams and therefore are not interchangeable under deterministic replay governance.
+This blocker is now resolved by **RD-SF-005** in the canonical Runtime Default Ledger.
 
-The current generic `SkillResolver._select_policy_targets()` already implements a reserve-required-targets-then-select-remaining-slots shape. Registering a Provocation contribution for CHOOSE_N now would silently promote that generic implementation detail into the 690108 gameplay law.
-
-That is forbidden by the frozen Runtime Default Ledger and by the 690108 integration command.
-
-### Minimum reopen scope
-
-Research does **not** reopen.
-
-Shared Foundation ownership does **not** reopen.
-
-Only the Runtime-governance decision for DQ-SF-12 / BU-P02 must be resolved and frozen as an explicitly labeled project rule before 690108 gameplay integration continues.
-
-The resolution record must freeze together:
+Frozen project Runtime rule:
 
 ```text
-Default ID
-Mechanism / BU-P02
-selection topology
-RNG owner
-RandomSystem API call topology
-draw / no-draw cases
-replay consequences
-scope
-reopen trigger
-required tests
-PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+PROJECT_RUNTIME_DEFAULT
+NOT_EMPIRICALLY_FROZEN
+
+NEW_QUERY + RANDOM + CHOOSE_N
++ admissible required Provocation Source
+-> reserve required Source first
+-> Source consumes one cardinality slot
+-> remove Source from random population
+-> TargetSystem fills N-1 remaining slots
+-> no post-selector replacement
 ```
 
-Until that exists, CHOOSE_N production integration is blocked.
+The decision is not derived from code accident. It is adopted because it preserves the frozen Shared Foundation owner topology, introduces no new RNG owner, requires no replacement-victim micro-policy, and gives deterministic replay a single explicit call topology.
+
+Random ownership remains:
+
+```text
+Provocation adapter RNG = 0
+SkillTargetPolicy RNG = 0
+TargetSystem -> BattleContext.random = sole target-sampling RNG path
+```
+
+Supported no-draw cases:
+
+```text
+N = 1 and Source fills the only slot
+-> remaining_slots = 0
+-> 0 RandomSystem.sample calls
+
+remaining candidate count == remaining_slots
+-> deterministic all-candidate fill
+-> 0 RandomSystem.sample calls
+```
+
+When `0 < remaining_slots < len(remaining)`, TargetSystem performs one `RandomSystem.sample(remaining, remaining_slots)` call.
+
+BU-P09 insufficient candidates is not answered by RD-SF-005; the legacy helper truncation remains outside the supported 690108 contract.
+
+Research does **not** reopen. Shared Foundation ownership does **not** reopen. BU-P02 remains empirically bounded; only the simulator implementation choice is frozen.
 
 ## I. FIXED_ALL Semantics
 
@@ -297,11 +310,15 @@ The existing one-owner graph remains unchanged.
 
 ## W. Tests Added
 
-None.
+Added generic governance suite:
 
-Reason: production gameplay was intentionally not partially enabled before the CHOOSE_N Runtime-governance prerequisite is frozen.
+```text
+tests/test_stage12_690108_bu_p02_runtime_governance.py
+```
 
-The existing full-suite baseline remains the validation target for this documentation-only blocker sync.
+It verifies required-target cardinality, exactly-once identity, reserve-first population/slot topology, TargetSystem RNG ownership, policy zero-RNG, draw/no-draw behavior, deterministic replay, downstream RNG-stream stability, continuation no-reselection, and absence of post-selector replacement.
+
+No 690108 gameplay adapter is registered by this governance round.
 
 ## X. Stage9 Regression
 
@@ -398,19 +415,23 @@ Recorded after merge.
 ## AJ. Implementation Blockers
 
 ```text
-IMPLEMENTATION_BLOCKER-690108-001 = OPEN
+IMPLEMENTATION_BLOCKER-690108-001 = CLOSED
 
-Exact frozen rule:
-CHOOSE_N preserves N and includes admissible Source exactly once.
+Resolution:
+RD-SF-005
 
-Exact production contradiction:
-current generic selector implementation already chooses reserve-required-first topology,
-while BU-P02 / DQ-SF-12 explicitly leaves reserve-first vs sample/replace unfrozen.
+Classification:
+PROJECT_RUNTIME_DEFAULT
+NOT_EMPIRICALLY_FROZEN
 
-Minimum reopen scope:
-Runtime governance for BU-P02 only.
-Research contract remains FROZEN.
-Shared Foundation owner architecture remains FROZEN.
+Selection topology:
+reserve-first
+
+Research contract:
+FROZEN / NOT REOPENED
+
+Shared Foundation owner architecture:
+FROZEN / NOT REOPENED
 ```
 
 Secondary implementation gap, not a research blocker:
@@ -437,7 +458,8 @@ Stage12 Shared Foundation Implementation = COMPLETE
 
 690108 PROVOCATION Gameplay = NOT_INTEGRATED
 690108 PROVOCATION Runtime = NOT_FROZEN
-690108 Integration = BLOCKED_BY_IMPLEMENTATION_BLOCKER-690108-001
+690108 Integration = READY_TO_RESUME
+IMPLEMENTATION_BLOCKER-690108-001 = CLOSED
 
 Stage12 Runtime Frozen = 3 / 7
 
@@ -449,8 +471,32 @@ Stage15 Active = NO
 ## AL. NEXT
 
 ```text
-Resolve DQ-SF-12 / BU-P02 as a formally governed Runtime implementation rule.
-Then resume STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.
+Resume STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION using RD-SF-005 for CHOOSE_N.
+Implement SINGLE / CHOOSE_N / FIXED_ALL producer mapping and the production Provocation target-policy adapter without changing RNG ownership.
 Do not start 690108 Independent Runtime Freeze Audit before integration exit gate passes.
 Do not start 690222 Runtime Integration while 690108 remains the active integration owner.
 ```
+
+
+## AM. BU-P02 Governance Resolution Amendment
+
+Authority:
+
+```text
+stages/stage12/STAGE12_RUNTIME_DEFAULT_LEDGER.md
+RD-SF-005
+```
+
+Current status:
+
+```text
+BU-P02 Runtime Governance = RESOLVED
+IMPLEMENTATION_BLOCKER-690108-001 = CLOSED
+
+690108 Research = FROZEN
+690108 Gameplay = NOT_INTEGRATED
+690108 Runtime = NOT_FROZEN
+Stage12 Runtime Frozen = 3 / 7
+```
+
+The blocker closure authorizes resuming 690108 integration. It does not itself implement Provocation gameplay and does not count as a fourth frozen Stage12 Runtime.
