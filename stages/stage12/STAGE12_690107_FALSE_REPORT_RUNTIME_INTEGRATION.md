@@ -36,7 +36,7 @@ PASSIVE
 COMMAND
 ```
 
-ACTIVE, ASSAULT, TROOP, FORMATION, preparation-active paths, and Normal Attack remain outside the direct FALSE_REPORT Provider suppression scope.
+ACTIVE, ASSAULT, TROOP, FORMATION, TALENT, preparation-active paths, and Normal Attack remain outside the direct FALSE_REPORT Provider suppression scope.
 
 ## E. Provider Ownership
 
@@ -149,7 +149,7 @@ No second ProviderValidity policy or parallel dependency graph was created.
 
 ## V. Tests Added
 
-`tests/test_stage12_690107_false_report.py` collects **40 executable tests**, exceeding the contract minimum of 30.
+`tests/test_stage12_690107_false_report.py` collects **40 executable integration tests**, exceeding the contract minimum of 30. The independent freeze audit later adds 14 adversarial tests; together the two 690107 suites execute **54 contract-focused cases**.
 
 Coverage includes application, effective truth, PASSIVE/COMMAND scope, non-target categories, ownership, identity, expiry, cleanse, INSIGHT, EXHAUSTION ordering, reapplication, source death, explicit ProviderDependency, attribution-negative tests, equipment positive/boundary cases, self-suppression, multiple causes, baseline precedence, zero-event queries, static architecture guards, and special-protection admission seams.
 
@@ -275,10 +275,10 @@ Stage12 Shared Foundation Implementation = COMPLETE
 690089 INSIGHT Runtime = FROZEN
 690101 EXHAUSTION Runtime = FROZEN
 
-690107 FALSE_REPORT Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
-690107 FALSE_REPORT Runtime = NOT YET FROZEN
+690107 FALSE_REPORT Gameplay = IMPLEMENTED
+690107 FALSE_REPORT Runtime = FROZEN
 
-Stage12 Runtime Frozen = 2 / 7
+Stage12 Runtime Frozen = 3 / 7
 
 690108 PROVOCATION = NOT INTEGRATED
 690222 INTIMIDATION = NOT INTEGRATED
@@ -288,13 +288,22 @@ Stage12 Runtime Frozen = 2 / 7
 Stage13 / Stage14 / Stage15 Active = NO
 ```
 
-## AJ. NEXT
+## AJ. Independent Runtime Freeze Audit Closure
 
-**690107 FALSE_REPORT Independent Runtime Freeze Audit**
-
-Only an independent audit PASS may advance:
+The independent adversarial audit passed after one narrow contract-alignment correction: `SkillType.TALENT` was added as an explicit negative discriminator because the frozen 690107 contract requires standard TALENT to remain directly unsuppressed. FALSE_REPORT suppression remains exactly PASSIVE / COMMAND.
 
 ```text
-690107 Runtime = FROZEN
-Stage12 Runtime Frozen = 3 / 7
+Audit code/test SHA = 2feb4b03a18f1779e78fd3df65eef3a80b835c67
+Fresh audit CI      = 36329400436 / success
+pytest              = 1299 passed
+demo                = PASS
+690107 Runtime      = FROZEN
+Stage12 Frozen      = 3 / 7
+Stage11 Reopen      = NO
 ```
+
+Freeze authority: `STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md`.
+
+## AK. NEXT
+
+**690108 PROVOCATION Runtime Integration**

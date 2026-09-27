@@ -20,8 +20,8 @@
 
     Official States                 = 40
     Research FROZEN                 = 39
-    Runtime FROZEN TO CONTRACT      = 35
-    Strict Complete                 = 34
+    Runtime FROZEN TO CONTRACT      = 36
+    Strict Complete                 = 35
 
 Strict Complete requires both research freeze and runtime freeze to contract.
 
@@ -59,9 +59,9 @@ Governance:
 
     Research Wave 4: COMPLETE
     Research FROZEN: 7 / 7
-    Runtime Frozen: 2 / 7
+    Runtime Frozen: 3 / 7
 
-Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT and 690101 EXHAUSTION have passed independent Runtime Freeze Audits, so Stage12 Runtime Frozen is now 2 / 7.
+Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT, 690101 EXHAUSTION and 690107 FALSE_REPORT have passed independent Runtime Freeze Audits, so Stage12 Runtime Frozen is now 3 / 7.
 
 ### 690089 INSIGHT
 
@@ -71,7 +71,7 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     Runtime: FROZEN TO CONTRACT
     Runtime Freeze Audit: PASS
     Audit Authority: stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md
-    Next: Maintain 690089 freeze; current integration owner is 690107 FALSE_REPORT
+    Next: Maintain 690089 freeze; current integration owner is 690108 PROVOCATION
 
 ### 690101 EXHAUSTION
 
@@ -97,8 +97,8 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     Fresh Audit CI: 36326173066 / success
     pytest: 1244 passed
     demo: PASS
-    Stage12 Runtime Frozen: 2 / 7
-    Next: Maintain 690101 freeze; proceed 690107 FALSE_REPORT Runtime Integration
+    Stage12 Runtime Frozen: 3 / 7
+    Next: Maintain 690101 freeze; proceed 690108 PROVOCATION Runtime Integration
 
 Integration authority:
 [stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md)
@@ -115,8 +115,23 @@ Battle-side research mirror:
     Contract: v1.0.1-frozen
     Final Adversarial Falsification: PASS
     Coverage Repair: PASS
-    Runtime: NOT_INTEGRATED
-    Next: 690107 FALSE_REPORT Runtime Integration
+    Gameplay: IMPLEMENTED
+    Runtime: FROZEN TO CONTRACT
+    Runtime Freeze Audit: PASS
+    Audit Code/Test SHA: 2feb4b03a18f1779e78fd3df65eef3a80b835c67
+    Fresh Audit CI: 36329400436 / success
+    pytest: 1299 passed
+    demo: PASS
+    Contract-focused tests: 54 passed across integration + independent audit suites
+    Stage12 Runtime Frozen: 3 / 7
+    Stage11 Reopen Required: NO
+    Next: 690108 PROVOCATION Runtime Integration
+
+Runtime Freeze authority:
+[stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md](stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md)
+
+Integration authority:
+[stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_INTEGRATION.md)
 
 Battle-side mirror:
 [stages/stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md](stages/stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md)

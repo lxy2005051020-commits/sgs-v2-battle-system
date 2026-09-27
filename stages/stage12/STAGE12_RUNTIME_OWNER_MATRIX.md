@@ -17,7 +17,7 @@
 | Natural action admission | ActionSystem | ActionSystem | CAPTURE | EXTEND |
 | Normal attack permission | NormalAttackSystem | NormalAttackSystem | EXHAUSTION negative discriminator; Capture action interaction | REUSE |
 | Skill identity / slots | SkillRuntime + SkillRuntimeRegistry | same registry + frozen SkillProviderRef(owner_id, slot, skill_id) identity | EXHAUSTION, FALSE_REPORT, INTIMIDATION, CAPTURE | REUSE / DESIGN FIXED |
-| Skill category recognition | insufficient general taxonomy | SkillDefinition metadata: SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION + PreparationMode NONE/REQUIRED | EXHAUSTION, FALSE_REPORT, INTIMIDATION, CAPTURE | DESIGN FIXED / FUTURE SCHEMA |
+| Skill category recognition | insufficient general taxonomy | SkillDefinition metadata: SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION/TALENT + PreparationMode NONE/REQUIRED; TALENT is a 690107 negative discriminator and is not implicitly eligible for Intimidation | EXHAUSTION, FALSE_REPORT, INTIMIDATION, CAPTURE | DESIGN FIXED / FUTURE SCHEMA |
 | Skill permission | none canonical | SkillPermissionPolicy, holder-level permission only | EXHAUSTION | NEW CANONICAL MINIMAL OWNER; DESIGN FIXED |
 | Skill operation admission composition | SkillResolver local enabled gate | SkillOperationAdmissionCoordinator composes ProviderValidityPolicy + SkillPermissionPolicy before observable activation/RNG | EXHAUSTION + all skill Providers | NEW THIN COORDINATOR; DESIGN FIXED |
 | Preparation interruption request | none | PreparationInterruptionPort implemented later by the true preparation owner | EXHAUSTION, INTIMIDATION | NEW MINIMAL PORT; DESIGN FIXED / IMPLEMENTATION DEPENDENCY |

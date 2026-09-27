@@ -1,7 +1,7 @@
 # Stage12 Shared Foundation Implementation Status
 
 Date: 2026-09-27  
-Current round: `STAGE12_690089_INSIGHT_RUNTIME_INTEGRATION`  
+Current round: `STAGE12_690107_FALSE_REPORT_INDEPENDENT_RUNTIME_FREEZE_AUDIT`  
 Round 4 implementation code/test SHA: `af9c70148075ef00614946ee797297c2aa1b622a`  
 Round 4 validation CI run: `36306780864` / success  
 690089 integration validation checkpoint SHA: `ae213863a52a8e4c19b5169939fecb700ac8bfd8`  
@@ -356,32 +356,32 @@ The current 690089 integration static/semantic checks confirm:
 - there is no `Stage12InsightRuntime`;
 - one production `BattleSystems` graph still owns exactly one `StateEffectivenessPolicy`;
 - state-to-state Insight suppression dependencies use the frozen Shared Foundation dependency graph and pre-commit cycle validation;
-- no real gameplay rule was added for 690101, 690107, 690108, 690222, 690109 or 690110.
+- Shared Foundation itself still adds no mechanism-specific gameplay for the remaining 690108, 690222, 690109 or 690110; 690101 and 690107 are integrated only through their mechanism-owned adapters.
 
 The pre-existing Round 4 equipment/execution-right static guards remain covered by the full regression suite.
 
 ## 16. Gameplay boundary
 
-Stage12 individual-state gameplay implemented in the current round:
+Stage12 individual-state gameplay currently frozen to contract:
 
 ```text
 690089 INSIGHT = IMPLEMENTED / RUNTIME_FROZEN
+690101 EXHAUSTION = IMPLEMENTED / RUNTIME_FROZEN
+690107 FALSE_REPORT = IMPLEMENTED / RUNTIME_FROZEN
 ```
 
-Not gameplay-integrated in this round:
+Not gameplay-integrated yet:
 
 ```text
-690101 EXHAUSTION
-690107 FALSE_REPORT
 690108 PROVOCATION
 690222 INTIMIDATION
 690109 SABOTAGE
 690110 CAPTURE
 ```
 
-Synthetic/resident instances of those state IDs are used only to verify the INSIGHT side of frozen admission/suppression boundaries. That does not constitute their gameplay implementation.
+The 690107 independent Runtime Freeze Audit also closed the frozen-contract TALENT negative discriminator by adding `SkillType.TALENT` to the shared taxonomy without adding TALENT to FALSE_REPORT's suppression set or to Intimidation eligibility.
 
-The independent 690089 Runtime Freeze Audit has passed. Stage12 Runtime Frozen is now **1 / 7**.
+Stage12 Runtime Frozen is now **3 / 7**.
 
 ## 17. Current gates
 
@@ -401,9 +401,13 @@ Stage12 Shared Foundation Implementation = COMPLETE
 
 690089 INSIGHT Gameplay = IMPLEMENTED
 690089 INSIGHT Runtime = FROZEN
+690101 EXHAUSTION Gameplay = IMPLEMENTED
+690101 EXHAUSTION Runtime = FROZEN
+690107 FALSE_REPORT Gameplay = IMPLEMENTED
+690107 FALSE_REPORT Runtime = FROZEN
 
-Stage12 Gameplay Implementation = 1 / 7 IMPLEMENTED
-Stage12 Runtime Frozen = 1 / 7
+Stage12 Gameplay Implementation = 3 / 7 IMPLEMENTED
+Stage12 Runtime Frozen = 3 / 7
 
 Stage13 Active = NO
 Stage14 Active = NO
@@ -424,7 +428,7 @@ Authority:
 The next authorized gameplay integration is:
 
 ```text
-690101 EXHAUSTION Runtime Integration
+690108 PROVOCATION Runtime Integration
 ```
 
 Do not mark any other Stage12 mechanism Runtime FROZEN until its own integration and independent freeze gate pass.

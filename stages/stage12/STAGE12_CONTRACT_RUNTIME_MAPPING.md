@@ -70,7 +70,7 @@ These rows are DESIGN_FROZEN_FOUNDATION, not GREEN. GREEN still requires impleme
 | Foundation item | Authority | Frozen design binding | Implementation status |
 |---|---|---|---|
 | Insight × existing Confusion | STAGE12_INSIGHT_CONFUSION_AUTHORITY_MIGRATION.md + Insight v0.4 §§3/4/7/8/21/22 | resident Confusion becomes ineffective under effective Insight; timer continues; surviving instance resumes; old P0-CFS-P93-01 claim narrowly superseded | NOT IMPLEMENTED |
-| Skill taxonomy | DQ-SF-04 | SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION; PreparationMode orthogonal; Normal Attack non-skill operation; equipment special separate ProviderCategory | NOT IMPLEMENTED |
+| Skill taxonomy | DQ-SF-04 | SkillType ACTIVE/ASSAULT/PASSIVE/COMMAND/TROOP/FORMATION/TALENT; PreparationMode orthogonal; Normal Attack non-skill operation; equipment special separate ProviderCategory; TALENT is a FALSE_REPORT negative discriminator only | NOT IMPLEMENTED |
 | Skill Provider identity | DQ-SF-05 | SkillProviderRef(owner_id, slot, skill_id); Registry resolves owner+slot and validates expected skill ID | NOT IMPLEMENTED |
 | Equipment Provider identity | DQ-SF-05 / DQ-SF-11 boundary | EquipmentProviderRef(owner_id, provider_key) enters typed ProviderRef union without masquerading as Skill | DESIGN ONLY |
 | Provider enumeration | RD-SF-002 | deterministic slot order 0/1/2 for identity enumeration; no implied Intimidation weighting | NOT IMPLEMENTED |

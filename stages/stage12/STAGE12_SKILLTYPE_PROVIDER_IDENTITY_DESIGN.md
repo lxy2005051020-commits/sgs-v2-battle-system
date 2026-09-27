@@ -37,6 +37,7 @@ The minimum Shared Foundation taxonomy is:
 - SkillType.COMMAND
 - SkillType.TROOP
 - SkillType.FORMATION
+- SkillType.TALENT
 
 Preparation is an orthogonal characteristic:
 
@@ -61,6 +62,7 @@ Normal Attack remains an operation owned by the Normal Attack runtime. It is not
 | COMMAND | SkillType | SkillType.COMMAND | FALSE_REPORT, INTIMIDATION, CAPTURE | Same Provider-effectiveness requirement with separate contract semantics |
 | TROOP | SkillType | SkillType.TROOP | INTIMIDATION | Positively eligible for Intimidation; not collapsed into Passive/Command |
 | FORMATION | SkillType | SkillType.FORMATION | INTIMIDATION exclusion, FalseReport negative boundary | Must be identifiable to exclude without pretending it is a non-skill operation |
+| TALENT | SkillType | SkillType.TALENT | FALSE_REPORT negative boundary only | 690107 frozen contract requires standard Talent to remain directly unsuppressed; this does not add Talent to Intimidation eligibility |
 | NORMAL_ATTACK | OperationType / non-skill operation | Normal Attack runtime, not SkillType | EXHAUSTION negative case, INTIMIDATION exclusion | Existing canonical owner is NormalAttackSystem; contracts treat it separately |
 | EQUIPMENT_SPECIAL | Provider category / non-skill contribution source | ProviderCategory.EQUIPMENT_SPECIAL | FALSE_REPORT tested boundary, SABOTAGE future equipment policy | Research explicitly does not prove equipment specials are Passive/Command skills |
 
@@ -280,3 +282,18 @@ DQ-SF-21 remains DESIGN_REQUIRED for implementation migration, but its identity 
 Shared Foundation Design Freeze = NOT YET.
 Stage12 Runtime Frozen = 0 / 7.
 Stage13 Active = NO.
+
+
+## 690107 Runtime Freeze corrective taxonomy amendment — 2026-09-27
+
+The independent FALSE_REPORT Runtime Freeze Audit found one schema coverage gap: the frozen 690107 contract explicitly requires standard TALENT to remain directly unsuppressed, while the original minimum taxonomy omitted a TALENT discriminator.
+
+The shared schema therefore adds `SkillType.TALENT` narrowly for contract observability.
+
+This amendment does **not**:
+- add TALENT to FALSE_REPORT suppression; suppression remains exactly PASSIVE / COMMAND;
+- add TALENT to INTIMIDATION eligibility;
+- create a new Runtime Default;
+- activate Stage13 / Stage14 / Stage15 gameplay.
+
+Authority: `STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md`.

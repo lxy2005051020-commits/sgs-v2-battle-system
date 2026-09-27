@@ -2,11 +2,11 @@
 
 > Sync Date: **2026-09-27**
 >
-> Battle Runtime Status: **IMPLEMENTED_PENDING_RUNTIME_AUDIT**
+> Battle Runtime Status: **RUNTIME_FROZEN_TO_CONTRACT**
 >
 > Research Status: **FROZEN**
 >
-> Purpose: preserve the frozen research authority while recording completed gameplay integration without treating implementation as Runtime Freeze.
+> Purpose: preserve the frozen research authority and record the independently audited Runtime Freeze without rewriting Research evidence.
 
 ## 1. Research authority
 
@@ -100,30 +100,22 @@ These are non-blocking for current standard Stage12 design.
 
 ## 5. Runtime status after integration
 
-The implementation round is now complete, but the independent freeze gate remains deliberately separate.
-
-What is now true:
-
-- Stage12 production Runtime is active;
-- 690107 gameplay integration is implemented;
-- 690107 has 40 dedicated executable tests;
-- final integration CI run 36328457017 passed with 1284 total tests and demo PASS;
-- contract bounded unknowns remain explicit rather than guessed.
-
-What is still not true:
-
-- 690107 Runtime is frozen to contract;
-- Strict Complete increased;
-- Stage12 Runtime Frozen increased beyond 2 / 7;
-- Stage13 / Stage14 / Stage15 are activated.
-
-Current Battle disposition:
+The gameplay integration and independent Runtime Freeze Audit are complete.
 
 ```text
 Research FROZEN                         = YES
-Gameplay                                = IMPLEMENTED_PENDING_RUNTIME_AUDIT
-Runtime FROZEN TO CONTRACT              = NO
-Strict Complete                         = NO
-Stage12 Runtime Frozen                  = 2 / 7
-Next                                    = 690107 Independent Runtime Freeze Audit
+Gameplay                                = IMPLEMENTED
+Runtime FROZEN TO CONTRACT              = YES
+Strict Complete                         = YES
+Stage12 Runtime Frozen                  = 3 / 7
+Audit code/test SHA                     = 2feb4b03a18f1779e78fd3df65eef3a80b835c67
+Fresh audit CI                          = 36329400436 / 1299 passed / demo PASS
+Stage11 Reopen Required                 = NO
+Stage13 / Stage14 / Stage15 Active      = NO
+Next                                    = 690108 PROVOCATION Runtime Integration
 ```
+
+The independent audit adds no Research claim and no new Runtime Default. It closes the missing TALENT negative discriminator in the shared SkillType taxonomy while preserving FALSE_REPORT suppression as exactly PASSIVE / COMMAND.
+
+Freeze authority:
+`stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md`.
