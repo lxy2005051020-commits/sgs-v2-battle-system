@@ -6,7 +6,6 @@ from sgs_v2.battle_core import (
     BattleContext,
     BattlePhase,
     BattleSystems,
-    DisarmStateParams,
     EmptyStateRuntimeParams,
     EventBus,
     EventType,
@@ -14,11 +13,9 @@ from sgs_v2.battle_core import (
     OfficialStateId,
     RandomSystem,
     RemovalOperation,
-    Stage11TimedFlagParams,
     StateApplicationResultStatus,
     StateCandidate,
     StateLifetimeSpec,
-    StunStateParams,
     TauntStateParams,
     UnitRuntime,
     register_official_state_definitions,
@@ -29,6 +26,12 @@ from sgs_v2.battle_core.insight_integration import (
     INSIGHT_PROTECTED_STATE_IDS,
 )
 from sgs_v2.battle_core.skill_runtime import SkillSlot
+from sgs_v2.battle_core.stage11_state_params import (
+    DisarmStateParams,
+    Stage11TimedFlagParams,
+    StunStateParams,
+)
+from sgs_v2.battle_core.state_effectiveness import StateEffectivenessStatus
 
 
 PROTECTED_IDS = (
@@ -280,7 +283,7 @@ def test_resident_protected_state_is_suppressed_without_removal(
 
     current = context.states.get(protected.instance_id)
     decision = systems.state_effectiveness_policy.evaluate_state(context, current)
-    assert decision.suppressed
+    assert decision.status is StateEffectivenessStatus.SUPPRESSED
     assert current.current_generation_id == generation
     assert event_count(context, EventType.STATE_REMOVED) == 0
 
@@ -308,7 +311,7 @@ def test_suppression_resume_preserves_instance_generation_lifetime_and_events() 
     for _ in range(5):
         assert systems.state_effectiveness_policy.evaluate_state(
             context, protected
-        ).suppressed
+        ).status is StateEffectivenessStatus.SUPPRESSED
     assert event_count(context, EventType.STATE_SUPPRESSED) == 1
 
     systems.state_removal_coordinator.remove(
