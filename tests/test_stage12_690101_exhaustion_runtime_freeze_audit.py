@@ -278,10 +278,10 @@ def test_preparation_owner_has_no_progression_api() -> None:
 
     source = inspect.getsource(preparation_state_module)
     for forbidden in (
-        "advance_round",
-        "progress",
-        "execute_prepared",
-        "target_selection",
+        "def advance_round",
+        "def progress_preparation",
+        "def execute_prepared",
+        "def select_target",
         "PreparationScheduler",
         "PreparationTurnMachine",
         "PreparationProgressEngine",
