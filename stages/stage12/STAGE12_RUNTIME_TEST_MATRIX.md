@@ -563,3 +563,190 @@ test_no_universal_work_id_required
 ~~~
 
 These are future production-test obligations only. Round 8 changes zero executable test code and zero gameplay code.
+
+
+## SF Round 9 planned RNG / Event / Default governance suite
+
+Status: DESIGN_FROZEN / NOT IMPLEMENTED.
+
+These are future production-test obligations. Round 9 adds zero executable test code.
+
+### RNG ownership / zero-consumption
+
+~~~text
+test_insight_rejection_preserves_source_control_rng_parity
+test_deterministic_control_under_insight_adds_no_rng
+test_state_admission_policy_consumes_zero_rng
+test_state_effectiveness_policy_consumes_zero_rng
+test_state_conflict_policy_consumes_zero_rng
+test_provider_validity_policy_consumes_zero_rng
+test_skill_permission_policy_consumes_zero_rng
+test_skill_operation_admission_coordinator_consumes_zero_rng
+test_skill_target_policy_consumes_zero_rng
+test_equipment_effectiveness_policy_consumes_zero_rng
+test_state_removal_policy_consumes_zero_rng
+test_effectiveness_transition_coordinator_consumes_zero_rng
+test_execution_right_evaluation_consumes_zero_rng
+test_provider_invalid_skill_consumes_no_activation_rng
+test_skill_permission_denied_consumes_no_activation_rng
+test_denied_skill_creates_no_target_rng
+test_forced_single_provocation_adds_no_target_rng
+test_all_candidates_target_selection_adds_no_target_rng
+test_intimidation_rejected_before_binding_consumes_no_binding_rng
+test_intimidation_refresh_performs_one_authorized_binding_selection
+test_intimidation_refresh_same_provider_still_counts_as_selection
+test_intimidation_resume_consumes_zero_binding_rng
+test_provider_invalid_recovery_consumes_zero_recovery_rng
+test_suppressed_equipment_trigger_consumes_zero_downstream_rng
+test_execution_right_denial_consumes_zero_downstream_rng
+~~~
+
+The Intimidation tests count one binding-selection operation at the RandomSystem service seam.
+They do not assert hidden random.Random bit consumption.
+
+### Deterministic replay / trace
+
+~~~text
+test_same_seed_same_stage12_rng_trace
+test_same_input_same_admission_decisions_same_rng_owner_sequence
+test_rejected_path_does_not_shift_later_rng_trace
+test_resume_path_does_not_shift_later_rng_trace
+test_policy_query_repetition_does_not_shift_rng_trace
+~~~
+
+Test instrumentation may wrap/fake the existing RandomSystem seam.
+Do not change production RNG semantics merely to expose a trace.
+
+### Provocation / Intimidation bounded RNG guards
+
+~~~text
+test_provocation_choose_n_micro_order_marked_deferred
+test_provocation_insufficient_candidates_marked_unsupported
+test_provocation_multisource_precedence_marked_unsupported
+test_intimidation_weights_not_claimed_uniform
+test_intimidation_empty_pool_marked_unsupported
+test_rd_sf_002_does_not_define_intimidation_weights
+~~~
+
+These tests are governance/contract guards, not assertions of invented gameplay.
+
+### Query vs Event
+
+~~~text
+test_repeated_effectiveness_query_emits_no_event
+test_repeated_provider_query_emits_no_event
+test_repeated_skill_permission_query_emits_no_event
+test_repeated_target_policy_query_emits_no_event
+test_repeated_equipment_policy_query_emits_no_event
+test_execution_right_query_emits_no_event
+~~~
+
+### State transition facts
+
+~~~text
+test_state_suppressed_transition_emits_once_if_public
+test_state_resume_transition_emits_once_if_public
+test_suppressed_to_suppressed_emits_no_event
+test_resumed_to_resumed_emits_no_event
+test_state_suppression_event_occurs_after_dependency_commit
+test_state_resume_requires_physical_state_still_present
+~~~
+
+### Provider internal transition boundary
+
+~~~text
+test_provider_query_emits_no_event
+test_provider_internal_transition_does_not_require_public_provider_event
+test_provider_resume_does_not_replay_missed_behavior
+~~~
+
+### Application rejection facts
+
+~~~text
+test_insight_admission_rejection_uses_application_rejected_admission_stage
+test_insight_reapplication_conflict_uses_application_rejected_conflict_stage
+test_admission_reject_event_distinct_from_conflict_reject_by_payload
+test_rejected_candidate_emits_no_state_applied
+test_rejected_candidate_emits_no_state_refreshed
+test_failed_binding_validation_emits_no_committed_state_event
+test_cycle_validation_failure_emits_no_committed_state_event
+~~~
+
+### Skill / preparation event facts
+
+~~~text
+test_actual_exhaustion_blocked_active_attempt_may_emit_skill_operation_blocked
+test_no_active_attempt_no_exhaustion_block_event
+test_actual_preparing_interruption_may_emit_preparation_interrupted
+test_not_preparing_no_interruption_event
+test_interruption_event_occurs_after_preparation_transition
+~~~
+
+### Domain event ownership
+
+~~~text
+test_capture_action_block_event_owned_by_action_system
+test_capture_state_handler_does_not_duplicate_action_blocked
+test_capture_damage_prevention_event_owned_by_damage_domain
+test_capture_damage_denial_is_not_weakness_legal_zero_event
+test_capture_recovery_prevention_event_owned_by_recovery_system
+test_capture_plus_healing_block_emits_one_recovery_prevented
+test_capture_plus_healing_block_keeps_multiple_internal_causes
+test_capture_plus_healing_block_public_primary_reason_preserves_healing_ban_compatibility
+~~~
+
+### Target event non-fabrication
+
+~~~text
+test_target_policy_query_emits_no_target_event
+test_provocation_fixed_all_noop_emits_no_false_forced_target_event
+test_provocation_source_already_present_no_duplicate_force_event
+test_target_change_event_if_added_is_owned_by_target_resolution_not_policy_query
+~~~
+
+### Transaction ordering / idempotence
+
+~~~text
+test_state_applied_event_occurs_after_physical_commit
+test_state_refreshed_event_occurs_after_refresh_commit
+test_transition_event_occurs_after_dependency_recompute
+test_failed_transaction_emits_no_applied_or_refreshed_event
+test_same_decision_without_transition_emits_no_transition_event
+test_event_bus_listener_cannot_be_permission_owner
+~~~
+
+### Runtime Default governance
+
+~~~text
+test_rd_sf_001_has_required_provenance_and_deterministic_test
+test_rd_sf_002_has_required_provenance_and_deterministic_test
+test_rd_sf_003_has_required_provenance_and_deterministic_test
+test_pd_ins_001_retains_inherited_project_default_label
+test_pd_ins_002_retains_inherited_project_default_label
+test_no_unledgered_project_runtime_default
+test_bounded_unknown_not_automatically_runtime_default
+test_round9_adds_no_new_runtime_default
+~~~
+
+### Static architecture scans
+
+~~~text
+test_no_direct_random_module_use_outside_random_system_infrastructure
+test_policy_classes_do_not_consume_battle_context_random
+test_event_bus_handlers_do_not_own_permission_decisions
+test_all_runtime_defaults_referenced_in_ledger
+test_project_runtime_default_comments_have_ledger_ids_or_inherited_default_ids
+test_no_stage13_stage14_stage15_gameplay_in_round9
+~~~
+
+### Round 9 test-design verdict
+
+~~~text
+RNG decision-point coverage = DESIGNED
+zero-RNG policy coverage = DESIGNED
+replay trace coverage = DESIGNED
+event query/transition/ordering/idempotence coverage = DESIGNED
+runtime-default provenance coverage = DESIGNED
+executable Stage12 Round 9 tests added = 0
+gameplay code changed = 0
+~~~
