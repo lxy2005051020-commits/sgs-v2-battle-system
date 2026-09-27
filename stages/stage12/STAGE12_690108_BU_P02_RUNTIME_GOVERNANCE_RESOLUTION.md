@@ -265,7 +265,7 @@ no Stage13 / Stage14 / Stage15 change
 ## U. Stage9 Regression
 
 ```text
-PASS via full-suite CI 36331485754
+PASS via full-suite CI 36331548296
 ```
 
 No Stage9 production code changed.
@@ -273,7 +273,7 @@ No Stage9 production code changed.
 ## V. Stage10 Regression
 
 ```text
-PASS via full-suite CI 36331485754
+PASS via full-suite CI 36331548296
 ```
 
 No Stage10 production code changed.
@@ -281,14 +281,14 @@ No Stage10 production code changed.
 ## W. Stage11 Regression
 
 ```text
-PASS via full-suite CI 36331485754
+PASS via full-suite CI 36331548296
 Stage11 Reopen Required = NO
 ```
 
 ## X. 690089 Regression
 
 ```text
-PASS via full-suite CI 36331485754
+PASS via full-suite CI 36331548296
 ```
 
 No 690089 production code changed.
@@ -296,7 +296,7 @@ No 690089 production code changed.
 ## Y. 690101 Regression
 
 ```text
-PASS via full-suite CI 36331485754
+PASS via full-suite CI 36331548296
 ```
 
 No 690101 production code changed.
@@ -304,7 +304,7 @@ No 690101 production code changed.
 ## Z. 690107 Regression
 
 ```text
-PASS via full-suite CI 36331485754
+PASS via full-suite CI 36331548296
 ```
 
 No 690107 production code changed.
@@ -312,7 +312,7 @@ No 690107 production code changed.
 ## AA. Shared Foundation Regression
 
 ```text
-PASS via full-suite CI 36331485754
+PASS via full-suite CI 36331548296
 Owner graph unchanged
 ```
 
@@ -348,7 +348,7 @@ The existing generic reserve-first topology is governed, not rewritten.
 Baseline before round = 1299 passed
 Final pytest = 1314 passed
 Net new tests = 15
-PR CI = 36331485754 / success
+PR CI = 36331548296 / success
 demo = PASS
 ```
 
@@ -376,13 +376,25 @@ PROJECT_STATUS.md
 
 ## AF. Commit SHA
 
-Validated PR head before final report-only sync:
+Final validated PR head:
 
 ```text
-15a60413b15ee4de6b7146df774ff30215d83e0a
+3cd61e81eccc8caafe95ab171e5d55ce78b9be78
 ```
 
-Merge commit is recorded after PR merge.
+Governance merge commit:
+
+```text
+73aa03a3cab73f440aa48a81998ded55d547aeb3
+```
+
+PR CI:
+
+```text
+36331548296 / success
+pytest = 1314 passed
+demo = PASS
+```
 
 ## AG. Blocker Verdict
 
@@ -406,7 +418,7 @@ reopen trigger = FROZEN
 required tests = PASS
 pytest = 1314 passed
 demo = PASS
-CI = 36331485754 / success
+CI = 36331548296 / success
 Research reopen = NO
 Shared Foundation reopen = NO
 ```
