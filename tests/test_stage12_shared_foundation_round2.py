@@ -44,7 +44,6 @@ from sgs_v2.battle_core import (
     StateLifetimeSpec,
     StateNode,
     StateRemovalResultStatus,
-    StunStateParams,
     SuppressionCause,
     UnitRuntime,
     register_official_state_definitions,
