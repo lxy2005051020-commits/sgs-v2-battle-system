@@ -168,14 +168,16 @@ class DependencyEvaluationSupport:
     def validate_acyclic(self) -> None:
         self._validate_graph(self._prerequisites)
 
-    def validate_dependency_replacement(
+    def _prepare_dependency_replacements(
         self,
-        consumer: DependencyNode,
-        prerequisites,
+        replacements,
         *,
         remove_nodes=(),
-    ) -> None:
-        """Validate a prospective topology change without mutating the live graph."""
+    ) -> tuple[
+        dict[DependencyNode, set[DependencyNode]],
+        dict[DependencyNode, set[DependencyNode]],
+    ]:
+        """Build and validate one atomic prospective dependency topology."""
         proposed = {
             node: set(values) for node, values in self._prerequisites.items()
         }
@@ -189,11 +191,67 @@ class DependencyEvaluationSupport:
             else:
                 proposed.pop(node, None)
 
-        proposed.pop(consumer, None)
-        new_values = set(prerequisites)
-        if new_values:
-            proposed[consumer] = new_values
+        normalized = tuple(
+            (consumer, set(prerequisites))
+            for consumer, prerequisites in replacements
+        )
+        seen_consumers: set[DependencyNode] = set()
+        for consumer, prerequisites in normalized:
+            if consumer in seen_consumers:
+                raise ValueError(
+                    "dependency replacement consumers must be unique in one atomic update"
+                )
+            seen_consumers.add(consumer)
+            proposed.pop(consumer, None)
+            if prerequisites:
+                proposed[consumer] = set(prerequisites)
+
         self._validate_graph(proposed)
+
+        proposed_dependents: dict[DependencyNode, set[DependencyNode]] = {}
+        for consumer, prerequisites in proposed.items():
+            for prerequisite in prerequisites:
+                proposed_dependents.setdefault(prerequisite, set()).add(consumer)
+        return proposed, proposed_dependents
+
+    def validate_dependency_replacements(
+        self,
+        replacements,
+        *,
+        remove_nodes=(),
+    ) -> None:
+        """Validate multiple dependency replacements as one pre-commit graph delta."""
+        self._prepare_dependency_replacements(
+            replacements,
+            remove_nodes=remove_nodes,
+        )
+
+    def replace_dependencies_many(
+        self,
+        replacements,
+        *,
+        remove_nodes=(),
+    ) -> None:
+        """Commit a previously-validatable dependency topology update atomically."""
+        proposed, proposed_dependents = self._prepare_dependency_replacements(
+            replacements,
+            remove_nodes=remove_nodes,
+        )
+        self._prerequisites = proposed
+        self._dependents = proposed_dependents
+
+    def validate_dependency_replacement(
+        self,
+        consumer: DependencyNode,
+        prerequisites,
+        *,
+        remove_nodes=(),
+    ) -> None:
+        """Validate a prospective topology change without mutating the live graph."""
+        self.validate_dependency_replacements(
+            ((consumer, tuple(prerequisites)),),
+            remove_nodes=remove_nodes,
+        )
 
     def remove_node(self, node: DependencyNode) -> None:
         """Remove one physical dependency node and every edge touching it."""
