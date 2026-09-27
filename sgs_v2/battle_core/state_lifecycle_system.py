@@ -1029,6 +1029,29 @@ class StateLifecycleSystem:
             include_duration_reason=True,
         )
 
+    def due_at_action_start(
+        self,
+        context: BattleContext,
+        owner_id: str,
+    ) -> tuple[StateInstance, ...]:
+        due_by_id: dict[str, StateInstance] = {}
+        for inst in context.states.find(owner_id=owner_id):
+            legacy_due = (
+                inst.lifecycle_window is not None
+                and context.current_round >= inst.lifecycle_window.last_eligible_round
+            )
+            typed_due = (
+                inst.lifetime_spec is not None
+                and inst.lifetime_spec.domain
+                is StateLifetimeDomain.HOLDER_ACTION_WINDOW
+                and inst.lifetime_spec.remaining_holder_action_windows == 1
+            )
+            if legacy_due or typed_due:
+                due_by_id[inst.instance_id] = inst
+        return tuple(
+            sorted(due_by_id.values(), key=lambda item: item.instance_id)
+        )
+
     def settle_action_start_lifetimes(
         self,
         context: BattleContext,
