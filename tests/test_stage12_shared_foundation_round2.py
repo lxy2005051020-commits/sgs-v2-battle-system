@@ -1043,6 +1043,31 @@ def test_remove_last_cause_one_resume_transition() -> None:
     assert target_transitions[0].after.status is StateEffectivenessStatus.EFFECTIVE
 
 
+def test_resume_transition_is_not_refresh() -> None:
+    context, systems, cause, target = _transition_fixture()
+    context.metadata["blocked_instances"] = (target.instance_id,)
+    suppressed = context.states.get(target.instance_id)
+    generation_before = suppressed.current_generation_id
+    lifetime_before = suppressed.lifetime_spec
+    events_before = context.event_bus.history
+    before = systems.effectiveness_transition_coordinator.capture(
+        context, (StateNode(cause.instance_id),)
+    )
+    context.metadata["blocked_instances"] = ()
+    transitions = systems.effectiveness_transition_coordinator.settle(
+        context, before, (StateNode(cause.instance_id),)
+    )
+    assert any(
+        getattr(item, "state_instance_id", None) == target.instance_id
+        for item in transitions
+    )
+    current = context.states.get(target.instance_id)
+    assert current.instance_id == suppressed.instance_id
+    assert current.current_generation_id == generation_before
+    assert current.lifetime_spec == lifetime_before
+    assert context.event_bus.history == events_before
+
+
 def test_duplicate_query_no_transition() -> None:
     context, systems, cause, _target = _transition_fixture()
     before = systems.effectiveness_transition_coordinator.capture(
@@ -1280,6 +1305,34 @@ def test_transition_coordinator_does_not_mutate_registry() -> None:
     assert "context.states.add(" not in source
     assert "context.states.remove(" not in source
     assert "context.states.replace(" not in source
+
+
+def test_round2_foundation_contains_no_stage12_gameplay_switches() -> None:
+    root = Path(__file__).parents[1] / "sgs_v2" / "battle_core"
+    forbidden = (
+        "INSIGHT",
+        "EXHAUSTION",
+        "FALSE_REPORT",
+        "PROVOCATION",
+        "INTIMIDATION",
+        "SABOTAGE",
+        "CAPTURE",
+        "690089",
+        "690101",
+        "690107",
+        "690108",
+        "690222",
+        "690109",
+        "690110",
+    )
+    for name in (
+        "state_application.py",
+        "state_removal.py",
+        "state_lifetime.py",
+        "effectiveness_transition.py",
+    ):
+        source = (root / name).read_text(encoding="utf-8")
+        assert all(token not in source for token in forbidden)
 
 
 def test_round2_transaction_modules_use_no_random_module_or_context_random() -> None:
