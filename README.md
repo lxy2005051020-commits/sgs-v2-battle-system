@@ -15,7 +15,7 @@
     Stage9  = FROZEN
     Stage10 = FROZEN
     Stage11 = RUNTIME FROZEN / POST-FREEZE ACCEPTED
-    Stage12 = ACTIVATION GATE CLEARED / RESEARCH COMPLETE / PRODUCTION RUNTIME NOT ACTIVE
+    Stage12 = ACTIVE / RESEARCH COMPLETE / SHARED FOUNDATION DESIGN PRE-AUDIT / RUNTIME 0 OF 7
     Stage13 = NOT ACTIVE
 
 Stage11 Runtime Tested SHA:
@@ -105,7 +105,7 @@ Research FROZEN:
 - Battle mirror: stages/stage12/STAGE12_690110_CAPTURE_RESEARCH_SYNC.md
 
 Stage12 Research = 7 / 7 FROZEN.
-Next: contract-aligned Runtime Integration Design.
+Next: DQ-SF-26 Independent Shared Foundation Design Audit before gameplay integration.
 
 ## Stage sequencing
 
@@ -116,3 +116,20 @@ Next: contract-aligned Runtime Integration Design.
     Stage16+ = Passive / Command / Formation / Troop etc.
 
 Research Wave does not renumber Project Stage, and Research FROZEN does not imply Runtime FROZEN.
+
+
+## Stage12 Shared Foundation Round 10
+
+Composition wiring and final test architecture are complete at design level.
+
+~~~text
+DQ-SF-17 CLOSED_BY_SHARED_FOUNDATION_DESIGN
+DQ-SF-18 CLOSED_BY_SHARED_FOUNDATION_DESIGN
+DQ-SF-26 PENDING INDEPENDENT DESIGN AUDIT
+
+Gameplay implementation = NONE
+Stage12 Runtime Frozen = 0 / 7
+Stage13 / Stage14 / Stage15 Active = NO
+~~~
+
+Authority: stages/stage12/STAGE12_SHARED_FOUNDATION_COMPOSITION_AND_TEST_ARCHITECTURE.md

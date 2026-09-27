@@ -1,6 +1,6 @@
 # Stage12 Runtime Test Matrix Skeleton
 
-> Status: **SHARED FOUNDATION TEST DESIGN / ROUNDS 2-9 EXPANDED / NOT IMPLEMENTED**  
+> Status: **ROUND 10 FINAL TEST ARCHITECTURE COMPLETE / PRE-INDEPENDENT-AUDIT / NOT IMPLEMENTED**  
 > Baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.
 
 | State / Foundation | Positive Case | Negative Case | Primary Discriminator | Cross-State Required | Minimum |
@@ -749,4 +749,137 @@ event query/transition/ordering/idempotence coverage = DESIGNED
 runtime-default provenance coverage = DESIGNED
 executable Stage12 Round 9 tests added = 0
 gameplay code changed = 0
+~~~
+
+
+## SF Round 10 final test architecture
+
+Authority: STAGE12_SHARED_FOUNDATION_COMPOSITION_AND_TEST_ARCHITECTURE.md
+
+### Layer 1 — Shared Foundation
+
+~~~text
+tests/test_stage12_state_admission.py
+tests/test_stage12_state_lifecycle_transaction.py
+tests/test_stage12_state_effectiveness.py
+tests/test_stage12_provider_validity.py
+tests/test_stage12_skill_permission.py
+tests/test_stage12_target_policy.py
+tests/test_stage12_equipment_effectiveness.py
+tests/test_stage12_execution_rights.py
+tests/test_stage12_rng_governance.py
+tests/test_stage12_event_governance.py
+tests/test_stage12_wiring.py
+tests/test_stage12_architecture_static.py
+~~~
+
+### Layer 2 — Seven-state contract suites
+
+~~~text
+tests/test_stage12_690089_insight.py
+tests/test_stage12_690101_exhaustion.py
+tests/test_stage12_690107_false_report.py
+tests/test_stage12_690108_provocation.py
+tests/test_stage12_690222_intimidation.py
+tests/test_stage12_690109_sabotage.py
+tests/test_stage12_690110_capture.py
+~~~
+
+Minimums remain: FALSE_REPORT >= 30, PROVOCATION >= 25, INTIMIDATION >= 21. The other four states use complete contract-obligation coverage with no invented numeric floor.
+
+### Layer 3 — Cross-state and Stage11 regression
+
+~~~text
+tests/test_stage12_cross_state.py
+tests/test_stage12_stage11_regressions.py
+~~~
+
+Required Stage12 matrix additionally includes FalseReport-source × Provocation as the existing dependency discriminator.
+
+Required Stage11/legacy matrix includes:
+STUN × CAPTURE; WEAKNESS × CAPTURE; HEALING_BLOCK × CAPTURE;
+CONFUSION × PROVOCATION; TAUNT × PROVOCATION; DISARM × INSIGHT;
+STUN × INSIGHT; Damage Pipeline × CAPTURE; Recovery Pipeline × CAPTURE;
+INSIGHT × CONFUSION as the AR-SF-01 authority-migration discriminator.
+
+### Layer 4 — Whole-system acceptance
+
+~~~text
+full pytest
+demo
+deterministic replay / RNG trace
+static architecture audit
+CI
+~~~
+
+### Wiring identity tests
+
+~~~text
+test_battle_systems_uses_single_state_effectiveness_policy
+test_battle_systems_uses_single_provider_validity_policy
+test_stage9_stage11_share_same_effective_truth
+test_skill_and_recovery_share_same_provider_validity
+test_equipment_consumers_share_same_equipment_policy
+test_dependency_support_is_shared_and_cycle_safe
+test_event_bus_is_shared_but_not_authority
+test_production_path_has_no_shared_policy_fallback
+test_explicit_test_factory_builds_one_coherent_graph
+~~~
+
+### Legacy constructor migration tests
+
+~~~text
+test_production_stage9_requires_injected_state_effectiveness_policy
+test_production_stage11_requires_injected_state_effectiveness_policy
+test_production_skill_resolver_requires_admission_and_target_policies
+test_production_recovery_opportunity_uses_injected_provider_validity
+test_non_production_fixture_factory_is_explicit
+test_fixture_factory_does_not_create_per_consumer_policy_instances
+~~~
+
+### Semantic static audits
+
+Use AST/class/call analysis instead of brittle raw-string bans.
+
+~~~text
+test_no_shared_policy_constructor_inside_production_consumer
+test_state_registry_mutation_is_lifecycle_authorized
+test_no_direct_random_module_gameplay_calls
+test_no_duplicate_random_system_construction
+test_event_handlers_do_not_own_permission
+test_no_stage12_state_id_ladder_duplicated_across_consumers
+test_no_source_skill_slot_truthiness_gate
+test_no_provider_attribution_dependency_inference
+test_no_unledgered_project_runtime_default
+test_no_stage13_stage14_stage15_gameplay_leakage
+~~~
+
+### Unsupported-boundary tests
+
+~~~text
+test_intimidation_empty_pool_is_explicit_boundary
+test_intimidation_weights_require_declared_distribution
+test_provocation_insufficient_candidates_not_silently_defaulted
+test_provocation_multisource_not_silently_defaulted
+test_sabotage_unproven_queued_mode_is_explicit_boundary
+test_capture_unproven_execution_right_mode_is_explicit_boundary
+~~~
+
+### No-regression oracle
+
+For battles without Stage12 states/new metadata: outcome unchanged; event order unchanged; RNG consumption unchanged; canonical owner count unchanged; provenance unchanged; Stage9/10/11 frozen behavior unchanged.
+
+~~~text
+four-layer architecture = COMPLETE
+seven-state file layout = COMPLETE
+cross-state matrix = COMPLETE
+Stage11 regression matrix = COMPLETE
+wiring/static audit matrix = COMPLETE
+contract-to-test traceability = COMPLETE BY DESIGN
+unsupported-boundary test policy = COMPLETE
+executable Stage12 Round 10 tests added = 0
+gameplay code changed = 0
+
+DQ-SF-18 = CLOSED_BY_SHARED_FOUNDATION_DESIGN
+DQ-SF-26 = PENDING
 ~~~

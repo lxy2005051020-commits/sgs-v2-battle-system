@@ -1,6 +1,6 @@
 # Stage12 Contract → Runtime Mapping Skeleton
 
-> Status: **SHARED FOUNDATION DESIGN MAPPING / ROUNDS 2-9 GOVERNED / NOT IMPLEMENTED**  
+> Status: **ROUNDS 2-10 DESIGN TRACE COMPLETE / PRE-INDEPENDENT-AUDIT / NOT IMPLEMENTED**  
 > Date: **2026-09-27**  
 > Rule-level expansion is mandatory before each state's implementation begins.
 
@@ -480,3 +480,44 @@ Capture-only prevention requires the future CAPTURE reason representation owned 
 - event publishing follows gameplay order and cannot define gameplay order;
 - unsupported/deferred boundaries are not converted to PROJECT_RUNTIME_DEFAULT until Runtime truly must choose;
 - Research remains read-only.
+
+
+## SF Round 10 final Contract → Owner → Method → Test traceability
+
+Method names for not-yet-implemented Shared Foundation types are design contracts, not claims that executable code exists.
+
+| State / rule group | Canonical owner | Method / exact seam | Positive test | Negative / discriminator test | Evidence class | Default | Status |
+|---|---|---|---|---|---|---|---|
+| INSIGHT incoming protection | StateAdmissionPolicy | evaluate_candidate before conflict/Lifecycle | insight_rejects_incoming_protected_control | special boundaries not ordinary-rejected | RESEARCH_CONFIRMED | PD-INS-001 source RNG parity | TRACE_COMPLETE |
+| INSIGHT existing suppression | StateEffectivenessPolicy | evaluate_state / effective_instances | insight_suppresses_existing_confusion | resident_suppressed_not_removed | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| INSIGHT resume | transition coordinator + effectiveness | affected-closure recompute after commit | remove_insight_resumes_live_control | expired_control_never_resumes | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| INSIGHT taxonomy | StateAdmissionPolicy rule adapter | protected-control classification | insight_sabotage_protected | insight_capture_not_protected | RESEARCH_CONFIRMED / provenance-qualified | NONE | TRACE_COMPLETE |
+| EXHAUSTION Active permission | SkillPermissionPolicy | evaluate_operation in Skill admission coordinator | exhaustion_denies_active | allows_normal_attack_and_standard_assault | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| EXHAUSTION preparation | transition coordinator → PreparationInterruptionPort | holder Active interruption request | effective_exhaustion_interrupts_preparation | suppressed_exhaustion_no_interrupt | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE_WITH_INTEGRATION_DEPENDENCY |
+| EXHAUSTION admitted work | ExecutionRightSpec / Skill owner | SNAPSHOT_AT_ADMISSION permission | admitted_active_not_rolled_back | new_active_attempt_denied | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| FALSE_REPORT admission exception | StateAdmissionPolicy | evaluate_candidate | ordinary_insight_does_not_reject_fr | special_protection_still_applies | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| FALSE_REPORT Passive/Command | ProviderValidityPolicy | evaluate_provider | suppresses_passive_command_provider | unrelated_provider_remains_valid | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| FALSE_REPORT equipment scope | EquipmentEffectivenessPolicy | evaluate_contribution | tested_equipment_scope_follows_contract | untested_category_explicit_boundary | RESEARCH_CONFIRMED + UNSUPPORTED_BOUNDARY | NONE | TRACE_COMPLETE |
+| FALSE_REPORT restore | ProviderValidityPolicy + transition | final-cause removal recompute | restore_provider_future_only | no_missed_trigger_replay | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| PROVOCATION target query | SkillTargetPolicy | TargetOperation eligibility/constraint | single_forces_source | noneligible_operation_unchanged | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| PROVOCATION source admissibility | SkillTargetPolicy | eligibility before selector | admissible_source_included | dead_inadmissible_source_not_forced_state_resident | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| PROVOCATION resident/effective | StateEffectivenessPolicy | evaluate_state | source_death_leaves_state_resident | ineffective_state_no_target_change | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| PROVOCATION Confusion/Taunt | SkillTargetPolicy + TargetResolutionSystem | separate Skill / NormalAttack paths | confusion_preempts_provocation | taunt_normal_attack_only | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| INTIMIDATION one binding | binding selector + ProviderValidityPolicy | select after admitted eligible pool | suppresses_exactly_one_provider | does_not_disable_all_skills | RESEARCH_CONFIRMED | RD-SF-002 enumeration only | TRACE_COMPLETE |
+| INTIMIDATION refresh | selector + StateApplicationCoordinator | reroll before atomic REFRESH commit | refresh_one_authorized_selection | rejected_refresh_zero_binding_rng | RESEARCH_CONFIRMED | weights DEFERRED | TRACE_COMPLETE |
+| INTIMIDATION resume | ProviderValidityPolicy + transition | reuse stored binding | resume_preserves_binding_timer | resume_zero_binding_rng | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| INTIMIDATION counter | source-skill owner | outside state core | state_core_no_counter_damage_branch | source_skill_scope_separate | SOURCE_SKILL_SCOPE | NONE | TRACE_COMPLETE |
+| SABOTAGE suppression | EquipmentEffectivenessPolicy | evaluate_contribution JIT | suppresses_tested_contribution | equipment_object_remains | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| SABOTAGE remote effect | explicit EquipmentContributionDependency | live-effect use-time query | remote_effect_follows_owner_suppression | unrelated_holder_provider_valid | RESEARCH_CONFIRMED / INFERRED_BOUNDED | NONE | TRACE_COMPLETE |
+| SABOTAGE restore | equipment policy + domain owner | final-cause removal future eligibility | resume_future_only | no_reinitialize_or_replay | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| CAPTURE natural action | ActionSystem | after maintenance, before STUN consume / NormalAttack | capture_denies_natural_action | capture_denial_does_not_consume_stun | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| CAPTURE damage | Damage work admission / DamageInstanceCoordinator | actor + work category + ExecutionRightSpec | blocks_verified_actor_damage | attached_active_dot_continues | RESEARCH_CONFIRMED + bounded cases | NONE | TRACE_COMPLETE |
+| CAPTURE Passive/Command | ProviderValidityPolicy | evaluate_provider | suppresses_verified_provider | source_death_does_not_remove_capture | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| CAPTURE recovery | RecoverySystem | prevention after modifier/second CEIL | capture_prevents_recovery | healing_block_coexists_without_rounding_change | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| CAPTURE friendly target | SkillTargetPolicy | friendly SINGLE/CHOOSE_N eligibility | excludes_captured_friendly | enemy_and_raw_allies_unchanged | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| CAPTURE restore | composed domain owners + transition | future-only re-evaluation | removal_restores_future_permissions | no_missed_work_replay | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+| CAPTURE source death | Lifecycle + effectiveness | no inferred source liveness | source_death_does_not_remove_capture | no_universal_origin_source_gate | RESEARCH_CONFIRMED | NONE | TRACE_COMPLETE |
+
+Explicit boundaries are also test-mapped: Intimidation weights = DEFERRED; Intimidation empty pool, Provocation BU-P09/BU-P06, Sabotage B-SAB-07 and Capture Q16/Q44/Q45 = UNSUPPORTED_BOUNDARY where already ledgered. Their tests must fail/reject explicitly until evidence or an approved Runtime Default changes the boundary.
+
+Round 10 owner TBD = 0; seam TBD = 0 for frozen claims; test-mapping TBD = 0 for frozen claims. Executable Stage12 implementation/tests remain future work.

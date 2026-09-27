@@ -1,6 +1,6 @@
 # Stage12 Runtime Owner Matrix
 
-> Status: **ENTRY-AUDITED / ROUND 9 RNG-EVENT-DEFAULT GOVERNANCE CLOSED / DESIGN INPUT**  
+> Status: **ROUND 10 COMPOSITION WIRING COMPLETE / PRE-INDEPENDENT-AUDIT DESIGN**  
 > Date: **2026-09-27**  
 > Canonical constraint: one responsibility may not have two competing canonical owners.
 
@@ -54,7 +54,7 @@ The following remain open after Round 4:
 - DQ-SF-11 CLOSED in Round 7: EquipmentContributionRef + EquipmentEffectivenessPolicy + domain filter/JIT seams;
 - DQ-SF-12 CLOSED in Round 9: sole RNG service + per-domain random-decision ownership + zero-RNG policy matrix + rejection/refresh/resume/replay rules;
 - DQ-SF-13 CLOSED in Round 9: query/event split + domain event ownership + post-decision/commit publication + idempotence;
-- DQ-SF-17 composition-root wiring;
+- DQ-SF-17 CLOSED in Round 10: BattleSystems canonical composition root, shared policy identity, strict production injection and legacy compatibility migration;
 - DQ-SF-19 CLOSED in Round 8: Capture composite owner matrix + action/damage/recovery/provider/target/equipment boundaries;
 - DQ-SF-21 CLOSED_BY_SHARED_FOUNDATION_DESIGN in Round 5: RecoveryOpportunitySystem Gate 4 migration contract frozen; implementation remains pending;
 - DQ-SF-23 ARCHITECTURE CLOSED / CONTRACT_DEPENDENT in Round 8: per-dimension ExecutionRightSpec; Q16/Q44/Q45/B-SAB-07 remain bounded;
@@ -366,3 +366,39 @@ Owner invariants after Round 9:
 - EventBus is the sole event dispatch/history service, but it is not a gameplay-decision owner.
 - Domain systems publish only facts they canonically own.
 - PROJECT_RUNTIME_DEFAULT is governance metadata, not a substitute policy engine.
+
+
+## SF Round 10 owner closure — construction / injection / rights
+
+Authority: STAGE12_SHARED_FOUNDATION_COMPOSITION_AND_TEST_ARCHITECTURE.md
+
+| Responsibility | Canonical owner | Constructed / owned by | Main consumers | Mutation rights | RNG rights | Event rights |
+|---|---|---|---|---|---|---|
+| state storage | StateRegistry | BattleContext.states | Lifecycle + read-only policies through context | storage only through authorized Lifecycle seams | NONE | NONE |
+| skill identity storage | SkillRuntimeRegistry | BattleContext.skill_runtimes | ProviderValidityPolicy / RecoveryOpportunitySystem | registry loading only | NONE | NONE |
+| RNG service | RandomSystem | BattleContext.random | domain random decision owners | RNG state only | SOLE SERVICE | NONE |
+| event bus | EventBus | BattleContext.event_bus | committed domain publishers | event history/subscriptions only | NONE | facts only; never permission |
+| state physical mutation / clock | StateLifecycleSystem | BattleSystems | application/removal/lifecycle orchestration | SOLE STATE WRITER | NONE | committed lifecycle facts |
+| dependency session | DependencyEvaluationSupport | BattleSystems | StateEffectivenessPolicy + ProviderValidityPolicy + transition coordinator | memo/visiting/reverse-index only | NONE | NONE |
+| state current authority | StateEffectivenessPolicy | BattleSystems | Stage9/11 + dependent policies/adapters | NONE | NONE | NONE on query |
+| Provider validity | ProviderValidityPolicy | BattleSystems | Skill admission, Recovery Gate 4, dependent triggers/effects | NONE | NONE | NONE on query |
+| state admission | StateAdmissionPolicy | BattleSystems | StateApplicationCoordinator | NONE | NONE | rejection only after final decision |
+| state conflict/reapply | StateConflictPolicy | BattleSystems | StateApplicationCoordinator | NONE | NONE | NONE on query |
+| state removal eligibility | StateRemovalPolicy | BattleSystems | removal orchestration | NONE | NONE | NONE on query |
+| equipment contribution identity | EquipmentContributionRegistry / adapter | BattleSystems | ProviderValidityPolicy + EquipmentEffectivenessPolicy | no inventory mutation | NONE | NONE |
+| equipment current contribution authority | EquipmentEffectivenessPolicy | BattleSystems | Attribute/Damage/Recovery/Trigger/live-effect adapters | NONE | NONE | NONE on query |
+| holder skill permission | SkillPermissionPolicy | BattleSystems | SkillOperationAdmissionCoordinator | NONE | NONE | domain block fact after denial |
+| Skill target policy | SkillTargetPolicy | BattleSystems | SkillResolver target-operation path | NONE | NONE | post-resolution domain fact only |
+| application orchestration | StateApplicationCoordinator | BattleSystems | state application callers | prepares only; Lifecycle commits | NONE | post-commit coordination |
+| effectiveness propagation | EffectivenessTransitionCoordinator | BattleSystems | application/removal/lifecycle orchestration | NONE | NONE | typed transition facts only after commit |
+| Skill admission composition | SkillOperationAdmissionCoordinator | BattleSystems | SkillResolver | NONE | NONE before admission | domain-owned admission fact |
+| preparation interruption | PreparationInterruptionPort | BattleSystems | EffectivenessTransitionCoordinator | concrete Stage15 owner later | NONE | no EventBus authority |
+| natural action | ActionSystem | BattleSystems | BattleEngine | action-domain state only | existing domain draws | ACTION_BLOCKED |
+| damage | Damage stack | BattleSystems | Effects / NormalAttack / reactions | damage settlement only | existing domain draws | DAMAGE facts |
+| recovery | RecoverySystem | BattleSystems | recovery opportunity / effects | troop restore through TroopSystem | NONE | RECOVERY facts |
+| recovery opportunity | RecoveryOpportunitySystem | BattleSystems | aftermath / hooks | opportunity execution | Gate 5 draw | governed domain facts |
+| trigger collection | TriggerSystem | BattleSystems | hooks / aftermath | collects intents only | explicit trigger-owned draws only | no permission authority |
+
+Production invariant: one StateEffectivenessPolicy, one ProviderValidityPolicy, one SkillPermissionPolicy, one SkillTargetPolicy and one EquipmentEffectivenessPolicy per BattleSystems graph. Isolated tests may build a complete fixture graph, but production consumers may not self-create these owners.
+
+DQ-SF-17 = CLOSED_BY_SHARED_FOUNDATION_DESIGN. DQ-SF-26 remains pending.

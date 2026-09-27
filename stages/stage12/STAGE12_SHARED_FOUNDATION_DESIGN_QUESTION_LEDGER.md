@@ -35,8 +35,8 @@ Statuses describe closure of a design question, not mechanism Research Freeze:
 | DQ-SF-14 | Which runtime defaults are required and where recorded? | CONTRACT_DEPENDENT_WITH_ARCHITECTURE_CLOSED | Runtime Default governance is frozen: only behavior Runtime must deterministically choose now may become PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN; rejectable/deferable unknowns remain UNSUPPORTED_BOUNDARY or DEFERRED. RD-SF-001/002/003 remain the complete Battle-owned set; PD-INS-001/002 remain inherited research-side approved project defaults. | See STAGE12_RUNTIME_DEFAULT_LEDGER.md and STAGE12_RNG_EVENT_DEFAULT_GOVERNANCE.md; Round 9 adds no new default; all named Insight/Intimidation/Provocation/FalseReport/Sabotage/Capture unknowns receive explicit governance classification and reopen triggers |
 | DQ-SF-15 | How migrate actual 690089 PARTIAL? | CLOSED_BY_AUTHORITY_MIGRATION | STAGE12_INSIGHT_CONFUSION_AUTHORITY_MIGRATION.md establishes later Insight v0.4 authority and explicit future test replacement; identity/lifecycle/Taunt scope preserved | 02,16; implementation still pending, but authority blocker is closed |
 | DQ-SF-16 | Stage11 and older frozen regression boundary? | CLOSED_BY_SCOPED_SUPERSESSION | P0-CFS-P93-01/P93-B01 superseded only for existing Confusion remaining operational after later effective Insight; all enumerated unaffected Stage9 rules preserved; Stage11 Reopen Required NO | 15,24; any future clock contradiction requires a separately proven scoped reopen |
-| DQ-SF-17 | BattleSystems wiring and compatibility paths? | DESIGN_REQUIRED | Composition root constructs one shared dependency graph, injects consumers and ports; legacy standalone constructors must not create second policy truth | 02,05,08,20; same policy instance for production consumers, explicit dependency failure, no EventBus backdoor |
-| DQ-SF-18 | Test architecture and model discriminators? | DESIGN_REQUIRED | Foundation tests + seven state files + cross-state suite; current 913 tests are baseline, not Stage12 coverage | All DQs; exact contract sections→future test cases; 30/25/21 minima retained; AST owner/RNG scans; independent design audit later |
+| DQ-SF-17 | BattleSystems wiring and compatibility paths? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | BattleSystems constructs one canonical Shared Foundation graph while BattleContext retains the sole per-battle StateRegistry / SkillRuntimeRegistry / RandomSystem / EventBus resources. Shared policies/coordinators are explicit production injections; DependencyEvaluationSupport breaks evaluation cycles without becoming a gameplay owner or service locator. | See STAGE12_SHARED_FOUNDATION_COMPOSITION_AND_TEST_ARCHITECTURE.md; Stage9/11 share one StateEffectivenessPolicy, Skill/Recovery share ProviderValidityPolicy, equipment consumers share EquipmentEffectivenessPolicy, and production fallback owner construction is forbidden. |
+| DQ-SF-18 | Test architecture and model discriminators? | CLOSED_BY_SHARED_FOUNDATION_DESIGN | Four-layer architecture: Shared Foundation unit/wiring/static tests; seven state contract suites; cross-state + Stage11 regressions; full-suite/demo/CI. Contract Rule → Owner → Method/Seam → Test → Evidence Class → Default → Status traceability is mandatory. | See STAGE12_SHARED_FOUNDATION_COMPOSITION_AND_TEST_ARCHITECTURE.md and STAGE12_RUNTIME_TEST_MATRIX.md; FALSE_REPORT >=30, PROVOCATION >=25, INTIMIDATION >=21 retained; unsupported boundaries require explicit failure tests; DQ-SF-26 remains independent audit. |
 
 ## 2. Additional questions required by code and contracts
 
@@ -407,3 +407,27 @@ NEXT:
 - DQ-SF-17 Composition Wiring
 - DQ-SF-18 Final Test Architecture
 - then DQ-SF-26 Independent Design Audit
+
+
+## 8. SF Round 10 closure — Composition Wiring + Final Test Architecture
+
+Authority record:
+- STAGE12_SHARED_FOUNDATION_COMPOSITION_AND_TEST_ARCHITECTURE.md
+
+Round 10 closes DQ-SF-17 and DQ-SF-18 by Shared Foundation design. BattleContext remains the sole per-battle owner of StateRegistry, SkillRuntimeRegistry, RandomSystem and EventBus; BattleSystems constructs one Shared Foundation policy/coordinator graph and injects it explicitly. Production fallback canonical-owner construction is forbidden.
+
+The final test architecture is four-layered and every frozen contract claim must trace through canonical owner, method/seam, concrete future test, evidence class and default provenance. Unsupported boundaries require explicit negative/failure tests rather than silent gameplay answers.
+
+Round 10 adds no Runtime Default and no gameplay implementation.
+
+~~~text
+DQ-SF-17 CLOSED_BY_SHARED_FOUNDATION_DESIGN
+DQ-SF-18 CLOSED_BY_SHARED_FOUNDATION_DESIGN
+DQ-SF-26 DESIGN_REQUIRED
+
+Shared Foundation Design Freeze = NOT YET
+Stage12 Runtime Frozen = 0 / 7
+Stage11 Reopen Required = NO
+Stage13 / Stage14 / Stage15 Active = NO
+NEXT = DQ-SF-26 Independent Design Audit
+~~~
