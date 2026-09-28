@@ -356,7 +356,7 @@ The current 690089 integration static/semantic checks confirm:
 - there is no `Stage12InsightRuntime`;
 - one production `BattleSystems` graph still owns exactly one `StateEffectivenessPolicy`;
 - state-to-state Insight suppression dependencies use the frozen Shared Foundation dependency graph and pre-commit cycle validation;
-- Shared Foundation itself still adds no mechanism-specific gameplay policy. 690101, 690107, 690108, 690222 and now 690109 are integrated through mechanism-owned adapters registered into the frozen canonical owners; 690110 remains not integrated.
+- Shared Foundation itself still adds no mechanism-specific gameplay policy. All seven Stage12 mechanisms are integrated through mechanism-owned adapters registered into the frozen canonical owners; 690110 has now passed its independent Runtime Freeze Audit without adding a second owner.
 
 The pre-existing Round 4 equipment/execution-right static guards remain covered by the full regression suite.
 
@@ -372,15 +372,11 @@ Stage12 individual-state gameplay currently frozen to contract:
 690222 INTIMIDATION = IMPLEMENTED / RUNTIME_FROZEN
 ```
 
-Not gameplay-integrated yet:
-
-```text
-690110 CAPTURE
-```
+690110 CAPTURE is also now IMPLEMENTED / RUNTIME_FROZEN_TO_CONTRACT after its independent audit.
 
 The 690107 independent Runtime Freeze Audit also closed the frozen-contract TALENT negative discriminator by adding `SkillType.TALENT` to the shared taxonomy without adding TALENT to FALSE_REPORT's suppression set or to Intimidation eligibility.
 
-Stage12 Runtime Frozen is now **6 / 7**.
+Stage12 Runtime Frozen is now **7 / 7**. Stage12 Complete remains **NO** pending the Stage12 Final Completion / Freeze Audit.
 
 ## 17. Current gates
 
@@ -467,3 +463,29 @@ NEXT = 690110 CAPTURE Runtime Integration
 ```
 
 The freeze adds no Shared Foundation owner, no Sabotage God-object and no dynamic-equipment gameplay default. B-SAB-07/B-SAB-09 remain explicit unsupported boundaries.
+
+
+## 20. 690110 CAPTURE Runtime Freeze checkpoint — 2026-09-28
+
+```text
+690110 Research = FROZEN
+690110 Gameplay = IMPLEMENTED
+690110 Runtime = FROZEN TO CONTRACT
+Independent Runtime Freeze Audit = PASS
+Audit test commit = f1db21211ce7d01fc867bc8c26c94cb82f11af49
+Independent adversarial tests = 33
+Local full pytest = 1640 passed
+Local demo = PASS
+BLOCKER = 0
+unresolved MAJOR = 0
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen = 7 / 7
+Stage12 Complete = NO
+Stage11 Reopen Required = NO
+Research Reopen Required = NO
+Shared Foundation Reopen Required = NO
+Stage13 / Stage14 / Stage15 Active = NO
+NEXT = Stage12 Final Completion / Freeze Audit
+```
+
+The audit confirms that CAPTURE consumes the existing Shared Foundation owners rather than creating a Capture-specific runtime owner. Bounded Research questions remain explicit boundaries.
