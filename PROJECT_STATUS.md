@@ -591,3 +591,33 @@ NEXT = 690109 SABOTAGE Independent Runtime Freeze Audit
 ```
 
 Authority: `stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md`.
+
+
+## Stage12 690110 CAPTURE Runtime Integration — 2026-09-28
+
+```text
+690110 Research = FROZEN
+690110 Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690110 Runtime = NOT YET FROZEN
+Integration Exit Gate = PASS
+
+Validated code/test SHA = 03c18d10fbfafa093e11f08ea779ac83c2e0d751
+PR #26 CI = 36383693483 / success
+pytest = 1607 passed
+demo = PASS
+net new integration test nodes = +49
+
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen = 6 / 7
+Stage12 Complete = NO
+Stage11 Reopen Required = NO
+Research Reopen Required = NO
+Shared Foundation Reopen Required = NO
+Research repository mutation = NONE
+
+NEXT = 690110 CAPTURE Independent Runtime Freeze Audit
+```
+
+Authority: `stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_INTEGRATION.md`.
+
+This checkpoint does not freeze 690110 Runtime and does not activate Stage13 / Stage14 / Stage15.

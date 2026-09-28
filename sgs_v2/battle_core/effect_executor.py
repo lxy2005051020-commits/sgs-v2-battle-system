@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from .context import BattleContext
-from .damage_instance_coordinator import DamageInstanceCoordinator
+from .damage_instance_coordinator import (
+    DamageExecutionRejected,
+    DamageInstanceCoordinator,
+)
 from .damage_resolution_system import DamageResolutionSystem
 from .effect_result import (
     ApplyStateEffectResult,
     DamageEffectResult,
+    DamageDeniedEffectResult,
     DeferredEffectResult,
     EffectExecutionResult,
     RecoverEffectResult,
@@ -74,6 +78,11 @@ class EffectExecutor:
                     "legacy DamageResolutionSystem construction is compatibility-only"
                 )
             execution = self._damage_instances.execute_damage_effect(context, effect)
+            if isinstance(execution, DamageExecutionRejected):
+                return DamageDeniedEffectResult(
+                    effect=effect,
+                    execution_right=execution.evaluation,
+                )
             return DamageEffectResult(
                 effect=effect,
                 resolution=execution.resolution,

@@ -140,10 +140,17 @@ Research FROZEN:
 690110 当前状态：
 - Contract v1.0-frozen
 - final adversarial falsification PASS
-- independent Freeze Audit PASS
-- counterattack / Active-DOT / Insight discriminators resolved
-- RST1 Resume / no missed-trigger replay / source-death independence
-- Runtime NOT_INTEGRATED
+- Research Freeze Audit PASS
+- Gameplay IMPLEMENTED_PENDING_RUNTIME_AUDIT
+- Runtime NOT YET FROZEN
+- Integration Exit Gate PASS
+- code/test SHA 03c18d10fbfafa093e11f08ea779ac83c2e0d751
+- PR #26 CI 36383693483 / 1607 passed / demo PASS
+- +49 integration test nodes
+- Counter damage blocked independently; attached Active-origin DOT continues
+- friendly SINGLE / CHOOSE_N pre-RNG exclusion implemented
+- bounded target/equipment/reapplication questions remain explicit
+- Integration record: stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_INTEGRATION.md
 - Battle mirror: stages/stage12/STAGE12_690110_CAPTURE_RESEARCH_SYNC.md
 
 Stage12 Research = 7 / 7 FROZEN.
@@ -157,9 +164,12 @@ Stage12 Shared Foundation Design + Implementation = FROZEN / COMPLETE.
 690222 INTIMIDATION Runtime = FROZEN TO CONTRACT.
 690109 SABOTAGE Gameplay = IMPLEMENTED.
 690109 SABOTAGE Runtime = FROZEN TO CONTRACT.
-Stage12 Gameplay Implementation = 6 / 7.
+690110 CAPTURE Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT.
+690110 CAPTURE Runtime = NOT YET FROZEN.
+Stage12 Gameplay Implementation = 7 / 7.
 Stage12 Runtime Frozen = 6 / 7.
-Next: 690110 CAPTURE Runtime Integration.
+Stage12 Complete = NO.
+Next: 690110 CAPTURE Independent Runtime Freeze Audit.
 
 ## Stage sequencing
 
@@ -232,10 +242,14 @@ Audit authority: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`
 690109 SABOTAGE Gameplay = IMPLEMENTED
 690109 SABOTAGE Runtime = FROZEN TO CONTRACT
 690109 Independent Runtime Freeze Audit = PASS
+690110 CAPTURE Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690110 CAPTURE Runtime = NOT YET FROZEN
+Stage12 Gameplay Implementation = 7 / 7
 Stage12 Runtime Frozen = 6 / 7
+Stage12 Complete = NO
 Stage11 Reopen Required = NO
 Stage13 / Stage14 / Stage15 Active = NO
-NEXT = 690110 CAPTURE Runtime Integration
+NEXT = 690110 CAPTURE Independent Runtime Freeze Audit
 ```
 
 690108 freeze authority: `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`.

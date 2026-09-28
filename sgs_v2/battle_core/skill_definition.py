@@ -20,6 +20,16 @@ class SkillTargetMode(str, Enum):
     CHOOSE_N_DETERMINISTIC_ENEMIES = "CHOOSE_N_DETERMINISTIC_ENEMIES"
     FIXED_ALL_ENEMIES = "FIXED_ALL_ENEMIES"
 
+    # Stage12 Capture needs real fresh friendly TargetOperation producers. These
+    # modes add no Capture policy of their own; they only map producer intent
+    # into the already-frozen ALLY/SELF target-operation taxonomy.
+    SINGLE_RANDOM_ALLY = "SINGLE_RANDOM_ALLY"
+    SINGLE_DETERMINISTIC_ALLY = "SINGLE_DETERMINISTIC_ALLY"
+    CHOOSE_N_RANDOM_ALLIES = "CHOOSE_N_RANDOM_ALLIES"
+    CHOOSE_N_DETERMINISTIC_ALLIES = "CHOOSE_N_DETERMINISTIC_ALLIES"
+    FIXED_ALL_ALLIES = "FIXED_ALL_ALLIES"
+    SELF = "SELF"
+
 
 class SkillType(str, Enum):
     ACTIVE = "ACTIVE"
@@ -113,6 +123,8 @@ class SkillDefinition:
         choose_n_modes = {
             SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES,
             SkillTargetMode.CHOOSE_N_DETERMINISTIC_ENEMIES,
+            SkillTargetMode.CHOOSE_N_RANDOM_ALLIES,
+            SkillTargetMode.CHOOSE_N_DETERMINISTIC_ALLIES,
         }
         if self.target_mode in choose_n_modes:
             if isinstance(self.target_count, bool) or not isinstance(

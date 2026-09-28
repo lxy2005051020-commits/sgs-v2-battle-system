@@ -1104,3 +1104,37 @@ NEXT = 690110 CAPTURE Runtime Integration
 The independent suite attacks baseline-disabled/missing/identity-mismatch precedence, repeated suppress/restore identity stability, real-consumer dynamic-equipment boundaries, damage/recovery/trigger/scheduled future-only semantics, local/remote dependent-state expiry, source/holder death, Insight suppression/resume, Gangyi variants, reapplication/generation invariants, unsupported removal, FalseReport cause composition, dependency-cycle atomicity, event silence and canonical wiring.
 
 B-SAB-09 remains an explicit unsupported dynamic-equipment boundary. No dynamic equipment gameplay producer is implemented by this freeze.
+
+
+## 690110 CAPTURE Gameplay Integration executable checkpoint — 2026-09-28
+
+Primary executable specification:
+
+```text
+tests/test_stage12_690110_capture.py
+```
+
+Validated checkpoint:
+
+```text
+baseline = 1558 passed
+validated code/test SHA = 03c18d10fbfafa093e11f08ea779ac83c2e0d751
+PR #26 CI = 36383693483 / success
+full pytest = 1607 passed
+delta = +49 test nodes
+demo = PASS
+```
+
+Production coverage reaches BattleEngine / ActionSystem, typed DamageExecutionRight for Active and Counter damage, attached PERIODIC_DAMAGE continuation, ProviderValidity dependency composition, RecoverySystem prevention, real friendly SkillDefinition -> SkillResolver -> TargetOperation -> SkillTargetPolicy -> TargetSystem routes, AttributeSystem equipment gather, StateRemovalPolicy and lifecycle restoration.
+
+Adversarial guards preserve Q16 already-created DamageRequest, Q42 ALL_ALLIES, Q44 delayed work, Q45 locked targets, Q63 non-ATTRIBUTE equipment behavior and Q70-Q74 reapplication as explicit unsupported boundaries. Capture does not consume STUN, does not reuse WEAKNESS damage-zero semantics, does not infer ProviderDependency from attribution, and does not inherit SABOTAGE's broader equipment scope.
+
+Runtime Freeze is not claimed by this checkpoint.
+
+```text
+690110 CAPTURE Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690110 CAPTURE Runtime = NOT YET FROZEN
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen = 6 / 7
+NEXT = 690110 CAPTURE Independent Runtime Freeze Audit
+```

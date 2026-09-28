@@ -7,6 +7,7 @@ from .damage_partition_system import DamagePartitionPlan
 from .damage_resolution_system import DamageResolutionResult
 from .direct_troop_loss_system import AttributedDirectTroopLoss
 from .effects import ApplyStateEffect, DamageEffect, RecoverEffect, RemoveStateEffect
+from .execution_right_runtime import ExecutionRightEvaluation
 from .operation_identity import DamageInstanceId
 from .recovery_system import RecoveryResult
 from .state_instance import StateInstance
@@ -14,6 +15,7 @@ from .state_instance import StateInstance
 
 class EffectExecutionStatus(str, Enum):
     RESOLVED = "RESOLVED"
+    DENIED = "DENIED"
     DEFERRED = "DEFERRED"
 
 
@@ -33,6 +35,18 @@ class DamageEffectResult:
     direct_losses: tuple[AttributedDirectTroopLoss, ...] = ()
     status: EffectExecutionStatus = field(
         default=EffectExecutionStatus.RESOLVED,
+        init=False,
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class DamageDeniedEffectResult:
+    """A DamageEffect denied before DamageRequest / DamageInstance admission."""
+
+    effect: DamageEffect
+    execution_right: ExecutionRightEvaluation
+    status: EffectExecutionStatus = field(
+        default=EffectExecutionStatus.DENIED,
         init=False,
     )
 
@@ -81,6 +95,7 @@ class DeferredEffectResult:
 
 EffectExecutionResult = (
     DamageEffectResult
+    | DamageDeniedEffectResult
     | ApplyStateEffectResult
     | RemoveStateEffectResult
     | RecoverEffectResult

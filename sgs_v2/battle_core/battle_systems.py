@@ -64,6 +64,7 @@ from .false_report_integration import register_false_report_integration
 from .intimidation_integration import register_intimidation_integration
 from .sabotage_integration import register_sabotage_integration
 from .provocation_integration import register_provocation_integration
+from .capture_integration import register_capture_integration
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
 from .stage9_state_runtime import Stage9StateRuntime
@@ -286,6 +287,17 @@ class BattleSystems:
             state_conflict_policy=self.state_conflict_policy,
             state_effectiveness_policy=self.state_effectiveness_policy,
             skill_target_policy=self.skill_target_policy,
+        )
+        register_capture_integration(
+            state_conflict_policy=self.state_conflict_policy,
+            state_effectiveness_policy=self.state_effectiveness_policy,
+            provider_validity_policy=self.provider_validity_policy,
+            current_actor_permission_policy=self.current_actor_permission_policy,
+            recovery_execution_prevention_policy=self.recovery_execution_prevention_policy,
+            skill_target_policy=self.skill_target_policy,
+            equipment_effectiveness_policy=self.equipment_effectiveness_policy,
+            state_application_coordinator=self.state_application_coordinator,
+            state_removal_policy=self.state_removal_policy,
         )
 
         self.stage11_state_runtime = Stage11StateRuntime(

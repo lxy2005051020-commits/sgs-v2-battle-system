@@ -297,6 +297,54 @@ class SkillResolver:
                 TargetPurpose.HOSTILE,
                 None,
             )
+        if mode is SkillTargetMode.SINGLE_RANDOM_ALLY:
+            return (
+                TargetRelation.ALLY,
+                TargetCardinality.SINGLE,
+                TargetSelectorKind.RANDOM,
+                TargetPurpose.FRIENDLY_SUPPORT,
+                None,
+            )
+        if mode is SkillTargetMode.SINGLE_DETERMINISTIC_ALLY:
+            return (
+                TargetRelation.ALLY,
+                TargetCardinality.SINGLE,
+                TargetSelectorKind.DETERMINISTIC,
+                TargetPurpose.FRIENDLY_SUPPORT,
+                None,
+            )
+        if mode is SkillTargetMode.CHOOSE_N_RANDOM_ALLIES:
+            return (
+                TargetRelation.ALLY,
+                TargetCardinality.CHOOSE_N,
+                TargetSelectorKind.RANDOM,
+                TargetPurpose.FRIENDLY_SUPPORT,
+                definition.target_count,
+            )
+        if mode is SkillTargetMode.CHOOSE_N_DETERMINISTIC_ALLIES:
+            return (
+                TargetRelation.ALLY,
+                TargetCardinality.CHOOSE_N,
+                TargetSelectorKind.DETERMINISTIC,
+                TargetPurpose.FRIENDLY_SUPPORT,
+                definition.target_count,
+            )
+        if mode is SkillTargetMode.FIXED_ALL_ALLIES:
+            return (
+                TargetRelation.ALLY,
+                TargetCardinality.FIXED_ALL,
+                TargetSelectorKind.DETERMINISTIC,
+                TargetPurpose.FRIENDLY_SUPPORT,
+                None,
+            )
+        if mode is SkillTargetMode.SELF:
+            return (
+                TargetRelation.SELF,
+                TargetCardinality.SINGLE,
+                TargetSelectorKind.DETERMINISTIC,
+                TargetPurpose.SELF,
+                None,
+            )
         raise ValueError(f"unsupported target mode: {mode}")
 
     def _new_target_operation(

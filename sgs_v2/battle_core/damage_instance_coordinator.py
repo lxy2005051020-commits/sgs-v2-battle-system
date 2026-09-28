@@ -32,7 +32,12 @@ from .execution_right_system import DamageSettlementPermit
 from .execution_right_runtime import (
     DamageExecutionRightPort,
     DamageExecutionWork,
+    DamageWorkKind,
     ExecutionRightEvaluation,
+    ExecutionRightEvaluationStatus,
+    ExecutionRightMode,
+    ExecutionRightRequest,
+    ExecutionRightSpec,
 )
 from .operation_identity import (
     ReactionBatchId,
@@ -73,6 +78,14 @@ class DamageInstanceExecution:
 
     def __ge__(self, other: Any) -> bool:
         _forbid_ordering("DamageInstanceExecution", ">=")
+
+
+@dataclass(frozen=True, slots=True)
+class DamageExecutionRejected:
+    """Typed admission denial before a DamageInstance exists."""
+
+    work: DamageExecutionWork
+    evaluation: ExecutionRightEvaluation
 
 
 @dataclass(slots=True)
@@ -190,6 +203,58 @@ class DamageInstanceCoordinator:
         if self._execution_right_port is None:
             raise RuntimeError("damage execution-right port is not configured")
         return self._execution_right_port.evaluate(context, work)
+
+    @staticmethod
+    def _damage_effect_execution_work(effect) -> DamageExecutionWork:
+        source_ref = effect.source_ref
+        if source_ref is None:
+            raise ValueError(
+                "Production DamageEffect requires authoritative EffectSourceRef"
+            )
+
+        if source_ref.stage9_source_type is SourceType.ACTIVE_SKILL:
+            return DamageExecutionWork(
+                DamageWorkKind.NEW_ACTOR_DRIVEN_DAMAGE,
+                ExecutionRightSpec(
+                    actor_permission=ExecutionRightMode.RECHECK_AT_EXECUTION,
+                ),
+                ExecutionRightRequest(
+                    current_actor_id=source_ref.source_unit_id,
+                    actor_operation_kind=DamageWorkKind.NEW_ACTOR_DRIVEN_DAMAGE.value,
+                    historical_source_id=effect.source_id,
+                    damage_source_id=effect.source_id,
+                ),
+            )
+
+        if source_ref.stage9_source_type is SourceType.PERIODIC_DAMAGE:
+            return DamageExecutionWork(
+                DamageWorkKind.ATTACHED_EXISTING_DOT,
+                ExecutionRightSpec(
+                    actor_permission=ExecutionRightMode.NOT_APPLICABLE,
+                ),
+                ExecutionRightRequest(
+                    historical_source_id=effect.source_id,
+                    damage_source_id=effect.source_id,
+                ),
+            )
+
+        raise ValueError(
+            f"SourceType {source_ref.stage9_source_type.value} has no production "
+            "DamageEffect execution-right classification"
+        )
+
+    def evaluate_damage_effect_execution_right(
+        self,
+        context: BattleContext,
+        effect,
+    ) -> tuple[DamageExecutionWork, ExecutionRightEvaluation]:
+        work = self._damage_effect_execution_work(effect)
+        evaluation = self.evaluate_execution_right(context, work)
+        if evaluation.status is ExecutionRightEvaluationStatus.UNSUPPORTED_BOUNDARY:
+            raise RuntimeError(
+                "damage execution-right reached unsupported boundary"
+            )
+        return work, evaluation
 
     def allocate_damage_instance_id(self, context: BattleContext) -> DamageInstanceId:
         if context is None or not isinstance(context, BattleContext):
@@ -401,6 +466,13 @@ class DamageInstanceCoordinator:
                 "Production DamageEffect requires authoritative EffectSourceRef; reverse DamageSourceType inference is forbidden"
             )
         self._validate_production_source(effect)
+        work, evaluation = self.evaluate_damage_effect_execution_right(
+            context,
+            effect,
+        )
+        if not evaluation.allowed:
+            return DamageExecutionRejected(work, evaluation)
+
         lineage = OperationLineage(
             root_action_id=None,
             parent_normal_attack_id=None,

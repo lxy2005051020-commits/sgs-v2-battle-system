@@ -6,6 +6,14 @@ from .damage_system import DamageRequest
 from .enums import DamageSourceType, DamageType
 from .events import EventType
 from .execution_right_system import FutureBranchKind
+from .execution_right_runtime import (
+    DamageExecutionWork,
+    DamageWorkKind,
+    ExecutionRightEvaluationStatus,
+    ExecutionRightMode,
+    ExecutionRightRequest,
+    ExecutionRightSpec,
+)
 from .operation_identity import CounterBatchEntryId, ReactionBatchId, OperationLineage, SourceType
 from .reaction_permission_policy import ReactionPermissionPolicy
 from .stage9_integerization import ExactRatio
@@ -94,6 +102,36 @@ class CounterSystem:
                             "source_type": SourceType.COUNTER.value})
                     results.append(CounterEntryResult(entry, True, True, 0, None))
                     continue
+                work = DamageExecutionWork(
+                    DamageWorkKind.COUNTER_DAMAGE,
+                    ExecutionRightSpec(
+                        actor_permission=ExecutionRightMode.RECHECK_AT_EXECUTION,
+                    ),
+                    ExecutionRightRequest(
+                        current_actor_id=entry.owner_id,
+                        actor_operation_kind=DamageWorkKind.COUNTER_DAMAGE.value,
+                        historical_source_id=entry.source_id or entry.owner_id,
+                        damage_source_id=entry.owner_id,
+                        credit_owner_id=entry.owner_id,
+                    ),
+                )
+                execution_right = self._damage.evaluate_execution_right(
+                    context,
+                    work,
+                )
+                if (
+                    execution_right.status
+                    is ExecutionRightEvaluationStatus.UNSUPPORTED_BOUNDARY
+                ):
+                    raise RuntimeError(
+                        "counter damage execution-right reached unsupported boundary"
+                    )
+                if not execution_right.allowed:
+                    results.append(
+                        CounterEntryResult(entry, True, False, 0, None)
+                    )
+                    continue
+
                 parent = batch.parent_lineage
                 lineage = OperationLineage(parent.root_action_id, parent.parent_normal_attack_id,
                     parent.parent_damage_instance_id, SourceType.COUNTER, entry.owner_id,
