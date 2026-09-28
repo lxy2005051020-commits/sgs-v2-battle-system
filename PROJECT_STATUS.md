@@ -256,6 +256,10 @@ Runtime Freeze authority:
     BLOCKER: 0
     unresolved MAJOR: 0
     Audit Authority: stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md
+    Final Audit PR Head: acb2324be3b82153be0556a0bd49ba5e335d0fc1
+    Final Audit PR CI: 36386542790 / 1640 passed / demo PASS
+    Freeze Merge SHA: 6d9868c93819bfe6b536dc7d1178c2be5c79e3eb
+    Fresh Merged-Main CI: 36386655272 / 1640 passed / demo PASS
     Next: Stage12 Final Completion / Freeze Audit
 
 Battle-side mirror:
