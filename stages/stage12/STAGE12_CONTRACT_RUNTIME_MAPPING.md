@@ -663,3 +663,36 @@ Current production mapping:
 | TROOP execution consumer | future domain consumer | no separate concrete consumer exists today | NON-BLOCKING NOTE; MUST consume ProviderValidity when introduced |
 
 Authority: `STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`.
+
+
+## 690109 SABOTAGE Runtime Freeze mapping — 2026-09-28
+
+```text
+Research Contract = v1.0-frozen
+Gameplay = IMPLEMENTED
+Runtime = FROZEN TO CONTRACT
+Independent Runtime Freeze Audit = PASS
+Audit test SHA = f698cb97b08596b3cea924a815991022cc2dfe7d
+Audit-test push CI = 36380946005 / success / 1558 passed / demo PASS
+Stage12 Runtime Frozen = 6 / 7
+NEXT = 690110 CAPTURE Runtime Integration
+```
+
+Current production mapping:
+
+| Concern | Canonical owner / seam | Production binding | Freeze status |
+|---|---|---|---|
+| target equipment identity | `EquipmentProviderRef` / registry | owner + provider_key remains resident | FROZEN TO CONTRACT |
+| provider validity | `ProviderValidityPolicy` | effective Sabotage contributes typed suppression cause | FROZEN TO CONTRACT |
+| contribution effectiveness | `EquipmentEffectivenessPolicy` | Attribute/Damage/Recovery/Trigger/Scheduled/LiveEffect consume shared truth | FROZEN TO CONTRACT |
+| existing derived State | `ProviderDependency` + `StateEffectivenessPolicy` | explicit equipment Provider dependency only | FROZEN TO CONTRACT |
+| remote ownership | equipment owner Provider identity | owner sabotaged suppresses remote dependent; holder sabotage alone does not | FROZEN TO CONTRACT |
+| Insight | canonical 690089 admission + effectiveness graph | incoming reject; resident suppress/resume | FROZEN TO CONTRACT |
+| Gangyi | Sabotage admission adapter + canonical equipment effectiveness | effective holder-level immunity | FROZEN TO CONTRACT |
+| reapplication | `StateConflictPolicy` | supported resident reapplication rejects / no refresh | FROZEN TO CONTRACT |
+| stronger/weaker | admission boundary | numeric strength mapping unsupported | B-SAB-02 PRESERVED |
+| removal | `StateRemovalPolicy` | ordinary observed cleanse; specialized/scripted unsupported | FROZEN OBSERVED BOUNDARY |
+| dynamic equipment | equipment effectiveness boundary | post-application new Provider/contribution surfaces unsupported in current consumers | B-SAB-09 PRESERVED |
+| queued/in-flight work | `ExecutionRightSpec` / owning operation | tested scheduled JIT covered; broader micro-order unsupported | B-SAB-07 PRESERVED |
+
+Freeze authority: `STAGE12_690109_SABOTAGE_RUNTIME_FREEZE_AUDIT.md`.
