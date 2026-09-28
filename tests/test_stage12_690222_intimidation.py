@@ -391,6 +391,36 @@ def test_single_candidate_create_consumes_zero_binding_rng() -> None:
     assert rng.random() == RandomSystem(17).random()
 
 
+def test_single_candidate_refresh_consumes_zero_binding_rng() -> None:
+    rng = CountingRandomSystem(19)
+    context = make_context(rng)
+    runtime = skill(context, skill_id="single-refresh-provider")
+    systems = BattleSystems()
+
+    created = apply_intimidation(
+        systems,
+        context,
+        lifetime=StateLifetimeSpec.round_calendar(expires_round=2),
+    )
+    assert created.instance is not None
+    old_generation = created.instance.current_generation_id
+
+    refreshed = apply_intimidation(
+        systems,
+        context,
+        lifetime=StateLifetimeSpec.round_calendar(expires_round=3),
+    )
+
+    assert refreshed.status is StateApplicationResultStatus.REFRESHED
+    assert refreshed.instance is not None
+    assert refreshed.instance.bound_provider_ref == pref(runtime)
+    assert refreshed.instance.current_generation_id != old_generation
+    assert refreshed.instance.lifetime_spec == StateLifetimeSpec.round_calendar(
+        expires_round=3
+    )
+    assert rng.choice_calls == []
+
+
 def test_gangyi_rejects_before_binding_rng_and_generation_commit() -> None:
     rng = CountingRandomSystem(31)
     context = make_context(rng)
