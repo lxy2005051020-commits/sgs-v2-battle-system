@@ -176,10 +176,14 @@ Research Campaign: COMPLETE
 Mechanism Contract: v1.0-frozen
 Freeze Audit: PASS
 Research Maturity: FROZEN
-Runtime Maturity: NOT_INTEGRATED
-Next: Stage12 contract-aligned Runtime Design
+Gameplay Maturity: IMPLEMENTED_PENDING_RUNTIME_AUDIT
+Runtime Maturity: NOT_YET_FROZEN
+Integration Exit Gate: PASS
+Validated checkpoint: 9d2b6aa37dffef1ea28ad4a5984ccc147114af89 / CI 36379462582 / 1525 passed / demo PASS
+Next: 690109 SABOTAGE Independent Runtime Freeze Audit
 
 正式研究权威位于 Research repository 的 states/control/sabotage/MECHANISM_CONTRACT.md。
+Runtime integration authority: STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md.
 
 ### 捕获
 
