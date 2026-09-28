@@ -1,27 +1,27 @@
 # Stage12 690109 SABOTAGE Runtime Integration
 
 Date: 2026-09-28  
-Status: **IMPLEMENTED_PENDING_RUNTIME_AUDIT / RUNTIME NOT YET FROZEN**
+Status: **IMPLEMENTED / RUNTIME FROZEN TO CONTRACT**
 
 ## Current gate
 
 ```text
 690109 Research = FROZEN
-690109 Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
-690109 Runtime = NOT YET FROZEN
+690109 Gameplay = IMPLEMENTED
+690109 Runtime = FROZEN TO CONTRACT
 Integration Exit Gate = PASS
-Independent Runtime Freeze Audit = PENDING
+Independent Runtime Freeze Audit = PASS
 
 Stage12 Gameplay Implementation = 6 / 7
-Stage12 Runtime Frozen = 5 / 7
+Stage12 Runtime Frozen = 6 / 7
 Stage11 Reopen Required = NO
 Research Reopen Required = NO
 Shared Foundation Reopen Required = NO
 
-NEXT = 690109 SABOTAGE Independent Runtime Freeze Audit
+NEXT = 690110 CAPTURE Runtime Integration
 ```
 
-This record deliberately does **not** freeze 690109 Runtime. The independent audit is a separate gate.
+The integration checkpoint was intentionally non-freezing. The separate independent audit has now passed; freeze authority is `STAGE12_690109_SABOTAGE_RUNTIME_FREEZE_AUDIT.md`.
 
 ## Repository lock
 
@@ -226,14 +226,23 @@ Preserved bounded areas are not blockers because the supported contract path can
 
 ```text
 690109 SABOTAGE Gameplay
-= IMPLEMENTED_PENDING_RUNTIME_AUDIT
+= IMPLEMENTED
 
 690109 SABOTAGE Runtime
-= NOT YET FROZEN
+= FROZEN TO CONTRACT
+
+Independent Runtime Freeze Audit
+= PASS
+
+Audit test SHA
+= f698cb97b08596b3cea924a815991022cc2dfe7d
+
+Audit-test push CI
+= 36380946005 / success / 1558 passed / demo PASS
 
 Stage12 Runtime Frozen
-= 5 / 7
+= 6 / 7
 
 NEXT
-= 690109 SABOTAGE Independent Runtime Freeze Audit
+= 690110 CAPTURE Runtime Integration
 ```
