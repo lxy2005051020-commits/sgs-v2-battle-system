@@ -6,6 +6,8 @@
 > Battle audit-entry baseline: `1f1bf621d5e987c15bbd7ec31273c3514b4497cb`  
 > Independent audit test SHA: `f698cb97b08596b3cea924a815991022cc2dfe7d`  
 > Audit-test push CI: `36380946005 / success`  
+> Fresh audit PR CI: `36381650061 / success`  
+> Fresh merged-main CI: `36381706482 / success` at `09d8ac5fadb0128dbd4b5c052c61c1a0a033fe74`  
 > Full-suite result: **1558 passed / demo PASS**. Integration baseline was 1525 tests; this audit adds 33 non-parametrized adversarial tests.
 
 This is the independent Runtime Freeze authority for 690109 SABOTAGE. It does not reopen Research, invent dynamic equipment-change behavior, define stronger/weaker replacement, generalize unobserved removal classes, or implement 690110 CAPTURE.
@@ -267,7 +269,17 @@ pytest = 1558 passed
 demo = PASS
 ```
 
-PR CI and fresh merged-main CI are release confirmations and must be green before the freeze is considered released on `main`.
+Fresh release confirmation:
+
+```text
+PR CI           = 36381650061 / SUCCESS
+Merged main SHA = 09d8ac5fadb0128dbd4b5c052c61c1a0a033fe74
+Main CI         = 36381706482 / SUCCESS
+pytest          = 1558 passed
+demo            = PASS
+```
+
+The pre-merge branch runs are not used as the sole release authority.
 
 ## Q. Current gates / NEXT
 

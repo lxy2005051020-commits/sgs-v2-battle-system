@@ -132,6 +132,8 @@ Research FROZEN:
 - Integration PR CI 36379462582 / 1525 passed / demo PASS
 - Independent audit test SHA f698cb97b08596b3cea924a815991022cc2dfe7d
 - Audit-test push CI 36380946005 / 1558 passed / demo PASS
+- Fresh audit PR CI 36381650061 / 1558 passed / demo PASS
+- Final merged-main CI 36381706482 / 1558 passed / demo PASS at 09d8ac5fadb0128dbd4b5c052c61c1a0a033fe74
 - Freeze authority: stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_FREEZE_AUDIT.md
 - Integration record: stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md
 

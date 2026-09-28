@@ -218,6 +218,9 @@ Battle-side mirror:
     Integration PR CI: 36379462582 / success / 1525 passed / demo PASS
     Independent Audit Test SHA: f698cb97b08596b3cea924a815991022cc2dfe7d
     Audit-Test Push CI: 36380946005 / success / 1558 passed / demo PASS
+    Fresh Audit PR CI: 36381650061 / success / 1558 passed / demo PASS
+    Final Main Release CI: 36381706482 / success / 1558 passed / demo PASS
+    Freeze Main SHA: 09d8ac5fadb0128dbd4b5c052c61c1a0a033fe74
     BLOCKER: 0
     unresolved MAJOR: 0
     Dynamic equipment creation/change: B-SAB-09 / UNSUPPORTED_BOUNDARY / NON-BLOCKING NOTE
