@@ -746,7 +746,7 @@ Stage13 Readiness                 = READY
 Stage13 Active                    = YES
 Core Gameplay Engine              = NOT YET FROZEN
 Skill Runtime Readiness           = NOT YET READY
-NEXT                              = STAGE13_B_GAP_CLASSIFICATION_AND_CLOSURE_PLANNING
+NEXT                              = STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
 ~~~
 
 Authority:
@@ -758,3 +758,26 @@ Authority:
 - stages/stage13/STAGE13_RUNTIME_GOVERNANCE_LEDGER.md
 
 Stage1-12 remain frozen. 690086 DSTS9-B02 remains OPEN / UNOBSERVED.
+
+
+## Stage13 Foundational Research Priority Replan — 2026-09-28
+
+Stage13-A remains a valid historical inventory, but the project has raised the empirical completion bar before any core-runtime architecture work.
+
+~~~text
+Stage13-B1 = Wounded-Troop / Recoverable-Capacity Research
+Stage13-B2 = Damage Increase / Reduction Mechanics Research
+Stage13-B3 = Recovery / Treatment Formula Research
+Stage13-C  = Residual State Mechanism Closure
+Stage13-D  = Consolidated Gap Classification + Runtime Governance
+Stage13-E  = Core Runtime Architecture Design
+Stage13-F  = Core Mechanism Implementation
+Stage13-G  = Independent Engine Completion / Deterministic Replay Audit
+
+CURRENT NEXT =
+STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
+~~~
+
+This amendment explicitly distinguishes a runnable Runtime rule from an empirically established original-game mechanism. The current missing-troop recovery clamp, typed damage-modifier pipeline, and recovery settlement remain valid Runtime behavior, but they are not used as proof that wounded-pool, modifier aggregation, or treatment-value formulas are fully researched.
+
+Authority: `stages/stage13/STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md`.
