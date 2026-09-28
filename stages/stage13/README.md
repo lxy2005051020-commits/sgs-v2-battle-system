@@ -95,6 +95,10 @@ Stage13-A identified one new blocking research family:
 
 ## 6. Skill-system boundary
 
+~~~text
+Stage14+ = Skill System / exact subtype numbering deferred until Stage13 exit audit
+~~~
+
 The previous Assault-first Stage13 route is superseded.
 
 Assault, ordinary Active, Preparation, Passive, Command, Formation, Troop and other concrete skill runtimes remain deferred until the Stage13 exit gate declares:
