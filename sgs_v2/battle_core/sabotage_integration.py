@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from .dependency_evaluation import ProviderNode, StateNode
+from .dependency_evaluation import DependencyEvaluationSupport, ProviderNode, StateNode
 from .equipment_effectiveness import (
     EquipmentContributionRegistry,
+    EquipmentEffectivenessContribution,
     EquipmentEffectivenessPolicy,
     EquipmentEffectivenessStatus,
 )
@@ -221,6 +222,56 @@ def sabotage_provider_suppression_adapter(context, provider_ref, session):
     return tuple(causes)
 
 
+def make_sabotage_dynamic_equipment_boundary_adapter(
+    *,
+    dependencies: DependencyEvaluationSupport,
+    state_effectiveness_policy: StateEffectivenessPolicy,
+):
+    """Keep post-application equipment creation/change inside B-SAB-09.
+
+    Providers that were present when Sabotage committed are explicitly bound to
+    that state.  If an effective Sabotage later encounters a target-owned
+    contribution whose Provider was not part of that committed topology, the
+    contribution is surfaced as UNSUPPORTED_BOUNDARY instead of silently
+    generalizing dynamic equipment semantics.
+    """
+
+    if not isinstance(dependencies, DependencyEvaluationSupport):
+        raise TypeError("dependencies must be DependencyEvaluationSupport")
+    if not isinstance(state_effectiveness_policy, StateEffectivenessPolicy):
+        raise TypeError("state_effectiveness_policy must be StateEffectivenessPolicy")
+
+    def sabotage_dynamic_equipment_boundary_adapter(
+        context,
+        contribution_ref,
+    ):
+        owner_id = contribution_ref.provider_ref.owner_id
+        effective_sabotage = state_effectiveness_policy.effective_instances(
+            context,
+            owner_id,
+            OfficialStateId.EQUIPMENT_DISABLE.value,
+        )
+        if not effective_sabotage:
+            return None
+
+        prerequisites = set(
+            dependencies.prerequisites(
+                ProviderNode(contribution_ref.provider_ref)
+            )
+        )
+        if any(
+            StateNode(item.instance_id) in prerequisites
+            for item in effective_sabotage
+        ):
+            return None
+
+        return EquipmentEffectivenessContribution(
+            unsupported_boundary=True,
+        )
+
+    return sabotage_dynamic_equipment_boundary_adapter
+
+
 def sabotage_provider_dependency_effectiveness_adapter(
     context,
     instance,
@@ -293,6 +344,7 @@ def register_sabotage_integration(
     equipment_effectiveness_policy: EquipmentEffectivenessPolicy,
     state_application_coordinator,
     state_removal_policy: StateRemovalPolicy,
+    dependencies: DependencyEvaluationSupport,
 ) -> None:
     """Install 690109 into the canonical Stage12 Shared Foundation graph."""
 
@@ -306,6 +358,8 @@ def register_sabotage_integration(
         raise TypeError("equipment_effectiveness_policy must be EquipmentEffectivenessPolicy")
     if not isinstance(state_removal_policy, StateRemovalPolicy):
         raise TypeError("state_removal_policy must be StateRemovalPolicy")
+    if not isinstance(dependencies, DependencyEvaluationSupport):
+        raise TypeError("dependencies must be DependencyEvaluationSupport")
 
     state_admission_policy.register_rule_adapter(
         make_sabotage_admission_adapter(
@@ -323,6 +377,12 @@ def register_sabotage_integration(
     )
     provider_validity_policy.register_rule_adapter(
         sabotage_provider_suppression_adapter
+    )
+    equipment_effectiveness_policy.register_rule_adapter(
+        make_sabotage_dynamic_equipment_boundary_adapter(
+            dependencies=dependencies,
+            state_effectiveness_policy=state_effectiveness_policy,
+        )
     )
     state_effectiveness_policy.register_rule_adapter(
         sabotage_provider_dependency_effectiveness_adapter
