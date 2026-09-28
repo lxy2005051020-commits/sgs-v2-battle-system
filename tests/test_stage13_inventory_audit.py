@@ -93,7 +93,7 @@ def test_stage13_research_and_runtime_governance_are_separate() -> None:
 
 def test_stage13_does_not_activate_skill_runtime() -> None:
     index = _read("README.md")
-    assert "full skill runtimes remain deferred" in index.lower()
+    assert "concrete skill runtimes remain deferred" in index.lower()
     assert "Stage14+" in index
     assert "Skill Runtime Readiness = READY" in index
     assert "Skill Runtime Readiness           = NOT YET READY" in index
