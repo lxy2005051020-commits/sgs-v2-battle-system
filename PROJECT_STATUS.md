@@ -178,15 +178,15 @@ Battle-side research mirror:
     Adversarial Falsification: PASS
     Canonical Governance: PASS
     OPEN_BLOCKING: 0
-    Binding Governance: RESOLVED SUBJECT TO CI
+    Binding Governance: RESOLVED / PASS
     Runtime Default: RD-SF-006
     Distribution: uniform over RD-SF-002 stable supported eligible Provider pool
     Provenance: PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
-    IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001: CLOSED SUBJECT TO CI
+    IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001: CLOSED
     Gameplay: NOT_INTEGRATED
     Runtime: NOT_FROZEN
     Stage12 Runtime Frozen: 4 / 7
-    Next: Resume 690222 INTIMIDATION Runtime Integration after governance CI
+    Governance CI: 36369968103 / success / 1409 passed / demo PASS\n    Next: Resume 690222 INTIMIDATION Runtime Integration
 
 Governance authority:
 [stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md](stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md)
@@ -532,4 +532,4 @@ Authority:
 - `stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md`
 - `stages/stage12/STAGE12_RUNTIME_DEFAULT_LEDGER.md` / RD-SF-006
 
-NEXT: Resume 690222 INTIMIDATION Runtime Integration after governance CI.
+Governance CI: 36369968103 / success / 1409 passed / demo PASS.\n\nNEXT: Resume 690222 INTIMIDATION Runtime Integration.
