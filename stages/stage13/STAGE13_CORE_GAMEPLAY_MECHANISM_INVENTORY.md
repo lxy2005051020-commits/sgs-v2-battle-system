@@ -135,17 +135,17 @@ A mechanism is ALREADY_IMPLEMENTED only when a production owner, observable sema
 ## 5. Inventory totals
 
 ~~~text
-ALREADY_IMPLEMENTED              23
+ALREADY_IMPLEMENTED              22
 PARTIAL                          16
 MISSING                           4
 RESEARCH_REQUIRED                 2
 RUNTIME_GOVERNANCE_REQUIRED       1
 UNSUPPORTED                       1
 NOT_NEEDED                        2
-TOTAL                            49
+TOTAL                            48
 ~~~
 
-Note: the totals above include CGM-001 through CGM-048 plus the Stage13 activation gate row tracked separately by governance. The canonical table itself contains 48 mechanism rows. The mechanism-row counts are therefore authoritative and are recalculated by the Stage13 inventory audit test; prose totals must not be used as a hidden source of truth.
+The table contains exactly 48 mechanism rows. These counts are checked by the Stage13 inventory audit test; prose totals are not a second source of truth.
 
 ## 6. High-level finding
 
