@@ -1,0 +1,48 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package and test runner
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install pytest
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Run demo smoke test
+        run: python demo.py > /dev/null
+
+      - name: Prepare independent audit snapshot
+        run: printf '%s\n' "$GITHUB_SHA" > AUDIT_SOURCE_SHA.txt
+
+      - name: Upload independent audit snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage8-independent-audit-${{ github.sha }}
+          path: |
+            AUDIT_SOURCE_SHA.txt
+            pyproject.toml
+            demo.py
+            sgs_v2
+            tests
+            data
+            research
+            stages
+          if-no-files-found: error
+          retention-days: 1

@@ -1,0 +1,632 @@
+{
+  "claim_id": "EM-22",
+  "original_file": "战报_1627796_pid1627641.json",
+  "event_range": [
+    1320,
+    1335
+  ],
+  "evidence_type": "positive",
+  "note": "Chain propagation completes atomic loop without recursive chain",
+  "events": [
+    {
+      "key": 17,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_archer_my.png'/><font color='#75b3ed'>[赵云]</font>造成伤害提升了12%",
+        "desc": "<font color='#75b3ed'>[赵云]</font>造成伤害提升了12%",
+        "cfg_id": 70,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "type_name",
+          "num"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f33e540",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "type_name"
+            },
+            {
+              "key": 3,
+              "value": "num"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 18,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_enemy.png'/><font color='#ec616b'>[董卓]</font>由于<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_archer_my.png'/><font color='#75b3ed'>[赵云]</font>【破阵摧坚】的伤害，损失了兵力<font color='#C12020'>564</font>（1487）",
+        "desc": "<font color='#ec616b'>[董卓]</font>由于<font color='#75b3ed'>[赵云]</font>【破阵摧坚】的伤害，损失了兵力<font color='#C12020'>564</font>（1487）",
+        "cfg_id": 145,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "skill_name",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f327320",
+          "checked": 5,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "skill_name"
+            },
+            {
+              "key": 4,
+              "value": "num1"
+            },
+            {
+              "key": 5,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 19,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 725,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f329fa0",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "num1"
+            },
+            {
+              "key": 4,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 20,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_enemy.png'/><font color='#ec616b'>[董卓]</font>执行来自【连环计】的「铁索连环」效果",
+        "desc": "<font color='#ec616b'>[董卓]</font>执行来自【连环计】的「铁索连环」效果",
+        "cfg_id": 96,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f327700",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 21,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_enemy.png'/><font color='#ec616b'>[孟获]</font>由于<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_archer_my.png'/><font color='#75b3ed'>[庞统]</font>【连环计】的「铁索连环」效果，损失了兵力<font color='#C12020'>117</font>（5953）",
+        "desc": "<font color='#ec616b'>[孟获]</font>由于<font color='#75b3ed'>[庞统]</font>【连环计】的「铁索连环」效果，损失了兵力<font color='#C12020'>117</font>（5953）",
+        "cfg_id": 26,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "skill_name",
+          "buff_name",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f325460",
+          "checked": 6,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "skill_name"
+            },
+            {
+              "key": 4,
+              "value": "buff_name"
+            },
+            {
+              "key": 5,
+              "value": "num1"
+            },
+            {
+              "key": 6,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 22,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 725,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f329fa0",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "num1"
+            },
+            {
+              "key": 4,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 23,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_enemy.png'/><font color='#ec616b'>[左慈]</font>由于<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_archer_my.png'/><font color='#75b3ed'>[庞统]</font>【连环计】的「铁索连环」效果，损失了兵力<font color='#C12020'>117</font>（1736）",
+        "desc": "<font color='#ec616b'>[左慈]</font>由于<font color='#75b3ed'>[庞统]</font>【连环计】的「铁索连环」效果，损失了兵力<font color='#C12020'>117</font>（1736）",
+        "cfg_id": 26,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "skill_name",
+          "buff_name",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f325460",
+          "checked": 6,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "skill_name"
+            },
+            {
+              "key": 4,
+              "value": "buff_name"
+            },
+            {
+              "key": 5,
+              "value": "num1"
+            },
+            {
+              "key": 6,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 24,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 725,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f329fa0",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "num1"
+            },
+            {
+              "key": 4,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 25,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_enemy.png'/><font color='#ec616b'>[左慈]</font>由于<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_archer_my.png'/><font color='#75b3ed'>[赵云]</font>【破阵摧坚】的伤害，损失了兵力<font color='#C12020'>651</font>（1085）",
+        "desc": "<font color='#ec616b'>[左慈]</font>由于<font color='#75b3ed'>[赵云]</font>【破阵摧坚】的伤害，损失了兵力<font color='#C12020'>651</font>（1085）",
+        "cfg_id": 145,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "skill_name",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f327320",
+          "checked": 5,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "skill_name"
+            },
+            {
+              "key": 4,
+              "value": "num1"
+            },
+            {
+              "key": 5,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 26,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 725,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f329fa0",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "num1"
+            },
+            {
+              "key": 4,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 27,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_enemy.png'/><font color='#ec616b'>[左慈]</font>执行来自【连环计】的「铁索连环」效果",
+        "desc": "<font color='#ec616b'>[左慈]</font>执行来自【连环计】的「铁索连环」效果",
+        "cfg_id": 96,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f327700",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 28,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_enemy.png'/><font color='#ec616b'>[孟获]</font>由于<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_archer_my.png'/><font color='#75b3ed'>[庞统]</font>【连环计】的「铁索连环」效果，损失了兵力<font color='#C12020'>135</font>（5818）",
+        "desc": "<font color='#ec616b'>[孟获]</font>由于<font color='#75b3ed'>[庞统]</font>【连环计】的「铁索连环」效果，损失了兵力<font color='#C12020'>135</font>（5818）",
+        "cfg_id": 26,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "skill_name",
+          "buff_name",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f325460",
+          "checked": 6,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "skill_name"
+            },
+            {
+              "key": 4,
+              "value": "buff_name"
+            },
+            {
+              "key": 5,
+              "value": "num1"
+            },
+            {
+              "key": 6,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 29,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 725,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f329fa0",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "num1"
+            },
+            {
+              "key": 4,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 30,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_shield_enemy.png'/><font color='#ec616b'>[董卓]</font>由于<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_archer_my.png'/><font color='#75b3ed'>[庞统]</font>【连环计】的「铁索连环」效果，损失了兵力<font color='#C12020'>135</font>（1352）",
+        "desc": "<font color='#ec616b'>[董卓]</font>由于<font color='#75b3ed'>[庞统]</font>【连环计】的「铁索连环」效果，损失了兵力<font color='#C12020'>135</font>（1352）",
+        "cfg_id": 26,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "skill_name",
+          "buff_name",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f325460",
+          "checked": 6,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "skill_name"
+            },
+            {
+              "key": 4,
+              "value": "buff_name"
+            },
+            {
+              "key": 5,
+              "value": "num1"
+            },
+            {
+              "key": 6,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 31,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 725,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8f329fa0",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "num1"
+            },
+            {
+              "key": 4,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    }
+  ]
+}

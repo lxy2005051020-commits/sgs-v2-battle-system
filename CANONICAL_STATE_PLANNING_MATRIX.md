@@ -1,0 +1,211 @@
+# Canonical State Planning Matrix
+
+> Status: **CURRENT CROSS-REPO PROJECT AUTHORITY**
+>
+> Reconciled: 2026-09-28
+>
+> Project Stage and Runtime Maturity authority: this Battle repository.
+>
+> Research Maturity and Mechanism Authority source: `lxy2005051020-commits/sgs-state-mechanics-research`.
+
+> **2026-09-26 Stage11 final authority:** Share × 倒戈/攻心 authority conflict is resolved; Stage11 Runtime is **FROZEN** and independent Post-Freeze Acceptance is **PASS / CONFIRMED**. Acceptance Audit SHA `5a0a4164e7624c28eae2c7aa28f66061ef3c9313`, CI `36170063365`; Research post-acceptance mirror `9ad990da544ad87047e74a664cc1984f890bb274`. Stage12 Activation Gate is **CLEARED**, while Stage12 Active remains **YES**.
+
+## 1. Canonical baseline
+
+```text
+Official States                 = 40
+Research FROZEN                 = 39
+Runtime FROZEN TO CONTRACT      = 37
+Strict Complete                 = 36
+Stage11 Scope                   = 17
+Stage11 Research FROZEN         = 16
+Stage11 Runtime FROZEN          = 17
+Stage12 Scope                   = 7
+Stage12 Research FROZEN         = 7
+Evidence-Blocked / Deferred     = 0
+Research-Debt States            = 1
+```
+
+Strict Complete means exactly:
+
+```text
+Research FROZEN
++
+Runtime FROZEN TO CONTRACT
+```
+
+## 2. Project Stage authority
+
+```text
+Stage11 = 官方状态补全（一） / 17 states
+Stage12 = 官方状态补全（二） / 7 states
+Stage13 = 突击战法运行时
+Stage14 = 普通主动战法
+Stage15 = 准备战法
+Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
+```
+
+Research Wave is a separate research-order label and never renumbers Project Stage.
+
+## 3. Canonical 40-state matrix
+
+| ID | State | Research Maturity | Runtime Maturity | Strict Complete | Project Stage | Research Wave | Authority | Next Action | Evidence / Debt |
+|---:|---|---|---|:---:|---|---|---|---|---|
+| 690072 | 灼烧 BURN | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage10 | Research Wave 1 | Research persistent/burn contract + Stage10 Implementation Freeze | Frozen; regression only |  |
+| 690073 | 水攻 FLOOD | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage10 | Research Wave 1 | Research persistent/flood contract + Stage10 Implementation Freeze | Frozen; regression only |  |
+| 690074 | 中毒 POISON | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage10 | Research Wave 1 | Research persistent/poison contract + Stage10 Implementation Freeze | Frozen; regression only |  |
+| 690075 | 溃逃 ROUT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage10 | Research Wave 1 | Research persistent/rout contract + Stage10 Implementation Freeze | Frozen; regression only |  |
+| 690076 | 沙暴 SANDSTORM | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage10 | Research Wave 1 | Research persistent/sandstorm contract + Stage10 Implementation Freeze | Frozen; regression only |  |
+| 690077 | 叛逃 REBELLION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage10 | Research Wave 1 | Research persistent/rebellion contract + Stage10 Implementation Freeze | Frozen; regression only |  |
+| 690078 | 急救 FIRST_AID | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage10 | Research Wave 1 | Research persistent/first_aid contract + Stage10 Implementation Freeze | Frozen; regression only |  |
+| 690079 | 休整 RECUPERATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage10 | Research Wave 1 | Research persistent/recuperation contract + Stage10 Implementation Freeze | Frozen; regression only | RE-FROZEN research authority |
+| 690081 | 连击 COMBO | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Research combo contract + frozen runtime | Frozen; regression only |  |
+| 690084 | 群攻 CLEAVE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Research cleave contract + frozen runtime | Frozen; regression only |  |
+| 690085 | 反击 COUNTERATTACK | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Stage9 counterattack freeze record | Frozen; regression only |  |
+| 690087 | 分担 DAMAGE_SHARE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Research damage_share contract + frozen runtime | Frozen; regression only |  |
+| 690097 | 铁索连环 CHAIN_LINK | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Stage9 chain freeze record | Frozen; regression only |  |
+| 690098 | 援护 GUARD | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Research guard contract + frozen runtime | Frozen; regression only |  |
+| 690103 | 混乱 CONFUSION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Research confusion contract + frozen runtime | Frozen; regression only |  |
+| 690106 | 嘲讽 TAUNT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Stage9 taunt freeze record | Frozen; regression only |  |
+| 690086 | 分摊 DISTRIBUTION | RUNTIME_READY_WITH_RESEARCH_DEBT | RUNTIME_FROZEN_TO_CONTRACT | NO | Stage11 | Research Debt Closure | Stage9 distribution freeze record | Maintain Stage11 Runtime Freeze; regression only | DSTS9-B02 OPEN / UNOBSERVED; Distribution × LifeSteal participant exclusion is PROJECT_RUNTIME_DEFAULT |
+| 690090 | 先攻 FIRST_STRIKE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 3 | Research states/functional/first_strike/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | Q1-Q17 CLOSED; deterministic tie migration green |
+| 690091 | 遇袭 SURPRISE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 3 | Research states/functional/surprise/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | PROJECT-FROZEN MIRROR CONTRACT |
+| 690102 | 缴械 DISARM | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 3 | Research states/control/disarm/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | reflected/proxy admission boundary preserved |
+| 690104 | 虚弱 WEAKNESS | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 3 | Research states/control/weakness/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | legal-zero topology frozen; bounded debt preserved |
+| 690105 | 禁疗 HEALING_BAN | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 3 | Research states/control/healing_block/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | positive-request interception after recovery modifier |
+| 690111 | 震慑 STUN | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 3 | Research states/control/stun/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | natural-action admission; bounded research debt preserved |
+| 690082 | 规避 EVASION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research evasion contract | Maintain Stage11 Runtime Freeze; regression only |  |
+| 690083 | 抵御 RESISTANCE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research resistance contract | Maintain Stage11 Runtime Freeze; regression only |  |
+| 690092 | 必中 SURE_HIT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research sure_hit contract | Maintain Stage11 Runtime Freeze; regression only |  |
+| 690093 | 破阵 BREAK_FORMATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research break_formation contract | Maintain Stage11 Runtime Freeze; regression only | persistent/application-bound limits explicit |
+| 690099 | 警戒 ALERT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research states/functional/alert/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | threshold equality / rounding / holder-death / Share micro-order debt preserved |
+| 690070 | 会心 CRITICAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research critical contract | Maintain Stage11 Runtime Freeze; regression only | exact micro-read / bonus-latch timing boundary preserved |
+| 690069 | 奇谋 STRATEGY_CRITICAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research strategy_critical contract | Maintain Stage11 Runtime Freeze; regression only | PROJECT-FROZEN MIRROR CONTRACT; timing debt preserved |
+| 690221 | 看破 DAMAGE_REDUCTION_PIERCE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | unsupported damage families remain explicit boundary |
+| 690094 | 倒戈 LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | Share assigned-damage basis + double-stage CEIL integrated; B11-FRZ-001 CLOSED |
+| 690095 | 攻心 STRATEGY_LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research strategy_life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | PROJECT-FROZEN MIRROR CONTRACT; shared RecoverySystem second-CEIL owner |
+| 690089 | 洞察 INSIGHT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/functional/insight/MECHANISM_CONTRACT.md | Maintain 690089 freeze; current integration owner 690222 | Contract v0.4-frozen; independent Runtime Freeze Audit PASS; 690109 protected-overlap amendment PASS; 690110 CAPTURE exclusion preserved; PD-INS-001/002 preserved |
+| 690101 | 计穷 EXHAUSTION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/exhaustion/MECHANISM_CONTRACT.md + STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md | Maintain 690101 freeze; current integration owner 690222 | Contract v0.2-frozen; independent Runtime Freeze Audit PASS; Preparation blockers CLOSED; concrete PREPARING owner + first-effective CREATE/resume interruption audited; RD-SF-004 preserved; CI 36326173066 / 1244 passed / demo PASS; B-EXH-01..05 preserved |
+| 690107 | 伪报 FALSE_REPORT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/false_report/MECHANISM_CONTRACT.md + STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md | Maintain 690107 freeze; current integration owner 690222 | Contract v1.0.1-frozen; independent Runtime Freeze Audit PASS; audit SHA 2feb4b03; CI 36329400436 = 1299 passed + demo PASS; 54 contract-focused tests; TALENT negative discriminator closed; bounded unknowns preserved |
+| 690108 | 挑拨 PROVOCATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/provocation/MECHANISM_CONTRACT.md + STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md | Maintain freeze; NEXT 690222 Runtime Integration | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; audit code/test SHA e0f9e0c24; CI 36334810169 = 1392 passed + demo PASS; RD-SF-005 provenance preserved; BU-P06/BU-P09 remain unsupported |
+| 690222 | 威慑 INTIMIDATION | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 4 | Research states/control/intimidation/MECHANISM_CONTRACT.md | 690222 INTIMIDATION Runtime Integration | Contract v1.0-frozen; repaired adversarial falsification PASS; Q1-Q80 canonical governance PASS; OPEN_BLOCKING=0; source-skill counter separated; BU-01..10 explicit/non-blocking |
+| 690109 | 破坏 SABOTAGE | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 5 | Research `states/control/sabotage/MECHANISM_CONTRACT.md` v1.0-frozen | Stage12 contract-aligned Runtime Design | Freeze Audit PASS; 690089 cross-contract amendment PASS; bounded unknowns explicit/non-blocking |
+| 690110 | 捕获 CAPTURE | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 5 | Research states/control/capture/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; final falsification PASS; Freeze Audit PASS; source-skill boundary explicit; Q70-Q74 bounded; cross-state Runtime tests required |
+
+### Stage12 current Runtime Freeze snapshot
+
+```text
+690089 INSIGHT Runtime = FROZEN
+690101 EXHAUSTION Gameplay = IMPLEMENTED
+690101 EXHAUSTION Runtime = FROZEN
+690101 Preparation Blockers = CLOSED
+690107 FALSE_REPORT Gameplay = IMPLEMENTED
+690107 FALSE_REPORT Runtime = FROZEN
+690108 PROVOCATION Gameplay = IMPLEMENTED
+690108 PROVOCATION Runtime = FROZEN TO CONTRACT
+Stage12 Runtime Frozen = 4 / 7
+Stage11 Reopen Required = NO
+Stage13 / Stage14 / Stage15 Active = NO
+NEXT = 690222 INTIMIDATION Runtime Integration
+```
+
+Authorities: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`
+
+## 4. Stage11 Final Acceptance Snapshot
+
+```text
+Stage11 Runtime: FROZEN
+Stage11 Post-Freeze Acceptance: PASS
+Stage11 Runtime Freeze: CONFIRMED
+Stage11 Reopen Required: NO
+B11-FRZ-001: CLOSED
+Runtime Tested SHA: ce42bc62cfb26f8ca0b448e74b26533604bb0505
+Freeze Declaration SHA: 8cde73ce15c8d02a70b3e0913efbfc5a2887e92b
+Post-Freeze Acceptance SHA: 5a0a4164e7624c28eae2c7aa28f66061ef3c9313
+Acceptance CI: 36170063365 / 913 passed / demo PASS
+Research post-acceptance mirror: 9ad990da544ad87047e74a664cc1984f890bb274
+Stage12 Activation Gate: CLEARED
+Stage12 Readiness: READY
+Stage12 Active: YES
+```
+
+Residual debt remains explicit and does not block the confirmed Stage11 Runtime Freeze.
+
+## 5. 40-state conservation
+
+```text
+Stage≤9 ownership = 8
+Stage10 ownership = 8
+Stage11 ownership = 17
+Stage12 ownership = 7
+Total             = 40
+
+Duplicate Project Stage ownership = 0
+Missing Project Stage ownership   = 0
+```
+
+## 6. Stage10 runtime audit basis
+
+The eight Stage10 persistent states are Runtime FROZEN TO CONTRACT.
+
+Current `main` production and test subtrees still equal the formal Stage10 frozen pins:
+
+```text
+sgs_v2 tree = 05511f7576b10efc9664e4e70d9dad88d364966a
+tests tree  = 122ffd68f1aac06ce353572fd3568aa54d19b5dd
+```
+
+Authority:
+- `stages/stage10/STAGE10_IMPLEMENTATION_FREEZE.md`
+- `stages/stage10/STAGE10_POST_FREEZE_MERGE_AUDIT.md`
+- main integration commit `30f623f9efed20b5a82044b51519db1af6da86d3`
+
+## 7. Governance invariants
+
+- Research Wave may be reordered; Project Stage may not be silently renumbered.
+- Stage11 exit gate is satisfied; Runtime Freeze is confirmed by independent post-freeze acceptance.
+- Research FROZEN does not imply Runtime FROZEN.
+- Runtime default with research debt does not count as Strict Complete.
+- 690069, 690095 and 690091 retain their Project-Frozen Mirror distinction.
+- 690099 and 690221 are Research FROZEN and Runtime FROZEN TO CONTRACT; bounded debt remains explicit and non-blocking.
+- Stage12 Research is COMPLETE at 7 / 7 FROZEN: 690089, 690101, 690107, 690108, 690109, 690110 and 690222. Stage12 Runtime Frozen is 4 / 7 after 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT and 690108 PROVOCATION passed independent Runtime Freeze Audits; 690222 INTIMIDATION is the next Runtime Integration owner.
+- Stage12 Activation Gate is CLEARED and Stage12 Readiness is READY; Stage12 Active remains YES. Stage13 is not activated.
+
+
+## Stage12 Runtime Entry Activation — 2026-09-27
+
+```text
+STAGE12_RUNTIME_ENTRY_GATE: PASS
+Stage12 Active: YES
+Stage12 Research FROZEN: 7 / 7
+Stage12 Runtime Frozen: 0 / 7
+Battle Entry Baseline SHA: b4c27511824001210f781bf8e750c74c9107da72
+Research Entry Baseline SHA: e18ae56a4db5662b87458dfa8fdff25dcdd8053b
+Current Battle Baseline CI: 36259315839 / success
+pytest: 913 passed
+demo: PASS
+```
+
+Entry authority and architecture records:
+- `stages/stage12/STAGE12_RUNTIME_ENTRY_AUDIT.md`
+- `stages/stage12/STAGE12_RUNTIME_OWNER_MATRIX.md`
+- `stages/stage12/STAGE12_CONTRACT_RUNTIME_MAPPING.md`
+- `stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md`
+
+This activation authorizes Stage12 contract-aligned Runtime Integration Design only. It does not declare any of the seven states Runtime Frozen, does not reopen Stage11, and does not activate Stage13/14/15 gameplay runtimes.
+
+
+## Shared Foundation SF-0 Reconnaissance — 2026-09-27
+
+Architecture reconnaissance is complete with design blockers; Shared Foundation Design is **NOT FROZEN**.
+Current capability inventory, 690089 migration findings and the 20-row gap ledger are in
+[Architecture Reconnaissance](stages/stage12/STAGE12_SHARED_FOUNDATION_ARCHITECTURE_RECONNAISSANCE.md).
+The [Design Question Ledger](stages/stage12/STAGE12_SHARED_FOUNDATION_DESIGN_QUESTION_LEDGER.md) tracks 28 questions.
+
+AR-SF-01: the frozen legacy Insight × Confusion runtime/test expectation conflicts with current
+Insight v0.4 existing-control suppression. A narrow authority/supersession disposition is required
+before design freeze or migration. Existing gameplay and tests are preserved.
+
+Stage11 Runtime FROZEN / Reopen Required NO in this documentation-only phase; Stage12 Active YES;
+Stage12 Runtime Frozen 0 / 7; Stage13 Active NO; Research FROZEN 39 / 40; DSTS9-B02 OPEN / UNOBSERVED.
+NEXT: DQ-SF-15/16 authority reconciliation, then DQ-SF-04/05 taxonomy and Provider identity design.

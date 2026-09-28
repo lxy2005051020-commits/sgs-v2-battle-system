@@ -1,0 +1,497 @@
+{
+  "total": 2258,
+  "same_cnt": 1938,
+  "diff_cnt": 320,
+  "same_samples": [
+    {
+      "report": "战报_1068281_pid1063298.json",
+      "event_idx": 198,
+      "skill_desc": "[马超]执行来自【槊血纵横】的「群攻」效果",
+      "main_target": "张飞",
+      "main_damage": 420,
+      "sub_hits": [
+        {
+          "target": "刘备",
+          "damage": 176,
+          "remaining": 4135,
+          "event_idx": 199
+        },
+        {
+          "target": "主公",
+          "damage": 176,
+          "remaining": 4353,
+          "event_idx": 201
+        }
+      ],
+      "same_damage": true
+    },
+    {
+      "report": "战报_1068281_pid1063298.json",
+      "event_idx": 351,
+      "skill_desc": "[马超]执行来自【槊血纵横】的「群攻」效果",
+      "main_target": "主公",
+      "main_damage": 281,
+      "sub_hits": [
+        {
+          "target": "刘备",
+          "damage": 118,
+          "remaining": 3263,
+          "event_idx": 352
+        },
+        {
+          "target": "张飞",
+          "damage": 118,
+          "remaining": 2014,
+          "event_idx": 354
+        },
+        {
+          "target": "刘备",
+          "damage": 152,
+          "remaining": 3111,
+          "event_idx": 357
+        },
+        {
+          "target": "张飞",
+          "damage": 152,
+          "remaining": 1862,
+          "event_idx": 359
+        }
+      ],
+      "same_damage": true
+    },
+    {
+      "report": "战报_1068281_pid1063298.json",
+      "event_idx": 356,
+      "skill_desc": "[马超]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": null,
+      "main_damage": null,
+      "sub_hits": [
+        {
+          "target": "刘备",
+          "damage": 152,
+          "remaining": 3111,
+          "event_idx": 357
+        },
+        {
+          "target": "张飞",
+          "damage": 152,
+          "remaining": 1862,
+          "event_idx": 359
+        }
+      ],
+      "same_damage": true
+    },
+    {
+      "report": "战报_1068281_pid1063298.json",
+      "event_idx": 366,
+      "skill_desc": "[马超]执行来自【槊血纵横】的「群攻」效果",
+      "main_target": "刘备",
+      "main_damage": 572,
+      "sub_hits": [
+        {
+          "target": "张飞",
+          "damage": 240,
+          "remaining": 1622,
+          "event_idx": 367
+        },
+        {
+          "target": "主公",
+          "damage": 240,
+          "remaining": 4162,
+          "event_idx": 369
+        },
+        {
+          "target": "张飞",
+          "damage": 311,
+          "remaining": 1311,
+          "event_idx": 372
+        },
+        {
+          "target": "主公",
+          "damage": 311,
+          "remaining": 3851,
+          "event_idx": 374
+        }
+      ],
+      "same_damage": true
+    },
+    {
+      "report": "战报_1068281_pid1063298.json",
+      "event_idx": 371,
+      "skill_desc": "[马超]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": null,
+      "main_damage": null,
+      "sub_hits": [
+        {
+          "target": "张飞",
+          "damage": 311,
+          "remaining": 1311,
+          "event_idx": 372
+        },
+        {
+          "target": "主公",
+          "damage": 311,
+          "remaining": 3851,
+          "event_idx": 374
+        }
+      ],
+      "same_damage": true
+    },
+    {
+      "report": "战报_1068281_pid1063298.json",
+      "event_idx": 467,
+      "skill_desc": "[马超]执行来自【槊血纵横】的「群攻」效果",
+      "main_target": "主公",
+      "main_damage": 564,
+      "sub_hits": [
+        {
+          "target": "刘备",
+          "damage": 236,
+          "remaining": 3172,
+          "event_idx": 468
+        },
+        {
+          "target": "张飞",
+          "damage": 236,
+          "remaining": 1953,
+          "event_idx": 470
+        },
+        {
+          "target": "刘备",
+          "damage": 306,
+          "remaining": 2866,
+          "event_idx": 473
+        },
+        {
+          "target": "张飞",
+          "damage": 306,
+          "remaining": 1647,
+          "event_idx": 475
+        }
+      ],
+      "same_damage": true
+    },
+    {
+      "report": "战报_1068281_pid1063298.json",
+      "event_idx": 472,
+      "skill_desc": "[马超]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": null,
+      "main_damage": null,
+      "sub_hits": [
+        {
+          "target": "刘备",
+          "damage": 306,
+          "remaining": 2866,
+          "event_idx": 473
+        },
+        {
+          "target": "张飞",
+          "damage": 306,
+          "remaining": 1647,
+          "event_idx": 475
+        }
+      ],
+      "same_damage": true
+    },
+    {
+      "report": "战报_1068281_pid1063298.json",
+      "event_idx": 482,
+      "skill_desc": "[马超]执行来自【槊血纵横】的「群攻」效果",
+      "main_target": "张飞",
+      "main_damage": 531,
+      "sub_hits": [
+        {
+          "target": "刘备",
+          "damage": 223,
+          "remaining": 2643,
+          "event_idx": 483
+        },
+        {
+          "target": "主公",
+          "damage": 223,
+          "remaining": 3064,
+          "event_idx": 485
+        },
+        {
+          "target": "刘备",
+          "damage": 288,
+          "remaining": 2355,
+          "event_idx": 488
+        },
+        {
+          "target": "主公",
+          "damage": 288,
+          "remaining": 2776,
+          "event_idx": 490
+        }
+      ],
+      "same_damage": true
+    },
+    {
+      "report": "战报_1068281_pid1063298.json",
+      "event_idx": 487,
+      "skill_desc": "[马超]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": null,
+      "main_damage": null,
+      "sub_hits": [
+        {
+          "target": "刘备",
+          "damage": 288,
+          "remaining": 2355,
+          "event_idx": 488
+        },
+        {
+          "target": "主公",
+          "damage": 288,
+          "remaining": 2776,
+          "event_idx": 490
+        }
+      ],
+      "same_damage": true
+    },
+    {
+      "report": "战报_1068281_pid1063298.json",
+      "event_idx": 564,
+      "skill_desc": "[马超]执行来自【槊血纵横】的「群攻」效果",
+      "main_target": "张飞",
+      "main_damage": 478,
+      "sub_hits": [
+        {
+          "target": "刘备",
+          "damage": 200,
+          "remaining": 818,
+          "event_idx": 565
+        },
+        {
+          "target": "主公",
+          "damage": 200,
+          "remaining": 1943,
+          "event_idx": 567
+        }
+      ],
+      "same_damage": true
+    }
+  ],
+  "diff_samples": [
+    {
+      "report": "战报_1068512_pid1063526.json",
+      "event_idx": 442,
+      "skill_desc": "[张辽]执行来自【智计百出】的「群攻」效果",
+      "main_target": "许褚",
+      "main_damage": 401,
+      "sub_hits": [
+        {
+          "target": "文聘",
+          "damage": 200,
+          "remaining": 10668,
+          "event_idx": 443
+        },
+        {
+          "target": "董袭",
+          "damage": 137,
+          "remaining": 0,
+          "event_idx": 445
+        }
+      ],
+      "same_damage": false
+    },
+    {
+      "report": "战报_1104444_pid1099544.json",
+      "event_idx": 847,
+      "skill_desc": "[徐晃]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": "诸葛亮",
+      "main_damage": 515,
+      "sub_hits": [
+        {
+          "target": "赵云",
+          "damage": 320,
+          "remaining": 1100,
+          "event_idx": 848
+        },
+        {
+          "target": "主公",
+          "damage": 352,
+          "remaining": 1974,
+          "event_idx": 854
+        }
+      ],
+      "same_damage": false
+    },
+    {
+      "report": "战报_1104450_pid1099550.json",
+      "event_idx": 59,
+      "skill_desc": "[徐晃]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": "刘备",
+      "main_damage": 486,
+      "sub_hits": [
+        {
+          "target": "赵云",
+          "damage": 288,
+          "remaining": 4995,
+          "event_idx": 63
+        },
+        {
+          "target": "刘备",
+          "damage": 46,
+          "remaining": 4719,
+          "event_idx": 68
+        }
+      ],
+      "same_damage": false
+    },
+    {
+      "report": "战报_1104450_pid1099550.json",
+      "event_idx": 287,
+      "skill_desc": "[徐晃]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": "刘备",
+      "main_damage": 506,
+      "sub_hits": [
+        {
+          "target": "赵云",
+          "damage": 267,
+          "remaining": 4050,
+          "event_idx": 289
+        },
+        {
+          "target": "刘备",
+          "damage": 48,
+          "remaining": 3238,
+          "event_idx": 294
+        }
+      ],
+      "same_damage": false
+    },
+    {
+      "report": "战报_1104452_pid1099552.json",
+      "event_idx": 147,
+      "skill_desc": "[徐晃]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": "孙坚",
+      "main_damage": 324,
+      "sub_hits": [
+        {
+          "target": "周瑜",
+          "damage": 201,
+          "remaining": 4812,
+          "event_idx": 148
+        },
+        {
+          "target": "主公",
+          "damage": 222,
+          "remaining": 5178,
+          "event_idx": 154
+        }
+      ],
+      "same_damage": false
+    },
+    {
+      "report": "战报_1104452_pid1099552.json",
+      "event_idx": 746,
+      "skill_desc": "[徐晃]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": "孙坚",
+      "main_damage": 232,
+      "sub_hits": [
+        {
+          "target": "周瑜",
+          "damage": 159,
+          "remaining": 1076,
+          "event_idx": 749
+        },
+        {
+          "target": "主公",
+          "damage": 144,
+          "remaining": 607,
+          "event_idx": 756
+        }
+      ],
+      "same_damage": false
+    },
+    {
+      "report": "战报_1104492_pid1099593.json",
+      "event_idx": 360,
+      "skill_desc": "[于禁]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": "主公",
+      "main_damage": 663,
+      "sub_hits": [
+        {
+          "target": "周瑜",
+          "damage": 454,
+          "remaining": 4614,
+          "event_idx": 363
+        },
+        {
+          "target": "吕蒙",
+          "damage": 412,
+          "remaining": 4345,
+          "event_idx": 368
+        }
+      ],
+      "same_damage": false
+    },
+    {
+      "report": "战报_1104494_pid1099595.json",
+      "event_idx": 567,
+      "skill_desc": "[于禁]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": "董卓",
+      "main_damage": 558,
+      "sub_hits": [
+        {
+          "target": "曹操",
+          "damage": 382,
+          "remaining": 3752,
+          "event_idx": 570
+        },
+        {
+          "target": "主公",
+          "damage": 347,
+          "remaining": 2426,
+          "event_idx": 572
+        }
+      ],
+      "same_damage": false
+    },
+    {
+      "report": "战报_1104494_pid1099595.json",
+      "event_idx": 784,
+      "skill_desc": "[于禁]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": "董卓",
+      "main_damage": 522,
+      "sub_hits": [
+        {
+          "target": "曹操",
+          "damage": 357,
+          "remaining": 2650,
+          "event_idx": 787
+        },
+        {
+          "target": "主公",
+          "damage": 324,
+          "remaining": 776,
+          "event_idx": 789
+        }
+      ],
+      "same_damage": false
+    },
+    {
+      "report": "战报_1104505_pid1099606.json",
+      "event_idx": 989,
+      "skill_desc": "[于禁]执行来自【瞋目横矛】的「群攻」效果",
+      "main_target": "吕蒙",
+      "main_damage": 208,
+      "sub_hits": [
+        {
+          "target": "周瑜",
+          "damage": 142,
+          "remaining": 4082,
+          "event_idx": 992
+        },
+        {
+          "target": "太史慈",
+          "damage": 129,
+          "remaining": 2636,
+          "event_idx": 994
+        }
+      ],
+      "same_damage": false
+    }
+  ]
+}

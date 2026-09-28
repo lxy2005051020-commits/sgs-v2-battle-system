@@ -1,0 +1,12 @@
+claim_id,battle_file,event_start,event_end,evidence_type,note
+EM-01,战报_1069659_pid1064677.json,310,325,positive,Confusion overrides Taunt: 勇城卫 attacked 黄月英 instead of 孙坚
+EM-01,战报_1070619_pid1065637.json,70,95,positive,Confusion overrides Taunt: 勇城卫 attacked friendly 勇城卫
+EM-01,战报_1073363_pid1068396.json,70,85,ambiguous,Confusion attacked Taunter 孙坚 by random chance
+EM-08,战报_1068514_pid1063527.json,40,70,positive,"Cleave (45) -> Counter stack (48) -> Assault (55, 64)"
+EM-08,战报_2498273_pid2607877.json,110,135,counterexample_explained,Juedi fanji stack after assault damage (OnDamageTaken callback)
+EM-03,战报_1111040_pid1106298.json,110,120,positive,Zhang Fei self-rescue under confusion (Zhang Fei attacks Zhang Fei)
+EM-21,战报_1000225_pid995488.json,140,165,positive,Yanren paoxiao multi-hit finishes target 2 after commander dies
+EM-21,战报_1008109_pid1003336.json,205,220,positive,Counter kills commander -> cfg 209 troop loss -> cfg 157 victory
+EM-22,战报_1627796_pid1627641.json,1320,1335,positive,Chain propagation completes atomic loop without recursive chain
+EM-11,战报_1008108_pid1003335.json,35,55,positive,Counter damage does not trigger counter back
+EM-19,战报_1008108_pid1003335.json,130,150,positive,Main target dies -> share does not execute

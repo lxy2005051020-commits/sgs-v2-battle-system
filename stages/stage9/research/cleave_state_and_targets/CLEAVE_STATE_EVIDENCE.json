@@ -1,0 +1,2578 @@
+{
+  "metadata": {
+    "total_files_scanned": 32999,
+    "total_applies": 2256,
+    "total_refreshes": 203,
+    "total_expires": 1283,
+    "total_multi_source_attacks": 121
+  },
+  "pairwise_execution_orders": {
+    "('槊血纵横', '瞋目横矛')": 121
+  },
+  "refresh_samples": [
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 211
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 494
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 299
+        }
+      ],
+      "expires": [],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 218,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 220
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 223
+            }
+          ]
+        },
+        {
+          "attack_idx": 229,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 231
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 235
+            }
+          ]
+        },
+        {
+          "attack_idx": 303,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 305
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 308
+            }
+          ]
+        },
+        {
+          "attack_idx": 391,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 393
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 396
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 27
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 542
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 646
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 116
+        }
+      ],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 303
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 29,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 31
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 36
+            }
+          ]
+        },
+        {
+          "attack_idx": 118,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 120
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 126
+            }
+          ]
+        },
+        {
+          "attack_idx": 202,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 204
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 210
+            }
+          ]
+        },
+        {
+          "attack_idx": 219,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 221
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 228
+            }
+          ]
+        },
+        {
+          "attack_idx": 547,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 549
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 552
+            }
+          ]
+        },
+        {
+          "attack_idx": 557,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 560
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 563
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1068998_pid1064015.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 90
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 308
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 491
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 629
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 372
+        }
+      ],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 255
+        },
+        {
+          "unit": "马超",
+          "event_idx": 487
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 92,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 94
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 100
+            }
+          ]
+        },
+        {
+          "attack_idx": 162,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 166
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 175
+            }
+          ]
+        },
+        {
+          "attack_idx": 310,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 312
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 315
+            }
+          ]
+        },
+        {
+          "attack_idx": 374,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 376
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 379
+            }
+          ]
+        },
+        {
+          "attack_idx": 434,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 436
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 439
+            }
+          ]
+        },
+        {
+          "attack_idx": 496,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 500
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 503
+            }
+          ]
+        },
+        {
+          "attack_idx": 508,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 512
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 515
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1104442_pid1099542.json",
+      "applies": [
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 19
+        },
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 197
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 290
+        }
+      ],
+      "expires": [
+        {
+          "unit": "徐晃",
+          "event_idx": 194
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1104494_pid1099595.json",
+      "applies": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 327
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 572
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 673
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 734
+        }
+      ],
+      "expires": [
+        {
+          "unit": "于禁",
+          "event_idx": 559
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1104622_pid1099727.json",
+      "applies": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 51
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 137
+        }
+      ],
+      "expires": [],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1104624_pid1099729.json",
+      "applies": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 48
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 382
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 590
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 130
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 218
+        }
+      ],
+      "expires": [
+        {
+          "unit": "于禁",
+          "event_idx": 378
+        },
+        {
+          "unit": "于禁",
+          "event_idx": 518
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1104897_pid1099995.json",
+      "applies": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 46
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 199
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 310
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 380
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 442
+        }
+      ],
+      "expires": [
+        {
+          "unit": "于禁",
+          "event_idx": 194
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1104926_pid1100024.json",
+      "applies": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 69
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 407
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 682
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 517
+        }
+      ],
+      "expires": [
+        {
+          "unit": "于禁",
+          "event_idx": 305
+        },
+        {
+          "unit": "于禁",
+          "event_idx": 675
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1104985_pid1100077.json",
+      "applies": [
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 395
+        },
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 741
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 497
+        }
+      ],
+      "expires": [
+        {
+          "unit": "徐晃",
+          "event_idx": 735
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1105082_pid1100176.json",
+      "applies": [
+        {
+          "unit": "马云騄",
+          "skill": "瞋目横矛",
+          "event_idx": 167
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马云騄",
+          "skill": "瞋目横矛",
+          "event_idx": 271
+        },
+        {
+          "unit": "马云騄",
+          "skill": "瞋目横矛",
+          "event_idx": 352
+        }
+      ],
+      "expires": [],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1105189_pid1100285.json",
+      "applies": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 60
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 165
+        }
+      ],
+      "expires": [],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1105205_pid1100301.json",
+      "applies": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 353
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 456
+        }
+      ],
+      "expires": [
+        {
+          "unit": "于禁",
+          "event_idx": 589
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1105508_pid1100613.json",
+      "applies": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 156
+        },
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 336
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 430
+        }
+      ],
+      "expires": [
+        {
+          "unit": "于禁",
+          "event_idx": 321
+        },
+        {
+          "unit": "于禁",
+          "event_idx": 605
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1105518_pid1100623.json",
+      "applies": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 117
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 222
+        }
+      ],
+      "expires": [],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1105540_pid1100645.json",
+      "applies": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 107
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "于禁",
+          "skill": "瞋目横矛",
+          "event_idx": 202
+        }
+      ],
+      "expires": [],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1107821_pid1103024.json",
+      "applies": [
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 46
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 117
+        }
+      ],
+      "expires": [
+        {
+          "unit": "徐晃",
+          "event_idx": 361
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1108201_pid1103408.json",
+      "applies": [
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 35
+        },
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 418
+        },
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 700
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "徐晃",
+          "skill": "瞋目横矛",
+          "event_idx": 159
+        }
+      ],
+      "expires": [
+        {
+          "unit": "徐晃",
+          "event_idx": 409
+        },
+        {
+          "unit": "徐晃",
+          "event_idx": 630
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1110302_pid1105559.json",
+      "applies": [
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 14
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 50
+        },
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 84
+        },
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 126
+        },
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 159
+        },
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 209
+        }
+      ],
+      "expires": [
+        {
+          "unit": "关羽",
+          "event_idx": 277
+        }
+      ],
+      "multi_source_attacks": []
+    },
+    {
+      "file": "战报_1110949_pid1106204.json",
+      "applies": [
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 14
+        },
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 116
+        },
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 235
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 47
+        },
+        {
+          "unit": "关羽",
+          "skill": "瞋目横矛",
+          "event_idx": 161
+        }
+      ],
+      "expires": [
+        {
+          "unit": "关羽",
+          "event_idx": 108
+        },
+        {
+          "unit": "关羽",
+          "event_idx": 226
+        }
+      ],
+      "multi_source_attacks": []
+    }
+  ],
+  "multi_source_samples": [
+    {
+      "file": "战报_1068281_pid1063298.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 235
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 575
+        }
+      ],
+      "refreshes": [],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 384
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 240,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 242
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 245
+            }
+          ]
+        },
+        {
+          "attack_idx": 250,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 252
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 255
+            }
+          ]
+        },
+        {
+          "attack_idx": 320,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 322
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 325
+            }
+          ]
+        },
+        {
+          "attack_idx": 330,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 332
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 335
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1068287_pid1063304.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 211
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 494
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 299
+        }
+      ],
+      "expires": [],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 218,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 220
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 223
+            }
+          ]
+        },
+        {
+          "attack_idx": 229,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 231
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 235
+            }
+          ]
+        },
+        {
+          "attack_idx": 303,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 305
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 308
+            }
+          ]
+        },
+        {
+          "attack_idx": 391,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 393
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 396
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1068375_pid1063363.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 27
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 542
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 646
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 116
+        }
+      ],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 303
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 29,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 31
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 36
+            }
+          ]
+        },
+        {
+          "attack_idx": 118,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 120
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 126
+            }
+          ]
+        },
+        {
+          "attack_idx": 202,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 204
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 210
+            }
+          ]
+        },
+        {
+          "attack_idx": 219,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 221
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 228
+            }
+          ]
+        },
+        {
+          "attack_idx": 547,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 549
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 552
+            }
+          ]
+        },
+        {
+          "attack_idx": 557,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 560
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 563
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1068396_pid1063382.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 132
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 407
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 570
+        }
+      ],
+      "refreshes": [],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 324
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 134,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 136
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 143
+            }
+          ]
+        },
+        {
+          "attack_idx": 247,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 249
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 252
+            }
+          ]
+        },
+        {
+          "attack_idx": 261,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 263
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 266
+            }
+          ]
+        },
+        {
+          "attack_idx": 409,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 411
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 418
+            }
+          ]
+        },
+        {
+          "attack_idx": 475,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 477
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 480
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1068764_pid1063780.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 15
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 116
+        }
+      ],
+      "refreshes": [],
+      "expires": [],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 20,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 22
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 25
+            }
+          ]
+        },
+        {
+          "attack_idx": 30,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 32
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 35
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1068998_pid1064015.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 90
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 308
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 491
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 629
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 372
+        }
+      ],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 255
+        },
+        {
+          "unit": "马超",
+          "event_idx": 487
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 92,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 94
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 100
+            }
+          ]
+        },
+        {
+          "attack_idx": 162,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 166
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 175
+            }
+          ]
+        },
+        {
+          "attack_idx": 310,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 312
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 315
+            }
+          ]
+        },
+        {
+          "attack_idx": 374,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 376
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 379
+            }
+          ]
+        },
+        {
+          "attack_idx": 434,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 436
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 439
+            }
+          ]
+        },
+        {
+          "attack_idx": 496,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 500
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 503
+            }
+          ]
+        },
+        {
+          "attack_idx": 508,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 512
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 515
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1069355_pid1064372.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 25
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 530
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 667
+        }
+      ],
+      "refreshes": [],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 294
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 27,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 31
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 34
+            }
+          ]
+        },
+        {
+          "attack_idx": 219,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 221
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 224
+            }
+          ]
+        },
+        {
+          "attack_idx": 532,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 536
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 539
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1069831_pid1064849.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 306
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 505
+        }
+      ],
+      "refreshes": [],
+      "expires": [],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 308,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 310
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 317
+            }
+          ]
+        },
+        {
+          "attack_idx": 360,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 362
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 366
+            }
+          ]
+        },
+        {
+          "attack_idx": 371,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 373
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 380
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1964568_pid2017070.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 54
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 560
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 702
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 122
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 194
+        }
+      ],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 374
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 55,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 57
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 60
+            }
+          ]
+        },
+        {
+          "attack_idx": 123,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 125
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 129
+            }
+          ]
+        },
+        {
+          "attack_idx": 195,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 197
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 201
+            }
+          ]
+        },
+        {
+          "attack_idx": 205,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 207
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 210
+            }
+          ]
+        },
+        {
+          "attack_idx": 283,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 285
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 288
+            }
+          ]
+        },
+        {
+          "attack_idx": 561,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 563
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 566
+            }
+          ]
+        },
+        {
+          "attack_idx": 570,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 572
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 575
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_1964609_pid2017107.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 28
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 447
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 626
+        }
+      ],
+      "refreshes": [],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 163
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 448,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 450
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 453
+            }
+          ]
+        },
+        {
+          "attack_idx": 527,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 529
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 532
+            }
+          ]
+        },
+        {
+          "attack_idx": 540,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 542
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 545
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_2240203_pid2311005.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 155
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 573
+        }
+      ],
+      "refreshes": [],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 332
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 158,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 160
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 165
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_2240231_pid2311022.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 230
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 439
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 294
+        }
+      ],
+      "expires": [],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 232,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 235
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 241
+            }
+          ]
+        },
+        {
+          "attack_idx": 299,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 301
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 309
+            }
+          ]
+        },
+        {
+          "attack_idx": 320,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 323
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 329
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_2240247_pid2311038.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 52
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 520
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 154
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 290
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 408
+        }
+      ],
+      "expires": [],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 54,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 56
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 61
+            }
+          ]
+        },
+        {
+          "attack_idx": 159,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 161
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 168
+            }
+          ]
+        },
+        {
+          "attack_idx": 179,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 181
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 190
+            }
+          ]
+        },
+        {
+          "attack_idx": 292,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 297
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 307
+            }
+          ]
+        },
+        {
+          "attack_idx": 410,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 412
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 418
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_2246448_pid2317832.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 50
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 283
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 434
+        }
+      ],
+      "refreshes": [],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 280
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 52,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 55
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 61
+            }
+          ]
+        },
+        {
+          "attack_idx": 199,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 201
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 208
+            }
+          ]
+        },
+        {
+          "attack_idx": 288,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 292
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 303
+            }
+          ]
+        },
+        {
+          "attack_idx": 314,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 319
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 329
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_2246452_pid2317836.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 50
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 289
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 452
+        }
+      ],
+      "refreshes": [],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 285
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 52,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 55
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 59
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_2246462_pid2317846.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 264
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 465
+        }
+      ],
+      "refreshes": [],
+      "expires": [],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 266,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 268
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 279
+            }
+          ]
+        },
+        {
+          "attack_idx": 353,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 355
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 363
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_2246479_pid2317863.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 52
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 539
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 194
+        }
+      ],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 400
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 54,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 57
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 61
+            }
+          ]
+        },
+        {
+          "attack_idx": 199,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 202
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 208
+            }
+          ]
+        },
+        {
+          "attack_idx": 218,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 221
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 227
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_5155482_pid5794030.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 17
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 166
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 437
+        }
+      ],
+      "refreshes": [],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 161
+        },
+        {
+          "unit": "马超",
+          "event_idx": 310
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 19,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 21
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 24
+            }
+          ]
+        },
+        {
+          "attack_idx": 168,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 170
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 173
+            }
+          ]
+        },
+        {
+          "attack_idx": 227,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 229
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 232
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_5179459_pid5820102.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 12
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 120
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 295
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 378
+        }
+      ],
+      "refreshes": [],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 117
+        },
+        {
+          "unit": "马超",
+          "event_idx": 291
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 122,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 124
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 127
+            }
+          ]
+        },
+        {
+          "attack_idx": 211,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 213
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 216
+            }
+          ]
+        },
+        {
+          "attack_idx": 297,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 299
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 302
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "file": "战报_5188018_pid5829349.json",
+      "applies": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 230
+        },
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 425
+        },
+        {
+          "unit": "马超",
+          "skill": "槊血纵横",
+          "event_idx": 542
+        }
+      ],
+      "refreshes": [
+        {
+          "unit": "马超",
+          "skill": "瞋目横矛",
+          "event_idx": 485
+        }
+      ],
+      "expires": [
+        {
+          "unit": "马超",
+          "event_idx": 358
+        }
+      ],
+      "multi_source_attacks": [
+        {
+          "attack_idx": 232,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 234
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 237
+            }
+          ]
+        },
+        {
+          "attack_idx": 297,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 299
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 302
+            }
+          ]
+        },
+        {
+          "attack_idx": 427,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 429
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 436
+            }
+          ]
+        },
+        {
+          "attack_idx": 487,
+          "cleaves": [
+            {
+              "unit": "马超",
+              "skill": "槊血纵横",
+              "event_idx": 489
+            },
+            {
+              "unit": "马超",
+              "skill": "瞋目横矛",
+              "event_idx": 492
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

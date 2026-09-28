@@ -1,0 +1,257 @@
+{
+  "total": 4017,
+  "strata": {
+    "('NORMAL', 'SURVIVED')": {
+      "total": 3568,
+      "same": 1721,
+      "diff": 1847,
+      "p_same": 0.4823430493273543
+    },
+    "('CONFUSION', 'DIED')": {
+      "total": 12,
+      "same": 1,
+      "diff": 11,
+      "p_same": 0.08333333333333333
+    },
+    "('NORMAL', 'DIED')": {
+      "total": 193,
+      "same": 49,
+      "diff": 144,
+      "p_same": 0.2538860103626943
+    },
+    "('CONFUSION', 'SURVIVED')": {
+      "total": 232,
+      "same": 80,
+      "diff": 152,
+      "p_same": 0.3448275862068966
+    },
+    "('TAUNT', 'SURVIVED')": {
+      "total": 12,
+      "same": 12,
+      "diff": 0,
+      "p_same": 1.0
+    }
+  },
+  "samples": [
+    {
+      "report": "战报_1025176_pid1020342.json",
+      "attacker": "太史慈",
+      "tgt1": "徐盛",
+      "tgt2": "徐盛",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1025176_pid1020342.json",
+      "attacker": "太史慈",
+      "tgt1": "潘凤",
+      "tgt2": "潘凤",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1025176_pid1020342.json",
+      "attacker": "太史慈",
+      "tgt1": "潘凤",
+      "tgt2": "徐盛",
+      "same": false,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1025176_pid1020342.json",
+      "attacker": "太史慈",
+      "tgt1": "徐盛",
+      "tgt2": "徐盛",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1025176_pid1020342.json",
+      "attacker": "太史慈",
+      "tgt1": "徐盛",
+      "tgt2": "张燕",
+      "same": false,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1031263_pid1026426.json",
+      "attacker": "迁都使",
+      "tgt1": "开路先锋",
+      "tgt2": "开路先锋",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1031263_pid1026426.json",
+      "attacker": "开路先锋",
+      "tgt1": "迁都使",
+      "tgt2": "开路先锋",
+      "same": false,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1031263_pid1026426.json",
+      "attacker": "开路先锋",
+      "tgt1": "开路先锋",
+      "tgt2": "开路先锋",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1031263_pid1026426.json",
+      "attacker": "迁都使",
+      "tgt1": "开路先锋",
+      "tgt2": "开路先锋",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1031263_pid1026426.json",
+      "attacker": "开路先锋",
+      "tgt1": "迁都使",
+      "tgt2": "迁都使",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1031263_pid1026426.json",
+      "attacker": "开路先锋",
+      "tgt1": "迁都使",
+      "tgt2": "迁都使",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1031263_pid1026426.json",
+      "attacker": "开路先锋",
+      "tgt1": "迁都使",
+      "tgt2": "迁都使",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1031263_pid1026426.json",
+      "attacker": "迁都使",
+      "tgt1": "迁都使",
+      "tgt2": "迁都使",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1031263_pid1026426.json",
+      "attacker": "开路先锋",
+      "tgt1": "迁都使",
+      "tgt2": "迁都使",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1033531_pid1028684.json",
+      "attacker": "迁都使",
+      "tgt1": "开路先锋",
+      "tgt2": "开路先锋",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1033531_pid1028684.json",
+      "attacker": "迁都使",
+      "tgt1": "开路先锋",
+      "tgt2": "迁都使",
+      "same": false,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1033531_pid1028684.json",
+      "attacker": "迁都使",
+      "tgt1": "开路先锋",
+      "tgt2": "迁都使",
+      "same": false,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1033531_pid1028684.json",
+      "attacker": "开路先锋",
+      "tgt1": "迁都使",
+      "tgt2": "迁都使",
+      "same": true,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1033531_pid1028684.json",
+      "attacker": "迁都使",
+      "tgt1": "开路先锋",
+      "tgt2": "迁都使",
+      "same": false,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    },
+    {
+      "report": "战报_1033531_pid1028684.json",
+      "attacker": "迁都使",
+      "tgt1": "开路先锋",
+      "tgt2": "迁都使",
+      "same": false,
+      "key": [
+        "NORMAL",
+        "SURVIVED"
+      ]
+    }
+  ]
+}

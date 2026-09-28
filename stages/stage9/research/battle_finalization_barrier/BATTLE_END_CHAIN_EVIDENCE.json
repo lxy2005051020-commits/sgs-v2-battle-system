@@ -1,0 +1,2425 @@
+{
+  "stats": {
+    "total_files": 32999,
+    "total_chain_commander_death_cases": 333,
+    "chain_continued_after_commander_death": 159
+  },
+  "continuation_cases": [
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）",
+        "[张飞]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力88（1642）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）",
+        "[张飞]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力88（1642）"
+      ],
+      "victory_idx": 51,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1104976_pid1100069.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 14,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[吕蒙]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力85（1758）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104976_pid1100069.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 14,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[吕蒙]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力85（1758）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104976_pid1100069.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 14,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[吕蒙]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力85（1758）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104734_pid1099839.json",
+      "group": 1,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 14,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力219（2270）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104734_pid1099839.json",
+      "group": 1,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 14,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力219（2270）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104734_pid1099839.json",
+      "group": 1,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 14,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力219（2270）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1107646_pid1102847.json",
+      "group": 6,
+      "commander_name": "张飞",
+      "commander_death_idx": 13,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[刘备]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力74（1209）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1107646_pid1102847.json",
+      "group": 6,
+      "commander_name": "张飞",
+      "commander_death_idx": 13,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[刘备]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力74（1209）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1107646_pid1102847.json",
+      "group": 6,
+      "commander_name": "张飞",
+      "commander_death_idx": 13,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[刘备]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力74（1209）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1516249_pid1514012.json",
+      "group": 6,
+      "commander_name": "董卓",
+      "commander_death_idx": 11,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力120（1964）"
+      ],
+      "victory_idx": 23,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1516249_pid1514012.json",
+      "group": 6,
+      "commander_name": "董卓",
+      "commander_death_idx": 11,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力120（1964）"
+      ],
+      "victory_idx": 23,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1521080_pid1518855.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 48,
+      "total_chain_events": 9,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力33（1175）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1521080_pid1518855.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 48,
+      "total_chain_events": 8,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力33（1175）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1521080_pid1518855.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 48,
+      "total_chain_events": 7,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力33（1175）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1521080_pid1518855.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 48,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力33（1175）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1521080_pid1518855.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 48,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力33（1175）",
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1521080_pid1518855.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 48,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力33（1175）",
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力35（1539）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1521080_pid1518855.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 48,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力33（1175）",
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力35（1539）"
+      ],
+      "victory_idx": 64,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1521080_pid1518855.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 48,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力33（1175）",
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力35（1539）"
+      ],
+      "victory_idx": 64,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1523561_pid1521431.json",
+      "group": 2,
+      "commander_name": "郝昭",
+      "commander_death_idx": 14,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[邓艾]执行来自【连环计】的「铁索连环」效果",
+        "[李典]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力333（1348）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1523561_pid1521431.json",
+      "group": 2,
+      "commander_name": "郝昭",
+      "commander_death_idx": 14,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[邓艾]执行来自【连环计】的「铁索连环」效果",
+        "[李典]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力333（1348）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1523561_pid1521431.json",
+      "group": 2,
+      "commander_name": "郝昭",
+      "commander_death_idx": 14,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[邓艾]执行来自【连环计】的「铁索连环」效果",
+        "[李典]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力333（1348）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1523850_pid1521899.json",
+      "group": 3,
+      "commander_name": "赵云",
+      "commander_death_idx": 210,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[主公]执行来自【连环计】的「铁索连环」效果",
+        "[诸葛亮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力28（2263）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1523850_pid1521899.json",
+      "group": 3,
+      "commander_name": "赵云",
+      "commander_death_idx": 210,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[主公]执行来自【连环计】的「铁索连环」效果",
+        "[诸葛亮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力28（2263）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1523850_pid1521899.json",
+      "group": 3,
+      "commander_name": "赵云",
+      "commander_death_idx": 210,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[主公]执行来自【连环计】的「铁索连环」效果",
+        "[诸葛亮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力28（2263）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1530618_pid1529243.json",
+      "group": 5,
+      "commander_name": "袁绍",
+      "commander_death_idx": 43,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力404（3614）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1530618_pid1529243.json",
+      "group": 5,
+      "commander_name": "袁绍",
+      "commander_death_idx": 43,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力404（3614）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1530618_pid1529243.json",
+      "group": 5,
+      "commander_name": "袁绍",
+      "commander_death_idx": 43,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力404（3614）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1530618_pid1529243.json",
+      "group": 5,
+      "commander_name": "袁绍",
+      "commander_death_idx": 43,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力404（3614）"
+      ],
+      "victory_idx": 51,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1530618_pid1529243.json",
+      "group": 5,
+      "commander_name": "袁绍",
+      "commander_death_idx": 43,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力404（3614）"
+      ],
+      "victory_idx": 51,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1627718_pid1627560.json",
+      "group": 7,
+      "commander_name": "贾诩",
+      "commander_death_idx": 16,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[孙权]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力244（0）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1627718_pid1627560.json",
+      "group": 7,
+      "commander_name": "贾诩",
+      "commander_death_idx": 16,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[孙权]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力244（0）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1627718_pid1627560.json",
+      "group": 7,
+      "commander_name": "贾诩",
+      "commander_death_idx": 16,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[孙权]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力244（0）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1822605_pid1828088.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 29,
+      "total_chain_events": 7,
+      "chain_events_after_commander_death": 4,
+      "after_events": [
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力54（791）",
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力67（676）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1822605_pid1828088.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 29,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 4,
+      "after_events": [
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力54（791）",
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力67（676）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1822605_pid1828088.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 29,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 4,
+      "after_events": [
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力54（791）",
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力67（676）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1830836_pid1836388.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 37,
+      "total_chain_events": 7,
+      "chain_events_after_commander_death": 4,
+      "after_events": [
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力64（1287）",
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力49（179）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1830836_pid1836388.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 37,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 4,
+      "after_events": [
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力64（1287）",
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力49（179）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1830836_pid1836388.json",
+      "group": 2,
+      "commander_name": "骁城卫",
+      "commander_death_idx": 37,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 4,
+      "after_events": [
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力64（1287）",
+        "[勇城卫]执行来自【连环计】的「铁索连环」效果",
+        "[勇城卫]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力49（179）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2105051_pid2166869.json",
+      "group": 2,
+      "commander_name": "黄盖",
+      "commander_death_idx": 44,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[朱儁]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力118（2942）"
+      ],
+      "victory_idx": 53,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2105051_pid2166869.json",
+      "group": 2,
+      "commander_name": "黄盖",
+      "commander_death_idx": 44,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[朱儁]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力118（2942）"
+      ],
+      "victory_idx": 53,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2189929_pid2256452.json",
+      "group": 1,
+      "commander_name": "黄权",
+      "commander_death_idx": 49,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[曹洪]执行来自【连环计】的「铁索连环」效果",
+        "[张任]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力222（2078）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2189929_pid2256452.json",
+      "group": 1,
+      "commander_name": "黄权",
+      "commander_death_idx": 49,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[曹洪]执行来自【连环计】的「铁索连环」效果",
+        "[张任]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力222（2078）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2189929_pid2256452.json",
+      "group": 1,
+      "commander_name": "黄权",
+      "commander_death_idx": 49,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[曹洪]执行来自【连环计】的「铁索连环」效果",
+        "[张任]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力222（2078）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2482367_pid2586730.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 8,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力508（1925）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2482367_pid2586730.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 7,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力508（1925）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2482367_pid2586730.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力508（1925）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2482367_pid2586730.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力508（1925）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2482367_pid2586730.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力508（1925）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2482367_pid2586730.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力508（1925）"
+      ],
+      "victory_idx": 39,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2482367_pid2586730.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力508（1925）"
+      ],
+      "victory_idx": 39,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2484523_pid2589705.json",
+      "group": 5,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 16,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[魏延]执行来自【连环计】的「铁索连环」效果",
+        "[庞统]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力660（1500）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2484523_pid2589705.json",
+      "group": 5,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 16,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[魏延]执行来自【连环计】的「铁索连环」效果",
+        "[庞统]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力660（1500）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2484523_pid2589705.json",
+      "group": 5,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 16,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[魏延]执行来自【连环计】的「铁索连环」效果",
+        "[庞统]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力660（1500）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2484456_pid2589602.json",
+      "group": 4,
+      "commander_name": "周瑜",
+      "commander_death_idx": 31,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力572（2815）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2484456_pid2589602.json",
+      "group": 4,
+      "commander_name": "周瑜",
+      "commander_death_idx": 31,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力572（2815）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2484456_pid2589602.json",
+      "group": 4,
+      "commander_name": "周瑜",
+      "commander_death_idx": 31,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力572（2815）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2484456_pid2589602.json",
+      "group": 4,
+      "commander_name": "周瑜",
+      "commander_death_idx": 31,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力572（2815）",
+        "[主公]执行来自【连环计】的「铁索连环」效果",
+        "[陆逊]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力233（517）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2484456_pid2589602.json",
+      "group": 4,
+      "commander_name": "周瑜",
+      "commander_death_idx": 31,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力572（2815）",
+        "[主公]执行来自【连环计】的「铁索连环」效果",
+        "[陆逊]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力233（517）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2485745_pid2591283.json",
+      "group": 4,
+      "commander_name": "甘宁",
+      "commander_death_idx": 36,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力233（3277）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2485745_pid2591283.json",
+      "group": 4,
+      "commander_name": "甘宁",
+      "commander_death_idx": 36,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力233（3277）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2485745_pid2591283.json",
+      "group": 4,
+      "commander_name": "甘宁",
+      "commander_death_idx": 36,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力233（3277）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2485745_pid2591283.json",
+      "group": 4,
+      "commander_name": "甘宁",
+      "commander_death_idx": 36,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力233（3277）",
+        "[吕蒙]执行来自【连环计】的「铁索连环」效果",
+        "[太史慈]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力82（5540）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2485745_pid2591283.json",
+      "group": 4,
+      "commander_name": "甘宁",
+      "commander_death_idx": 36,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力233（3277）",
+        "[吕蒙]执行来自【连环计】的「铁索连环」效果",
+        "[太史慈]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力82（5540）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2486546_pid2592272.json",
+      "group": 3,
+      "commander_name": "司马懿",
+      "commander_death_idx": 69,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[郭淮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力346（1606）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2486546_pid2592272.json",
+      "group": 3,
+      "commander_name": "司马懿",
+      "commander_death_idx": 69,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[郭淮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力346（1606）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2486546_pid2592272.json",
+      "group": 3,
+      "commander_name": "司马懿",
+      "commander_death_idx": 69,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[郭淮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力346（1606）",
+        "[郭淮]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力77（1797）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2486546_pid2592272.json",
+      "group": 3,
+      "commander_name": "司马懿",
+      "commander_death_idx": 69,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[郭淮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力346（1606）",
+        "[郭淮]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力77（1797）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2487494_pid2593553.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 47,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[卢植]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力332（2385）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2487494_pid2593553.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 47,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[卢植]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力332（2385）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2487494_pid2593553.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 47,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[卢植]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力332（2385）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2488911_pid2595397.json",
+      "group": 5,
+      "commander_name": "刘备",
+      "commander_death_idx": 27,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力421（450）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2488911_pid2595397.json",
+      "group": 5,
+      "commander_name": "刘备",
+      "commander_death_idx": 27,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力421（450）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2488911_pid2595397.json",
+      "group": 5,
+      "commander_name": "刘备",
+      "commander_death_idx": 27,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力421（450）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2488911_pid2595397.json",
+      "group": 5,
+      "commander_name": "刘备",
+      "commander_death_idx": 27,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力421（450）"
+      ],
+      "victory_idx": 40,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2488911_pid2595397.json",
+      "group": 5,
+      "commander_name": "刘备",
+      "commander_death_idx": 27,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力421（450）"
+      ],
+      "victory_idx": 40,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2488086_pid2594336.json",
+      "group": 3,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 78,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[庞统]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力104（4236）"
+      ],
+      "victory_idx": 88,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2488086_pid2594336.json",
+      "group": 3,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 78,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[庞统]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力104（4236）"
+      ],
+      "victory_idx": 88,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2491184_pid2598556.json",
+      "group": 3,
+      "commander_name": "张辽",
+      "commander_death_idx": 31,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[王元姬]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力187（1971）"
+      ],
+      "victory_idx": 40,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2491184_pid2598556.json",
+      "group": 3,
+      "commander_name": "张辽",
+      "commander_death_idx": 31,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[王元姬]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力187（1971）"
+      ],
+      "victory_idx": 40,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2493717_pid2601905.json",
+      "group": 6,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 83,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[赵云]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力568（486）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2493717_pid2601905.json",
+      "group": 6,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 83,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[赵云]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力568（486）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2493717_pid2601905.json",
+      "group": 6,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 83,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[赵云]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力568（486）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2493717_pid2601905.json",
+      "group": 6,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 83,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[赵云]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力568（486）"
+      ],
+      "victory_idx": 96,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2493717_pid2601905.json",
+      "group": 6,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 83,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[赵云]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力568（486）"
+      ],
+      "victory_idx": 96,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2495022_pid2603674.json",
+      "group": 3,
+      "commander_name": "张辽",
+      "commander_death_idx": 45,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[郭嘉]执行来自【连环计】的「铁索连环」效果"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2495022_pid2603674.json",
+      "group": 3,
+      "commander_name": "张辽",
+      "commander_death_idx": 45,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[郭嘉]执行来自【连环计】的「铁索连环」效果",
+        "[王元姬]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力381（5024）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2495022_pid2603674.json",
+      "group": 3,
+      "commander_name": "张辽",
+      "commander_death_idx": 45,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[郭嘉]执行来自【连环计】的「铁索连环」效果",
+        "[王元姬]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力381（5024）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2495022_pid2603674.json",
+      "group": 3,
+      "commander_name": "张辽",
+      "commander_death_idx": 45,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[郭嘉]执行来自【连环计】的「铁索连环」效果",
+        "[王元姬]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力381（5024）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2498308_pid2607919.json",
+      "group": 1,
+      "commander_name": "关羽",
+      "commander_death_idx": 98,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[纪灵]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力360（2931）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2498308_pid2607919.json",
+      "group": 1,
+      "commander_name": "关羽",
+      "commander_death_idx": 98,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[纪灵]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力360（2931）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2498308_pid2607919.json",
+      "group": 1,
+      "commander_name": "关羽",
+      "commander_death_idx": 98,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[纪灵]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力360（2931）"
+      ],
+      "victory_idx": 108,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2498308_pid2607919.json",
+      "group": 1,
+      "commander_name": "关羽",
+      "commander_death_idx": 98,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[纪灵]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力360（2931）"
+      ],
+      "victory_idx": 108,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2501602_pid2612222.json",
+      "group": 6,
+      "commander_name": "赵云",
+      "commander_death_idx": 53,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]执行来自【连环计】的「铁索连环」效果"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2501602_pid2612222.json",
+      "group": 6,
+      "commander_name": "赵云",
+      "commander_death_idx": 53,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[主公]执行来自【连环计】的「铁索连环」效果",
+        "[刘备]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力332（1772）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2501602_pid2612222.json",
+      "group": 6,
+      "commander_name": "赵云",
+      "commander_death_idx": 53,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[主公]执行来自【连环计】的「铁索连环」效果",
+        "[刘备]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力332（1772）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2501600_pid2612218.json",
+      "group": 7,
+      "commander_name": "贾诩",
+      "commander_death_idx": 38,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力289（1947）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2501600_pid2612218.json",
+      "group": 7,
+      "commander_name": "贾诩",
+      "commander_death_idx": 38,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力289（1947）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2501600_pid2612218.json",
+      "group": 7,
+      "commander_name": "贾诩",
+      "commander_death_idx": 38,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力289（1947）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2501600_pid2612218.json",
+      "group": 7,
+      "commander_name": "贾诩",
+      "commander_death_idx": 38,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力289（1947）",
+        "[主公]执行来自【连环计】的「铁索连环」效果",
+        "[赵云]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力134（247）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2501600_pid2612218.json",
+      "group": 7,
+      "commander_name": "贾诩",
+      "commander_death_idx": 38,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力289（1947）",
+        "[主公]执行来自【连环计】的「铁索连环」效果",
+        "[赵云]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力134（247）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2502672_pid2613642.json",
+      "group": 4,
+      "commander_name": "甘宁",
+      "commander_death_idx": 25,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[太史慈]执行来自【连环计】的「铁索连环」效果",
+        "[卢植]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力591（5925）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2502672_pid2613642.json",
+      "group": 4,
+      "commander_name": "甘宁",
+      "commander_death_idx": 25,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[太史慈]执行来自【连环计】的「铁索连环」效果",
+        "[卢植]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力591（5925）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2502672_pid2613642.json",
+      "group": 4,
+      "commander_name": "甘宁",
+      "commander_death_idx": 25,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[太史慈]执行来自【连环计】的「铁索连环」效果",
+        "[卢植]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力591（5925）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2502868_pid2613934.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 8,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力379（4712）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2502868_pid2613934.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 7,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力379（4712）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2502868_pid2613934.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力379（4712）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2502868_pid2613934.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力379（4712）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2502868_pid2613934.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力379（4712）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2502868_pid2613934.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力379（4712）"
+      ],
+      "victory_idx": 41,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2502868_pid2613934.json",
+      "group": 3,
+      "commander_name": "贾诩",
+      "commander_death_idx": 25,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[貂蝉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力379（4712）"
+      ],
+      "victory_idx": 41,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2505012_pid2616799.json",
+      "group": 1,
+      "commander_name": "刘备",
+      "commander_death_idx": 136,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[魏延]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力132（1220）"
+      ],
+      "victory_idx": 145,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2505012_pid2616799.json",
+      "group": 1,
+      "commander_name": "刘备",
+      "commander_death_idx": 136,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[魏延]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力132（1220）"
+      ],
+      "victory_idx": 145,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2508524_pid2621196.json",
+      "group": 1,
+      "commander_name": "钟会",
+      "commander_death_idx": 81,
+      "total_chain_events": 9,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[朱儁]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力408（1832）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2508524_pid2621196.json",
+      "group": 1,
+      "commander_name": "钟会",
+      "commander_death_idx": 81,
+      "total_chain_events": 8,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[朱儁]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力408（1832）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2508524_pid2621196.json",
+      "group": 1,
+      "commander_name": "钟会",
+      "commander_death_idx": 81,
+      "total_chain_events": 7,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[朱儁]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力408（1832）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2508524_pid2621196.json",
+      "group": 1,
+      "commander_name": "钟会",
+      "commander_death_idx": 81,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[朱儁]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力408（1832）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2508524_pid2621196.json",
+      "group": 1,
+      "commander_name": "钟会",
+      "commander_death_idx": 81,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[朱儁]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力408（1832）",
+        "[朱儁]执行来自【连环计】的「铁索连环」效果"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2508524_pid2621196.json",
+      "group": 1,
+      "commander_name": "钟会",
+      "commander_death_idx": 81,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[朱儁]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力408（1832）",
+        "[朱儁]执行来自【连环计】的「铁索连环」效果",
+        "[韩当]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力478（1100）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_2508524_pid2621196.json",
+      "group": 1,
+      "commander_name": "钟会",
+      "commander_death_idx": 81,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[朱儁]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力408（1832）",
+        "[朱儁]执行来自【连环计】的「铁索连环」效果",
+        "[韩当]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力478（1100）"
+      ],
+      "victory_idx": 96,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_2508524_pid2621196.json",
+      "group": 1,
+      "commander_name": "钟会",
+      "commander_death_idx": 81,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[朱儁]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力408（1832）",
+        "[朱儁]执行来自【连环计】的「铁索连环」效果",
+        "[韩当]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力478（1100）"
+      ],
+      "victory_idx": 96,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_3442426_pid3803752.json",
+      "group": 5,
+      "commander_name": "吕布",
+      "commander_death_idx": 34,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[刘备]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力378（3495）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3442426_pid3803752.json",
+      "group": 5,
+      "commander_name": "吕布",
+      "commander_death_idx": 34,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[刘备]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力378（3495）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3442426_pid3803752.json",
+      "group": 5,
+      "commander_name": "吕布",
+      "commander_death_idx": 34,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[刘备]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力378（3495）"
+      ],
+      "victory_idx": 42,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_3442426_pid3803752.json",
+      "group": 5,
+      "commander_name": "吕布",
+      "commander_death_idx": 34,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[刘备]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力378（3495）"
+      ],
+      "victory_idx": 42,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_3442426_pid3803752.json",
+      "group": 5,
+      "commander_name": "吕布",
+      "commander_death_idx": 34,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[刘备]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力378（3495）"
+      ],
+      "victory_idx": 42,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_3444743_pid3807152.json",
+      "group": 7,
+      "commander_name": "司马懿",
+      "commander_death_idx": 17,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[曹操]执行来自【连环计】的「铁索连环」效果",
+        "[郝昭]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力277（3206）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3444743_pid3807152.json",
+      "group": 7,
+      "commander_name": "司马懿",
+      "commander_death_idx": 17,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[曹操]执行来自【连环计】的「铁索连环」效果",
+        "[郝昭]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力277（3206）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3444743_pid3807152.json",
+      "group": 7,
+      "commander_name": "司马懿",
+      "commander_death_idx": 17,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[曹操]执行来自【连环计】的「铁索连环」效果",
+        "[郝昭]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力277（3206）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3446374_pid3809417.json",
+      "group": 3,
+      "commander_name": "张飞",
+      "commander_death_idx": 145,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[诸葛亮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力507（6743）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3446374_pid3809417.json",
+      "group": 3,
+      "commander_name": "张飞",
+      "commander_death_idx": 145,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[诸葛亮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力507（6743）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3446374_pid3809417.json",
+      "group": 3,
+      "commander_name": "张飞",
+      "commander_death_idx": 145,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[诸葛亮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力507（6743）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3446374_pid3809417.json",
+      "group": 3,
+      "commander_name": "张飞",
+      "commander_death_idx": 145,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[诸葛亮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力507（6743）"
+      ],
+      "victory_idx": 160,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_3446374_pid3809417.json",
+      "group": 3,
+      "commander_name": "张飞",
+      "commander_death_idx": 145,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[诸葛亮]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力507（6743）"
+      ],
+      "victory_idx": 160,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_3450074_pid3814713.json",
+      "group": 4,
+      "commander_name": "董卓",
+      "commander_death_idx": 70,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力597（2569）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3450074_pid3814713.json",
+      "group": 4,
+      "commander_name": "董卓",
+      "commander_death_idx": 70,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力597（2569）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3450074_pid3814713.json",
+      "group": 4,
+      "commander_name": "董卓",
+      "commander_death_idx": 70,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力597（2569）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3450074_pid3814713.json",
+      "group": 4,
+      "commander_name": "董卓",
+      "commander_death_idx": 70,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力597（2569）"
+      ],
+      "victory_idx": 83,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_3450074_pid3814713.json",
+      "group": 4,
+      "commander_name": "董卓",
+      "commander_death_idx": 70,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力597（2569）"
+      ],
+      "victory_idx": 83,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_3452103_pid3817667.json",
+      "group": 3,
+      "commander_name": "张辽",
+      "commander_death_idx": 25,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[曹操]执行来自【连环计】的「铁索连环」效果",
+        "[郭嘉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力106（694）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3452103_pid3817667.json",
+      "group": 3,
+      "commander_name": "张辽",
+      "commander_death_idx": 25,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[曹操]执行来自【连环计】的「铁索连环」效果",
+        "[郭嘉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力106（694）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3452103_pid3817667.json",
+      "group": 3,
+      "commander_name": "张辽",
+      "commander_death_idx": 25,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[曹操]执行来自【连环计】的「铁索连环」效果",
+        "[郭嘉]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力106（694）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3454163_pid3820653.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 16,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[陆逊]执行来自【连环计】的「铁索连环」效果",
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力198（260）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3454163_pid3820653.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 16,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[陆逊]执行来自【连环计】的「铁索连环」效果",
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力198（260）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3454163_pid3820653.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 16,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[陆逊]执行来自【连环计】的「铁索连环」效果",
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力198（260）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3458884_pid3827610.json",
+      "group": 5,
+      "commander_name": "周瑜",
+      "commander_death_idx": 16,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[陆逊]执行来自【连环计】的「铁索连环」效果",
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力198（167）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3458884_pid3827610.json",
+      "group": 5,
+      "commander_name": "周瑜",
+      "commander_death_idx": 16,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[陆逊]执行来自【连环计】的「铁索连环」效果",
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力198（167）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3458884_pid3827610.json",
+      "group": 5,
+      "commander_name": "周瑜",
+      "commander_death_idx": 16,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[陆逊]执行来自【连环计】的「铁索连环」效果",
+        "[吕蒙]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力198（167）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3459507_pid3828638.json",
+      "group": 5,
+      "commander_name": "甘宁",
+      "commander_death_idx": 35,
+      "total_chain_events": 7,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[卢植]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力374（7839）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3459507_pid3828638.json",
+      "group": 5,
+      "commander_name": "甘宁",
+      "commander_death_idx": 35,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[卢植]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力374（7839）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3459507_pid3828638.json",
+      "group": 5,
+      "commander_name": "甘宁",
+      "commander_death_idx": 35,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[卢植]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力374（7839）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3459507_pid3828638.json",
+      "group": 5,
+      "commander_name": "甘宁",
+      "commander_death_idx": 35,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[卢植]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力374（7839）",
+        "[卢植]执行来自【连环计】的「铁索连环」效果"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3459507_pid3828638.json",
+      "group": 5,
+      "commander_name": "甘宁",
+      "commander_death_idx": 35,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[卢植]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力374（7839）",
+        "[卢植]执行来自【连环计】的「铁索连环」效果",
+        "[太史慈]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力316（354）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_3459507_pid3828638.json",
+      "group": 5,
+      "commander_name": "甘宁",
+      "commander_death_idx": 35,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[卢植]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力374（7839）",
+        "[卢植]执行来自【连环计】的「铁索连环」效果",
+        "[太史慈]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力316（354）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    }
+  ],
+  "sample_cases": [
+    {
+      "file": "战报_1104440_pid1099540.json",
+      "group": 7,
+      "commander_name": "关羽",
+      "commander_death_idx": 99,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1071968_pid1066994.json",
+      "group": 3,
+      "commander_name": "勇城卫",
+      "commander_death_idx": 29,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1072308_pid1067334.json",
+      "group": 3,
+      "commander_name": "勇城卫",
+      "commander_death_idx": 14,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": 18,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 6,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 1,
+      "after_events": [
+        "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）",
+        "[张飞]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力88（1642）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104998_pid1100090.json",
+      "group": 3,
+      "commander_name": "关羽",
+      "commander_death_idx": 34,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 3,
+      "after_events": [
+        "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）",
+        "[张飞]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力88（1642）"
+      ],
+      "victory_idx": 51,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1104976_pid1100069.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 14,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[吕蒙]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力85（1758）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104976_pid1100069.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 14,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[吕蒙]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力85（1758）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104976_pid1100069.json",
+      "group": 6,
+      "commander_name": "周瑜",
+      "commander_death_idx": 14,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 2,
+      "after_events": [
+        "[吕蒙]执行来自【连环计】的「铁索连环」效果",
+        "[主公]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力85（1758）"
+      ],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104971_pid1100063.json",
+      "group": 3,
+      "commander_name": "刘备",
+      "commander_death_idx": 47,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1104971_pid1100063.json",
+      "group": 3,
+      "commander_name": "刘备",
+      "commander_death_idx": 47,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1070675_pid1065693.json",
+      "group": 1,
+      "commander_name": "勇城卫",
+      "commander_death_idx": 57,
+      "total_chain_events": 5,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1070675_pid1065693.json",
+      "group": 1,
+      "commander_name": "勇城卫",
+      "commander_death_idx": 57,
+      "total_chain_events": 4,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1070675_pid1065693.json",
+      "group": 1,
+      "commander_name": "勇城卫",
+      "commander_death_idx": 57,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": 63,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1070675_pid1065693.json",
+      "group": 1,
+      "commander_name": "勇城卫",
+      "commander_death_idx": 57,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": 63,
+      "victory_after_chain_complete": true
+    },
+    {
+      "file": "战报_1105800_pid1100918.json",
+      "group": 2,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 124,
+      "total_chain_events": 3,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    },
+    {
+      "file": "战报_1105800_pid1100918.json",
+      "group": 2,
+      "commander_name": "诸葛亮",
+      "commander_death_idx": 124,
+      "total_chain_events": 2,
+      "chain_events_after_commander_death": 0,
+      "after_events": [],
+      "victory_idx": null,
+      "victory_after_chain_complete": false
+    }
+  ]
+}

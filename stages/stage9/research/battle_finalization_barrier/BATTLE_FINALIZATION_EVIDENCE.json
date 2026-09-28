@@ -1,0 +1,508 @@
+{
+  "metadata": {
+    "package": "RF-P04",
+    "title": "BATTLE_FINALIZATION_BARRIER_EVIDENCE_CORPUS",
+    "date": "2026-09-13",
+    "total_corpus_scanned": 32999
+  },
+  "combo_battle_ending_evidence": {
+    "stats": {
+      "total_files": 32999,
+      "total_battle_ending_attack1": 15393,
+      "commander_kills": 10745,
+      "commander_kills_with_cfg230": 410,
+      "commander_kills_with_second_attack_cfg9": 1,
+      "deputy_kills_ending_battle": 4648,
+      "deputy_kills_with_cfg230": 278,
+      "deputy_kills_with_second_attack_cfg9": 130
+    },
+    "summary": {
+      "total_attack1_battle_ending": 15393,
+      "commander_kills": 10745,
+      "commander_kills_with_cfg230": 410,
+      "commander_kills_with_second_attack_cfg9": 1,
+      "cfg9_admission_ratio_after_commander_kill": "0 / 10745 (0.00%)",
+      "conclusion": "NORMAL_ATTACK #2 is strictly blocked after victory condition satisfied by Attack #1."
+    },
+    "sample_commander_with_230": [
+      {
+        "file": "战报_1071938_pid1066964.json",
+        "group": 3,
+        "actor": "张飞",
+        "target": "勇城卫",
+        "target_pos": 1,
+        "is_commander": true,
+        "has_cfg230": true,
+        "has_cfg9_second": false,
+        "has_cfg209_collateral": true,
+        "events_between_death_and_victory": [
+          "163: [勇城卫]兵力为0，无法再战",
+          "736: ",
+          "230: [张飞]执行来自【强攻】的「连击」效果",
+          "733: ",
+          "209: [强城卫]由于主将[勇城卫]阵亡，损失了兵力25（228）",
+          "157: 防守方主将[勇城卫]兵力为0，无法再战，攻击方胜利！"
+        ]
+      },
+      {
+        "file": "战报_1104765_pid1099870.json",
+        "group": 5,
+        "actor": "孙尚香",
+        "target": "赵云",
+        "target_pos": 1,
+        "is_commander": true,
+        "has_cfg230": true,
+        "has_cfg9_second": false,
+        "has_cfg209_collateral": false,
+        "events_between_death_and_victory": [
+          "163: [赵云]兵力为0，无法再战",
+          "736: ",
+          "230: [孙尚香]执行来自【兵锋】的「连击」效果",
+          "733: ",
+          "157: 攻击方主将[赵云]兵力为0，无法再战，防守方胜利！"
+        ]
+      },
+      {
+        "file": "战报_1104793_pid1099898.json",
+        "group": 3,
+        "actor": "黄忠",
+        "target": "甘宁",
+        "target_pos": 1,
+        "is_commander": true,
+        "has_cfg230": true,
+        "has_cfg9_second": false,
+        "has_cfg209_collateral": false,
+        "events_between_death_and_victory": [
+          "163: [甘宁]兵力为0，无法再战",
+          "736: ",
+          "230: [黄忠]执行来自【兵锋】的「连击」效果",
+          "733: ",
+          "157: 攻击方主将[甘宁]兵力为0，无法再战，防守方胜利！"
+        ]
+      },
+      {
+        "file": "战报_1105146_pid1100241.json",
+        "group": 2,
+        "actor": "孙尚香",
+        "target": "张飞",
+        "target_pos": 1,
+        "is_commander": true,
+        "has_cfg230": true,
+        "has_cfg9_second": false,
+        "has_cfg209_collateral": true,
+        "events_between_death_and_victory": [
+          "163: [张飞]兵力为0，无法再战",
+          "736: ",
+          "149: [张飞]已经死亡，无法获得「混乱」效果",
+          "96: [孙尚香]执行来自【一鼓作气】的「一鼓作气[预备]」效果",
+          "22: [孙尚香]的「突击战法造成伤害增加」效果已消失",
+          "21: [孙尚香]的「突击战法造成伤害增加」效果已施加",
+          "230: [孙尚香]执行来自【兵锋】的「连击」效果",
+          "230: [孙尚香]执行来自【弓腰姬】的「弓腰姬」效果",
+          "26: [魏延]由于[孙尚香]【弓腰姬】的「弓腰姬」效果，损失了兵力587（139）",
+          "725: ",
+          "262: [孙尚香]拥有【1】个增益",
+          "26: [魏延]由于[孙尚香]【弓腰姬】的「弓腰姬」效果，损失了兵力93（46）",
+          "725: ",
+          "733: ",
+          "209: [魏延]由于主将[张飞]阵亡，损失了兵力4（42）",
+          "157: 攻击方主将[张飞]兵力为0，无法再战，防守方胜利！"
+        ]
+      },
+      {
+        "file": "战报_1108470_pid1103680.json",
+        "group": 3,
+        "actor": "孙尚香",
+        "target": "甘宁",
+        "target_pos": 1,
+        "is_commander": true,
+        "has_cfg230": true,
+        "has_cfg9_second": false,
+        "has_cfg209_collateral": false,
+        "events_between_death_and_victory": [
+          "163: [甘宁]兵力为0，无法再战",
+          "736: ",
+          "230: [孙尚香]执行来自【兵锋】的「连击」效果",
+          "733: ",
+          "157: 攻击方主将[甘宁]兵力为0，无法再战，防守方胜利！"
+        ]
+      }
+    ]
+  },
+  "cleave_battle_ending_evidence": {
+    "stats": {
+      "total_files": 32999,
+      "total_lethal_cleave_commander_cases": 14,
+      "cases_with_subsequent_cleave_hits": 5
+    },
+    "case_a_main_target_lethal_cleave_executes": 169,
+    "case_b_attacker_dies_during_cleave": 2,
+    "case_d_secondary_commander_lethal": 14,
+    "case_d_subsequent_cleave_continued": 5,
+    "case_e_cleave_chain_kills_commander": 0,
+    "summary": {
+      "case_a_rule": "Main target lethal does NOT prevent Cleave execution on secondary targets (169/169 cases).",
+      "case_d_rule": "Secondary commander death during Cleave does NOT abort remaining secondary targets in the same admitted Cleave effect (5/5 cases where remaining secondary existed, secondary executed before finalization).",
+      "finalization_barrier": "Victory log cfg 157 occurs after Cleave completes all admitted secondary targets and commander collateral cfg 209 commits."
+    },
+    "sample_lethal_cases": [
+      {
+        "file": "战报_1104666_pid1099769.json",
+        "group": 6,
+        "actor": "于禁",
+        "commander": "刘备",
+        "skill": "瞋目横矛",
+        "loss": 56,
+        "events_after_death": [
+          [
+            725,
+            ""
+          ],
+          [
+            163,
+            "[刘备]兵力为0，无法再战"
+          ],
+          [
+            736,
+            ""
+          ],
+          [
+            733,
+            ""
+          ],
+          [
+            157,
+            "攻击方主将[刘备]兵力为0，无法再战，防守方胜利！"
+          ]
+        ],
+        "remaining_cleave_hits": [],
+        "remaining_cleave_count": 0,
+        "has_victory_157": true,
+        "has_collateral_209": false
+      },
+      {
+        "file": "战报_1105074_pid1100167.json",
+        "group": 2,
+        "actor": "马云騄",
+        "commander": "张飞",
+        "skill": "瞋目横矛",
+        "loss": 308,
+        "events_after_death": [
+          [
+            725,
+            ""
+          ],
+          [
+            163,
+            "[张飞]兵力为0，无法再战"
+          ],
+          [
+            736,
+            ""
+          ],
+          [
+            96,
+            "[马云騄]执行来自【鸱苕凤姿】的「禁疗」效果"
+          ],
+          [
+            149,
+            "[法正]已经死亡，无法获得「禁疗」效果"
+          ],
+          [
+            733,
+            ""
+          ],
+          [
+            157,
+            "攻击方主将[张飞]兵力为0，无法再战，防守方胜利！"
+          ]
+        ],
+        "remaining_cleave_hits": [],
+        "remaining_cleave_count": 0,
+        "has_victory_157": true,
+        "has_collateral_209": false
+      },
+      {
+        "file": "战报_1105082_pid1100176.json",
+        "group": 3,
+        "actor": "马云騄",
+        "commander": "赵云",
+        "skill": "瞋目横矛",
+        "loss": 73,
+        "events_after_death": [
+          [
+            725,
+            ""
+          ],
+          [
+            163,
+            "[赵云]兵力为0，无法再战"
+          ],
+          [
+            736,
+            ""
+          ],
+          [
+            96,
+            "[马云騄]执行来自【鸱苕凤姿】的「禁疗」效果"
+          ],
+          [
+            149,
+            "[主公]已经死亡，无法获得「禁疗」效果"
+          ],
+          [
+            733,
+            ""
+          ],
+          [
+            157,
+            "攻击方主将[赵云]兵力为0，无法再战，防守方胜利！"
+          ]
+        ],
+        "remaining_cleave_hits": [],
+        "remaining_cleave_count": 0,
+        "has_victory_157": true,
+        "has_collateral_209": false
+      },
+      {
+        "file": "战报_1107861_pid1103064.json",
+        "group": 4,
+        "actor": "徐晃",
+        "commander": "刘备",
+        "skill": "瞋目横矛",
+        "loss": 360,
+        "events_after_death": [
+          [
+            725,
+            ""
+          ],
+          [
+            163,
+            "[刘备]兵力为0，无法再战"
+          ],
+          [
+            736,
+            ""
+          ],
+          [
+            96,
+            "[徐晃]执行来自【长驱直入】的「长驱直入[预备]」效果"
+          ],
+          [
+            64,
+            "[徐晃]身上的「造成兵刃伤害增加」效果已达最大叠加层数"
+          ],
+          [
+            96,
+            "[徐晃]执行来自【长驱直入】的「长驱直入[预备]」效果"
+          ],
+          [
+            64,
+            "[徐晃]身上的「造成兵刃伤害增加」效果已达最大叠加层数"
+          ],
+          [
+            733,
+            ""
+          ],
+          [
+            209,
+            "[主公]由于主将[刘备]阵亡，损失了兵力95（861）"
+          ],
+          [
+            157,
+            "攻击方主将[刘备]兵力为0，无法再战，防守方胜利！"
+          ]
+        ],
+        "remaining_cleave_hits": [],
+        "remaining_cleave_count": 0,
+        "has_victory_157": true,
+        "has_collateral_209": true
+      },
+      {
+        "file": "战报_1515964_pid1513725.json",
+        "group": 3,
+        "actor": "马云騄",
+        "commander": "刘备",
+        "skill": "瞋目横矛",
+        "loss": 500,
+        "events_after_death": [
+          [
+            725,
+            ""
+          ],
+          [
+            163,
+            "[刘备]兵力为0，无法再战"
+          ],
+          [
+            736,
+            ""
+          ],
+          [
+            96,
+            "[马云騄]执行来自【鸱苕凤姿】的「禁疗」效果"
+          ],
+          [
+            21,
+            "[主公]的「禁疗」效果已施加"
+          ],
+          [
+            733,
+            ""
+          ],
+          [
+            209,
+            "[主公]由于主将[刘备]阵亡，损失了兵力45（407）"
+          ],
+          [
+            157,
+            "攻击方主将[刘备]兵力为0，无法再战，防守方胜利！"
+          ]
+        ],
+        "remaining_cleave_hits": [],
+        "remaining_cleave_count": 0,
+        "has_victory_157": true,
+        "has_collateral_209": true
+      }
+    ]
+  },
+  "counter_battle_ending_evidence": {
+    "stats": {
+      "total_files_scanned": 32999,
+      "total_sibling_counter_cases": 2,
+      "commander_attacker_cases": 0
+    },
+    "summary": {
+      "total_sibling_counter_cases": 2,
+      "commander_attacker_cases": 0,
+      "conclusion": "Sibling counter continuation is frozen per Counter P0. CTS9-H02 is codified with explicit runtime regression."
+    }
+  },
+  "chain_battle_ending_evidence": {
+    "stats": {
+      "total_files": 32999,
+      "total_chain_commander_death_cases": 333,
+      "chain_continued_after_commander_death": 159
+    },
+    "summary": {
+      "total_chain_commander_death_cases": 333,
+      "chain_continued_after_commander_death": 159,
+      "conclusion": "Chain atomic traversal completes remaining linked targets before finalization barrier in 159/159 continuation cases."
+    },
+    "sample_cases": [
+      {
+        "file": "战报_1104440_pid1099540.json",
+        "group": 7,
+        "commander_name": "关羽",
+        "commander_death_idx": 99,
+        "total_chain_events": 2,
+        "chain_events_after_commander_death": 0,
+        "after_events": [],
+        "victory_idx": null,
+        "victory_after_chain_complete": false
+      },
+      {
+        "file": "战报_1071968_pid1066994.json",
+        "group": 3,
+        "commander_name": "勇城卫",
+        "commander_death_idx": 29,
+        "total_chain_events": 2,
+        "chain_events_after_commander_death": 0,
+        "after_events": [],
+        "victory_idx": null,
+        "victory_after_chain_complete": false
+      },
+      {
+        "file": "战报_1072308_pid1067334.json",
+        "group": 3,
+        "commander_name": "勇城卫",
+        "commander_death_idx": 14,
+        "total_chain_events": 2,
+        "chain_events_after_commander_death": 0,
+        "after_events": [],
+        "victory_idx": 18,
+        "victory_after_chain_complete": true
+      },
+      {
+        "file": "战报_1104998_pid1100090.json",
+        "group": 3,
+        "commander_name": "关羽",
+        "commander_death_idx": 34,
+        "total_chain_events": 6,
+        "chain_events_after_commander_death": 0,
+        "after_events": [],
+        "victory_idx": null,
+        "victory_after_chain_complete": false
+      },
+      {
+        "file": "战报_1104998_pid1100090.json",
+        "group": 3,
+        "commander_name": "关羽",
+        "commander_death_idx": 34,
+        "total_chain_events": 6,
+        "chain_events_after_commander_death": 1,
+        "after_events": [
+          "[张飞]由于[庞统]【连环计】的「铁索连环」效果，损失了兵力76（2598）"
+        ],
+        "victory_idx": null,
+        "victory_after_chain_complete": false
+      }
+    ]
+  },
+  "finalization_matrix": [
+    {
+      "operation": "ChainTraversal",
+      "death_victim": "commander",
+      "victory_satisfied": true,
+      "admitted_work_exists": true,
+      "work_after_death": "remaining linked slots continue propagation",
+      "new_work_admitted": false,
+      "finalization_point": "after Chain broadcast completes"
+    },
+    {
+      "operation": "CounterBatch",
+      "death_victim": "attacker commander",
+      "victory_satisfied": true,
+      "admitted_work_exists": true,
+      "work_after_death": "sibling C2 executes with 0 troop loss against dead target",
+      "new_work_admitted": false,
+      "finalization_point": "after CounterBatch completes"
+    },
+    {
+      "operation": "CleaveEffect",
+      "death_victim": "commander secondary",
+      "victory_satisfied": true,
+      "admitted_work_exists": true,
+      "work_after_death": "remaining admitted secondary target in effect executes",
+      "new_work_admitted": false,
+      "finalization_point": "after Cleave secondary queue completes and cfg 209 commits"
+    },
+    {
+      "operation": "ShareTransaction",
+      "death_victim": "protected target",
+      "victory_satisfied": true,
+      "admitted_work_exists": false,
+      "work_after_death": "TARGET_DEATH_INTERRUPT: pending sharer loss discarded (0 loss)",
+      "new_work_admitted": false,
+      "finalization_point": "after transaction terminal boundary"
+    },
+    {
+      "operation": "DistributionTransaction",
+      "death_victim": "commander participant",
+      "victory_satisfied": true,
+      "admitted_work_exists": true,
+      "work_after_death": "ENGINEERING_DEFAULT: transaction finishes already-planned commits",
+      "new_work_admitted": false,
+      "finalization_point": "after DistributionTransaction commits finish"
+    },
+    {
+      "operation": "NormalAttack",
+      "death_victim": "final enemy / commander",
+      "victory_satisfied": true,
+      "admitted_work_exists": false,
+      "work_after_death": "none (future Assault / Combo #2 / Next Action cancelled)",
+      "new_work_admitted": false,
+      "finalization_point": "after NormalAttack #1 synchronous lifecycle completes"
+    }
+  ]
+}

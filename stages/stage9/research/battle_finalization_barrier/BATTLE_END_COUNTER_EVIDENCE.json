@@ -1,0 +1,41 @@
+{
+  "stats": {
+    "total_files_scanned": 32999,
+    "total_sibling_counter_cases": 2,
+    "commander_attacker_cases": 0
+  },
+  "cases": [
+    {
+      "file": "战报_1069951_pid1064969.json",
+      "group_idx": 0,
+      "actor": "勇城卫",
+      "actor_pos": 2,
+      "is_actor_commander": false,
+      "actor_death_idx": 61,
+      "counters_before_death": [
+        "[夏侯惇]执行来自【后发制人】的「反击」效果",
+        "[勇城卫]由于[夏侯惇]【后发制人】的「反击」效果，损失了兵力336（1309）"
+      ],
+      "counters_after_death": [
+        "[夏侯惇]执行来自【绝地反击】的「绝地反击-绝境[预备]」效果"
+      ],
+      "victory_found": false
+    },
+    {
+      "file": "战报_1823002_pid1828486.json",
+      "group_idx": 3,
+      "actor": "勇城卫",
+      "actor_pos": 3,
+      "is_actor_commander": false,
+      "actor_death_idx": 74,
+      "counters_before_death": [
+        "[夏侯惇]执行来自【后发制人】的「反击」效果",
+        "[勇城卫]由于[夏侯惇]【后发制人】的「反击」效果，损失了兵力221（732）"
+      ],
+      "counters_after_death": [
+        "[夏侯惇]执行来自【绝地反击】的「绝地反击-绝境[预备]」效果"
+      ],
+      "victory_found": false
+    }
+  ]
+}

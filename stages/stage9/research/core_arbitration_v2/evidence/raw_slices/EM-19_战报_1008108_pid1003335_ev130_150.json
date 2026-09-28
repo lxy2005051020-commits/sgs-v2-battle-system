@@ -1,0 +1,792 @@
+{
+  "claim_id": "EM-19",
+  "original_file": "战报_1008108_pid1003335.json",
+  "event_range": [
+    130,
+    150
+  ],
+  "evidence_type": "positive",
+  "note": "Main target dies -> share does not execute",
+  "events": [
+    {
+      "key": 57,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_lancer_enemy.png'/><font color='#ec616b'>[傅士仁]</font> 行动回合",
+        "desc": " 行动回合",
+        "cfg_id": 723,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "num"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1ae840",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "num"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 58,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_lancer_enemy.png'/><font color='#ec616b'>[傅士仁]</font>开始行动",
+        "desc": "开始行动",
+        "cfg_id": 175,
+        "not_show": false,
+        "args": [
+          "hero_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1ae200",
+          "checked": 1,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 59,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 734,
+        "not_show": true,
+        "args": [
+          "hero_name",
+          "strength",
+          "defense",
+          "intelligent",
+          "speed",
+          "politics",
+          "luck",
+          "phys_crit",
+          "magic_crit",
+          "phys_crit_per",
+          "magic_crit_per",
+          "phys_att_per",
+          "magic_att_per",
+          "phys_def_per",
+          "magic_def_per",
+          "normal_att_per"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1bec40",
+          "checked": 16,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "strength"
+            },
+            {
+              "key": 3,
+              "value": "defense"
+            },
+            {
+              "key": 4,
+              "value": "intelligent"
+            },
+            {
+              "key": 5,
+              "value": "speed"
+            },
+            {
+              "key": 6,
+              "value": "politics"
+            },
+            {
+              "key": 7,
+              "value": "luck"
+            },
+            {
+              "key": 8,
+              "value": "phys_crit"
+            },
+            {
+              "key": 9,
+              "value": "magic_crit"
+            },
+            {
+              "key": 10,
+              "value": "phys_crit_per"
+            },
+            {
+              "key": 11,
+              "value": "magic_crit_per"
+            },
+            {
+              "key": 12,
+              "value": "phys_att_per"
+            },
+            {
+              "key": 13,
+              "value": "magic_att_per"
+            },
+            {
+              "key": 14,
+              "value": "phys_def_per"
+            },
+            {
+              "key": 15,
+              "value": "magic_def_per"
+            },
+            {
+              "key": 16,
+              "value": "normal_att_per"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 60,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_lancer_enemy.png'/><font color='#ec616b'>[傅士仁]</font>发动战法【护卫】",
+        "desc": "发动战法【护卫】",
+        "cfg_id": 7,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f2237e0",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 61,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_lancer_enemy.png'/><font color='#ec616b'>[曹洪]</font>的「分担」效果已施加",
+        "desc": "<font color='#ec616b'>[曹洪]</font>的「分担」效果已施加",
+        "cfg_id": 21,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1bdb60",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 62,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_lancer_enemy.png'/><font color='#ec616b'>[傅士仁]</font>对<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_siege_my.png'/><font color='#75b3ed'>[甘宁]</font>发动普通攻击",
+        "desc": "对<font color='#75b3ed'>[甘宁]</font>发动普通攻击",
+        "cfg_id": 9,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1bed20",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 63,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_siege_my.png'/><font color='#75b3ed'>[甘宁]</font>损失了兵力<font color='#C12020'>226</font>（3574）",
+        "desc": "<font color='#75b3ed'>[甘宁]</font>损失了兵力<font color='#C12020'>226</font>（3574）",
+        "cfg_id": 28,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1bf420",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "num1"
+            },
+            {
+              "key": 3,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 64,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 725,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1bfa00",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "num1"
+            },
+            {
+              "key": 4,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 65,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_siege_my.png'/><font color='#75b3ed'>[甘宁]</font>执行来自【气凌三军】的「反击」效果",
+        "desc": "<font color='#75b3ed'>[甘宁]</font>执行来自【气凌三军】的「反击」效果",
+        "cfg_id": 96,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1be120",
+          "checked": 3,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 66,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_siege_my.png'/><font color='#75b3ed'>[甘宁]</font>触发<font color='#F8913D'>会心</font>，兵刃伤害提升<font color='#F8913D'>118.30%</font>",
+        "desc": "<font color='#75b3ed'>[甘宁]</font>触发<font color='#F8913D'>会心</font>，兵刃伤害提升<font color='#F8913D'>118.30%</font>",
+        "cfg_id": 34,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "num"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f238900",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "num"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 67,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_lancer_enemy.png'/><font color='#ec616b'>[傅士仁]</font>由于<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_siege_my.png'/><font color='#75b3ed'>[甘宁]</font>【气凌三军】的「反击」效果，损失了兵力<font color='#F8913D'>222</font>（2778）",
+        "desc": "<font color='#ec616b'>[傅士仁]</font>由于<font color='#75b3ed'>[甘宁]</font>【气凌三军】的「反击」效果，损失了兵力<font color='#F8913D'>222</font>（2778）",
+        "cfg_id": 213,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "skill_name",
+          "buff_name",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x64be0ee0",
+          "checked": 6,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "skill_name"
+            },
+            {
+              "key": 4,
+              "value": "buff_name"
+            },
+            {
+              "key": 5,
+              "value": "num1"
+            },
+            {
+              "key": 6,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 68,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 725,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "num1",
+          "num2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1bfa00",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "num1"
+            },
+            {
+              "key": 4,
+              "value": "num2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 69,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 733,
+        "not_show": true,
+        "args": [
+          "hero_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f220600",
+          "checked": 1,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 1,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_siege_my.png'/><font color='#75b3ed'>[甘宁]</font> 行动回合",
+        "desc": " 行动回合",
+        "cfg_id": 723,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "num"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1ae840",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "num"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 2,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_siege_my.png'/><font color='#75b3ed'>[甘宁]</font>开始行动",
+        "desc": "开始行动",
+        "cfg_id": 175,
+        "not_show": false,
+        "args": [
+          "hero_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1ae200",
+          "checked": 1,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 3,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 734,
+        "not_show": true,
+        "args": [
+          "hero_name",
+          "strength",
+          "defense",
+          "intelligent",
+          "speed",
+          "politics",
+          "luck",
+          "phys_crit",
+          "magic_crit",
+          "phys_crit_per",
+          "magic_crit_per",
+          "phys_att_per",
+          "magic_att_per",
+          "phys_def_per",
+          "magic_def_per",
+          "normal_att_per"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1bec40",
+          "checked": 16,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "strength"
+            },
+            {
+              "key": 3,
+              "value": "defense"
+            },
+            {
+              "key": 4,
+              "value": "intelligent"
+            },
+            {
+              "key": 5,
+              "value": "speed"
+            },
+            {
+              "key": 6,
+              "value": "politics"
+            },
+            {
+              "key": 7,
+              "value": "luck"
+            },
+            {
+              "key": 8,
+              "value": "phys_crit"
+            },
+            {
+              "key": 9,
+              "value": "magic_crit"
+            },
+            {
+              "key": 10,
+              "value": "phys_crit_per"
+            },
+            {
+              "key": 11,
+              "value": "magic_crit_per"
+            },
+            {
+              "key": 12,
+              "value": "phys_att_per"
+            },
+            {
+              "key": 13,
+              "value": "magic_att_per"
+            },
+            {
+              "key": 14,
+              "value": "phys_def_per"
+            },
+            {
+              "key": 15,
+              "value": "magic_def_per"
+            },
+            {
+              "key": 16,
+              "value": "normal_att_per"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 4,
+      "event": {
+        "full_desc": null,
+        "desc": null,
+        "cfg_id": 735,
+        "not_show": true,
+        "args": [
+          "hero_name1",
+          "hero_name2",
+          "buff_name",
+          "round",
+          "skill_name"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1beca0",
+          "checked": 5,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            },
+            {
+              "key": 4,
+              "value": "round"
+            },
+            {
+              "key": 5,
+              "value": "skill_name"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 5,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_siege_my.png'/><font color='#75b3ed'>[甘宁]</font>对<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_lancer_enemy.png'/><font color='#ec616b'>[曹洪]</font>发动普通攻击",
+        "desc": "对<font color='#ec616b'>[曹洪]</font>发动普通攻击",
+        "cfg_id": 9,
+        "not_show": false,
+        "args": [
+          "hero_name1",
+          "hero_name2"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f1bed20",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name1"
+            },
+            {
+              "key": 2,
+              "value": "hero_name2"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 6,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_siege_my.png'/><font color='#75b3ed'>[甘宁]</font>触发<font color='#F8913D'>会心</font>，兵刃伤害提升<font color='#F8913D'>118.30%</font>",
+        "desc": "<font color='#75b3ed'>[甘宁]</font>触发<font color='#F8913D'>会心</font>，兵刃伤害提升<font color='#F8913D'>118.30%</font>",
+        "cfg_id": 34,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "num"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x7f238900",
+          "checked": 2,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "num"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    },
+    {
+      "key": 7,
+      "event": {
+        "full_desc": "<img src='asset/fairy/ui_3d/report/report_s1/image/icon/tag_lancer_enemy.png'/><font color='#ec616b'>[曹洪]</font>由于【护卫】的「分担」效果，本次攻击受到的伤害减少了14.40%",
+        "desc": "<font color='#ec616b'>[曹洪]</font>由于【护卫】的「分担」效果，本次攻击受到的伤害减少了14.40%",
+        "cfg_id": 123,
+        "not_show": false,
+        "args": [
+          "hero_name",
+          "skill_name",
+          "buff_name",
+          "num"
+        ],
+        "args_raw": {
+          "type": "table",
+          "pointer": "0x8587b460",
+          "checked": 4,
+          "entries": [
+            {
+              "key": 1,
+              "value": "hero_name"
+            },
+            {
+              "key": 2,
+              "value": "skill_name"
+            },
+            {
+              "key": 3,
+              "value": "buff_name"
+            },
+            {
+              "key": 4,
+              "value": "num"
+            }
+          ],
+          "source": "event.config_data.args"
+        }
+      }
+    }
+  ]
+}

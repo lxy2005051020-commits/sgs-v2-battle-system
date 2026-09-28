@@ -1,0 +1,78 @@
+{
+  "metadata": {
+    "task": "RF-P05 / DSTS9-B02 DISTRIBUTION Commander-Participant Death Transaction Extraction",
+    "total_files_scanned": 27,
+    "total_distribution_transactions": 136,
+    "commander_participant_lethal_cases_count": 0,
+    "ordinary_participant_lethal_control_count": 2,
+    "empirical_status": "EMPIRICALLY UNOBSERVED FOR COMMANDER (0 CASES IN 32,999 CORPUS); CONTROL PROVEN FOR ORDINARY PARTICIPANT (1 GRADE A CASE)",
+    "verdict": "DSTS9-B02 REMAINS OPEN (UNRESOLVED) / ORDINARY PARTICIPANT DEATH CONTINUATION RE-CONFIRMED"
+  },
+  "commander_samples": [],
+  "control_samples": [
+    {
+      "sample_id": "DIST_CONTROL_001",
+      "battle_id": "战报_596995_pid594340.json",
+      "round": 3,
+      "event_index": 20,
+      "parent_damage_event": "NormalAttack / SkillDamage",
+      "actual_target": "刘备",
+      "target_is_commander": true,
+      "distribution_holder": "刘备",
+      "source_skill": "义心昭烈",
+      "participant_plan_identities": [
+        "主公",
+        "程普"
+      ],
+      "participant_slot": 1,
+      "lethal_participant": "程普",
+      "is_commander": false,
+      "participant_troops_before": 49,
+      "participant_actual_loss": 49,
+      "participant_troops_after": 0,
+      "participant_death_fact": true,
+      "later_participant_exists": false,
+      "later_participant_committed": false,
+      "target_committed": true,
+      "target_loss": 266,
+      "target_troops_after": 46,
+      "target_death_fact": false,
+      "victory_marker": null,
+      "battle_finalized_marker": null,
+      "verdict": "ORDINARY_PARTICIPANT_DEATH_CONTINUES",
+      "evidence_grade": "Grade A"
+    },
+    {
+      "sample_id": "DIST_CONTROL_002",
+      "battle_id": "战报_596995_pid594340.json",
+      "round": 3,
+      "event_index": 20,
+      "parent_damage_event": "NormalAttack / SkillDamage",
+      "actual_target": "刘备",
+      "target_is_commander": true,
+      "distribution_holder": "刘备",
+      "source_skill": "义心昭烈",
+      "participant_plan_identities": [
+        "主公",
+        "程普"
+      ],
+      "participant_slot": 1,
+      "lethal_participant": "程普",
+      "is_commander": false,
+      "participant_troops_before": 49,
+      "participant_actual_loss": 49,
+      "participant_troops_after": 0,
+      "participant_death_fact": true,
+      "later_participant_exists": false,
+      "later_participant_committed": false,
+      "target_committed": true,
+      "target_loss": 266,
+      "target_troops_after": 46,
+      "target_death_fact": false,
+      "victory_marker": null,
+      "battle_finalized_marker": null,
+      "verdict": "ORDINARY_PARTICIPANT_DEATH_CONTINUES",
+      "evidence_grade": "Grade A"
+    }
+  ]
+}
