@@ -602,9 +602,10 @@ Authority: `stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md`.
 Integration Exit Gate = PASS
 
 Validated code/test SHA = 03c18d10fbfafa093e11f08ea779ac83c2e0d751
-PR #26 CI = 36383693483 / success
-pytest = 1607 passed
-demo = PASS
+Validated code/test CI = 36383693483 / success / 1607 passed / demo PASS
+Final PR-head CI = 36383957010 / success / 1607 passed / demo PASS
+Integration merge SHA = 4f41906d6f0ba18ea6c09e3ca600af4f5491e2c7
+Merged-main CI = 36384025882 / success / 1607 passed / demo PASS
 net new integration test nodes = +49
 
 Stage12 Gameplay Implementation = 7 / 7

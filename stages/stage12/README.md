@@ -160,7 +160,10 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - Runtime NOT YET FROZEN
 - Integration Exit Gate: PASS
 - Integration code/test SHA: `03c18d10fbfafa093e11f08ea779ac83c2e0d751`
-- Integration PR CI: `36383693483 / success / 1607 passed / demo PASS`
+- Validated code/test CI: `36383693483 / success / 1607 passed / demo PASS`
+- Final PR-head CI: `36383957010 / success / 1607 passed / demo PASS`
+- Integration merge SHA: `4f41906d6f0ba18ea6c09e3ca600af4f5491e2c7`
+- Merged-main CI: `36384025882 / success / 1607 passed / demo PASS`
 - Net new integration test nodes: +49
 - Composite owners preserved: Action / Damage / Provider / Recovery / Target / Equipment / Lifecycle
 - Counterattack denied independently; attached Active-origin DOT continues

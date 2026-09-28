@@ -145,7 +145,10 @@ Research FROZEN:
 - Runtime NOT YET FROZEN
 - Integration Exit Gate PASS
 - code/test SHA 03c18d10fbfafa093e11f08ea779ac83c2e0d751
-- PR #26 CI 36383693483 / 1607 passed / demo PASS
+- validated code/test CI 36383693483 / 1607 passed / demo PASS
+- final PR-head CI 36383957010 / 1607 passed / demo PASS
+- integration merge SHA 4f41906d6f0ba18ea6c09e3ca600af4f5491e2c7
+- merged-main CI 36384025882 / 1607 passed / demo PASS
 - +49 integration test nodes
 - Counter damage blocked independently; attached Active-origin DOT continues
 - friendly SINGLE / CHOOSE_N pre-RNG exclusion implemented

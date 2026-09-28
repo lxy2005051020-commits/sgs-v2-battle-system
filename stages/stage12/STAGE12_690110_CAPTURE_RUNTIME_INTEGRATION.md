@@ -384,14 +384,17 @@ Code/test SHA
 PR
 = #26
 
-CI
-= 36383693483 / success
+Validated code/test CI
+= 36383693483 / success / 1607 passed / demo PASS
 
-pytest
-= 1607 passed in 5.23s
+Final PR-head CI
+= 36383957010 / success / 1607 passed / demo PASS
 
-demo smoke
-= PASS
+Integration merge SHA
+= 4f41906d6f0ba18ea6c09e3ca600af4f5491e2c7
+
+Merged-main CI
+= 36384025882 / success / 1607 passed in 4.74s / demo PASS
 ```
 
 The same CI run executed the repository demo smoke step successfully and produced the independent-audit snapshot artifact.
@@ -430,7 +433,17 @@ Validated code/test SHA:
 03c18d10fbfafa093e11f08ea779ac83c2e0d751
 ```
 
-Final merge SHA is recorded after PR merge.
+Integration merge SHA:
+
+```text
+4f41906d6f0ba18ea6c09e3ca600af4f5491e2c7
+```
+
+Merged-main CI:
+
+```text
+36384025882 / success / 1607 passed / demo PASS
+```
 
 ## AW. Implementation Blockers
 
