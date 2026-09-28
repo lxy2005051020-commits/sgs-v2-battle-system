@@ -15,7 +15,7 @@
 - [Stage 9：Cross-Mechanism Runtime Orchestration — FROZEN](stage9/README.md)
 - [Stage 10：Persistent State Runtime Integration — FROZEN](stage10/README.md)
 - [Stage 11：官方状态补全（一）— RUNTIME FROZEN / POST-FREEZE ACCEPTED](stage11/README.md)
-- [Stage 12：官方状态补全（二）— RESEARCH IN PROGRESS / PRODUCTION RUNTIME NOT ACTIVE](stage12/README.md)
+- [Stage 12：官方状态补全（二）— 7/7 RUNTIME FROZEN / FINAL COMPLETION AUDIT PENDING](stage12/README.md)
 
 ## 2. 当前阶段
 
@@ -24,7 +24,7 @@ Stage 8  = FROZEN
 Stage 9  = FROZEN
 Stage10  = FROZEN / MAIN INTEGRATION COMPLETE
 Stage11  = RUNTIME FROZEN / POST-FREEZE ACCEPTED
-Stage12  = ACTIVATION GATE CLEARED / RESEARCH IN PROGRESS / PRODUCTION RUNTIME NOT ACTIVE
+Stage12  = ACTIVE / RESEARCH COMPLETE / 7 OF 7 RUNTIME FROZEN / FINAL COMPLETION AUDIT PENDING
 Stage13  = NOT ACTIVE
 ```
 
@@ -32,17 +32,17 @@ Stage13  = NOT ACTIVE
 
 ```text
 Official States            = 40
-Research FROZEN            = 36
-Runtime FROZEN TO CONTRACT = 33
-Strict Complete            = 32
+Research FROZEN            = 39
+Runtime FROZEN TO CONTRACT = 40
+Strict Complete            = 39
 
 Stage11 Scope              = 17
 Stage11 Research FROZEN    = 16
 Stage11 Runtime FROZEN     = 17
 
 Stage12 Scope              = 7
-Stage12 Research FROZEN    = 4
-Stage12 Runtime FROZEN     = 0
+Stage12 Research FROZEN    = 7
+Stage12 Runtime FROZEN     = 7
 ```
 
 Strict Complete requires both Research FROZEN and Runtime FROZEN TO CONTRACT.
@@ -67,6 +67,9 @@ Research FROZEN:
 - 690101 EXHAUSTION
 - 690107 FALSE_REPORT
 - 690108 PROVOCATION
+- 690222 INTIMIDATION
+- 690109 SABOTAGE
+- 690110 CAPTURE
 
 Battle research mirrors:
 
@@ -74,18 +77,16 @@ Battle research mirrors:
 - [690107 FALSE_REPORT](stage12/STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md)
 - [690108 PROVOCATION](stage12/STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md)
 
-Remaining research queue:
+Research queue: COMPLETE.
 
 ```text
-Wave 4:
-  690222 INTIMIDATION
-
-Wave 5:
-  690109 SABOTAGE
-  690110 CAPTURE
+Stage12 Research = 7 / 7 FROZEN
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen = 7 / 7
+Stage12 Complete = NO
 ```
 
-Stage12 production Runtime remains inactive. Research Freeze and Runtime Freeze remain separate governance states.
+Research Freeze and Runtime Freeze remain separate governance states. Stage12 now awaits its stage-level Final Completion / Freeze Audit before any Stage13 activation decision.
 
 ## 6. Project Stage 与 Research Wave
 
@@ -109,11 +110,10 @@ Research Wave 是研究顺序，不得覆盖项目阶段编号。
 ## 7. Current next action
 
 ```text
-Continue Stage12 Research Wave 4
-→ 690222 INTIMIDATION
-→ Mechanism Contract
-→ Freeze Audit
-→ Research FROZEN
+Stage12 Final Completion / Freeze Audit
+→ seven-state cross-state final regression
+→ governance consistency confirmation
+→ Stage12 completion decision
 ```
 
-Stage12 Runtime design work for already frozen states may be prepared only under the frozen research contracts and current production-activation governance.
+Stage13 remains NOT ACTIVE until that stage-level gate is explicitly closed.
