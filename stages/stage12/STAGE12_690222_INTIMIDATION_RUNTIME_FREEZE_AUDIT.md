@@ -601,7 +601,7 @@ pytest  = 1483 passed
 demo    = PASS
 ```
 
-A fresh `main` CI after merge is still required as release confirmation; the pre-audit 1453-pass run is not used as the sole freeze authority.
+Fresh merged-main release confirmation:\n\n```text\nMerged main SHA = 9e6062a80dcc796e0e94f9e7fd21d7d055d3abe7\nMain CI         = 36375033360 / SUCCESS\npytest          = 1483 passed\ndemo            = PASS\n```\n\nThe pre-audit 1453-pass run is not used as the sole freeze authority.
 
 ## AS. Files Created / Updated
 
@@ -630,7 +630,7 @@ Independent test SHA:
 
 `0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96`
 
-The final merged `main` SHA is recorded by repository history and final release report after PR merge.
+Final merged freeze-authority `main` SHA: `9e6062a80dcc796e0e94f9e7fd21d7d055d3abe7`.\n\nFresh merged-main CI: `36375033360 / SUCCESS / 1483 passed / demo PASS`.
 
 ## AU. Current Project Gates
 

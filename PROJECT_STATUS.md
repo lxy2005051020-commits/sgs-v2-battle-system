@@ -187,7 +187,7 @@ Battle-side research mirror:
     Runtime: FROZEN TO CONTRACT
     Independent Runtime Freeze Audit: PASS
     Audit Test SHA: 0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96
-    Fresh Audit PR CI: 36374443142 / success / 1483 passed / demo PASS
+    Fresh Audit PR CI: 36374443142 / success / 1483 passed / demo PASS\n    Final main release CI: 36375033360 / success / 1483 passed / demo PASS\n    Freeze main SHA: 9e6062a80dcc796e0e94f9e7fd21d7d055d3abe7
     TROOP consumer absence: NON_BLOCKING NOTE
     Stage12 Runtime Frozen: 5 / 7
     Governance CI: 36369968103 / success / 1409 passed / demo PASS
