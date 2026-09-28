@@ -6,7 +6,8 @@
 > Battle audit-entry baseline: \`6a86e358a937ca168e4729d8d559b873062e5381\`  
 > Independent audit test commit: \`f1db21211ce7d01fc867bc8c26c94cb82f11af49\`  
 > Local full-suite result: **1640 passed / demo PASS**  
-> Fresh PR CI: **PENDING**  
+> Audit-governance push CI: **36386363077 / success / 1640 passed / demo PASS**  
+> Fresh audit PR CI: **36386407024 / success / 1640 passed / demo PASS** at `aa35123341892a0dddc207c4005422f474060a82`  
 > Fresh merged-main CI: **PENDING**
 
 This document is the independent Runtime Freeze authority for 690110 CAPTURE. It audits the production implementation against the frozen Research contract and Shared Foundation authorities. It does not close Q16, Q23, Q34, Q42, Q44, Q45, Q63, Q70-Q74 or Q78, does not invent holder-death cleanup order, and does not activate Stage13/14/15.
@@ -482,7 +483,7 @@ full pytest = 1640 passed
 demo = PASS
 \`\`\`
 
-Fresh PR CI and fresh merged-main CI must both pass before this audit is treated as release-final. Integration CI 36384210914 is background evidence only and is not reused as Freeze authority.
+Audit-governance push CI `36386363077` and fresh PR CI `36386407024` both passed with **1640 passed / demo PASS** on `aa35123341892a0dddc207c4005422f474060a82`. Fresh merged-main CI remains mandatory. Integration CI 36384210914 is background evidence only and is not reused as Freeze authority.
 
 ## AW. Files Created / Updated
 
@@ -499,7 +500,7 @@ Governance synchronized in the canonical project/status/Stage12 planning and run
 
 \`\`\`text
 independent audit test commit = f1db21211ce7d01fc867bc8c26c94cb82f11af49
-audit/governance release SHA = PENDING
+audit/governance release SHA = aa35123341892a0dddc207c4005422f474060a82
 final merged-main SHA = PENDING
 \`\`\`
 
