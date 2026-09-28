@@ -196,7 +196,7 @@ The separate independent audit has now passed.
 Independent Runtime Freeze Audit = PASS
 Audit test SHA = 0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96
 Push CI = 36374423908 / success
-PR CI = 36374443142 / success
+PR CI = 36374443142 / success\nFinal merged-main CI = 36375033360 / success\nFinal merged-main SHA = 9e6062a80dcc796e0e94f9e7fd21d7d055d3abe7
 pytest = 1483 passed
 demo = PASS
 BLOCKER = 0
