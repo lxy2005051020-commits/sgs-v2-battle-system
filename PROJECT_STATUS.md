@@ -15,6 +15,8 @@
     Stage 9  Cross-Mechanism Runtime Orchestration FROZEN
     Stage10 Persistent State Runtime Integration   FROZEN
     Stage11 State Runtime Integration              FROZEN / POST-FREEZE ACCEPTED
+    Stage12 Official State Runtime Completion       FROZEN / COMPLETE
+    Stage13 Core Gameplay Mechanism Completion      READINESS READY / NOT ACTIVE
 
 ## 2. Cross-repository completion baseline
 
@@ -53,9 +55,11 @@ Canonical scope:
 
 Governance:
 
-    Stage12 Activation Gate: CLEARED
-    Stage12 Readiness: READY
-    Stage12 Active: YES
+    Stage12 Activation Gate: CLOSED_BY_FINAL_FREEZE
+    Stage12 Readiness: COMPLETE
+    Stage12 Active: NO
+    Stage12 Runtime: FROZEN
+    Stage12 Complete: YES
 
     Research Wave 4: COMPLETE
     Research FROZEN: 7 / 7
@@ -684,3 +688,50 @@ Fresh merged-main evidence: `f288adfb615cbb46444a32f77aadd615d22c267a`, CI run `
 
 Authority: `stages/stage12/STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
 Explicit dated historical snapshots remain historical and are not rewritten.
+
+
+## Stage13 Core Gameplay Mechanism Replan — 2026-09-28
+
+The project route after Stage12 is formally replanned.
+
+```text
+OLD:
+Stage13 = Assault Skill Runtime
+Stage14 = ordinary Active Skill Runtime
+Stage15 = Preparation Skill Runtime
+
+SUPERSEDED BY:
+
+Stage13 = Core Gameplay Mechanism Completion
+          游戏底层机制完备化
+
+Stage14+ = Skill System / 战法系统
+           exact subtype staging will be replanned only after Stage13 exit audit
+```
+
+Stage13 objective:
+
+1. inventory every game-engine mechanism required before large-scale skill integration;
+2. classify each mechanism as ALREADY_IMPLEMENTED / PARTIAL / MISSING / RESEARCH_REQUIRED / RUNTIME_GOVERNANCE_REQUIRED / UNSUPPORTED / NOT_NEEDED;
+3. close every implementation-required core gap through focused research, governance, design, implementation and independent audit;
+4. freeze deterministic replay, owner boundaries, lifecycle, timing, trigger/opportunity, attributes, targeting, RNG, effect primitives, modifiers, death/defeat, multi-effect work, removal and related engine foundations;
+5. only after the Stage13 engine-completion freeze may the project activate the Skill System integration stages.
+
+Current gate:
+
+```text
+Stage12 Runtime = FROZEN
+Stage12 Complete = YES
+FINAL_40_STATE_RUNTIME_AUDIT = PASS
+GOVERNANCE_SYNC = PASS
+
+Stage13 Readiness = READY
+Stage13 Active = NO
+Stage13 Gameplay Implementation = NOT STARTED
+
+NEXT = STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
+```
+
+This replan moves Assault Runtime behind the core-engine completion gate; it does not delete Assault from the future skill-system roadmap.
+
+Authority: `stages/stage13/STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN.md`.
