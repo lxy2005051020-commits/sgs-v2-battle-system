@@ -1,7 +1,7 @@
 # Stage12 690222 INTIMIDATION Runtime Integration
 
 Date: 2026-09-28  
-Status: GOVERNANCE_RESOLVED / GAMEPLAY_NOT_INTEGRATED
+Status: GOVERNANCE_RESOLVED / PASS / GAMEPLAY_NOT_INTEGRATED
 
 ## Current gate
 
@@ -18,7 +18,7 @@ The Runtime integration was intentionally not started until the binding-selectio
 
 ```text
 IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001
-= CLOSED SUBJECT TO GOVERNANCE CI
+= CLOSED
 ```
 
 Authority:
@@ -100,7 +100,7 @@ It must not implement source-skill counter formulas, Equipment/Bingshu/TALENT el
 
 ## Exit from this governance round
 
-After governance CI passes and the branch is merged:
+After governance validation:
 
 ```text
 IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001 = CLOSED
@@ -108,5 +108,5 @@ IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001 = CLOSED
 690222 Gameplay = NOT_INTEGRATED
 690222 Runtime = NOT_FROZEN
 Stage12 Runtime Frozen = 4 / 7
-NEXT = Resume 690222 INTIMIDATION Runtime Integration
+Governance CI = 36369968103 / success / 1409 passed / demo PASS\nNEXT = Resume 690222 INTIMIDATION Runtime Integration
 ```
