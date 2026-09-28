@@ -643,7 +643,7 @@ def test_attribution_alone_does_not_create_equipment_dependency() -> None:
     assert attributed is not None
     assert systems.dependency_evaluation_support.prerequisites(
         StateNode(attributed.instance_id)
-    ) == []
+    ) == ()
 
     apply_sabotage(systems, context, owner="a", source="c")
 
@@ -1109,5 +1109,5 @@ def test_provider_dependency_graph_is_explicit_and_owner_local() -> None:
     )
     assert systems.dependency_evaluation_support.prerequisites(
         ProviderNode(unrelated_provider)
-    ) == []
+    ) == ()
     assert_effective(systems, context, unrelated_ref)
