@@ -177,6 +177,10 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - Local independent audit: 33 tests / full suite 1640 passed / demo PASS
 - BLOCKER: 0 / unresolved MAJOR: 0
 - Freeze authority: [690110 Runtime Freeze Audit](STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md)
+- Final audit PR head: `acb2324be3b82153be0556a0bd49ba5e335d0fc1`
+- Final audit PR CI: `36386542790 / success / 1640 passed / demo PASS`
+- Freeze merge SHA: `6d9868c93819bfe6b536dc7d1178c2be5c79e3eb`
+- Fresh merged-main CI: `36386655272 / success / 1640 passed / demo PASS`
 - Integration record: [690110 Runtime Integration](STAGE12_690110_CAPTURE_RUNTIME_INTEGRATION.md)
 - Battle mirror: [690110 research authority sync](STAGE12_690110_CAPTURE_RESEARCH_SYNC.md)
 - Next: Stage12 Final Completion / Freeze Audit

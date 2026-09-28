@@ -2,30 +2,30 @@
 
 > Date: **2026-09-28**  
 > Verdict: **PASS / RUNTIME FROZEN TO CONTRACT**  
-> Research authority: \`lxy2005051020-commits/sgs-state-mechanics-research@e18ae56a4db5662b87458dfa8fdff25dcdd8053b\`  
-> Battle audit-entry baseline: \`6a86e358a937ca168e4729d8d559b873062e5381\`  
-> Independent audit test commit: \`f1db21211ce7d01fc867bc8c26c94cb82f11af49\`  
+> Research authority: `lxy2005051020-commits/sgs-state-mechanics-research@e18ae56a4db5662b87458dfa8fdff25dcdd8053b`  
+> Battle audit-entry baseline: `6a86e358a937ca168e4729d8d559b873062e5381`  
+> Independent audit test commit: `f1db21211ce7d01fc867bc8c26c94cb82f11af49`  
 > Local full-suite result: **1640 passed / demo PASS**  
-> Audit-governance push CI: **36386363077 / success / 1640 passed / demo PASS**  
-> Fresh audit PR CI: **36386407024 / success / 1640 passed / demo PASS** at `aa35123341892a0dddc207c4005422f474060a82`  
-> Fresh merged-main CI: **PENDING**
+> Final audit-head push CI: **36386537088 / success / 1640 passed / demo PASS**  
+> Final audit PR CI: **36386542790 / success / 1640 passed / demo PASS** at `acb2324be3b82153be0556a0bd49ba5e335d0fc1`  
+> Fresh merged-main CI: **36386655272 / success / 1640 passed / demo PASS** at `6d9868c93819bfe6b536dc7d1178c2be5c79e3eb`
 
 This document is the independent Runtime Freeze authority for 690110 CAPTURE. It audits the production implementation against the frozen Research contract and Shared Foundation authorities. It does not close Q16, Q23, Q34, Q42, Q44, Q45, Q63, Q70-Q74 or Q78, does not invent holder-death cleanup order, and does not activate Stage13/14/15.
 
 ## A. Repository Lock
 
-\`\`\`text
+```text
 Battle main = 6a86e358a937ca168e4729d8d559b873062e5381
 Research main = e18ae56a4db5662b87458dfa8fdff25dcdd8053b
 Research repository = READ ONLY / UNCHANGED
 Integration baseline CI = 36384210914 / success / 1607 passed / demo PASS
-\`\`\`
+```
 
 ## B. Audit Scope
 
 Independent attack surface:
 
-\`\`\`text
+```text
 Action
 Damage
 Provider
@@ -41,13 +41,13 @@ Event ownership
 canonical wiring
 bounded unknown preservation
 Stage9/10/11 + prior Stage12 regressions
-\`\`\`
+```
 
 A new independent suite was added at:
 
-\`\`\`text
+```text
 tests/test_stage12_690110_capture_runtime_freeze_audit.py
-\`\`\`
+```
 
 It adds **33 collected adversarial tests** on top of the 1607-test integration baseline.
 
@@ -57,7 +57,7 @@ It adds **33 collected adversarial tests** on top of the 1607-test integration b
 
 Authority order was preserved:
 
-\`\`\`text
+```text
 690110 Frozen Research Contract
 -> Stage12 Shared Foundation frozen design
 -> frozen ExecutionRight / Target / Provider / Equipment / Recovery governance
@@ -65,7 +65,7 @@ Authority order was preserved:
 -> earlier frozen Stage12 Runtime contracts
 -> production implementation
 -> executable tests
-\`\`\`
+```
 
 Production was not used to answer bounded Research questions.
 
@@ -75,7 +75,7 @@ Production was not used to answer bounded Research questions.
 
 CAPTURE supplies typed facts/contributions. Domain decisions remain owned by:
 
-\`\`\`text
+```text
 Action     -> ActionSystem
 Damage     -> DamageInstanceCoordinator / DamageExecutionRightPort
 Provider   -> ProviderValidityPolicy
@@ -84,7 +84,7 @@ Target     -> SkillTargetPolicy + TargetSystem
 Equipment  -> EquipmentEffectivenessPolicy
 Lifecycle  -> StateLifecycleSystem
 Removal    -> StateRemovalPolicy / StateRemovalCoordinator
-\`\`\`
+```
 
 No Capture God Object or second truth universe exists.
 
@@ -92,13 +92,13 @@ No Capture God Object or second truth universe exists.
 
 **PASS.**
 
-Effective Capture denies \`NATURAL_ACTION\` through CurrentActorPermissionPolicy. The denial occurs in ActionSystem before NormalAttackSystem.
+Effective Capture denies `NATURAL_ACTION` through CurrentActorPermissionPolicy. The denial occurs in ActionSystem before NormalAttackSystem.
 
 ## F. STUN Composition Audit
 
 **PASS.**
 
-CAPTURE + STUN denies the natural action without consuming the STUN \`remaining_blocks\` counter. Source-code branch order therefore does not mutate STUN state merely because Capture also denies the action.
+CAPTURE + STUN denies the natural action without consuming the STUN `remaining_blocks` counter. Source-code branch order therefore does not mutate STUN state merely because Capture also denies the action.
 
 ## G. NormalAttack Short-circuit Audit
 
@@ -106,12 +106,12 @@ CAPTURE + STUN denies the natural action without consuming the STUN \`remaining_
 
 Independent instrumentation proves:
 
-\`\`\`text
+```text
 Capture denial
 -> NormalAttackSystem.execute = 0
 -> NORMAL_ATTACK event for holder = 0
 -> normal-attack target RNG = 0
-\`\`\`
+```
 
 ## H. Damage Work Taxonomy Audit
 
@@ -119,13 +119,13 @@ Capture denial
 
 Typed work remains distinct:
 
-\`\`\`text
+```text
 NEW_ACTOR_DRIVEN_DAMAGE
 COUNTER_DAMAGE
 ATTACHED_EXISTING_DOT
 FREE_PROXY_DAMAGE
 ALREADY_CREATED_DAMAGE_REQUEST
-\`\`\`
+```
 
 The implementation does not collapse these into a universal source-id damage gate.
 
@@ -145,31 +145,31 @@ Counter opportunity/batch survives. Counter execution bookkeeping remains observ
 
 **PASS.**
 
-Previously attached Active-origin periodic damage continues after the historical provider becomes captured. It is classified as \`ATTACHED_EXISTING_DOT\`, not as new current-actor damage.
+Previously attached Active-origin periodic damage continues after the historical provider becomes captured. It is classified as `ATTACHED_EXISTING_DOT`, not as new current-actor damage.
 
 ## L. Free Proxy Audit
 
 **PASS.**
 
-A free proxy current actor remains legal when only its historical source is captured. The evaluated actor dimension reads \`current_actor_id\`, not vague provenance.
+A free proxy current actor remains legal when only its historical source is captured. The evaluated actor dimension reads `current_actor_id`, not vague provenance.
 
 ## M. Q16 DamageRequest Boundary Audit
 
 **PASS.**
 
-\`ALREADY_CREATED_DAMAGE_REQUEST\` remains explicitly \`UNSUPPORTED_BOUNDARY\`. The audit does not choose continue/deny.
+`ALREADY_CREATED_DAMAGE_REQUEST` remains explicitly `UNSUPPORTED_BOUNDARY`. The audit does not choose continue/deny.
 
 ## N. ExecutionRight Audit
 
 **PASS.**
 
-Active new actor-driven damage uses actor \`RECHECK_AT_EXECUTION\`; attached DOT marks actor permission \`NOT_APPLICABLE\`. Provider/target/equipment dimensions are not silently converted to recheck-everything.
+Active new actor-driven damage uses actor `RECHECK_AT_EXECUTION`; attached DOT marks actor permission `NOT_APPLICABLE`. Provider/target/equipment dimensions are not silently converted to recheck-everything.
 
 ## O. PASSIVE / COMMAND Provider Audit
 
 **PASS.**
 
-PASSIVE and COMMAND Providers become \`SUPPRESSED\` through ProviderValidityPolicy. Their SkillRuntime identity and \`enabled=True\` baseline remain unchanged, and blocked resolution consumes zero activation RNG.
+PASSIVE and COMMAND Providers become `SUPPRESSED` through ProviderValidityPolicy. Their SkillRuntime identity and `enabled=True` baseline remain unchanged, and blocked resolution consumes zero activation RNG.
 
 Negative scope remains intact for ACTIVE / ASSAULT / TROOP / FORMATION / TALENT.
 
@@ -207,11 +207,11 @@ Instrumentation observes the candidate population entering TargetSystem after po
 
 **PASS.**
 
-\`\`\`text
+```text
 FIXED_ALL / ALL_ALLIES -> UNSUPPORTED_BOUNDARY
 LOCK_RESOLVED -> retained result, no requery
 INHERIT_RESOLVED -> retained result, no requery
-\`\`\`
+```
 
 Q42/Q44/Q45 remain bounded.
 
@@ -229,10 +229,10 @@ Non-ATTRIBUTE equipment categories remain explicit unsupported boundaries.
 
 For the same non-ATTRIBUTE TRIGGER category:
 
-\`\`\`text
+```text
 CAPTURE -> UNSUPPORTED_BOUNDARY
 SABOTAGE -> SUPPRESSED
-\`\`\`
+```
 
 The 690109 broader equipment scope does not leak into 690110.
 
@@ -258,7 +258,7 @@ After source death and defeat cleanup, the established Capture instance remains 
 
 **PASS.**
 
-Resident Capture + incoming Capture returns \`UNSUPPORTED_BOUNDARY\`. The rejected attempt consumes no additional application generation. No refresh/replace/stack/extend law is invented.
+Resident Capture + incoming Capture returns `UNSUPPORTED_BOUNDARY`. The rejected attempt consumes no additional application generation. No refresh/replace/stack/extend law is invented.
 
 ## AB. Lifetime / Restoration / No Replay Audit
 
@@ -276,7 +276,7 @@ Capture adapters own zero RNG. Policy queries own zero RNG. Denied natural actio
 
 **PASS.**
 
-\`capture_integration.py\` performs no direct \`event_bus.publish\`. No CAPTURE-specific public event type was introduced. Canonical domain owners continue to publish committed facts.
+`capture_integration.py` performs no direct `event_bus.publish`. No CAPTURE-specific public event type was introduced. Canonical domain owners continue to publish committed facts.
 
 ## AE. Canonical Wiring Audit
 
@@ -290,7 +290,7 @@ The BattleSystems composition root contains one shared owner instance for the re
 
 The independent suite exercises real production paths across:
 
-\`\`\`text
+```text
 ActionSystem
 EffectExecutor / DamageInstanceCoordinator
 CounterSystem
@@ -300,7 +300,7 @@ SkillTargetPolicy / TargetSystem
 AttributeSystem / EquipmentEffectivenessPolicy
 StateLifecycleSystem
 StateRemovalCoordinator
-\`\`\`
+```
 
 ## AG. Adversarial Tests Added
 
@@ -312,9 +312,9 @@ Required named attacks include natural-action short circuit, STUN preservation, 
 
 **PASS.**
 
-Production \`capture_integration.py\` contains no:
+Production `capture_integration.py` contains no:
 
-\`\`\`text
+```text
 CaptureRuntime
 CaptureManager
 CaptureEngine
@@ -324,7 +324,7 @@ SkillRuntime.enabled mutation
 provider unregister/removal
 20228 / 暗箭难防 source-skill branch
 TargetQueryMode / LOCK_RESOLVED / INHERIT_RESOLVED guessed semantics
-\`\`\`
+```
 
 No STUN / WEAKNESS / FALSE_REPORT / HEALING_BLOCK alias is used as Capture truth.
 
@@ -334,9 +334,9 @@ No STUN / WEAKNESS / FALSE_REPORT / HEALING_BLOCK alias is used as Capture truth
 
 Canonical discoverable Stage9 suite:
 
-\`\`\`text
+```text
 427 passed
-\`\`\`
+```
 
 A manually forced, underscore-prefixed historical snapshot contains an obsolete legacy EffectExecutor assertion and is not collected by the canonical pytest suite. See NOTE-690110-AUD-001.
 
@@ -344,26 +344,26 @@ A manually forced, underscore-prefixed historical snapshot contains an obsolete 
 
 **PASS.**
 
-\`\`\`text
+```text
 145 passed
-\`\`\`
+```
 
 ## AK. Stage11 Regression
 
 **PASS.**
 
-\`\`\`text
+```text
 12 passed
 Stage11 Reopen Required = NO
-\`\`\`
+```
 
 ## AL. 690089 Regression
 
 **PASS.**
 
-\`\`\`text
+```text
 52 passed
-\`\`\`
+```
 
 INSIGHT does not reject CAPTURE.
 
@@ -371,9 +371,9 @@ INSIGHT does not reject CAPTURE.
 
 **PASS.**
 
-\`\`\`text
+```text
 58 passed
-\`\`\`
+```
 
 SkillPermission / ExecutionRight boundaries remain intact.
 
@@ -381,9 +381,9 @@ SkillPermission / ExecutionRight boundaries remain intact.
 
 **PASS.**
 
-\`\`\`text
+```text
 54 passed
-\`\`\`
+```
 
 ProviderValidity multi-cause composition remains intact.
 
@@ -391,9 +391,9 @@ ProviderValidity multi-cause composition remains intact.
 
 **PASS.**
 
-\`\`\`text
+```text
 93 passed
-\`\`\`
+```
 
 NEW_QUERY / LOCK_RESOLVED / TargetOperation identity remain intact.
 
@@ -401,9 +401,9 @@ NEW_QUERY / LOCK_RESOLVED / TargetOperation identity remain intact.
 
 **PASS.**
 
-\`\`\`text
+```text
 91 passed
-\`\`\`
+```
 
 Bound Provider identity, RD-SF-006 and suppression composition remain intact.
 
@@ -411,9 +411,9 @@ Bound Provider identity, RD-SF-006 and suppression composition remain intact.
 
 **PASS.**
 
-\`\`\`text
+```text
 75 passed
-\`\`\`
+```
 
 Sabotage broad equipment contribution scope remains distinct from Capture ATTRIBUTE-only scope.
 
@@ -421,9 +421,9 @@ Sabotage broad equipment contribution scope remains distinct from Capture ATTRIB
 
 **PASS.**
 
-\`\`\`text
+```text
 222 passed
-\`\`\`
+```
 
 Shared Action / ExecutionRight / ProviderValidity / Recovery / Target / Equipment / Lifecycle / Removal / dependency infrastructure remains green.
 
@@ -431,7 +431,7 @@ Shared Action / ExecutionRight / ProviderValidity / Recovery / Target / Equipmen
 
 ### NOTE-690110-AUD-001
 
-\`\`\`text
+```text
 Severity: NOTE
 Area: historical Stage9 test archive
 Frozen expectation: canonical Stage9 regression must pass
@@ -442,23 +442,23 @@ Evidence: manually forcing tests/_stage9_phase_9_4_damage_instance_history.py ex
 Impact: none on current production authority
 Required correction: none; do not promote historical non-discoverable snapshot to current contract
 Freeze impact: NON-BLOCKING
-\`\`\`
+```
 
 No BLOCKER or unresolved MAJOR was found.
 
 ## AT. Corrections Applied
 
-\`\`\`text
+```text
 Production gameplay correction = NONE
 Shared Foundation correction = NONE
 Research correction = NONE
 Independent audit tests = ADDED
 Governance sync = APPLIED
-\`\`\`
+```
 
 ## AU. Runtime Freeze Verdict
 
-\`\`\`text
+```text
 690110 CAPTURE Research = FROZEN
 690110 CAPTURE Gameplay = IMPLEMENTED
 690110 CAPTURE Runtime = FROZEN TO CONTRACT
@@ -470,45 +470,46 @@ unresolved MAJOR = 0
 Research Reopen Required = NO
 Shared Foundation Reopen Required = NO
 Stage11 Reopen Required = NO
-\`\`\`
+```
 
 ## AV. pytest / demo / CI
 
 Local audit source snapshot:
 
-\`\`\`text
+```text
 baseline main = 6a86e358a937ca168e4729d8d559b873062e5381
 independent audit suite = 33 passed
 full pytest = 1640 passed
 demo = PASS
-\`\`\`
+```
 
-Audit-governance push CI `36386363077` and fresh PR CI `36386407024` both passed with **1640 passed / demo PASS** on `aa35123341892a0dddc207c4005422f474060a82`. Fresh merged-main CI remains mandatory. Integration CI 36384210914 is background evidence only and is not reused as Freeze authority.
+Final audit-head push CI `36386537088` and PR CI `36386542790` both passed with **1640 passed / demo PASS** on `acb2324be3b82153be0556a0bd49ba5e335d0fc1`. The merged-main CI `36386655272` then passed with **1640 passed / demo PASS** at `6d9868c93819bfe6b536dc7d1178c2be5c79e3eb`. Integration CI `36384210914` remains background evidence only and is not reused as Freeze authority.
 
 ## AW. Files Created / Updated
 
 Created:
 
-\`\`\`text
+```text
 tests/test_stage12_690110_capture_runtime_freeze_audit.py
 stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md
-\`\`\`
+```
 
 Governance synchronized in the canonical project/status/Stage12 planning and runtime mapping authorities. Research repository remains unchanged.
 
 ## AX. Commit SHA
 
-\`\`\`text
+```text
 independent audit test commit = f1db21211ce7d01fc867bc8c26c94cb82f11af49
-audit/governance release SHA = aa35123341892a0dddc207c4005422f474060a82
-final merged-main SHA = PENDING
-\`\`\`
+audit/governance final PR-head SHA = acb2324be3b82153be0556a0bd49ba5e335d0fc1
+freeze merge SHA = 6d9868c93819bfe6b536dc7d1178c2be5c79e3eb
+freeze merged-main CI = 36386655272 / success / 1640 passed / demo PASS
+```
 
 ## AY. Current Project Gates
 
 After successful fresh CI:
 
-\`\`\`text
+```text
 Stage11 Runtime = FROZEN
 Stage12 Research = 7 / 7 FROZEN
 Stage12 Shared Foundation Design = FROZEN
@@ -526,7 +527,7 @@ Stage12 Gameplay Implementation = 7 / 7
 Stage12 Runtime Frozen = 7 / 7
 Stage12 Complete = NO
 Stage13 / Stage14 / Stage15 Active = NO
-\`\`\`
+```
 
 Seven state runtimes being frozen is not by itself authority to activate Stage13.
 
@@ -534,8 +535,8 @@ Seven state runtimes being frozen is not by itself authority to activate Stage13
 
 No existing roadmap entry directly authorizes Stage13 immediately after the seventh state freeze. The next governance gate is therefore:
 
-\`\`\`text
+```text
 NEXT = Stage12 Final Completion / Freeze Audit
-\`\`\`
+```
 
 That stage-level audit must confirm the full seven-state cross-state matrix, final governance consistency and Stage12 completion declaration before any Stage13 activation decision.
