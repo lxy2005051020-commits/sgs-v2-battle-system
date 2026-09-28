@@ -7,6 +7,8 @@ from sgs_v2.battle_core import (
     BattleEngine,
     BattlePhase,
     BattleSystems,
+    DamageSkillEffectSpec,
+    DamageType,
     DependencyCycleError,
     EmptyStateRuntimeParams,
     EventBus,
@@ -15,10 +17,15 @@ from sgs_v2.battle_core import (
     OfficialStateId,
     ProviderDependency,
     ProviderNode,
+    PreparationMode,
     RandomSystem,
     RemovalOperation,
+    SkillDefinition,
     SkillProviderRef,
+    SkillRuntime,
     SkillSlot,
+    SkillTargetMode,
+    SkillType,
     StateApplicationResultStatus,
     StateCandidate,
     StateEffectivenessContribution,
@@ -53,6 +60,25 @@ def make_context(seed: int = 69008999) -> BattleContext:
     context.current_round = 1
     context.current_phase = BattlePhase.ACTION_ORDER.value
     return context
+
+
+def register_intimidation_provider(context: BattleContext) -> None:
+    context.skill_runtimes.register(
+        SkillRuntime(
+            definition=SkillDefinition(
+                skill_id="audit-intimidation-provider",
+                name="audit-intimidation-provider",
+                activation_rate=1.0,
+                target_mode=SkillTargetMode.SINGLE_RANDOM_ENEMY,
+                effect_specs=(DamageSkillEffectSpec(DamageType.WEAPON),),
+                skill_type=SkillType.ACTIVE,
+                preparation_mode=PreparationMode.NONE,
+            ),
+            owner_id="a0",
+            skill_slot=SkillSlot.INHERENT,
+            enabled=True,
+        )
+    )
 
 
 def candidate(
@@ -258,6 +284,8 @@ def test_negative_exclusion_resident_is_not_suppressed(
 ) -> None:
     context = make_context()
     systems = BattleSystems()
+    if state_id == OfficialStateId.INTIMIDATION.value:
+        register_intimidation_provider(context)
     excluded = apply(systems, context, state_id).instance
     assert excluded is not None
 

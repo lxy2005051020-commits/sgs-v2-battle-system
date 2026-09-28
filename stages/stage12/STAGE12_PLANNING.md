@@ -387,11 +387,15 @@ Stage12 Shared Foundation Implementation = COMPLETE
 690108 PROVOCATION Runtime = FROZEN TO CONTRACT
 Audit code/test SHA = e0f9e0c24a4c379918c3b9389a67dcfea138ac13
 Fresh audit CI = 36334810169 / success / 1392 passed / demo PASS
-Stage12 Gameplay Implementation = 4 / 7
+690222 INTIMIDATION Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690222 INTIMIDATION Runtime = NOT_YET_FROZEN
+690222 Integration code SHA = 834f6e7508c8006342ff37593454ef91d8e8d0a4
+690222 Integration CI = 36372018782 / success / 1453 passed / demo PASS
+Stage12 Gameplay Implementation = 5 / 7
 Stage12 Runtime Frozen = 4 / 7
 Stage11 Reopen Required = NO
 Stage13 / Stage14 / Stage15 Active = NO
-NEXT = 690222 INTIMIDATION Runtime Integration
+NEXT = 690222 INTIMIDATION Independent Runtime Freeze Audit
 ```
 
 690108 authority: `STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`. Earlier research/runtime-entry snapshots in this planning document remain historical and are not retroactively rewritten.

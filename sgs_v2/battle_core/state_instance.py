@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 from .enums import BattlePhase
+from .provider_identity import SkillProviderRef
 from .skill_runtime import SkillSlot
 from .state_generation import PersistentLifecycleWindow, StateApplicationGenerationId
 from .state_lifetime import StateLifetimeSpec
@@ -56,6 +57,7 @@ class StateInstance:
     current_generation_id: StateApplicationGenerationId | None = None
     lifecycle_window: PersistentLifecycleWindow | None = None
     lifetime_spec: StateLifetimeSpec | None = None
+    bound_provider_ref: SkillProviderRef | None = None
 
     def __post_init__(self) -> None:
         if not self.instance_id:
@@ -100,6 +102,17 @@ class StateInstance:
             raise TypeError(
                 f"lifetime_spec must be a StateLifetimeSpec or None, got {type(self.lifetime_spec)}"
             )
+        if self.bound_provider_ref is not None and not isinstance(
+            self.bound_provider_ref, SkillProviderRef
+        ):
+            raise TypeError(
+                "bound_provider_ref must be a SkillProviderRef or None"
+            )
+        if (
+            self.bound_provider_ref is not None
+            and self.bound_provider_ref.owner_id != self.owner_id
+        ):
+            raise ValueError("bound_provider_ref owner must match StateInstance owner_id")
 
         validate_state_runtime_params(self.runtime_params)
 

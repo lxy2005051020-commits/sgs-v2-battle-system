@@ -1,6 +1,6 @@
 # 第十二阶段 · 官方状态补全（二）
 
-> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690089 + 690101 + 690107 + 690108 RUNTIME FROZEN**
+> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690089 + 690101 + 690107 + 690108 RUNTIME FROZEN / 690222 IMPLEMENTED_PENDING_RUNTIME_AUDIT**
 > Canonical Scope：**7 states**
 > Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 > Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）
@@ -15,7 +15,7 @@
     Stage12 Research FROZEN: 7 / 7
     Stage12 Runtime Frozen: 4 / 7
 
-Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 与 Implementation 已完成；690089 INSIGHT、690101 EXHAUSTION、690107 FALSE_REPORT 与 690108 PROVOCATION 均已通过独立 Runtime Freeze Audit，因此 Stage12 Runtime Frozen = 4 / 7；690222 / 690109 / 690110 尚未 gameplay-integrated。
+Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 与 Implementation 已完成；690089 INSIGHT、690101 EXHAUSTION、690107 FALSE_REPORT 与 690108 PROVOCATION 均已通过独立 Runtime Freeze Audit，因此 Stage12 Runtime Frozen = 4 / 7。690222 INTIMIDATION gameplay 已完成 contract-aligned integration，但尚未通过独立 Runtime Freeze Audit；690109 / 690110 仍未 gameplay-integrated。
 
 ## 已冻结研究
 
@@ -114,10 +114,15 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - RESUME: retain binding / 0 binding RNG
 - Empty pool and TALENT eligibility remain unsupported boundaries
 - IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001: CLOSED
-- Runtime NOT_INTEGRATED
+- Gameplay IMPLEMENTED_PENDING_RUNTIME_AUDIT
+- Runtime NOT_YET_FROZEN
 - Counter semantics separated from 690222 State Stack
+- Stage12 Gameplay Implementation: 5 / 7
 - Stage12 Runtime Frozen: 4 / 7
-- Governance CI: 36369968103 / success / 1409 passed / demo PASS\n- Next: Resume 690222 INTIMIDATION Runtime Integration
+- Governance CI: 36369968103 / success / 1409 passed / demo PASS
+- Integration code SHA: `834f6e7508c8006342ff37593454ef91d8e8d0a4`
+- Integration CI: `36372018782 / success / 1453 passed / demo PASS`
+- Next: 690222 INTIMIDATION Independent Runtime Freeze Audit
 - Governance authority: [690222 binding selection governance](STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md)
 - Integration gate record: [690222 Runtime Integration](STAGE12_690222_INTIMIDATION_RUNTIME_INTEGRATION.md)
 - Battle mirror: [690222 research authority sync](STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)
@@ -149,7 +154,7 @@ Wave 5: COMPLETE
 Stage12 Research: 7 / 7 FROZEN
 
 Next project task:
-690222 INTIMIDATION Runtime Integration
+690222 INTIMIDATION Independent Runtime Freeze Audit
 
 ## Stage12 responsibility
 

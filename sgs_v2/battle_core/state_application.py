@@ -200,6 +200,80 @@ ApplicationDependencyRuleAdapter: TypeAlias = Callable[
 ]
 
 
+@dataclass(frozen=True, slots=True)
+class StateApplicationCommitAugmentation:
+    """Mechanism-owned commit data resolved after generic precommit checks.
+
+    This seam is intentionally narrow: it may add/replace dependency edges and
+    attach immutable binding payload, or stop at an unsupported boundary. It
+    does not own lifecycle mutation, generation allocation, or event publication.
+    """
+
+    binding_payload: object | None = None
+    dependency_replacements: tuple[
+        tuple[DependencyNode, tuple[DependencyNode, ...]], ...
+    ] = ()
+    unsupported_reason_rule_id: str | None = None
+
+    def __post_init__(self) -> None:
+        replacements = tuple(self.dependency_replacements)
+        seen_consumers: set[DependencyNode] = set()
+        normalized: list[
+            tuple[DependencyNode, tuple[DependencyNode, ...]]
+        ] = []
+        for consumer, prerequisites in replacements:
+            if not isinstance(consumer, (StateNode, ProviderNode)):
+                raise TypeError("augmentation consumer must be a DependencyNode")
+            if consumer in seen_consumers:
+                raise ValueError(
+                    "augmentation dependency replacement consumers must be unique"
+                )
+            seen_consumers.add(consumer)
+            values = tuple(prerequisites)
+            if any(
+                not isinstance(item, (StateNode, ProviderNode))
+                for item in values
+            ):
+                raise TypeError(
+                    "augmentation prerequisites must contain DependencyNode values"
+                )
+            normalized.append(
+                (consumer, tuple(sorted(set(values), key=repr)))
+            )
+        object.__setattr__(
+            self,
+            "dependency_replacements",
+            tuple(normalized),
+        )
+
+        if self.unsupported_reason_rule_id is not None:
+            if (
+                not isinstance(self.unsupported_reason_rule_id, str)
+                or not self.unsupported_reason_rule_id.strip()
+            ):
+                raise ValueError(
+                    "unsupported_reason_rule_id cannot be empty when provided"
+                )
+            if self.binding_payload is not None or normalized:
+                raise ValueError(
+                    "unsupported augmentation cannot carry commit data"
+                )
+
+
+ApplicationCommitAugmentationAdapter: TypeAlias = Callable[
+    [
+        object,
+        StateCandidate,
+        tuple[StateInstance, ...],
+        StateNode,
+        tuple[tuple[DependencyNode, tuple[DependencyNode, ...]], ...],
+        tuple[DependencyNode, ...],
+        ApplicationDisposition,
+    ],
+    StateApplicationCommitAugmentation | None,
+]
+
+
 class StateConflictPolicy:
     """Pure post-admission state conflict decision owner."""
 
@@ -340,6 +414,7 @@ class StateApplicationCoordinator:
         "_transition_coordinator",
         "_state_effectiveness_policy",
         "_dependency_rule_adapters",
+        "_commit_augmentation_adapters",
         "_effective_activation_ports",
     )
 
@@ -370,6 +445,9 @@ class StateApplicationCoordinator:
         self._transition_coordinator = transition_coordinator
         self._state_effectiveness_policy = state_effectiveness_policy
         self._dependency_rule_adapters: list[ApplicationDependencyRuleAdapter] = []
+        self._commit_augmentation_adapters: list[
+            ApplicationCommitAugmentationAdapter
+        ] = []
         self._effective_activation_ports: list[CommittedEffectiveStateActivationPort] = []
 
     def register_effective_activation_port(
@@ -389,6 +467,15 @@ class StateApplicationCoordinator:
             raise TypeError("dependency rule adapter must be callable")
         if adapter not in self._dependency_rule_adapters:
             self._dependency_rule_adapters.append(adapter)
+
+    def register_commit_augmentation_adapter(
+        self,
+        adapter: ApplicationCommitAugmentationAdapter,
+    ) -> None:
+        if not callable(adapter):
+            raise TypeError("commit augmentation adapter must be callable")
+        if adapter not in self._commit_augmentation_adapters:
+            self._commit_augmentation_adapters.append(adapter)
 
     @property
     def admission_policy(self) -> StateAdmissionPolicy:
@@ -619,6 +706,71 @@ class StateApplicationCoordinator:
             existing_generation_id=expected_existing_generation,
         )
 
+        binding_payload = conflict.binding_payload
+        for adapter in tuple(self._commit_augmentation_adapters):
+            augmentation = adapter(
+                context,
+                candidate,
+                residents,
+                prospective_node,
+                dependency_replacements,
+                removed_nodes,
+                conflict.disposition,
+            )
+            if augmentation is None:
+                continue
+            if not isinstance(augmentation, StateApplicationCommitAugmentation):
+                raise TypeError(
+                    "commit augmentation adapter returned invalid augmentation"
+                )
+            if augmentation.unsupported_reason_rule_id is not None:
+                return StateApplicationResult(
+                    StateApplicationResultStatus.UNSUPPORTED_BOUNDARY,
+                    augmentation.unsupported_reason_rule_id,
+                    admission_decision=admission,
+                    conflict_decision=conflict,
+                )
+            if augmentation.binding_payload is not None:
+                if (
+                    binding_payload is not None
+                    and binding_payload != augmentation.binding_payload
+                ):
+                    raise StateTransactionPreconditionError(
+                        "multiple commit augmentations supplied conflicting binding payloads"
+                    )
+                binding_payload = augmentation.binding_payload
+
+            if augmentation.dependency_replacements:
+                merged = {
+                    consumer: set(values)
+                    for consumer, values in dependency_replacements
+                }
+                for consumer, values in augmentation.dependency_replacements:
+                    merged[consumer] = set(values)
+                dependency_replacements = tuple(
+                    (
+                        consumer,
+                        tuple(sorted(values, key=repr)),
+                    )
+                    for consumer, values in sorted(
+                        merged.items(), key=lambda item: repr(item[0])
+                    )
+                )
+                self._dependencies.validate_dependency_replacements(
+                    dependency_replacements,
+                    remove_nodes=removed_nodes,
+                )
+
+        # Recheck physical/generation preconditions after all non-writing
+        # mechanism planning, including any mechanism-owned RNG decision.
+        self._assert_preconditions(
+            context,
+            candidate=candidate,
+            expected=expected_residents,
+            existing_instance_id=expected_existing_id,
+            existing_generation_id=expected_existing_generation,
+        )
+
         transition_snapshot = None
         transition_roots = tuple(
             sorted(
@@ -656,7 +808,7 @@ class StateApplicationCoordinator:
             expected_existing_instance_id=expected_existing_id,
             expected_existing_generation_id=expected_existing_generation,
             planned_new_instance_id=planned_new_instance_id,
-            binding_payload=conflict.binding_payload,
+            binding_payload=binding_payload,
         )
 
         instance = self._lifecycle.commit_application_transaction(context, transaction)

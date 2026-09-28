@@ -1,14 +1,14 @@
 # Stage12 690222 INTIMIDATION Runtime Integration
 
 Date: 2026-09-28  
-Status: GOVERNANCE_RESOLVED / PASS / GAMEPLAY_NOT_INTEGRATED
+Status: IMPLEMENTED_PENDING_RUNTIME_AUDIT
 
 ## Current gate
 
 ```text
 690222 Research = FROZEN
-690222 Gameplay = NOT_INTEGRATED
-690222 Runtime = NOT_FROZEN
+690222 Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690222 Runtime = NOT_YET_FROZEN
 Stage12 Runtime Frozen = 4 / 7
 ```
 
@@ -110,3 +110,73 @@ IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001 = CLOSED
 Stage12 Runtime Frozen = 4 / 7
 Governance CI = 36369968103 / success / 1409 passed / demo PASS\nNEXT = Resume 690222 INTIMIDATION Runtime Integration
 ```
+
+
+## Runtime integration resume implementation
+
+The production integration now uses the canonical Shared Foundation owners rather
+than a 690222 lifecycle facade.
+
+- loaded Skill Providers are exact-identity validated before taxonomy filtering,
+  then ordered by RD-SF-002;
+- ACTIVE (including preparation-required ACTIVE), ASSAULT, PASSIVE, COMMAND,
+  and TROOP are supported eligible Provider families;
+- FORMATION is the frozen exclusion; TALENT remains an unsupported runtime
+  boundary rather than a Research-confirmed exclusion, and
+  Normal Attack is not a Provider candidate;
+- empty supported pool remains UNSUPPORTED_BOUNDARY;
+- one candidate consumes zero binding RNG; multiple candidates consume exactly
+  one BattleContext.random.choice after all non-writing dependency preflights;
+- the selected full SkillProviderRef is stored as StateInstance.bound_provider_ref;
+- CREATE and REFRESH perform binding decisions, while effectiveness RESUME
+  preserves the same binding and consumes zero binding RNG;
+- Provider suppression is represented through ProviderValidity and dependency
+  causes without mutating SkillRuntime.enabled;
+- selected preparation-required ACTIVE work is interrupted with PROVIDER scope;
+- explicit ProviderDependency controls source gating and downstream Provider-owned
+  state effectiveness; source attribution alone does not create dependency;
+- tested generic cleanse rejects Intimidation; specialized removal stays an
+  unsupported boundary; source-death behavior is not invented.
+
+RD-SF-006 provenance remains PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN.
+
+### TROOP consumer audit
+
+The production tree has Provider-level TROOP identity and suppression support,
+but no separate concrete TROOP execution consumer is currently present. The
+integration therefore represents suppression truth without inventing a consumer.
+This is not treated as authority to fabricate TROOP execution semantics; the
+independent Runtime Freeze Audit must review this boundary before Runtime freeze.
+
+### Exit gate
+
+This integration round may advance gameplay only to:
+
+    690222 Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+    690222 Runtime = NOT_YET_FROZEN
+    Stage12 Runtime Frozen = 4 / 7
+    NEXT = 690222 INTIMIDATION Independent Runtime Freeze Audit
+
+No statement in this document freezes 690222 Runtime.
+
+
+## Final implementation checkpoint
+
+```text
+Implementation code SHA = 834f6e7508c8006342ff37593454ef91d8e8d0a4
+Push CI = 36372015077 / success / 1453 passed / demo PASS
+PR CI = 36372018782 / success / 1453 passed / demo PASS
+Research repository = READ ONLY / UNCHANGED
+Stage11 Reopen Required = NO
+Stage13 / Stage14 / Stage15 Active = NO
+
+690222 Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690222 Runtime = NOT_YET_FROZEN
+Stage12 Gameplay Implementation = 5 / 7
+Stage12 Runtime Frozen = 4 / 7
+NEXT = 690222 INTIMIDATION Independent Runtime Freeze Audit
+```
+
+The integration round intentionally stops here. Runtime freeze, freeze-count
+increment, and any independent-audit authority remain out of scope until the
+separate 690222 Independent Runtime Freeze Audit passes.

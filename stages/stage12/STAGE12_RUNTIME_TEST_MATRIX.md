@@ -1,7 +1,8 @@
 # Stage12 Runtime Test Matrix Skeleton
 
-> Status: **SHARED FOUNDATION COMPLETE / 690089 + 690101 + 690107 + 690108 RUNTIME FROZEN / STAGE12 4 OF 7**  
-> Baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.
+> Status: **SHARED FOUNDATION COMPLETE / 690089 + 690101 + 690107 + 690108 RUNTIME FROZEN / 690222 GAMEPLAY IMPLEMENTED_PENDING_RUNTIME_AUDIT / STAGE12 RUNTIME 4 OF 7**  
+> Historical entry baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.  
+> Current 690222 integration checkpoint: **1453 passed / demo PASS** at code SHA `834f6e7508c8006342ff37593454ef91d8e8d0a4`, CI `36372018782`.
 
 | State / Foundation | Positive Case | Negative Case | Primary Discriminator | Cross-State Required | Minimum |
 |---|---|---|---|---|---:|

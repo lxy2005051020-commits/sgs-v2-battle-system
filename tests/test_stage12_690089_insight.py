@@ -8,13 +8,20 @@ from sgs_v2.battle_core import (
     BattleContext,
     BattlePhase,
     BattleSystems,
+    DamageSkillEffectSpec,
+    DamageType,
     EmptyStateRuntimeParams,
     EventBus,
     EventType,
     LineupPosition,
     OfficialStateId,
+    PreparationMode,
     RandomSystem,
     RemovalOperation,
+    SkillDefinition,
+    SkillRuntime,
+    SkillTargetMode,
+    SkillType,
     StateApplicationResultStatus,
     StateCandidate,
     StateLifetimeSpec,
@@ -96,6 +103,25 @@ def make_context(seed: int = 690089) -> BattleContext:
     context.current_round = 1
     context.current_phase = BattlePhase.ACTION_ORDER.value
     return context
+
+
+def register_intimidation_provider(context: BattleContext) -> None:
+    context.skill_runtimes.register(
+        SkillRuntime(
+            definition=SkillDefinition(
+                skill_id="insight-negative-intimidation-provider",
+                name="insight-negative-intimidation-provider",
+                activation_rate=1.0,
+                target_mode=SkillTargetMode.SINGLE_RANDOM_ENEMY,
+                effect_specs=(DamageSkillEffectSpec(DamageType.WEAPON),),
+                skill_type=SkillType.ACTIVE,
+                preparation_mode=PreparationMode.NONE,
+            ),
+            owner_id="a0",
+            skill_slot=SkillSlot.INHERENT,
+            enabled=True,
+        )
+    )
 
 
 def runtime_params(state_id: str):
@@ -217,6 +243,8 @@ def test_negative_exclusions_are_not_rejected_by_ordinary_insight(
     context = make_context()
     systems = BattleSystems()
     apply(systems, context, OfficialStateId.INSIGHT.value)
+    if state_id == OfficialStateId.INTIMIDATION.value:
+        register_intimidation_provider(context)
 
     result = apply(systems, context, state_id)
 
