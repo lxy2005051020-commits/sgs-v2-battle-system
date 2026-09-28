@@ -521,3 +521,30 @@ Stage13 / Stage14 / Stage15
 ```
 
 This integration checkpoint has no authority to declare 690110 Runtime frozen or Stage12 complete.
+
+
+## AZ. Post-Integration Independent Freeze Outcome — 2026-09-28
+
+The separate independent Runtime Freeze Audit has now completed.
+
+```text
+690110 CAPTURE Research = FROZEN
+690110 CAPTURE Gameplay = IMPLEMENTED
+690110 CAPTURE Runtime = FROZEN TO CONTRACT
+Independent Runtime Freeze Audit = PASS
+Audit test commit = f1db21211ce7d01fc867bc8c26c94cb82f11af49
+Independent adversarial tests = 33
+Local full pytest = 1640 passed
+Local demo = PASS
+BLOCKER = 0
+unresolved MAJOR = 0
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen = 7 / 7
+Stage12 Complete = NO
+Stage13 / Stage14 / Stage15 Active = NO
+NEXT = Stage12 Final Completion / Freeze Audit
+```
+
+Freeze authority: `STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`.
+
+The historical Integration checkpoint above remains an integration-era record and is not retroactively rewritten into freeze authority.
