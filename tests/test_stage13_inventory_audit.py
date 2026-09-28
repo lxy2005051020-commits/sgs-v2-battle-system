@@ -66,7 +66,7 @@ def test_stage13_entry_gate_is_active_but_engine_not_frozen() -> None:
     index = _read("README.md")
     assert "STAGE13_ENTRY_GATE                = PASS" in index
     assert "Stage13 Active                    = YES" in index
-    assert "Core Gameplay Engine              = NOT YET FROZEN" in index
+    assert "CORE_GAMEPLAY_ENGINE              = NOT YET FROZEN" in index
     assert "Skill Runtime Readiness           = NOT YET READY" in index
 
 
