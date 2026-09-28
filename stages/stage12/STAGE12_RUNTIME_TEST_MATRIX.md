@@ -1119,10 +1119,12 @@ Validated checkpoint:
 ```text
 baseline = 1558 passed
 validated code/test SHA = 03c18d10fbfafa093e11f08ea779ac83c2e0d751
-PR #26 CI = 36383693483 / success
+validated code/test CI = 36383693483 / success / 1607 passed / demo PASS
+final PR-head CI = 36383957010 / success / 1607 passed / demo PASS
+integration merge SHA = 4f41906d6f0ba18ea6c09e3ca600af4f5491e2c7
+merged-main CI = 36384025882 / success / 1607 passed / demo PASS
 full pytest = 1607 passed
 delta = +49 test nodes
-demo = PASS
 ```
 
 Production coverage reaches BattleEngine / ActionSystem, typed DamageExecutionRight for Active and Counter damage, attached PERIODIC_DAMAGE continuation, ProviderValidity dependency composition, RecoverySystem prevention, real friendly SkillDefinition -> SkillResolver -> TargetOperation -> SkillTargetPolicy -> TargetSystem routes, AttributeSystem equipment gather, StateRemovalPolicy and lifecycle restoration.
