@@ -179,5 +179,20 @@ Current authority:
 Current next action:
 
 ```text
-STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
+STAGE13_B_GAP_CLASSIFICATION_AND_CLOSURE_PLANNING
 ```
+
+
+## Stage13-A Inventory Activation — 2026-09-28
+
+~~~text
+Core Gameplay Mechanism Inventory = COMPLETE
+Stage13 Entry Gate                = PASS
+Stage13 Active                    = YES
+Stage13-A                         = COMPLETE
+Stage13-B                         = NEXT
+Core Gameplay Engine              = NOT YET FROZEN
+Skill Runtime Readiness           = NOT YET READY
+~~~
+
+The inventory found mature existing owners plus implementation-required generalization gaps. No Stage1-12 reopen is required by the entry audit. Focused empirical research is opened only for the 690221 ACTIVE_SKILL and DOT/DELAYED applicability lanes; 690086 DSTS9-B02 remains separate explicit research debt.

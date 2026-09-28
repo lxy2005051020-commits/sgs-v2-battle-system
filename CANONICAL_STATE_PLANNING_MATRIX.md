@@ -8,7 +8,7 @@
 >
 > Research Maturity and Mechanism Authority source: `lxy2005051020-commits/sgs-state-mechanics-research`.
 
-> **Current stage authority:** Stage11 Runtime remains FROZEN / POST-FREEZE ACCEPTED. Stage12 has completed its Final Completion / Freeze Audit and is **FROZEN / COMPLETE**. FINAL_40_STATE_RUNTIME_AUDIT = PASS and GOVERNANCE_SYNC = PASS. Stage13 Readiness = READY; Stage13 Active = NO.
+> **Current stage authority:** Stage11 Runtime remains FROZEN / POST-FREEZE ACCEPTED. Stage12 has completed its Final Completion / Freeze Audit and is **FROZEN / COMPLETE**. FINAL_40_STATE_RUNTIME_AUDIT = PASS and GOVERNANCE_SYNC = PASS. Stage13 Readiness = READY; Stage13 Active = YES; Stage13-A Inventory Entry Gate = PASS.
 
 ## 1. Canonical baseline
 
@@ -267,6 +267,19 @@ STAGE1-12_REGRESSION = PASS
 Skill Runtime Readiness = READY
 ```
 
-Current next action: `STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT`.
+Current next action: `STAGE13_B_GAP_CLASSIFICATION_AND_CLOSURE_PLANNING`.
 
 Authority: `stages/stage13/STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN.md`.
+
+
+## STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_ACTIVATION — 2026-09-28
+
+~~~text
+CORE_GAMEPLAY_MECHANISM_INVENTORY = COMPLETE
+STAGE13_ENTRY_GATE                = PASS
+Stage13 Active                    = YES
+Stage13-A                         = COMPLETE
+Stage13-B                         = NEXT
+~~~
+
+This activation changes no state maturity rows. Research remains 39/40, Runtime FROZEN TO CONTRACT remains 40/40, Strict Complete remains 39/40, and 690086 DSTS9-B02 remains OPEN / UNOBSERVED.

@@ -16,7 +16,7 @@
     Stage10 Persistent State Runtime Integration   FROZEN
     Stage11 State Runtime Integration              FROZEN / POST-FREEZE ACCEPTED
     Stage12 Official State Runtime Completion       FROZEN / COMPLETE
-    Stage13 Core Gameplay Mechanism Completion      READINESS READY / NOT ACTIVE
+    Stage13 Core Gameplay Mechanism Completion      ACTIVE / ENTRY GATE PASS
 
 ## 2. Cross-repository completion baseline
 
@@ -735,3 +735,26 @@ NEXT = STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
 This replan moves Assault Runtime behind the core-engine completion gate; it does not delete Assault from the future skill-system roadmap.
 
 Authority: `stages/stage13/STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN.md`.
+
+
+## Stage13 Inventory Activation — 2026-09-28
+
+~~~text
+CORE_GAMEPLAY_MECHANISM_INVENTORY = COMPLETE
+STAGE13_ENTRY_GATE                = PASS
+Stage13 Readiness                 = READY
+Stage13 Active                    = YES
+Core Gameplay Engine              = NOT YET FROZEN
+Skill Runtime Readiness           = NOT YET READY
+NEXT                              = STAGE13_B_GAP_CLASSIFICATION_AND_CLOSURE_PLANNING
+~~~
+
+Authority:
+- stages/stage13/STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY.md
+- stages/stage13/STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md
+- stages/stage13/STAGE13_CORE_RUNTIME_OWNER_MATRIX.md
+- stages/stage13/STAGE13_CORE_MECHANISM_TEST_MATRIX.md
+- stages/stage13/STAGE13_RESEARCH_GAP_LEDGER.md
+- stages/stage13/STAGE13_RUNTIME_GOVERNANCE_LEDGER.md
+
+Stage1-12 remain frozen. 690086 DSTS9-B02 remains OPEN / UNOBSERVED.
