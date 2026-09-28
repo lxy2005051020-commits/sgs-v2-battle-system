@@ -118,7 +118,7 @@ Research FROZEN:
 - Independent Runtime Freeze Audit PASS
 - Runtime FROZEN TO CONTRACT
 - TROOP concrete consumer absence = NON_BLOCKING NOTE; future consumer must use ProviderValidity
-- Fresh independent audit PR CI 36374443142 / 1483 passed / demo PASS
+- Fresh independent audit PR CI 36374443142 / 1483 passed / demo PASS\n- Final merged-main CI 36375033360 / 1483 passed / demo PASS at 9e6062a80dcc796e0e94f9e7fd21d7d055d3abe7
 - Freeze authority: stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md
 - Battle mirror: stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md
 
