@@ -20,8 +20,8 @@
 
     Official States                 = 40
     Research FROZEN                 = 39
-    Runtime FROZEN TO CONTRACT      = 39
-    Strict Complete                 = 38
+    Runtime FROZEN TO CONTRACT      = 40
+    Strict Complete                 = 39
 
 Strict Complete requires both research freeze and runtime freeze to contract.
 
@@ -59,9 +59,9 @@ Governance:
 
     Research Wave 4: COMPLETE
     Research FROZEN: 7 / 7
-    Runtime Frozen: 6 / 7
+    Runtime Frozen: 7 / 7
 
-Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT, 690108 PROVOCATION, 690222 INTIMIDATION and 690109 SABOTAGE have passed independent Runtime Freeze Audits. Stage12 Runtime Frozen is 6 / 7. The current owner is 690110 CAPTURE Runtime Integration.
+Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; all seven Stage12 mechanisms have now passed independent Runtime Freeze Audits. Stage12 Runtime Frozen is 7 / 7. Stage12 Complete remains NO until the Stage12 Final Completion / Freeze Audit closes the stage-level gate.
 
 ### 690089 INSIGHT
 
@@ -246,8 +246,17 @@ Runtime Freeze authority:
     Counterattack / Active-DOT / Insight discriminators: RESOLVED
     Restoration: RST1 RESUME / NO MISSED-TRIGGER REPLAY
     Source Death: independent lifecycle
-    Runtime: NOT_INTEGRATED
-    Next: contract-aligned Runtime Design
+    Gameplay: IMPLEMENTED
+    Runtime: FROZEN TO CONTRACT
+    Independent Runtime Freeze Audit: PASS
+    Audit Test Commit: f1db21211ce7d01fc867bc8c26c94cb82f11af49
+    Independent Adversarial Tests: 33
+    Local Full Suite: 1640 passed
+    Local Demo: PASS
+    BLOCKER: 0
+    unresolved MAJOR: 0
+    Audit Authority: stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md
+    Next: Stage12 Final Completion / Freeze Audit
 
 Battle-side mirror:
 [stages/stage12/STAGE12_690110_CAPTURE_RESEARCH_SYNC.md](stages/stage12/STAGE12_690110_CAPTURE_RESEARCH_SYNC.md)
@@ -622,3 +631,31 @@ NEXT = 690110 CAPTURE Independent Runtime Freeze Audit
 Authority: `stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_INTEGRATION.md`.
 
 This checkpoint does not freeze 690110 Runtime and does not activate Stage13 / Stage14 / Stage15.
+
+
+## Stage12 690110 CAPTURE Independent Runtime Freeze Audit — 2026-09-28
+
+```text
+690110 Research = FROZEN
+690110 Gameplay = IMPLEMENTED
+690110 Runtime = FROZEN TO CONTRACT
+Independent Runtime Freeze Audit = PASS
+Audit test commit = f1db21211ce7d01fc867bc8c26c94cb82f11af49
+Independent adversarial tests = 33
+Local full pytest = 1640 passed
+Local demo = PASS
+BLOCKER = 0
+unresolved MAJOR = 0
+Stage11 Reopen Required = NO
+Research Reopen Required = NO
+Shared Foundation Reopen Required = NO
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen = 7 / 7
+Stage12 Complete = NO
+Stage13 / Stage14 / Stage15 Active = NO
+NEXT = Stage12 Final Completion / Freeze Audit
+```
+
+Freeze authority: `stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`.
+
+The integration CI `36384210914` is not reused as freeze authority; fresh audit PR CI and fresh merged-main CI remain required before release-final closure.
