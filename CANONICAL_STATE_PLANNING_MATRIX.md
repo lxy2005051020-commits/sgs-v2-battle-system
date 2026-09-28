@@ -8,7 +8,7 @@
 >
 > Research Maturity and Mechanism Authority source: `lxy2005051020-commits/sgs-state-mechanics-research`.
 
-> **2026-09-26 Stage11 final authority:** Share × 倒戈/攻心 authority conflict is resolved; Stage11 Runtime is **FROZEN** and independent Post-Freeze Acceptance is **PASS / CONFIRMED**. Acceptance Audit SHA `5a0a4164e7624c28eae2c7aa28f66061ef3c9313`, CI `36170063365`; Research post-acceptance mirror `9ad990da544ad87047e74a664cc1984f890bb274`. Stage12 Activation Gate is **CLEARED**, while Stage12 Active remains **YES**.
+> **Current stage authority:** Stage11 Runtime remains FROZEN / POST-FREEZE ACCEPTED. Stage12 has completed its Final Completion / Freeze Audit and is **FROZEN / COMPLETE**. FINAL_40_STATE_RUNTIME_AUDIT = PASS and GOVERNANCE_SYNC = PASS. Stage13 Readiness = READY; Stage13 Active = NO.
 
 ## 1. Canonical baseline
 
@@ -39,10 +39,9 @@ Runtime FROZEN TO CONTRACT
 ```text
 Stage11 = 官方状态补全（一） / 17 states
 Stage12 = 官方状态补全（二） / 7 states
-Stage13 = 突击战法运行时
-Stage14 = 普通主动战法
-Stage15 = 准备战法
-Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
+Stage13 = 游戏底层机制完备化 / Core Gameplay Mechanism Completion
+Stage14+ = 战法系统 / Skill System
+           exact subtype stage numbering is deferred until Stage13 exit audit
 ```
 
 Research Wave is a separate research-order label and never renumbers Project Stage.
@@ -178,8 +177,9 @@ Authority:
 - Runtime default with research debt does not count as Strict Complete.
 - 690069, 690095 and 690091 retain their Project-Frozen Mirror distinction.
 - 690099 and 690221 are Research FROZEN and Runtime FROZEN TO CONTRACT; bounded debt remains explicit and non-blocking.
-- Stage12 Research is COMPLETE at 7 / 7 FROZEN: 690089, 690101, 690107, 690108, 690109, 690110 and 690222. Stage12 Gameplay Implementation is 7 / 7 after 690110 CAPTURE reached IMPLEMENTED_PENDING_RUNTIME_AUDIT. Stage12 Runtime Frozen remains 6 / 7 after 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT, 690108 PROVOCATION, 690222 INTIMIDATION and 690109 SABOTAGE passed independent Runtime Freeze Audits. 690110 CAPTURE Runtime is NOT YET FROZEN; NEXT is its Independent Runtime Freeze Audit.
-- Stage12 Activation Gate is CLEARED and Stage12 Readiness is READY; Stage12 Active remains YES. Stage13 is not activated.
+- Stage12 Research is COMPLETE at 7 / 7 FROZEN; Stage12 Gameplay = 7 / 7; Stage12 Runtime Frozen To Contract = 7 / 7; Stage12 Runtime = FROZEN; Stage12 Complete = YES.
+- FINAL_40_STATE_RUNTIME_AUDIT = PASS and GOVERNANCE_SYNC = PASS. Stage13 Readiness = READY; Stage13 Active = NO.
+- The 2026-09-28 project replan supersedes the old Stage13 Assault / Stage14 Active / Stage15 Preparation sequence. Stage13 now owns Core Gameplay Mechanism Completion. Large-scale Skill System work begins only after Stage13 exit audit.
 
 
 ## Stage12 Runtime Entry Activation — 2026-09-27
@@ -238,3 +238,35 @@ Strict Complete = 39 / 40
 
 Final stage-level authority: `stages/stage12/STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
 Fresh merged-main run `36389096961`: 1667 passed / demo PASS.
+
+
+## STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN — 2026-09-28
+
+```text
+OLD ROUTE
+Stage13 = Assault Skill Runtime
+Stage14 = ordinary Active Skill Runtime
+Stage15 = Preparation Skill Runtime
+
+CURRENT ROUTE
+Stage13 = Core Gameplay Mechanism Completion
+Stage14+ = Skill System / 战法系统
+```
+
+Stage13 owns the inventory, classification, research/governance closure, design, implementation and independent freeze of all implementation-required core gameplay mechanisms that should exist before large-scale skill integration.
+
+Stage13 exit gate:
+
+```text
+CORE_GAMEPLAY_MECHANISM_INVENTORY = COMPLETE
+UNRESOLVED_IMPLEMENTATION_REQUIRED_GAPS = 0
+UNRESOLVED_RUNTIME_GOVERNANCE_BLOCKERS = 0
+CORE_GAMEPLAY_ENGINE = FROZEN
+DETERMINISTIC_REPLAY_AUDIT = PASS
+STAGE1-12_REGRESSION = PASS
+Skill Runtime Readiness = READY
+```
+
+Current next action: `STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT`.
+
+Authority: `stages/stage13/STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN.md`.
