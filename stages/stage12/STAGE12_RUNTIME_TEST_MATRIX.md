@@ -1,6 +1,6 @@
 # Stage12 Runtime Test Matrix Skeleton
 
-> Status: **SHARED FOUNDATION COMPLETE / 690109 GAMEPLAY IMPLEMENTED PENDING AUDIT / STAGE12 RUNTIME 5 OF 7 / NEXT 690109 SABOTAGE INDEPENDENT RUNTIME FREEZE AUDIT**  
+> Status: **SHARED FOUNDATION COMPLETE / 690109 RUNTIME FROZEN TO CONTRACT / STAGE12 RUNTIME 6 OF 7 / NEXT 690110 CAPTURE RUNTIME INTEGRATION**  
 > Historical entry baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.  
 > Current 690222 independent freeze checkpoint: **1483 passed / demo PASS** at audit-test SHA `0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96`, PR CI `36374443142`.
 
@@ -1076,3 +1076,31 @@ implemented.
 
 Runtime Freeze is not claimed by this checkpoint. NEXT =
 `690109 SABOTAGE Independent Runtime Freeze Audit`.
+
+
+## 690109 SABOTAGE Independent Runtime Freeze Audit checkpoint — 2026-09-28
+
+Independent executable specification:
+
+```text
+tests/test_stage12_690109_sabotage_runtime_freeze_audit.py
+```
+
+Audit checkpoint:
+
+```text
+integration baseline = 1525 passed
+audit test SHA = f698cb97b08596b3cea924a815991022cc2dfe7d
+audit-test push CI = 36380946005 / success
+independent adversarial tests = 33
+full pytest = 1558 passed
+demo = PASS
+BLOCKER = 0
+unresolved MAJOR = 0
+Stage12 Runtime Frozen = 6 / 7
+NEXT = 690110 CAPTURE Runtime Integration
+```
+
+The independent suite attacks baseline-disabled/missing/identity-mismatch precedence, repeated suppress/restore identity stability, real-consumer dynamic-equipment boundaries, damage/recovery/trigger/scheduled future-only semantics, local/remote dependent-state expiry, source/holder death, Insight suppression/resume, Gangyi variants, reapplication/generation invariants, unsupported removal, FalseReport cause composition, dependency-cycle atomicity, event silence and canonical wiring.
+
+B-SAB-09 remains an explicit unsupported dynamic-equipment boundary. No dynamic equipment gameplay producer is implemented by this freeze.

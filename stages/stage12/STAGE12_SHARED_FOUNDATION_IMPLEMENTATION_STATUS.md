@@ -356,7 +356,7 @@ The current 690089 integration static/semantic checks confirm:
 - there is no `Stage12InsightRuntime`;
 - one production `BattleSystems` graph still owns exactly one `StateEffectivenessPolicy`;
 - state-to-state Insight suppression dependencies use the frozen Shared Foundation dependency graph and pre-commit cycle validation;
-- Shared Foundation itself still adds no mechanism-specific gameplay policy. 690101, 690107, 690108 and now 690222 are integrated through mechanism-owned adapters registered into the frozen canonical owners; 690109 and 690110 remain not integrated.
+- Shared Foundation itself still adds no mechanism-specific gameplay policy. 690101, 690107, 690108, 690222 and now 690109 are integrated through mechanism-owned adapters registered into the frozen canonical owners; 690110 remains not integrated.
 
 The pre-existing Round 4 equipment/execution-right static guards remain covered by the full regression suite.
 
@@ -375,13 +375,12 @@ Stage12 individual-state gameplay currently frozen to contract:
 Not gameplay-integrated yet:
 
 ```text
-690109 SABOTAGE
 690110 CAPTURE
 ```
 
 The 690107 independent Runtime Freeze Audit also closed the frozen-contract TALENT negative discriminator by adding `SkillType.TALENT` to the shared taxonomy without adding TALENT to FALSE_REPORT's suppression set or to Intimidation eligibility.
 
-Stage12 Runtime Frozen is now **5 / 7**.
+Stage12 Runtime Frozen is now **6 / 7**.
 
 ## 17. Current gates
 
@@ -411,8 +410,14 @@ Stage12 Shared Foundation Implementation = COMPLETE
 690222 INTIMIDATION Runtime = FROZEN TO CONTRACT
 690222 Independent Runtime Freeze Audit = PASS
 
-Stage12 Gameplay Implementation = 5 / 7 IMPLEMENTED
-Stage12 Runtime Frozen = 5 / 7
+690109 SABOTAGE Gameplay = IMPLEMENTED
+690109 SABOTAGE Runtime = FROZEN TO CONTRACT
+690109 Independent Runtime Freeze Audit = PASS
+690109 Audit-test SHA = f698cb97b08596b3cea924a815991022cc2dfe7d
+690109 Audit-test CI = 36380946005 / success / 1558 passed / demo PASS
+
+Stage12 Gameplay Implementation = 6 / 7 IMPLEMENTED
+Stage12 Runtime Frozen = 6 / 7
 
 Stage13 Active = NO
 Stage14 Active = NO
@@ -433,7 +438,7 @@ Authority:
 The next authorized action is:
 
 ```text
-690109 SABOTAGE Runtime Integration
+690110 CAPTURE Runtime Integration
 ```
 
 690222 independent freeze checkpoint: `0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96` / PR CI `36374443142` / 1483 passed / demo PASS. Runtime is FROZEN TO CONTRACT; TROOP concrete-consumer absence is a non-blocking note and future consumers must use ProviderValidity.
@@ -441,3 +446,24 @@ The next authorized action is:
 690108 integration checkpoint: `d420e8130dff1b3b9cc2545f0a832eccf58abd75` / CI `36333059532` / 1359 passed / demo PASS.
 
 690108 independent freeze checkpoint: `e0f9e0c24a4c379918c3b9389a67dcfea138ac13` / CI `36334810169` / 1392 passed / demo PASS. Runtime remains FROZEN TO CONTRACT.
+
+
+## 19. 690109 SABOTAGE Runtime Freeze checkpoint — 2026-09-28
+
+```text
+690109 Research = FROZEN
+690109 Gameplay = IMPLEMENTED
+690109 Runtime = FROZEN TO CONTRACT
+Independent Runtime Freeze Audit = PASS
+Audit test SHA = f698cb97b08596b3cea924a815991022cc2dfe7d
+Audit-test CI = 36380946005 / success / 1558 passed / demo PASS
+BLOCKER = 0
+unresolved MAJOR = 0
+Stage12 Runtime Frozen = 6 / 7
+Stage11 Reopen Required = NO
+Research Reopen Required = NO
+Shared Foundation Reopen Required = NO
+NEXT = 690110 CAPTURE Runtime Integration
+```
+
+The freeze adds no Shared Foundation owner, no Sabotage God-object and no dynamic-equipment gameplay default. B-SAB-07/B-SAB-09 remain explicit unsupported boundaries.
