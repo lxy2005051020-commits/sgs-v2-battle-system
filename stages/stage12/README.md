@@ -1,6 +1,6 @@
 # 第十二阶段 · 官方状态补全（二）
 
-> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690109 GAMEPLAY IMPLEMENTED PENDING AUDIT / 5 OF 7 RUNTIME FROZEN / NEXT 690109 SABOTAGE INDEPENDENT RUNTIME FREEZE AUDIT**
+> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690109 RUNTIME FROZEN TO CONTRACT / 6 OF 7 RUNTIME FROZEN / NEXT 690110 CAPTURE RUNTIME INTEGRATION**
 > Canonical Scope：**7 states**
 > Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 > Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）
@@ -13,9 +13,9 @@
     Stage12 Active: YES
 
     Stage12 Research FROZEN: 7 / 7
-    Stage12 Runtime Frozen: 5 / 7
+    Stage12 Runtime Frozen: 6 / 7
 
-Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 与 Implementation 已完成；690089 INSIGHT、690101 EXHAUSTION、690107 FALSE_REPORT、690108 PROVOCATION 与 690222 INTIMIDATION 均已通过独立 Runtime Freeze Audit，因此 Stage12 Runtime Frozen = 5 / 7。690109 SABOTAGE 已完成 gameplay integration 并通过 Integration Exit Gate，但 Runtime 仍 NOT YET FROZEN；690110 仍未 gameplay-integrated。当前 owner 转入 690109 SABOTAGE Independent Runtime Freeze Audit。
+Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 与 Implementation 已完成；690089 INSIGHT、690101 EXHAUSTION、690107 FALSE_REPORT、690108 PROVOCATION、690222 INTIMIDATION 与 690109 SABOTAGE 均已通过独立 Runtime Freeze Audit，因此 Stage12 Runtime Frozen = 6 / 7。690110 CAPTURE 仍未 gameplay-integrated，当前 owner 转入 690110 CAPTURE Runtime Integration。
 
 ## 已冻结研究
 
@@ -135,15 +135,21 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 ### 690109 破坏 SABOTAGE
 - Research FROZEN
 - Contract v1.0-frozen
-- Freeze Audit: PASS
-- Gameplay IMPLEMENTED_PENDING_RUNTIME_AUDIT
-- Runtime NOT YET FROZEN
+- Research Freeze Audit: PASS
+- Gameplay IMPLEMENTED
+- Runtime FROZEN TO CONTRACT
 - Integration Exit Gate: PASS
+- Independent Runtime Freeze Audit: PASS
 - Integration checkpoint: CI 36379462582 / success / 1525 passed / demo PASS
+- Independent audit test SHA: `f698cb97b08596b3cea924a815991022cc2dfe7d`
+- Audit-test push CI: `36380946005 / success / 1558 passed / demo PASS`
+- BLOCKER = 0 / unresolved MAJOR = 0
+- B-SAB-09 dynamic equipment remains explicit unsupported boundary
 - Stage12 Gameplay Implementation: 6 / 7
-- Stage12 Runtime Frozen: 5 / 7
+- Stage12 Runtime Frozen: 6 / 7
+- Freeze authority: [690109 Runtime Freeze Audit](STAGE12_690109_SABOTAGE_RUNTIME_FREEZE_AUDIT.md)
 - Integration record: [690109 Runtime Integration](STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md)
-- Next: 690109 SABOTAGE Independent Runtime Freeze Audit
+- Next: 690110 CAPTURE Runtime Integration
 
 ### 690110 捕获 CAPTURE
 - Research FROZEN
@@ -165,7 +171,7 @@ Wave 5: COMPLETE
 Stage12 Research: 7 / 7 FROZEN
 
 Next project task:
-690109 SABOTAGE Independent Runtime Freeze Audit
+690110 CAPTURE Runtime Integration
 
 ## Stage12 responsibility
 
