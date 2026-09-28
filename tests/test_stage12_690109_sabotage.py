@@ -643,7 +643,7 @@ def test_attribution_alone_does_not_create_equipment_dependency() -> None:
     assert attributed is not None
     assert systems.dependency_evaluation_support.prerequisites(
         StateNode(attributed.instance_id)
-    ) == ()
+    ) == []
 
     apply_sabotage(systems, context, owner="a", source="c")
 
@@ -669,7 +669,7 @@ def test_insight_rejects_incoming_sabotage_before_residency_or_equipment_change(
     assert context.states.find(
         owner_id="a",
         state_id=OfficialStateId.EQUIPMENT_DISABLE.value,
-    ) == ()
+    ) == []
     assert_effective(systems, context, ref)
 
 
@@ -816,7 +816,7 @@ def test_effective_gangyi_rejects_incoming_sabotage() -> None:
     assert context.states.find(
         owner_id="a",
         state_id=OfficialStateId.EQUIPMENT_DISABLE.value,
-    ) == ()
+    ) == []
 
 
 def test_false_report_suppressed_gangyi_does_not_block_sabotage() -> None:
@@ -1109,5 +1109,5 @@ def test_provider_dependency_graph_is_explicit_and_owner_local() -> None:
     )
     assert systems.dependency_evaluation_support.prerequisites(
         ProviderNode(unrelated_provider)
-    ) == ()
+    ) == []
     assert_effective(systems, context, unrelated_ref)
