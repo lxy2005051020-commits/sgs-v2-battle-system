@@ -21,9 +21,9 @@
 | PROVOCATION | Source admissibility | `SkillTargetPolicy` operation-local eligibility after raw candidates | admissible Source required; illegal/dead Source never forced and State is not physically removed | RUNTIME_FROZEN_TO_CONTRACT |
 | PROVOCATION | Resident != Effective | `StateEffectivenessPolicy` | source death leaves state resident; Insight/Provider suppression does not remove | RUNTIME_FROZEN_TO_CONTRACT |
 | PROVOCATION | Taunt/Confusion boundaries | `TargetResolutionSystem` remains Normal Attack owner; `SkillTargetPolicy` handles eligible Skill operations | Confusion-owned Skill target decision pre-empts Provocation via TargetEligibilityContext metadata; Taunt stays NormalAttack domain | RUNTIME_FROZEN_TO_CONTRACT |
-| INTIMIDATION | single selected Provider binding | provider-validity policy + Stage12 params | one provider disabled vs all skills disabled | DESIGN_MAPPING |
-| INTIMIDATION | refresh reroll | provider-validity policy + RandomSystem | release old → exactly one reroll → no multi-disable stack | DESIGN_MAPPING |
-| INTIMIDATION | resume preserves binding | provider-validity + lifecycle | resume does not reroll; lifetime continues | DESIGN_MAPPING |
+| INTIMIDATION | single selected Provider binding | provider-validity policy + Stage12 params + RD-SF-006 selector governance | one provider disabled vs all skills disabled | GOVERNANCE_READY / GAMEPLAY_NOT_INTEGRATED |
+| INTIMIDATION | refresh reroll | provider-validity policy + RandomSystem + RD-SF-006 | release old → exactly one reroll → no multi-disable stack | GOVERNANCE_READY / GAMEPLAY_NOT_INTEGRATED |
+| INTIMIDATION | resume preserves binding | provider-validity + lifecycle + RD-SF-006 no-draw rule | resume does not reroll; lifetime continues | GOVERNANCE_READY / GAMEPLAY_NOT_INTEGRATED |
 | INTIMIDATION | source-skill counter separation | source-skill boundary ledger | no counter/damage branch inside state core | DESIGN_MAPPING |
 | SABOTAGE | equipment effectiveness suppression | EquipmentEffectivenessPolicy.evaluate_contribution | target-owned tested contribution suppressed vs physical unequip/delete | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
 | SABOTAGE | existing effects/remote ownership | explicit EquipmentContributionDependency -> EquipmentEffectivenessPolicy | Equipment Owner suppression affects dependent remote live effect; unrelated Holder Provider remains valid | DESIGN_FROZEN_FOUNDATION / NOT IMPLEMENTED |
@@ -599,3 +599,31 @@ NEXT = 690222 INTIMIDATION Runtime Integration
 ```
 
 Authority: `STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`.
+
+
+## 690222 binding-selection governance mapping — 2026-09-28
+
+```text
+Frozen Research:
+randomly select exactly one supported eligible Skill Provider
+uniform/equal/1/N hidden weight = unproven
+
+Runtime governance:
+RD-SF-002 = stable Provider population order
+RD-SF-006 = simulator-only uniform selection + RNG call topology
+```
+
+Mapping:
+
+| Concern | Owner / seam | Current binding | Status |
+|---|---|---|---|
+| supported pool identity | SkillRuntimeRegistry / SkillProviderRef | loaded holder Providers; identity enumeration does not filter ProviderValidity | DESIGN FROZEN |
+| type filtering | Intimidation adapter-to-be | ACTIVE incl. preparation, ASSAULT, PASSIVE, COMMAND, TROOP; FORMATION excluded; TALENT/Equipment/Bingshu unsupported | DESIGN FROZEN |
+| stable pool order | RD-SF-002 | slot 0 -> 1 -> 2, skill_id tiebreaker | RUNTIME DEFAULT FROZEN |
+| multi-candidate distribution | BattleContext.random / RandomSystem.choice | uniform over supplied stable supported pool, exactly one choice call | RD-SF-006 FROZEN |
+| single-candidate selection | Intimidation selector-to-be | sole Provider, zero RNG | RD-SF-006 FROZEN |
+| rejected application | admission/conflict owners | zero binding RNG | GOVERNANCE FROZEN |
+| successful REFRESH | state application + selector-to-be | new binding decision; same Provider may be selected | GOVERNANCE FROZEN |
+| RESUME | effectiveness transition | retain binding, zero RNG | GOVERNANCE FROZEN |
+| empty pool | unsupported boundary | no gameplay answer invented | PRESERVED |
+| production adapter | future 690222 integration | absent in this governance round | NOT INTEGRATED |

@@ -8,7 +8,7 @@ Every RD-SF entry in this ledger is PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FR
 
 This ledger is intentionally small. Round 2 does not pre-fill future unknowns merely to make the table look productive.
 
-Current Battle-owned Runtime Default set after BU-P02 governance resolution:
+Current Battle-owned Runtime Default set after 690222 binding governance resolution:
 
 ```text
 RD-SF-001
@@ -16,6 +16,7 @@ RD-SF-002
 RD-SF-003
 RD-SF-004
 RD-SF-005
+RD-SF-006
 ```
 
 ## RD-SF-001 — Legacy SkillDefinition classification compatibility
@@ -556,3 +557,107 @@ RD-SF-005
 ```
 
 690108 Research remains FROZEN. BU-P02 empirical status remains bounded. RD-SF-005 exists only to give the simulator a deterministic, traceable and reversible implementation rule.
+
+
+## 690222 Binding Selection Runtime Governance Resolution — 2026-09-28
+
+The 690222 INTIMIDATION integration gate made selection weighting non-deferrable. Research freezes only that exactly one supported eligible Skill Provider is selected randomly and explicitly does not prove uniform/equal/1/N weighting. Runtime therefore records the smallest deterministic simulator rule without laundering it into Research fact.
+
+### RD-SF-006 — INTIMIDATION uniform eligible-Provider binding selection
+
+Mechanism: 690222 INTIMIDATION  
+Question: When the already-constructed supported eligible Provider pool contains multiple candidates, what probability distribution and RandomSystem API topology does Runtime use for the one binding decision?
+
+Research status:
+
+```text
+exactly one eligible skill is randomly selected
+refresh performs selection again
+uniform / equal / 1/N is not empirically proven
+```
+
+Chosen Runtime default:
+
+1. Pool construction remains owned by the frozen Intimidation consumer boundary: loaded Skill Providers for the Holder, RD-SF-002 stable ordering, and supported SkillType-domain filtering.
+2. Loaded enumeration does not itself filter ProviderValidity. BASELINE_DISABLED or already-SUPPRESSED identity remains loaded identity; this resolution does not invent a new validity-based denominator filter.
+3. Supported families are ACTIVE (including PreparationMode.REQUIRED), ASSAULT, PASSIVE, COMMAND and TROOP.
+4. FORMATION is excluded; NORMAL_ATTACK is outside the Skill Provider domain.
+5. TALENT, EQUIPMENT and BINGSHU remain unsupported/not frozen for Intimidation eligibility.
+6. If `eligible_count == 1`, select the sole Provider with **0 binding RNG**.
+7. If `eligible_count >= 2`, select uniformly over the stable pool with exactly one `BattleContext.random.choice(pool)` / `RandomSystem.choice(pool)` API operation.
+8. If `eligible_count == 0`, retain the existing `UNSUPPORTED_BOUNDARY`; RD-SF-006 does not invent rejection, no-binding, or fallback semantics.
+9. Successful CREATE and successful REFRESH perform a binding decision under the same rule. REFRESH may select the same Provider again and still counts as a new binding decision.
+10. RESUME retains the existing binding, application generation and lifetime progress and consumes **0 binding RNG**.
+11. Admission/conflict rejection, including confirmed Gangyi rejection before binding selection, consumes **0 binding RNG**.
+12. The binding selector does not import Python `random`, create a local RNG, use a hash mapping, shuffle the pool, or add a second random draw.
+
+Evidence classification:
+
+```text
+PROJECT_RUNTIME_DEFAULT
+NOT_EMPIRICALLY_FROZEN
+```
+
+This default does not claim the original game's hidden binding weights.
+
+Why this default:
+
+- it adds no unexplained slot/type/source weight parameters;
+- it is symmetric when weight evidence is absent;
+- it preserves RandomSystem as the sole RNG service;
+- it uses RD-SF-002 stable population order;
+- it has one explicit API-level replay decision for multi-candidate pools;
+- it is easy to replace if stronger authority appears.
+
+Rejected alternatives:
+
+- slot-weighted distribution: no authority for weights;
+- SkillType-weighted distribution: no authority for weights;
+- source/rarity/history weighting: no authority and extra metadata;
+- deterministic hash selection: bypasses canonical RandomSystem accounting.
+
+Replay signature includes at least seed/current RNG state, Holder identity, application generation, stable supported eligible Provider list, Provider identities and RD-SF-006 provenance/version.
+
+Reopen trigger:
+
+- Tier-A model-separating battle evidence;
+- official-client evidence;
+- deterministic observation distinguishing uniform from weighted selection;
+- higher-authority gameplay evidence;
+- audited/frozen 690222 contract amendment;
+- later Shared Foundation governance explicitly superseding RD-SF-006.
+
+Required governance tests:
+
+```text
+test_binding_default_has_project_runtime_provenance
+test_binding_default_not_empirical_claim
+test_stable_provider_ordering_uses_rd_sf_002
+test_single_candidate_selection
+test_single_candidate_rng_call_topology
+test_multiple_candidate_selection_uses_canonical_rng
+test_same_seed_same_pool_same_binding
+test_downstream_rng_stream_is_stable
+test_rejected_application_consumes_zero_binding_rng
+test_refresh_performs_new_binding_selection
+test_refresh_can_select_same_provider_legitimately
+test_resume_consumes_zero_binding_rng
+test_resume_retains_binding
+test_empty_pool_remains_unsupported
+test_talent_boundary_remains_unsupported
+test_all_candidates_reachable_across_deterministic_seed_set
+test_loaded_provider_pool_is_not_provider_validity_filtering
+```
+
+Current Battle-owned Runtime Defaults after this resolution:
+
+```text
+RD-SF-001
+RD-SF-002
+RD-SF-003
+RD-SF-004
+RD-SF-005
+RD-SF-006
+```
+
+690222 Research remains FROZEN. The uniform distribution exists only as a simulator Runtime Default. Gameplay remains NOT_INTEGRATED and Stage12 Runtime Frozen remains 4 / 7.

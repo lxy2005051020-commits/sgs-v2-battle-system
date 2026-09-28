@@ -178,8 +178,21 @@ Battle-side research mirror:
     Adversarial Falsification: PASS
     Canonical Governance: PASS
     OPEN_BLOCKING: 0
-    Runtime: NOT_INTEGRATED
-    Next: 690222 INTIMIDATION Runtime Integration
+    Binding Governance: RESOLVED / PASS
+    Runtime Default: RD-SF-006
+    Distribution: uniform over RD-SF-002 stable supported eligible Provider pool
+    Provenance: PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+    IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001: CLOSED
+    Gameplay: NOT_INTEGRATED
+    Runtime: NOT_FROZEN
+    Stage12 Runtime Frozen: 4 / 7
+    Governance CI: 36369968103 / success / 1409 passed / demo PASS\n    Next: Resume 690222 INTIMIDATION Runtime Integration
+
+Governance authority:
+[stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md](stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md)
+
+Integration gate record:
+[stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_INTEGRATION.md)
 
 Battle-side mirror:
 [stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md](stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)
@@ -490,3 +503,33 @@ NEXT = 690222 INTIMIDATION Runtime Integration
 ```
 
 Authority: `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`. Historical snapshots above remain historical.
+
+
+## Stage12 690222 Binding Selection Runtime Governance Resolution — 2026-09-28
+
+```text
+RD-SF-006 = INTIMIDATION uniform eligible-Provider binding selection
+Classification = PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+
+N == 1
+-> sole Provider
+-> 0 binding RNG
+
+N >= 2
+-> RD-SF-002 stable pool
+-> exactly one RandomSystem.choice
+-> uniform over supplied supported eligible Providers
+
+REFRESH = new binding decision
+RESUME = retained binding / 0 binding RNG
+empty pool = UNSUPPORTED_BOUNDARY
+TALENT = UNSUPPORTED / NOT FROZEN
+```
+
+This governance round changes no 690222 gameplay code and does not increment Stage12 Runtime Frozen. Research repository remains unchanged.
+
+Authority:
+- `stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md`
+- `stages/stage12/STAGE12_RUNTIME_DEFAULT_LEDGER.md` / RD-SF-006
+
+Governance CI: 36369968103 / success / 1409 passed / demo PASS.\n\nNEXT: Resume 690222 INTIMIDATION Runtime Integration.

@@ -234,17 +234,27 @@ RD-SF-005 is `PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN`; it does not cha
 
 ## 9. Intimidation weighting and empty-pool boundaries
 
-~~~text
-selection weighting
-= NOT CURRENTLY IMPLEMENTED / DEFERRED
-uniform 1/N is forbidden as a research claim
+The later 690222 integration gate made weighting non-deferrable. Runtime governance now records **RD-SF-006**:
 
-empty eligible pool
-= UNSUPPORTED_BOUNDARY
-until contract/default authority supplies a deterministic gameplay answer
+~~~text
+multi-candidate supported eligible pool
+-> RD-SF-002 stable order
+-> exactly one BattleContext.random / RandomSystem.choice
+-> uniform 1/N simulator selection
+
+single candidate
+-> deterministic sole Provider
+-> 0 binding RNG
 ~~~
 
-RD-SF-002 defines deterministic Provider enumeration only. It does not define selection weighting.
+This is `PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN`. Uniform 1/N remains forbidden as a Research claim about the original game's hidden weights.
+
+~~~text
+empty eligible pool
+= UNSUPPORTED_BOUNDARY
+~~~
+
+RD-SF-002 still governs deterministic Provider enumeration only; RD-SF-006 separately governs the simulator distribution and call topology.
 
 ## 10. Deterministic replay contract
 
@@ -272,7 +282,7 @@ The following remain explicit rather than guessed:
 - Provocation CHOOSE_N exact sampling micro-order.
 - Provocation insufficient-candidate policy.
 - Provocation simultaneous multi-source precedence.
-- Intimidation exact selection weights.
+- Intimidation exact original-game selection weights remain empirically unknown; simulator weighting is governed by RD-SF-006.
 - Intimidation empty eligible pool.
 - any mechanism-specific queued/JIT boundary already marked UNSUPPORTED_BOUNDARY.
 
@@ -800,3 +810,29 @@ RD-SF-003
 RD-SF-004
 RD-SF-005
 ```
+
+
+## 690222 binding-selection governance update — 2026-09-28
+
+The current Runtime Default set is now:
+
+~~~text
+RD-SF-001
+RD-SF-002
+RD-SF-003
+RD-SF-004
+RD-SF-005
+RD-SF-006
+~~~
+
+For 690222:
+
+~~~text
+CREATE successful + N >= 2 -> exactly one RandomSystem.choice
+REFRESH successful + N >= 2 -> exactly one new RandomSystem.choice
+N == 1 -> deterministic selection / 0 binding RNG
+RESUME -> retained binding / 0 binding RNG
+admission or conflict rejection -> 0 binding RNG
+~~~
+
+No second RNG owner is introduced. The research statement remains only "randomly select exactly one eligible skill"; equal weighting remains unproven as game behavior.

@@ -990,3 +990,35 @@ Audit code/test SHA = e0f9e0c24a4c379918c3b9389a67dcfea138ac13
 Coverage includes NEW_QUERY-only freshness, immutable resolved history, legal Source filtering, SINGLE/CHOOSE_N/FIXED_ALL, exact RD-SF-005 sample topology/downstream RNG state, all five production producer mappings, NormalAttack/Taunt/Confusion separation, INSIGHT/EXHAUSTION/FALSE_REPORT interactions, explicit ProviderDependency versus attribution, source death/lifetime/resume, event silence, canonical wiring, BU-P06 and BU-P09 unsupported-boundary preservation, and Stage12 leakage guards.
 
 Freeze authority: `STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`.
+
+
+## 690222 binding-selection governance suite — 2026-09-28
+
+Executable governance specification:
+
+```text
+tests/test_stage12_690222_binding_selection_governance.py
+```
+
+Coverage:
+
+- RD-SF-006 provenance is PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN;
+- RD-SF-002 stable Provider ordering;
+- loaded identity pool is not silently replaced by ProviderValidity filtering;
+- one candidate -> deterministic / zero binding RNG;
+- multiple candidates -> exactly one canonical RandomSystem.choice;
+- same seed + same pool -> same binding;
+- downstream RNG stream position is stable;
+- rejected application and Gangyi rejection own zero binding RNG by governance contract;
+- successful REFRESH performs a new selection;
+- same-provider REFRESH is legal and still a new selection operation;
+- RESUME retains binding and consumes zero binding RNG;
+- empty pool remains UNSUPPORTED_BOUNDARY;
+- TALENT remains unsupported/not frozen for 690222 eligibility;
+- all supplied candidates are reachable across a deterministic seed set.
+
+This suite is an executable governance specification only. It does not claim that 690222 gameplay has been integrated.
+
+
+Governance validation: `36369968103 / success / 1409 passed / demo PASS`.
+Baseline before RD-SF-006 governance was 1392 passed; net new governance tests = 17.

@@ -106,10 +106,20 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - Repaired adversarial falsification: PASS
 - Canonical Q1–Q80 governance: PASS
 - OPEN_BLOCKING = 0
+- Binding-selection governance: RESOLVED / PASS
+- Runtime Default: RD-SF-006 / uniform over stable supported eligible Provider pool
+- Runtime Default provenance: PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+- Single candidate: deterministic / 0 binding RNG
+- Multi-candidate: exactly one BattleContext.random -> RandomSystem.choice
+- RESUME: retain binding / 0 binding RNG
+- Empty pool and TALENT eligibility remain unsupported boundaries
+- IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001: CLOSED
 - Runtime NOT_INTEGRATED
-- 21 minimum Runtime contract tests defined
 - Counter semantics separated from 690222 State Stack
-- Next: 690222 INTIMIDATION Runtime Integration
+- Stage12 Runtime Frozen: 4 / 7
+- Governance CI: 36369968103 / success / 1409 passed / demo PASS\n- Next: Resume 690222 INTIMIDATION Runtime Integration
+- Governance authority: [690222 binding selection governance](STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md)
+- Integration gate record: [690222 Runtime Integration](STAGE12_690222_INTIMIDATION_RUNTIME_INTEGRATION.md)
 - Battle mirror: [690222 research authority sync](STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)
 
 ### 690109 破坏 SABOTAGE
