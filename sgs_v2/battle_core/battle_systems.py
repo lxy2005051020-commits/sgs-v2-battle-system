@@ -280,6 +280,7 @@ class BattleSystems:
             equipment_effectiveness_policy=self.equipment_effectiveness_policy,
             state_application_coordinator=self.state_application_coordinator,
             state_removal_policy=self.state_removal_policy,
+            dependencies=self.dependency_evaluation_support,
         )
         register_provocation_integration(
             state_conflict_policy=self.state_conflict_policy,
