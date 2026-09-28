@@ -4,7 +4,7 @@
 > Battle audit-start baseline: `7b0f5695d92ccb9075c03f1a0f527feab686ef90`  
 > Research baseline: `e18ae56a4db5662b87458dfa8fdff25dcdd8053b` (**READ ONLY**)  
 > Audit-start merged-main CI: run `36386893132` = **1640 passed / demo PASS**  
-> Candidate status: **AUDIT CONTENT PASS / FRESH MERGED-MAIN CI REQUIRED BEFORE FINAL DECLARATION**
+> Final status: **PASS / STAGE12 RUNTIME FROZEN / STAGE13 READINESS READY**
 
 ## A. Repository Lock
 Both real `main` heads were re-read before audit. The supplied baselines were still current. The Research repository remains read-only.
@@ -193,49 +193,66 @@ One governance defect was found: several current-looking Stage12 documents lagge
 - Stage12 Freeze impact: blocks final declaration until corrected
 - Stage13 Readiness impact: blocks READY until corrected
 
-No production BLOCKER or unresolved mechanism MAJOR was found.
+No production BLOCKER or unresolved mechanism MAJOR was found. F12-GOV-001 is RESOLVED by current-authority synchronization and merged-main validation.
 
 ## AO. Corrections Applied
-Audit change set is restricted to final adversarial tests, final authority, and current governance synchronization. No frozen Research contract or mechanism semantic is changed. Research repository is unchanged.
+F12-GOV-001 was corrected by synchronizing current governance authority to the already-frozen 7/7 runtime state while preserving explicit historical snapshots. The correction is governance + final acceptance tests only. No frozen Research contract or mechanism semantic was changed. Research repository is unchanged.
 
 ## AP. Stage12 Runtime Freeze Verdict
-`STAGE12_RUNTIME_FREEZE = CANDIDATE_PASS / PENDING_FRESH_MERGED_MAIN_CI`
+`STAGE12_RUNTIME_FREEZE = PASS`
 
 ## AQ. Final 40-State Runtime Audit Verdict
-`FINAL_40_STATE_RUNTIME_AUDIT = CANDIDATE_PASS / PENDING_FRESH_MERGED_MAIN_CI`
+`FINAL_40_STATE_RUNTIME_AUDIT = PASS`
 
 ## AR. Governance Sync Verdict
-`GOVERNANCE_SYNC = PENDING_CORRECTION_AND_FRESH_MERGED_MAIN_CI`
+`GOVERNANCE_SYNC = PASS`
 
 ## AS. Stage13 Readiness Verdict
-`Stage13 Readiness = NOT READY UNTIL FINAL MERGED-MAIN GATE`  
+`Stage13 Readiness = READY`  
 `Stage13 Active = NO`
 
 ## AT. pytest / demo / CI
-Audit-start merged-main run `36386893132`: 1640 passed, demo PASS. Local audit snapshot with the new final suite: 1667 passed, demo PASS. Final verdict requires a fresh successful merged-main run after governance synchronization.
 
+Audit-start merged-main run `36386893132`: 1640 passed, demo PASS. Final audit suite adds 27 tests. Audit candidate merge `f288adfb615cbb46444a32f77aadd615d22c267a` was validated on merged `main` by GitHub Actions run `36389096961`: **1667 passed in 8.25s / demo PASS**. This satisfies the fresh merged-main execution gate used for the final declaration.
 ## AU. Files Created / Updated
 Created: this final authority and `tests/test_stage12_final_completion_audit.py`. Current governance authorities are synchronized in the same audit work. Research repository remains unchanged.
 
 ## AV. Commit SHA
 Audit-start Battle main: `7b0f5695d92ccb9075c03f1a0f527feab686ef90`  
 Research main: `e18ae56a4db5662b87458dfa8fdff25dcdd8053b`  
-Final merge/governance SHA: **pending final merged-main gate**.
+Merged-main audited candidate SHA: `f288adfb615cbb46444a32f77aadd615d22c267a` (run `36389096961` PASS). Final governance declaration is the docs-only successor commit containing this authority.
 
 ## AW. Final Project Gates
+
 ```text
 BLOCKER = 0
-unresolved production/mechanism MAJOR = 0
-F12-GOV-001 = correction pending
+unresolved MAJOR = 0
+F12-GOV-001 = RESOLVED
 Seven individual runtime freezes = VALID
 Shared Foundation = VALID
-40-state runtime coverage = VALID
+Cross-state matrix = PASS
+No duplicate canonical owner = PASS
+No bounded unknown leakage = PASS
+Runtime Default provenance = PASS
+Stage9 = PASS
+Stage10 = PASS
+Stage11 = PASS / Reopen Required NO
+Stage12 = PASS
+40-state runtime coverage = PASS
+full pytest = 1667 passed
+demo = PASS
+fresh merged-main CI = PASS / run 36389096961
+STAGE12_RUNTIME_FREEZE = PASS
+Stage12 Runtime = FROZEN
+Stage12 Complete = YES
+FINAL_40_STATE_RUNTIME_AUDIT = PASS
+GOVERNANCE_SYNC = PASS
 Research FROZEN = 39 / 40
 Runtime FROZEN TO CONTRACT = 40 / 40
 Strict Complete = 39 / 40
 690086 DSTS9-B02 = OPEN / UNOBSERVED
+Stage13 Readiness = READY
 Stage13 Active = NO
 ```
-
 ## AX. NEXT
-`Governance synchronization → fresh merged-main CI → finalize Stage12 Freeze → Stage13 Runtime Entry / Activation in a separate next round.`
+`Stage13 Runtime Entry / Activation` (separate next round; no Assault gameplay was added by this audit).
