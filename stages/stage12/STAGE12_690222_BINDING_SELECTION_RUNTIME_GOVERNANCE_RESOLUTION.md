@@ -349,49 +349,49 @@ NORMAL_ATTACK not added
 ## AB. Stage9 Regression
 
 ```text
-PENDING CI VALIDATION
+PASS via full-suite CI 36369968103 / 1409 passed / demo PASS
 ```
 
 ## AC. Stage10 Regression
 
 ```text
-PENDING CI VALIDATION
+PASS via full-suite CI 36369968103 / 1409 passed / demo PASS
 ```
 
 ## AD. Stage11 Regression
 
 ```text
-PENDING CI VALIDATION
+PASS via full-suite CI 36369968103 / 1409 passed / demo PASS
 ```
 
 ## AE. 690089 Regression
 
 ```text
-PENDING CI VALIDATION
+PASS via full-suite CI 36369968103 / 1409 passed / demo PASS
 ```
 
 ## AF. 690101 Regression
 
 ```text
-PENDING CI VALIDATION
+PASS via full-suite CI 36369968103 / 1409 passed / demo PASS
 ```
 
 ## AG. 690107 Regression
 
 ```text
-PENDING CI VALIDATION
+PASS via full-suite CI 36369968103 / 1409 passed / demo PASS
 ```
 
 ## AH. 690108 Regression
 
 ```text
-PENDING CI VALIDATION
+PASS via full-suite CI 36369968103 / 1409 passed / demo PASS
 ```
 
 ## AI. Shared Foundation Regression
 
 ```text
-PENDING CI VALIDATION
+PASS via full-suite CI 36369968103 / 1409 passed / demo PASS
 ```
 
 ## AJ. Research Changes
@@ -418,7 +418,7 @@ Baseline before this governance round:
 demo = PASS
 ```
 
-Final branch/PR validation is recorded after CI completes.
+Governance validation CI = 36369968103 / success / 1409 passed / demo PASS. Baseline was 1392 passed; net new governance tests = 17.
 
 ## AM. Files Created / Updated
 
@@ -430,12 +430,21 @@ tests/test_stage12_690222_binding_selection_governance.py
 stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_INTEGRATION.md
 ```
 
-Updated governance/status files are listed in the final validated revision.
+Updated:
+
+```text
+stages/stage12/STAGE12_RUNTIME_DEFAULT_LEDGER.md
+stages/stage12/STAGE12_RNG_EVENT_DEFAULT_GOVERNANCE.md
+stages/stage12/STAGE12_CONTRACT_RUNTIME_MAPPING.md
+stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md
+stages/stage12/README.md
+PROJECT_STATUS.md
+```
 
 ## AN. Commit SHA
 
 ```text
-PENDING VALIDATED PR HEAD / MERGE SHA
+Validated governance/test PR head = d3c0b0af389f8d6ca4262c881956307cfb39401f\nPR = #19\nMerge SHA = recorded after final branch validation
 ```
 
 ## AO. Blocker Verdict
@@ -443,8 +452,8 @@ PENDING VALIDATED PR HEAD / MERGE SHA
 Governance decision:
 
 ```text
-Binding Governance = RESOLVED SUBJECT TO CI
-IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001 = CLOSED SUBJECT TO CI
+Binding Governance = RESOLVED / PASS
+IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001 = CLOSED
 ```
 
 No new binding-pool blocker is opened because existing frozen Shared Foundation identity design already supplies the pool-construction boundary used by this default.
@@ -457,7 +466,7 @@ Until CI validation and merge:
 690222 Research = FROZEN
 690222 Gameplay = NOT_INTEGRATED
 690222 Runtime = NOT_FROZEN
-Binding Governance = RESOLVED SUBJECT TO CI
+Binding Governance = RESOLVED / PASS
 Stage12 Runtime Frozen = 4 / 7
 Research Reopen Required = NO
 Shared Foundation Reopen Required = NO
@@ -467,7 +476,7 @@ Blocker closure does not increment Stage12 Runtime Frozen.
 
 ## AQ. NEXT
 
-After CI validation and merge:
+After governance validation:
 
 ```text
 Resume 690222 INTIMIDATION Runtime Integration
