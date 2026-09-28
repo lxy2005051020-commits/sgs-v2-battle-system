@@ -1,6 +1,6 @@
 # Stage12 Runtime Test Matrix Skeleton
 
-> Status: **SHARED FOUNDATION COMPLETE / ALL SEVEN INDIVIDUAL RUNTIME FREEZES VALID / STAGE12 RUNTIME 7 OF 7 / FINAL COMPLETION AUDIT CANDIDATE**ntry baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.  
+> Status: **STAGE12 FINAL COMPLETION PASS / RUNTIME FROZEN / 40-STATE ACCEPTANCE PASS**ntry baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.  
 > Current 690222 independent freeze checkpoint: **1483 passed / demo PASS** at audit-test SHA `0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96`, PR CI `36374443142`.
 
 | State / Foundation | Positive Case | Negative Case | Primary Discriminator | Cross-State Required | Minimum |
@@ -1169,6 +1169,8 @@ The suite independently attacks Action short-circuit and STUN counter preservati
 
 Freeze authority: `STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`.
 
-## STAGE12_FINAL_AUDIT_CANDIDATE_TEST_MATRIX — 2026-09-28
+## STAGE12_FINAL_COMPLETION_TEST_MATRIX — 2026-09-28
 
-The final stage-level suite is `tests/test_stage12_final_completion_audit.py` (27 tests). It binds the mandatory 13-pair cross-state matrix to executable anchors and adds owner/RNG/provenance/40-state/governance guards. Local audit snapshot: 1667 passed + demo PASS. Fresh merged-main CI remains the final authority.
+Final stage-level suite: `tests/test_stage12_final_completion_audit.py` (27 tests).
+Mandatory 13-pair cross-state matrix plus owner/RNG/provenance/40-state/governance guards are executable.
+Fresh merged-main run `36389096961`: **1667 passed / demo PASS**.
