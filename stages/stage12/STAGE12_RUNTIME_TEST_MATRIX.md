@@ -1,6 +1,6 @@
 # Stage12 Runtime Test Matrix Skeleton
 
-> Status: **SHARED FOUNDATION COMPLETE / 690089 + 690101 + 690107 + 690108 + 690222 RUNTIME FROZEN / STAGE12 RUNTIME 5 OF 7 / NEXT 690109 SABOTAGE**  
+> Status: **SHARED FOUNDATION COMPLETE / 690109 GAMEPLAY IMPLEMENTED PENDING AUDIT / STAGE12 RUNTIME 5 OF 7 / NEXT 690109 SABOTAGE INDEPENDENT RUNTIME FREEZE AUDIT**  
 > Historical entry baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.  
 > Current 690222 independent freeze checkpoint: **1483 passed / demo PASS** at audit-test SHA `0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96`, PR CI `36374443142`.
 
@@ -1045,3 +1045,34 @@ Coverage independently attacks RD-SF-002 ordering, RD-SF-006 call topology and d
 TROOP executable Provider identity/binding/suppression is covered. The absence of a separate concrete TROOP execution consumer is a non-blocking audit note; any future TROOP consumer must query canonical ProviderValidity.
 
 Freeze authority: `STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`.
+
+
+## 690109 SABOTAGE Gameplay Integration executable checkpoint — 2026-09-28
+
+Primary executable specification:
+
+```text
+tests/test_stage12_690109_sabotage.py
+```
+
+Validated checkpoint:
+
+```text
+baseline = 1483 passed
+validated code/test SHA = 9d2b6aa37dffef1ea28ad4a5984ccc147114af89
+PR CI = 36379462582 / success
+full pytest = 1525 passed
+delta = +42 test nodes
+demo = PASS
+```
+
+Coverage reaches canonical AttributeSystem, DamageModifierSystem, RecoverySystem,
+TriggerSystem equipment gate, ExecutionRightSupport scheduled recheck, explicit
+EquipmentProvider dependency propagation, remote-owner semantics, Insight,
+Gangyi, FalseReport multi-cause composition, lifecycle/same-envelope settlement,
+RNG/event silence and static architecture guards. Dynamic post-application
+equipment remains an explicit unsupported boundary; 690110 gameplay is not
+implemented.
+
+Runtime Freeze is not claimed by this checkpoint. NEXT =
+`690109 SABOTAGE Independent Runtime Freeze Audit`.

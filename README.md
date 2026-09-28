@@ -125,7 +125,11 @@ Research FROZEN:
 690109 当前状态：
 - Contract v1.0-frozen
 - Freeze Audit PASS
-- Runtime NOT_INTEGRATED
+- Gameplay IMPLEMENTED_PENDING_RUNTIME_AUDIT
+- Runtime NOT YET FROZEN
+- Integration Exit Gate PASS
+- PR CI 36379462582 / 1525 passed / demo PASS
+- Integration record: stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md
 
 690110 当前状态：
 - Contract v1.0-frozen
@@ -145,8 +149,11 @@ Stage12 Shared Foundation Design + Implementation = FROZEN / COMPLETE.
 690108 PROVOCATION Runtime = FROZEN TO CONTRACT.
 690222 INTIMIDATION Gameplay = IMPLEMENTED.
 690222 INTIMIDATION Runtime = FROZEN TO CONTRACT.
+690109 SABOTAGE Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT.
+690109 SABOTAGE Runtime = NOT YET FROZEN.
+Stage12 Gameplay Implementation = 6 / 7.
 Stage12 Runtime Frozen = 5 / 7.
-Next: 690109 SABOTAGE Runtime Integration.
+Next: 690109 SABOTAGE Independent Runtime Freeze Audit.
 
 ## Stage sequencing
 
@@ -219,7 +226,7 @@ Audit authority: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`
 Stage12 Runtime Frozen = 5 / 7
 Stage11 Reopen Required = NO
 Stage13 / Stage14 / Stage15 Active = NO
-NEXT = 690109 SABOTAGE Runtime Integration
+NEXT = 690109 SABOTAGE Independent Runtime Freeze Audit
 ```
 
 690108 freeze authority: `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`.

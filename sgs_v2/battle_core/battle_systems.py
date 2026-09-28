@@ -62,6 +62,7 @@ from .insight_integration import register_insight_integration
 from .exhaustion_integration import register_exhaustion_integration
 from .false_report_integration import register_false_report_integration
 from .intimidation_integration import register_intimidation_integration
+from .sabotage_integration import register_sabotage_integration
 from .provocation_integration import register_provocation_integration
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
@@ -268,6 +269,17 @@ class BattleSystems:
             preparation_interruption_port=self.preparation_interruption_port,
             equipment_contribution_registry=self.equipment_contribution_registry,
             equipment_effectiveness_policy=self.equipment_effectiveness_policy,
+            dependencies=self.dependency_evaluation_support,
+        )
+        register_sabotage_integration(
+            state_admission_policy=self.state_admission_policy,
+            state_conflict_policy=self.state_conflict_policy,
+            state_effectiveness_policy=self.state_effectiveness_policy,
+            provider_validity_policy=self.provider_validity_policy,
+            equipment_contribution_registry=self.equipment_contribution_registry,
+            equipment_effectiveness_policy=self.equipment_effectiveness_policy,
+            state_application_coordinator=self.state_application_coordinator,
+            state_removal_policy=self.state_removal_policy,
             dependencies=self.dependency_evaluation_support,
         )
         register_provocation_integration(
