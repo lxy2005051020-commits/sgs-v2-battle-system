@@ -220,20 +220,21 @@ Stage11 Runtime FROZEN / Reopen Required NO in this documentation-only phase; St
 Stage12 Runtime Frozen 0 / 7; Stage13 Active NO; Research FROZEN 39 / 40; DSTS9-B02 OPEN / UNOBSERVED.
 NEXT: DQ-SF-15/16 authority reconciliation, then DQ-SF-04/05 taxonomy and Provider identity design.
 
-## STAGE12_FINAL_AUDIT_CANDIDATE_MATRIX — 2026-09-28
-
-Current matrix authority:
+## STAGE12_FINAL_COMPLETION_MATRIX — 2026-09-28
 
 ```text
-Stage12 Research FROZEN = 7 / 7
-Stage12 Gameplay = 7 / 7
-Stage12 Runtime FROZEN TO CONTRACT = 7 / 7
-Official Runtime FROZEN TO CONTRACT = 40 / 40
+STAGE12_RUNTIME_FREEZE = PASS
+Stage12 Runtime = FROZEN
+Stage12 Complete = YES
+FINAL_40_STATE_RUNTIME_AUDIT = PASS
+GOVERNANCE_SYNC = PASS
+Stage13 Readiness = READY
+Stage13 Active = NO
 Research FROZEN = 39 / 40
+Runtime FROZEN TO CONTRACT = 40 / 40
 Strict Complete = 39 / 40
 690086 DSTS9-B02 = OPEN / UNOBSERVED
-Stage12 Complete = NO (fresh merged-main final gate pending)
-Stage13 Active = NO
 ```
 
 Final stage-level authority: `stages/stage12/STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
+Fresh merged-main run `36389096961`: 1667 passed / demo PASS.
