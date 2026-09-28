@@ -12,6 +12,7 @@ from sgs_v2.battle_core import (
     DamageSkillEffectSpec,
     DamageType,
     DependencyCycleError,
+    EffectSourceRef,
     EmptyStateRuntimeParams,
     EquipmentProviderRef,
     EventBus,
@@ -23,7 +24,11 @@ from sgs_v2.battle_core import (
     ProviderNode,
     ProviderValidityStatus,
     RandomSystem,
+    RecoveryOpportunity,
+    RecoveryOpportunityKind,
     RemovalOperation,
+    RuleIntentExecutionDescriptor,
+    RuleIntentKind,
     SkillDefinition,
     SkillOperationAdmissionRequest,
     SkillOperationAdmissionStatus,
@@ -32,6 +37,7 @@ from sgs_v2.battle_core import (
     SkillRuntime,
     SkillSlot,
     SkillTargetMode,
+    SourceType,
     SkillType,
     StateApplicationResultStatus,
     StateCandidate,
@@ -39,6 +45,7 @@ from sgs_v2.battle_core import (
     StateLifetimeSpec,
     StateNode,
     StateRemovalResultStatus,
+    PersistentSourceSkillGate,
     UnitRuntime,
     register_official_state_definitions,
 )
@@ -517,6 +524,66 @@ def test_active_and_assault_production_admission_reads_provider_validity(
 
     assert decision.status is SkillOperationAdmissionStatus.DENY_PROVIDER_INVALID
     assert decision.permission_decision is None
+
+
+@pytest.mark.parametrize("skill_type", [SkillType.PASSIVE, SkillType.COMMAND])
+def test_passive_and_command_future_opportunity_consumer_gates_and_restores_without_replay(
+    skill_type,
+) -> None:
+    rng = CountingRandomSystem(29)
+    context = make_context(rng)
+    runtime = skill(
+        context,
+        skill_type=skill_type,
+        skill_id=f"{skill_type.value.lower()}-future-provider",
+    )
+    systems = BattleSystems()
+    intimidation = apply_intimidation(systems, context)
+    assert intimidation.instance is not None
+
+    descriptor = RuleIntentExecutionDescriptor(
+        intent_kind=RuleIntentKind.RECOVERY_OPPORTUNITY,
+        intent_owner_id="a",
+        state_owner_id="a",
+        target_id="a",
+        source_ref=EffectSourceRef(
+            stage9_source_type=SourceType.ACTIVE_SKILL,
+            source_unit_id="a",
+            source_skill_id=runtime.definition.skill_id,
+            source_skill_slot=runtime.skill_slot,
+        ),
+        execution_domain="STATE_RESOLUTION",
+    )
+    opportunity = RecoveryOpportunity(
+        opportunity_kind=RecoveryOpportunityKind.RECUPERATION_ACTION_START,
+        execution_descriptor=descriptor,
+        probability=1.0,
+        source_skill_gate=PersistentSourceSkillGate.query_skill_runtime(),
+    )
+
+    suppressed = systems.recovery_opportunity_system.evaluate_and_resolve(
+        context,
+        opportunity,
+    )
+    assert suppressed.executed is False
+    assert suppressed.reason == "SKILL_TEMPORARILY_DISABLED"
+    assert rng.chance_calls == 0
+
+    remove_state(
+        systems,
+        context,
+        intimidation.instance.instance_id,
+        RemovalOperation.NATURAL_EXPIRY,
+    )
+    # Restoration itself creates no retroactive opportunity and consumes no RNG.
+    assert rng.chance_calls == 0
+
+    restored_future = systems.recovery_opportunity_system.evaluate_and_resolve(
+        context,
+        opportunity,
+    )
+    assert restored_future.reason != "SKILL_TEMPORARILY_DISABLED"
+    assert rng.chance_calls == 1
 
 
 def test_exhaustion_ordering_is_provider_validity_before_skill_permission() -> None:

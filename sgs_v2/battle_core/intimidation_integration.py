@@ -111,8 +111,6 @@ def intimidation_eligible_provider_pool(
         runtime = context.skill_runtimes.get(holder_id, slot)
         if runtime is None:
             continue
-        if runtime.definition.skill_type not in INTIMIDATION_SUPPORTED_SKILL_TYPES:
-            continue
         provider_ref = SkillProviderRef(
             owner_id=holder_id,
             skill_slot=slot,
@@ -123,6 +121,8 @@ def intimidation_eligible_provider_pool(
             raise RuntimeError(
                 "loaded SkillRuntime failed canonical Provider identity validation"
             )
+        if runtime.definition.skill_type not in INTIMIDATION_SUPPORTED_SKILL_TYPES:
+            continue
         providers.append(provider_ref)
 
     return tuple(

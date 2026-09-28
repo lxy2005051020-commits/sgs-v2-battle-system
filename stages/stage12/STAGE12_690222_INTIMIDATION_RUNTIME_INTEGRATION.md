@@ -117,10 +117,12 @@ Governance CI = 36369968103 / success / 1409 passed / demo PASS\nNEXT = Resume 6
 The production integration now uses the canonical Shared Foundation owners rather
 than a 690222 lifecycle facade.
 
-- loaded Skill Providers are identity-validated and ordered by RD-SF-002;
+- loaded Skill Providers are exact-identity validated before taxonomy filtering,
+  then ordered by RD-SF-002;
 - ACTIVE (including preparation-required ACTIVE), ASSAULT, PASSIVE, COMMAND,
   and TROOP are supported eligible Provider families;
-- FORMATION is excluded, TALENT remains outside the supported frozen pool, and
+- FORMATION is the frozen exclusion; TALENT remains an unsupported runtime
+  boundary rather than a Research-confirmed exclusion, and
   Normal Attack is not a Provider candidate;
 - empty supported pool remains UNSUPPORTED_BOUNDARY;
 - one candidate consumes zero binding RNG; multiple candidates consume exactly
