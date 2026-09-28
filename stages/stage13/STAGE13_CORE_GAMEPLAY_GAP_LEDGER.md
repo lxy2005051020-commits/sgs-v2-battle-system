@@ -1,6 +1,6 @@
 # Stage13 Core Gameplay Gap Ledger
 
-> Status: Stage13-A inventory output
+> Status: CURRENT GAP LEDGER / Stage13-A inventory preserved + foundational research amendment
 >
 > Source inventory: STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY.md
 >
@@ -9,16 +9,20 @@
 ## 1. Gate summary
 
 ~~~text
-Inventory rows                            48
-Implementation-required gap families     18
-New empirical research families           1
+Inventory rows                                  48
+Inventory-derived implementation gap families   18
+Post-inventory foundational research families    3
+  - wounded-troop / recoverable capacity
+  - damage increase / reduction mechanics
+  - recovery / treatment formula mechanics
+Residual known state research family             1
   - 690221 family applicability
-Runtime-governance workstreams            5
-Stage1-12 reopen required                 0
-Skill Runtime implementation started      NO
+Runtime-governance workstreams                    5
+Stage1-12 wholesale reopen required               0
+Skill Runtime implementation started              NO
 ~~~
 
-The two 690221 inventory rows are one focused research family with two discriminating lanes: ACTIVE_SKILL and DOT / DELAYED.
+The two 690221 inventory rows remain one focused residual-state research family with two discriminating lanes: ACTIVE_SKILL and DOT / DELAYED. A post-inventory route review additionally opened three foundational empirical families because the original inventory treated runnable settlement behavior too generously as evidence of formula-level closure.
 
 ## 2. Gap ledger
 
@@ -43,6 +47,9 @@ The two 690221 inventory rows are one focused research family with two discrimin
 | G13-017 | CGM-038 | Generic cleanse/dispel/category removal | exact removal strong; category semantics are bounded/adapters only | PARTIAL | YES | StateRemovalPolicy, actual state taxonomy | typed category-removal query after authority review; never infer from UI labels |
 | G13-018 | CGM-043 | Whole-battle deterministic replay audit | seeded RNG and golden traces exist but no Stage13 replay gate | PARTIAL | YES | G13-007, all other core work | trace schema + repeated same-input/same-seed audit across operations/RNG/targets/damage/recovery/states/result |
 | G13-019 | CGM-045/046 | 690221 See-Through active / DOT family applicability | explicit UNSUPPORTED_UNKNOWN | RESEARCH_REQUIRED | YES | existing 690221 authority | focused evidence campaign + amendment/freeze audit OR explicit Stage13 non-blocking unsupported-boundary verdict |
+| G13-020 | Post-inventory foundation audit | Wounded-troop / recoverable-capacity mechanics | Runtime clamps recovery to missing troops; independent wounded-pool truth is not empirically established | RESEARCH_REQUIRED | YES | damage settlement, RecoverySystem, TroopSystem | focused battle-report research establishing equivalence, independent pool, family-specific rule, or explicit unobservable boundary |
+| G13-021 | Post-inventory foundation audit | Damage increase / reduction aggregation mathematics | typed modifier phases exist, but universal stacking/order/cap/rounding semantics are not fully empirically frozen | RESEARCH_REQUIRED | YES | DamageModifierSystem, critical families, morale/troop-restraint layers | controlled multi-modifier research + quantitative model discrimination + foundation freeze |
+| G13-022 | Post-inventory foundation audit | General recovery / treatment formula mechanics | trigger/lifecycle are mature, while treatment-rate/attribute conversion remains FORMULA_RESEARCH_OUT_OF_SCOPE in key contracts | RESEARCH_REQUIRED | YES | G13-020, RecoverySystem, FirstAid/Recuperation authorities | formula-family research + modifier/rounding/snapshot discrimination + foundation freeze |
 
 ## 3. Non-gaps that must not be reopened
 
@@ -91,21 +98,31 @@ The existing Runtime Default Ledger keeps Provocation, Capture, FalseReport and 
 
 ## 5. Dependency order
 
+The research-first route amendment supersedes the original direct BATCH A-F execution order.
+
 ~~~text
-BATCH A — identity / deterministic governance
+RESEARCH GATE B1
+  G13-020 wounded-troop / recoverable-capacity mechanics
+
+RESEARCH GATE B2
+  G13-021 damage increase / reduction mechanics
+
+RESEARCH GATE B3
+  G13-022 recovery / treatment formula mechanics
+
+STAGE13-C
+  G13-019 690221 focused research
+  audit 690086 / 690099 / all other residual state debt
+  reopen only exact unresolved clauses
+
+STAGE13-D — consolidated planning / governance
   G13-007 RNG trace governance
   G13-015 operation/work lineage
-
-BATCH B — core value model
   G13-005 attribute source/modifier model
   G13-006 attribute snapshot/JIT policy
   G13-002 selector vocabulary
-
-BATCH C — timing / opportunity
   G13-001 timing/opportunity breadth
   G13-004 recovery opportunity extensibility
-
-BATCH D — effect / modifier / work
   G13-008 core Effect primitives
   G13-009 multi-effect composition
   G13-011 modifier shell
@@ -113,23 +130,22 @@ BATCH D — effect / modifier / work
   G13-013 usage/frequency
   G13-010 delayed/repeated work
   G13-016 ExecutionRight extension
-  G13-014 defeat/provider/target validity for pending work
-
-BATCH E — removal / research boundary closure
+  G13-014 pending-work validity
   G13-017 category removal
-  G13-019 690221 focused research
+  G13-003 damage extension seam
+  G13-018 replay plan
 
-BATCH F — replay and completion
-  G13-003 damage extension final integration
-  G13-018 deterministic replay audit
-  full Stage1-12 regression
+STAGE13-E/F/G
+  architecture
+  implementation
+  deterministic replay / independent completion audit
 ~~~
 
-Research G13-019 may run in parallel with Batches A-C because it has an existing isolated contract boundary and does not authorize implementation before freeze.
+B1 is first because B3 recovery interpretation depends on knowing what capacity is actually recoverable. B2 is independent enough to prepare in parallel, but all three foundational research gates must close before Stage13-C is declared complete.
 
-## 6. Stage13-B planning requirement
+## 6. Stage13-D planning requirement
 
-Stage13-B must produce a closure plan for every gap with:
+Stage13-D must produce a closure plan for every gap with:
 
 - exact authority source;
 - owner to reuse/extend;

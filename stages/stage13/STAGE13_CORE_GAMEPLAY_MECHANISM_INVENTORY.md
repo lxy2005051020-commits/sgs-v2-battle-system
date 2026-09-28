@@ -10,6 +10,8 @@
 >
 > Scope: inventory / classification / governance only. No new gameplay implementation.
 
+> **2026-09-28 route amendment:** this document remains the historical Stage13-A inventory authority. Its conclusion that only CGM-045/046 require new blocking empirical research is superseded for subsequent execution by `STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md`, which adds wounded/recoverable-capacity, damage increase/reduction, and recovery/treatment-formula research gates. The 48-row inventory counts are intentionally not rewritten retroactively.
+
 ## 1. Verdict
 
 ~~~text
@@ -189,11 +191,20 @@ STAGE13_ENTRY_GATE                               PASS
 Stage13 Active                                   YES
 ~~~
 
-## 8. Unique NEXT
+## 8. Historical NEXT and current supersession
+
+The Stage13-A audit originally emitted:
 
 ~~~text
-NEXT =
+HISTORICAL_NEXT =
 STAGE13_B_GAP_CLASSIFICATION_AND_CLOSURE_PLANNING
 ~~~
 
-Stage13-B must turn the implementation-required rows into closure batches, open focused research only for CGM-045/046, and prepare Runtime Governance questions for CGM-022 and the deterministic choices implied by the PARTIAL/MISSING work primitives. No gameplay implementation is authorized by this document.
+That sequencing is now superseded by the foundational-research amendment.
+
+~~~text
+CURRENT_NEXT =
+STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
+~~~
+
+No gameplay implementation is authorized by this inventory document.

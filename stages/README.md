@@ -111,14 +111,14 @@ Research Wave 是研究顺序，不得覆盖项目阶段编号。
 ## 7. Current next action
 
 ```text
-STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
-→ complete core-mechanism inventory
-→ classify ALREADY_IMPLEMENTED / PARTIAL / MISSING / RESEARCH_REQUIRED /
-   RUNTIME_GOVERNANCE_REQUIRED / UNSUPPORTED / NOT_NEEDED
-→ build Stage13 closure plan
+STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
+→ B1 wound/recoverable-capacity research
+→ B2 damage increase/reduction mechanics research
+→ B3 recovery/treatment formula research
+→ Stage13-C residual state mechanism closure
 ```
 
-Stage13 Readiness = READY. Stage13 Active remains NO until the Stage13 entry/inventory gate is explicitly passed.
+Stage13 Readiness = READY. Stage13 Active = YES. Stage13-A inventory is complete; the current foundational-research amendment governs execution.
 
 ## STAGE12_FINAL_COMPLETION_STAGE_INDEX — 2026-09-28
 
@@ -150,7 +150,14 @@ STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT = PASS
 CORE_GAMEPLAY_MECHANISM_INVENTORY               = COMPLETE
 Stage13 Active                                   = YES
 Stage13-A                                        = COMPLETE
-NEXT                                             = STAGE13_B_GAP_CLASSIFICATION_AND_CLOSURE_PLANNING
+NEXT                                             = STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
 ~~~
 
 The Stage13 index and ledgers are under stages/stage13/. No gameplay implementation was added by the activation audit.
+
+
+## STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN — 2026-09-28
+
+The current execution order is B1 wounded/recoverable capacity, B2 damage increase/reduction mechanics, B3 recovery/treatment formula mechanics, then Stage13-C residual state-debt closure.
+
+Authority: [Stage13 Foundational Research Priority Replan](stage13/STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md).

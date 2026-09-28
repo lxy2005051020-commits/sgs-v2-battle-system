@@ -116,11 +116,14 @@ Stage13 = Core Gameplay Mechanism Completion
           游戏底层机制完备化
 
           Phase A  Core Mechanism Inventory Audit
-          Phase B  Gap Classification & Research Planning
-          Phase C  Focused Mechanism Research / Runtime Governance
-          Phase D  Core Runtime Architecture Design
-          Phase E  Core Mechanism Implementation
-          Phase F  Independent Engine Completion / Deterministic Replay Audit
+          Phase B1 Wounded-Troop / Recoverable-Capacity Research
+          Phase B2 Damage Increase / Reduction Mechanics Research
+          Phase B3 Recovery / Treatment Formula Research
+          Phase C  Residual State Mechanism Closure
+          Phase D  Consolidated Gap Classification + Runtime Governance
+          Phase E  Core Runtime Architecture Design
+          Phase F  Core Mechanism Implementation
+          Phase G  Independent Engine Completion / Deterministic Replay Audit
 
 Stage14+ = Skill System / 战法系统
            Assault / Active / Preparation / Passive / Command /
@@ -179,7 +182,7 @@ Current authority:
 Current next action:
 
 ```text
-STAGE13_B_GAP_CLASSIFICATION_AND_CLOSURE_PLANNING
+STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
 ```
 
 
@@ -195,4 +198,20 @@ Core Gameplay Engine              = NOT YET FROZEN
 Skill Runtime Readiness           = NOT YET READY
 ~~~
 
-The inventory found mature existing owners plus implementation-required generalization gaps. No Stage1-12 reopen is required by the entry audit. Focused empirical research is opened only for the 690221 ACTIVE_SKILL and DOT/DELAYED applicability lanes; 690086 DSTS9-B02 remains separate explicit research debt.
+The inventory found mature existing owners plus implementation-required generalization gaps. No Stage1-12 wholesale reopen is required by the entry audit. A subsequent foundational-research amendment supersedes the earlier research-priority conclusion: Stage13 now researches wounded/recoverable capacity first, then damage increase/reduction mathematics, then recovery/treatment formulas, and only afterward performs systematic residual state-mechanism closure. 690221 ACTIVE_SKILL / DOT-DELAYED and 690086 DSTS9-B02 remain preserved for that residual-state phase.
+
+
+## Stage13 Foundational Research Priority Amendment — 2026-09-28
+
+Authority: `stages/stage13/STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md`.
+
+The Stage13 exit gate now additionally requires auditable verdicts for:
+
+~~~text
+WOUNDED_TROOP_RESEARCH = CLOSED OR EXPLICIT_UNOBSERVABLE_DEFAULT
+DAMAGE_MODIFIER_MATH_RESEARCH = CLOSED OR EXPLICIT_BOUNDED_AUTHORITY
+RECOVERY_TREATMENT_FORMULA_RESEARCH = CLOSED OR EXPLICIT_BOUNDED_AUTHORITY
+RESIDUAL_STATE_DEBT_LEDGER = COMPLETE
+~~~
+
+The Skill System remains behind the Stage13 engine-completion gate.

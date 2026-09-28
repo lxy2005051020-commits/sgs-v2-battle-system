@@ -14,6 +14,7 @@ REQUIRED_DOCS = (
     "STAGE13_CORE_MECHANISM_TEST_MATRIX.md",
     "STAGE13_RESEARCH_GAP_LEDGER.md",
     "STAGE13_RUNTIME_GOVERNANCE_LEDGER.md",
+    "STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md",
 )
 
 CLASSIFICATIONS = {
@@ -82,6 +83,9 @@ def test_stage13_research_and_runtime_governance_are_separate() -> None:
     research = _read("STAGE13_RESEARCH_GAP_LEDGER.md")
     governance = _read("STAGE13_RUNTIME_GOVERNANCE_LEDGER.md")
 
+    assert "RQ13-B1" in research
+    assert "RQ13-B2" in research
+    assert "RQ13-B3" in research
     assert "RQ13-001" in research
     assert "RQ13-002" in research
     assert "RESEARCH_REQUIRED" in research
@@ -99,9 +103,12 @@ def test_stage13_does_not_activate_skill_runtime() -> None:
     assert "Skill Runtime Readiness           = NOT YET READY" in index
 
 
-def test_stage13_next_is_unique_closure_planning() -> None:
+def test_stage13_next_is_foundational_wounded_research() -> None:
     inventory = _read("STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY.md")
     index = _read("README.md")
-    token = "STAGE13_B_GAP_CLASSIFICATION_AND_CLOSURE_PLANNING"
+    replan = _read("STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md")
+    token = "STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH"
     assert token in inventory
     assert token in index
+    assert token in replan
+    assert "HISTORICAL_NEXT" in inventory
