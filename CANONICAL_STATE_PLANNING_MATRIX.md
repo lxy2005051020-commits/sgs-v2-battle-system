@@ -267,7 +267,7 @@ STAGE1-12_REGRESSION = PASS
 Skill Runtime Readiness = READY
 ```
 
-Current next action: `STAGE13_B_GAP_CLASSIFICATION_AND_CLOSURE_PLANNING`.
+Current next action: `STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH`.
 
 Authority: `stages/stage13/STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN.md`.
 
@@ -283,3 +283,18 @@ Stage13-B                         = NEXT
 ~~~
 
 This activation changes no state maturity rows. Research remains 39/40, Runtime FROZEN TO CONTRACT remains 40/40, Strict Complete remains 39/40, and 690086 DSTS9-B02 remains OPEN / UNOBSERVED.
+
+
+## STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN — 2026-09-28
+
+~~~text
+Stage13-B1 = Wounded-Troop / Recoverable-Capacity Research
+Stage13-B2 = Damage Increase / Reduction Mechanics Research
+Stage13-B3 = Recovery / Treatment Formula Research
+Stage13-C  = Residual State Mechanism Closure
+Stage13-D+ = Governance / Architecture / Implementation / Independent Audit
+~~~
+
+The Stage13-A 48-row inventory remains historical authority and its counts are unchanged. The amendment raises the empirical completion bar before core-runtime design and does not alter any existing 40-state maturity row.
+
+Authority: `stages/stage13/STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md`.
