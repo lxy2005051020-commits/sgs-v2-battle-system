@@ -61,7 +61,7 @@ Governance:
     Research FROZEN: 7 / 7
     Runtime Frozen: 7 / 7
 
-Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; all seven Stage12 mechanisms have now passed independent Runtime Freeze Audits. Stage12 Runtime Frozen is 7 / 7. Stage12 Complete remains NO until the Stage12 Final Completion / Freeze Audit closes the stage-level gate.
+Stage12 production Runtime has passed the Final Completion / Freeze Audit. Research remains 7 / 7 FROZEN; all seven mechanisms have independent Runtime Freeze authorities. Stage12 Runtime = FROZEN; Stage12 Complete = YES; FINAL_40_STATE_RUNTIME_AUDIT = PASS; GOVERNANCE_SYNC = PASS; Stage13 Readiness = READY; Stage13 Active = NO.
 
 ### 690089 INSIGHT
 
@@ -664,25 +664,23 @@ Freeze authority: `stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md
 
 The integration CI `36384210914` is not reused as freeze authority; fresh audit PR CI and fresh merged-main CI remain required before release-final closure.
 
-## STAGE12_FINAL_AUDIT_CANDIDATE_GOVERNANCE — 2026-09-28
-
-Current authority superseding undated per-state progress text:
+## STAGE12_FINAL_COMPLETION_GOVERNANCE — 2026-09-28
 
 ```text
-Stage12 Research = 7 / 7 FROZEN
-Stage12 Gameplay Implementation = 7 / 7
-Stage12 Runtime Frozen To Contract = 7 / 7
-Stage12 Complete = NO
-STAGE12_RUNTIME_FREEZE = CANDIDATE_PASS / FRESH_MERGED_MAIN_CI_PENDING
-FINAL_40_STATE_RUNTIME_AUDIT = CANDIDATE_PASS / FRESH_MERGED_MAIN_CI_PENDING
-GOVERNANCE_SYNC = CANDIDATE_SYNCED / FRESH_MERGED_MAIN_CI_PENDING
+STAGE12_RUNTIME_FREEZE = PASS
+Stage12 Runtime = FROZEN
+Stage12 Complete = YES
+FINAL_40_STATE_RUNTIME_AUDIT = PASS
+GOVERNANCE_SYNC = PASS
+Stage13 Readiness = READY
+Stage13 Active = NO
 Research FROZEN = 39 / 40
 Runtime FROZEN TO CONTRACT = 40 / 40
 Strict Complete = 39 / 40
 690086 DSTS9-B02 = OPEN / UNOBSERVED
-Stage13 Readiness = NOT READY UNTIL FINAL GATE
-Stage13 Active = NO
 ```
+
+Fresh merged-main evidence: `f288adfb615cbb46444a32f77aadd615d22c267a`, CI run `36389096961` = 1667 passed / demo PASS.
 
 Authority: `stages/stage12/STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
 Explicit dated historical snapshots remain historical and are not rewritten.
