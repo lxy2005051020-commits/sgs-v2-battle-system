@@ -1,8 +1,8 @@
 # Stage12 Runtime Test Matrix Skeleton
 
-> Status: **SHARED FOUNDATION COMPLETE / 690089 + 690101 + 690107 + 690108 RUNTIME FROZEN / 690222 GAMEPLAY IMPLEMENTED_PENDING_RUNTIME_AUDIT / STAGE12 RUNTIME 4 OF 7**  
+> Status: **SHARED FOUNDATION COMPLETE / 690089 + 690101 + 690107 + 690108 + 690222 RUNTIME FROZEN / STAGE12 RUNTIME 5 OF 7 / NEXT 690109 SABOTAGE**  
 > Historical entry baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.  
-> Current 690222 integration checkpoint: **1453 passed / demo PASS** at code SHA `834f6e7508c8006342ff37593454ef91d8e8d0a4`, CI `36372018782`.
+> Current 690222 independent freeze checkpoint: **1483 passed / demo PASS** at audit-test SHA `0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96`, PR CI `36374443142`.
 
 | State / Foundation | Positive Case | Negative Case | Primary Discriminator | Cross-State Required | Minimum |
 |---|---|---|---|---|---:|
@@ -1023,3 +1023,25 @@ This suite is an executable governance specification only. It does not claim tha
 
 Governance validation: `36369968103 / success / 1409 passed / demo PASS`.
 Baseline before RD-SF-006 governance was 1392 passed; net new governance tests = 17.
+
+
+## 690222 INTIMIDATION Independent Runtime Freeze Audit — 2026-09-28
+
+Executable audit file: `tests/test_stage12_690222_intimidation_runtime_freeze_audit.py`.
+
+```text
+Independent freeze-audit tests = 30 passed
+Full pytest = 1483 passed
+Demo = PASS
+Push CI = 36374423908 / success
+PR CI = 36374443142 / success
+Audit test SHA = 0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96
+Stage12 Runtime Frozen = 5 / 7
+NEXT = 690109 SABOTAGE Runtime Integration
+```
+
+Coverage independently attacks RD-SF-002 ordering, RD-SF-006 call topology and downstream RNG state, rejected CREATE/Gangyi zero-RNG, full Provider identity, CREATE/REFRESH/RESUME, refresh rollback and dependency-cycle preflight, exact PROVIDER preparation interruption, Insight/FalseReport/Exhaustion/Provocation composition, attribution-vs-dependency, Formation/TALENT/NormalAttack negatives, generic/specialized removal boundaries, source-death non-definition, lifetime, same-envelope settlement, event silence, canonical wiring and TROOP Provider suppression.
+
+TROOP executable Provider identity/binding/suppression is covered. The absence of a separate concrete TROOP execution consumer is a non-blocking audit note; any future TROOP consumer must query canonical ProviderValidity.
+
+Freeze authority: `STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`.

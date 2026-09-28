@@ -1,15 +1,17 @@
 # Stage12 690222 INTIMIDATION Runtime Integration
 
 Date: 2026-09-28  
-Status: IMPLEMENTED_PENDING_RUNTIME_AUDIT
+Status: IMPLEMENTED / RUNTIME_FROZEN_TO_CONTRACT
 
 ## Current gate
 
 ```text
 690222 Research = FROZEN
-690222 Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
-690222 Runtime = NOT_YET_FROZEN
-Stage12 Runtime Frozen = 4 / 7
+690222 Gameplay = IMPLEMENTED
+690222 Runtime = FROZEN TO CONTRACT
+Independent Runtime Freeze Audit = PASS
+Stage12 Runtime Frozen = 5 / 7
+NEXT = 690109 SABOTAGE Runtime Integration
 ```
 
 The Runtime integration was intentionally not started until the binding-selection weighting gap had explicit project governance.
@@ -145,8 +147,9 @@ RD-SF-006 provenance remains PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN.
 The production tree has Provider-level TROOP identity and suppression support,
 but no separate concrete TROOP execution consumer is currently present. The
 integration therefore represents suppression truth without inventing a consumer.
-This is not treated as authority to fabricate TROOP execution semantics; the
-independent Runtime Freeze Audit must review this boundary before Runtime freeze.
+The independent Runtime Freeze Audit adjudicated this as a **NON-BLOCKING NOTE**:
+690222 owns the canonical ProviderValidity suppression truth, while any future
+concrete TROOP consumer must consume that truth rather than invent a second owner.
 
 ### Exit gate
 
@@ -180,3 +183,32 @@ NEXT = 690222 INTIMIDATION Independent Runtime Freeze Audit
 The integration round intentionally stops here. Runtime freeze, freeze-count
 increment, and any independent-audit authority remain out of scope until the
 separate 690222 Independent Runtime Freeze Audit passes.
+
+
+## Independent Runtime Freeze closure — 2026-09-28
+
+The separate independent audit has now passed.
+
+```text
+690222 Research = FROZEN
+690222 Gameplay = IMPLEMENTED
+690222 Runtime = FROZEN TO CONTRACT
+Independent Runtime Freeze Audit = PASS
+Audit test SHA = 0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96
+Push CI = 36374423908 / success
+PR CI = 36374443142 / success
+pytest = 1483 passed
+demo = PASS
+BLOCKER = 0
+unresolved MAJOR = 0
+Stage12 Gameplay Implementation = 5 / 7
+Stage12 Runtime Frozen = 5 / 7
+Stage11 Reopen Required = NO
+Research Reopen Required = NO
+Shared Foundation Reopen Required = NO
+NEXT = 690109 SABOTAGE Runtime Integration
+```
+
+Freeze authority: `STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`.
+
+Earlier `IMPLEMENTED_PENDING_RUNTIME_AUDIT` and `NOT_YET_FROZEN` blocks in this file are retained as historical integration-round exit records; they no longer describe the current project gate.
