@@ -2,7 +2,9 @@
 
 > 状态：**当前项目级路线权威**
 >
-> Governance refresh: 2026-09-26
+> Governance refresh: 2026-09-28
+>
+> 2026-09-28 Replan supersedes the old Stage13 Assault / Stage14 Active / Stage15 Preparation ordering.
 >
 > Project Stage remains distinct from Research Wave.
 
@@ -11,10 +13,9 @@
 ```text
 Stage11 = 官方状态补全（一） / 17 states
 Stage12 = 官方状态补全（二） / 7 states
-Stage13 = 突击战法运行时
-Stage14 = 普通主动战法
-Stage15 = 准备战法
-Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
+Stage13 = 游戏底层机制完备化 / Core Gameplay Mechanism Completion
+Stage14+ = 战法系统 / Skill System
+           exact subtype stages are intentionally deferred until Stage13 exit audit
 ```
 
 ## 2. Current completion baseline
@@ -22,8 +23,8 @@ Stage16+ = 被动 / 指挥 / 阵法 / 兵种等
 ```text
 Official States                 = 40
 Research FROZEN                 = 39
-Runtime FROZEN TO CONTRACT      = 33
-Strict Complete                 = 32
+Runtime FROZEN TO CONTRACT      = 40
+Strict Complete                 = 39
 ```
 
 Stage11 is Runtime FROZEN. Its 17 states enter the Runtime-FROZEN count; 690086 Distribution remains outside Strict Complete because its research debt remains explicit.
@@ -91,30 +92,55 @@ Canonical scope = 7:
 Current state:
 
 ```text
-Stage12 Activation Gate: CLEARED
-Stage12 Readiness: READY
-Stage12 Active: YES
 Stage12 Research FROZEN: 7 / 7
-Stage12 Runtime Frozen: 0 / 7
+Stage12 Gameplay: 7 / 7
+Stage12 Runtime Frozen To Contract: 7 / 7
+STAGE12_RUNTIME_FREEZE: PASS
+FINAL_40_STATE_RUNTIME_AUDIT: PASS
+GOVERNANCE_SYNC: PASS
+Stage12 Runtime: FROZEN
+Stage12 Complete: YES
+Stage12 Active: NO
+Stage13 Readiness: READY
+Stage13 Active: NO
 ```
 
-Research FROZEN:
-- 690089 INSIGHT — v0.4-frozen; Runtime PARTIAL.
-- 690101 EXHAUSTION — v0.2-frozen; full-corpus adversarial audit PASS; Runtime NOT_INTEGRATED.
-- 690107 FALSE_REPORT — v1.0.1-frozen; final falsification + coverage repair PASS; Runtime NOT_INTEGRATED.
-- 690108 PROVOCATION — v1.0-frozen; Round 1–6 + final adversarial falsification PASS; final contract correction audit 20/20 PASS; Runtime NOT_INTEGRATED.
+Stage12 is closed. Its seven mechanism contracts and runtimes remain regression-only unless an authority-driven reopen trigger fires.
 
-Stage12 research is complete at 7 / 7 FROZEN. No Stage12 production gameplay implementation is implied by this status; the next owner is contract-aligned Runtime Integration Design.
+The project does not move directly into Assault implementation. The 2026-09-28 replan inserts a core-engine completion stage before all large-scale skill runtime work.
 
-No Stage12 gameplay implementation is included in this Stage11 freeze.
-
-## 5. Stage13-15
+## 5. Stage13+ — 2026-09-28 Replan
 
 ```text
-Stage13 = assault skill runtime
-Stage14 = ordinary active skill runtime
-Stage15 = preparation skill runtime
+Stage13 = Core Gameplay Mechanism Completion
+          游戏底层机制完备化
+
+          Phase A  Core Mechanism Inventory Audit
+          Phase B  Gap Classification & Research Planning
+          Phase C  Focused Mechanism Research / Runtime Governance
+          Phase D  Core Runtime Architecture Design
+          Phase E  Core Mechanism Implementation
+          Phase F  Independent Engine Completion / Deterministic Replay Audit
+
+Stage14+ = Skill System / 战法系统
+           Assault / Active / Preparation / Passive / Command /
+           Formation / Troop / Special subtype staging is decided only
+           after Stage13 exit audit.
 ```
+
+Stage13 exit target:
+
+```text
+CORE_GAMEPLAY_MECHANISM_INVENTORY = COMPLETE
+UNRESOLVED_IMPLEMENTATION_REQUIRED_GAPS = 0
+UNRESOLVED_RUNTIME_GOVERNANCE_BLOCKERS = 0
+CORE_GAMEPLAY_ENGINE = FROZEN
+DETERMINISTIC_REPLAY_AUDIT = PASS
+STAGE1-12_REGRESSION = PASS
+Skill Runtime Readiness = READY
+```
+
+The previous Assault-first Stage13 route is superseded, not erased from history. Assault becomes the first candidate skill-runtime workstream after the core-engine completion gate.
 
 ## 6. Governance rule
 
@@ -142,3 +168,16 @@ Entry authority and architecture records:
 - `stages/stage12/STAGE12_RUNTIME_TEST_MATRIX.md`
 
 This activation authorizes Stage12 contract-aligned Runtime Integration Design only. It does not declare any of the seven states Runtime Frozen, does not reopen Stage11, and does not activate Stage13/14/15 gameplay runtimes.
+
+
+## Stage13 route authority
+
+Current authority:
+- `stages/stage13/STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN.md`
+- `stages/stage13/README.md`
+
+Current next action:
+
+```text
+STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
+```
