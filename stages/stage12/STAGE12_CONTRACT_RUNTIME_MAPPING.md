@@ -696,3 +696,41 @@ Current production mapping:
 | queued/in-flight work | `ExecutionRightSpec` / owning operation | tested scheduled JIT covered; broader micro-order unsupported | B-SAB-07 PRESERVED |
 
 Freeze authority: `STAGE12_690109_SABOTAGE_RUNTIME_FREEZE_AUDIT.md`.
+
+
+## 690110 CAPTURE Runtime Freeze mapping — 2026-09-28
+
+```text
+Research Contract = v1.0-frozen
+Gameplay = IMPLEMENTED
+Runtime = FROZEN TO CONTRACT
+Independent Runtime Freeze Audit = PASS
+Audit test commit = f1db21211ce7d01fc867bc8c26c94cb82f11af49
+Independent adversarial tests = 33
+Local full pytest = 1640 passed / demo PASS
+Stage12 Runtime Frozen = 7 / 7
+NEXT = Stage12 Final Completion / Freeze Audit
+```
+
+| Concern | Canonical owner / seam | Production binding | Freeze status |
+|---|---|---|---|
+| natural action | `ActionSystem` + CurrentActorPermissionPolicy | captured current actor denies NATURAL_ACTION before STUN consume / NormalAttack | FROZEN TO CONTRACT |
+| new actor-driven damage | DamageExecutionRight / DamageInstanceCoordinator | actor RECHECK_AT_EXECUTION before DamageRequest/DamageInstance | FROZEN TO CONTRACT |
+| counter damage | CounterSystem + DamageExecutionRight | opportunity retained, local damage denied | FROZEN TO CONTRACT |
+| attached Active-origin DOT | typed ATTACHED_EXISTING_DOT work | actor permission NOT_APPLICABLE; continues | FROZEN TO CONTRACT |
+| free proxy | typed current actor | historical captured source alone does not deny | FROZEN TO CONTRACT |
+| Q16 already-created request | ExecutionRightSpec | explicit UNSUPPORTED_BOUNDARY | BOUNDED / PRESERVED |
+| PASSIVE / COMMAND | ProviderValidityPolicy | suppressed without runtime deletion/disable | FROZEN TO CONTRACT |
+| provider dependency | DependencyEvaluationSupport | explicit ProviderDependency only; attribution does not infer liveness | FROZEN TO CONTRACT |
+| received recovery | RecoverySystem prevention | target remains targetable where legal; final recovery zero | FROZEN TO CONTRACT |
+| friendly SINGLE / CHOOSE_N | SkillTargetPolicy before TargetSystem selector | captured ally excluded pre-RNG | FROZEN TO CONTRACT |
+| ALL_ALLIES / delayed / locked | TargetOperation boundary | unsupported or immutable continuation; no guessed requery | BOUNDED / PRESERVED |
+| equipment ATTRIBUTE | EquipmentEffectivenessPolicy | ATTRIBUTE contribution suppressed; Provider identity retained | FROZEN TO CONTRACT |
+| equipment non-ATTRIBUTE | EquipmentEffectivenessPolicy | explicit unsupported boundary, not SABOTAGE alias | BOUNDED / PRESERVED |
+| INSIGHT | StateAdmissionPolicy | ordinary Insight does not reject Capture | FROZEN NEGATIVE |
+| ordinary cleanse | StateRemovalPolicy | rejected; same Capture remains | FROZEN TO CONTRACT |
+| source death | StateLifecycleSystem | established Capture continues | FROZEN TO CONTRACT |
+| reapplication / multisource | StateConflictPolicy | explicit unsupported boundary; no refresh/stack law invented | BOUNDED / PRESERVED |
+| RNG / Event | canonical domain owners | adapter queries zero-RNG / no direct CAPTURE event publishing | FROZEN GOVERNANCE |
+
+Authority: `STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`.
