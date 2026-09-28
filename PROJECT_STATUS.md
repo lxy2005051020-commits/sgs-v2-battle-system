@@ -20,8 +20,8 @@
 
     Official States                 = 40
     Research FROZEN                 = 39
-    Runtime FROZEN TO CONTRACT      = 38
-    Strict Complete                 = 37
+    Runtime FROZEN TO CONTRACT      = 39
+    Strict Complete                 = 38
 
 Strict Complete requires both research freeze and runtime freeze to contract.
 
@@ -59,9 +59,9 @@ Governance:
 
     Research Wave 4: COMPLETE
     Research FROZEN: 7 / 7
-    Runtime Frozen: 5 / 7
+    Runtime Frozen: 6 / 7
 
-Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT, 690108 PROVOCATION and 690222 INTIMIDATION have passed independent Runtime Freeze Audits. Stage12 Runtime Frozen remains 5 / 7. 690109 SABOTAGE has completed gameplay integration and is IMPLEMENTED_PENDING_RUNTIME_AUDIT; the current owner is its Independent Runtime Freeze Audit.
+Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT, 690108 PROVOCATION, 690222 INTIMIDATION and 690109 SABOTAGE have passed independent Runtime Freeze Audits. Stage12 Runtime Frozen is 6 / 7. The current owner is 690110 CAPTURE Runtime Integration.
 
 ### 690089 INSIGHT
 
@@ -209,23 +209,30 @@ Battle-side mirror:
 
     Research: FROZEN
     Contract: v1.0-frozen
-    Freeze Audit: PASS
-    Gameplay: IMPLEMENTED_PENDING_RUNTIME_AUDIT
-    Runtime: NOT YET FROZEN
+    Research Freeze Audit: PASS
+    Gameplay: IMPLEMENTED
+    Runtime: FROZEN TO CONTRACT
     Integration Exit Gate: PASS
-    Validated Code/Test SHA: 9d2b6aa37dffef1ea28ad4a5984ccc147114af89
-    Integration PR CI: 36379462582 / success
-    pytest: 1525 passed
-    demo: PASS
+    Independent Runtime Freeze Audit: PASS
+    Integration Code/Test SHA: 9d2b6aa37dffef1ea28ad4a5984ccc147114af89
+    Integration PR CI: 36379462582 / success / 1525 passed / demo PASS
+    Independent Audit Test SHA: f698cb97b08596b3cea924a815991022cc2dfe7d
+    Audit-Test Push CI: 36380946005 / success / 1558 passed / demo PASS
+    BLOCKER: 0
+    unresolved MAJOR: 0
+    Dynamic equipment creation/change: B-SAB-09 / UNSUPPORTED_BOUNDARY / NON-BLOCKING NOTE
     Stage12 Gameplay Implementation: 6 / 7
-    Stage12 Runtime Frozen: 5 / 7
+    Stage12 Runtime Frozen: 6 / 7
     Stage11 Reopen Required: NO
     Research Reopen Required: NO
     Shared Foundation Reopen Required: NO
-    Next: 690109 SABOTAGE Independent Runtime Freeze Audit
+    Next: 690110 CAPTURE Runtime Integration
 
 Integration authority:
 [stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md)
+
+Runtime Freeze authority:
+[stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_FREEZE_AUDIT.md](stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_FREEZE_AUDIT.md)
 
 ### 690110 CAPTURE
 
