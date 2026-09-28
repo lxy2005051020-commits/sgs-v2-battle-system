@@ -84,6 +84,7 @@ from .damage_prevention_system import (
     DamagePreventionSystem,
 )
 from .damage_instance_coordinator import (
+    DamageExecutionRejected,
     DamageInstanceCoordinator,
     DamageInstanceExecution,
     PartitionExecutionStatus,
@@ -139,6 +140,7 @@ from .damage_system import (
 from .effect_executor import EffectExecutor
 from .effect_result import (
     ApplyStateEffectResult,
+    DamageDeniedEffectResult,
     DamageEffectResult,
     DeferredEffectResult,
     EffectExecutionResult,
@@ -538,6 +540,7 @@ __all__ = [
     "DamagePreventedResult",
     "DamagePreventionReason",
     "DamagePreventionSystem",
+    "DamageExecutionRejected",
     "DamageInstanceCoordinator",
     "DamageInstanceExecution",
     "PartitionExecutionStatus",
@@ -578,6 +581,7 @@ __all__ = [
     "EffectExecutor",
     "EffectExecutionStatus",
     "EffectExecutionResult",
+    "DamageDeniedEffectResult",
     "DamageEffectResult",
     "ApplyStateEffectResult",
     "RemoveStateEffectResult",
