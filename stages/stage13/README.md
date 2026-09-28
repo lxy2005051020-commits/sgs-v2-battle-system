@@ -46,9 +46,9 @@ Stage13-G  Independent Engine Completion / Deterministic Replay Audit
 
 ~~~text
 CORE_GAMEPLAY_MECHANISM_INVENTORY       = COMPLETE
-STAGE13_ENTRY_GATE                      = PASS
+STAGE13_ENTRY_GATE                = PASS
 Stage13 Readiness                       = READY
-Stage13 Active                          = YES
+Stage13 Active                    = YES
 
 Stage12 Runtime                         = FROZEN
 Stage12 Complete                        = YES
