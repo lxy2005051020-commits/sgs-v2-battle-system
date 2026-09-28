@@ -15,8 +15,8 @@
 ```text
 Official States                 = 40
 Research FROZEN                 = 39
-Runtime FROZEN TO CONTRACT      = 39
-Strict Complete                 = 38
+Runtime FROZEN TO CONTRACT      = 40
+Strict Complete                 = 39
 Stage11 Scope                   = 17
 Stage11 Research FROZEN         = 16
 Stage11 Runtime FROZEN          = 17
@@ -90,7 +90,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690108 | 挑拨 PROVOCATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/provocation/MECHANISM_CONTRACT.md + STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md | Maintain freeze; current audit owner 690109 | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; audit code/test SHA e0f9e0c24; CI 36334810169 = 1392 passed + demo PASS; RD-SF-005 provenance preserved; BU-P06/BU-P09 remain unsupported |
 | 690222 | 威慑 INTIMIDATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/intimidation/MECHANISM_CONTRACT.md + STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md | Maintain 690222 freeze; current audit owner 690109 | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; RD-SF-006 provenance preserved; full SkillProviderRef binding; REFRESH reroll / RESUME zero-RNG audited; TROOP consumer absence NON_BLOCKING NOTE; source-death/specialized-removal/multi-source boundaries preserved |
 | 690109 | 破坏 SABOTAGE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 5 | Research `states/control/sabotage/MECHANISM_CONTRACT.md` v1.0-frozen + STAGE12_690109_SABOTAGE_RUNTIME_FREEZE_AUDIT.md | Maintain freeze; current owner 690110 CAPTURE | Independent Runtime Freeze Audit PASS; audit-test SHA f698cb97; CI 36380946005 = 1558 passed + demo PASS; BLOCKER 0; MAJOR 0; B-SAB-09 dynamic equipment remains explicit unsupported boundary |
-| 690110 | 捕获 CAPTURE | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 5 | Research states/control/capture/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; final falsification PASS; Freeze Audit PASS; source-skill boundary explicit; Q70-Q74 bounded; cross-state Runtime tests required |
+| 690110 | 捕获 CAPTURE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 5 | Research states/control/capture/MECHANISM_CONTRACT.md + STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md | Stage12 Final Completion / Freeze Audit | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; 33 adversarial tests; local full suite 1640 passed + demo PASS; BLOCKER 0; MAJOR 0; Q16/Q23/Q34/Q42/Q44/Q45/Q63/Q70-Q74/Q78 bounded boundaries preserved |
 
 ### Stage12 current Runtime Freeze snapshot
 
@@ -108,14 +108,18 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 690109 SABOTAGE Gameplay = IMPLEMENTED
 690109 SABOTAGE Runtime = FROZEN TO CONTRACT
 690109 Independent Runtime Freeze Audit = PASS
-Stage12 Gameplay Implementation = 6 / 7
-Stage12 Runtime Frozen = 6 / 7
+690110 CAPTURE Gameplay = IMPLEMENTED
+690110 CAPTURE Runtime = FROZEN TO CONTRACT
+690110 Independent Runtime Freeze Audit = PASS
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen = 7 / 7
+Stage12 Complete = NO
 Stage11 Reopen Required = NO
 Stage13 / Stage14 / Stage15 Active = NO
-NEXT = 690110 CAPTURE Runtime Integration
+NEXT = Stage12 Final Completion / Freeze Audit
 ```
 
-Authorities: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`
+Authorities: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`
 
 ## 4. Stage11 Final Acceptance Snapshot
 
