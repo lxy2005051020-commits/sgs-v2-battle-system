@@ -117,3 +117,7 @@ Stage12 Final Completion / Freeze Audit
 ```
 
 Stage13 remains NOT ACTIVE until that stage-level gate is explicitly closed.
+
+## STAGE12_FINAL_AUDIT_CANDIDATE_STAGE_INDEX — 2026-09-28
+
+Stage12 Research = 7/7 FROZEN; Gameplay = 7/7; Runtime Frozen To Contract = 7/7. Stage12 Final Completion Audit candidate is green locally (1667 passed + demo PASS) and awaits fresh merged-main CI before Stage12 Complete may become YES. Stage13 Active = NO.
