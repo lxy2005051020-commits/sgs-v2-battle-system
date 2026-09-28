@@ -1,7 +1,6 @@
 # Stage12 Runtime Test Matrix Skeleton
 
-> Status: **SHARED FOUNDATION COMPLETE / 690109 RUNTIME FROZEN TO CONTRACT / STAGE12 RUNTIME 6 OF 7 / NEXT 690110 CAPTURE RUNTIME INTEGRATION**  
-> Historical entry baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.  
+> Status: **SHARED FOUNDATION COMPLETE / ALL SEVEN INDIVIDUAL RUNTIME FREEZES VALID / STAGE12 RUNTIME 7 OF 7 / FINAL COMPLETION AUDIT CANDIDATE**ntry baseline: **913 passed / demo PASS** at Battle SHA `b4c27511824001210f781bf8e750c74c9107da72`.  
 > Current 690222 independent freeze checkpoint: **1483 passed / demo PASS** at audit-test SHA `0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96`, PR CI `36374443142`.
 
 | State / Foundation | Positive Case | Negative Case | Primary Discriminator | Cross-State Required | Minimum |
@@ -1169,3 +1168,7 @@ NEXT = Stage12 Final Completion / Freeze Audit
 The suite independently attacks Action short-circuit and STUN counter preservation; NEW actor-driven / Counter / attached DOT three-way execution-right behavior; current actor vs historical source; Q16; PASSIVE/COMMAND real-consumer suppression; explicit ProviderDependency vs attribution; FALSE_REPORT and INTIMIDATION multi-cause composition; Recovery/self-target semantics; SINGLE/CHOOSE_N filter-before-RNG; ALL_ALLIES/delayed/locked boundaries; ATTRIBUTE-only equipment suppression vs SABOTAGE broad scope; INSIGHT admission; cleanse; source death; reapplication generation stability; future-only restoration; canonical wiring and source-skill leakage.
 
 Freeze authority: `STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`.
+
+## STAGE12_FINAL_AUDIT_CANDIDATE_TEST_MATRIX — 2026-09-28
+
+The final stage-level suite is `tests/test_stage12_final_completion_audit.py` (27 tests). It binds the mandatory 13-pair cross-state matrix to executable anchors and adds owner/RNG/provenance/40-state/governance guards. Local audit snapshot: 1667 passed + demo PASS. Fresh merged-main CI remains the final authority.
