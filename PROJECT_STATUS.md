@@ -71,7 +71,7 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     Runtime: FROZEN TO CONTRACT
     Runtime Freeze Audit: PASS
     Audit Authority: stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md
-    Next: Maintain 690089 freeze; current owner is 690109 SABOTAGE Independent Runtime Freeze Audit
+    Next: Maintain 690089 freeze; current owner is Stage12 Final Completion / Freeze Audit
 
 ### 690101 EXHAUSTION
 
@@ -97,8 +97,8 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     Fresh Audit CI: 36326173066 / success
     pytest: 1244 passed
     demo: PASS
-    Stage12 Runtime Frozen: 5 / 7
-    Next: Maintain 690101 freeze; current owner is 690109 SABOTAGE Independent Runtime Freeze Audit
+    Stage12 Runtime Frozen: 7 / 7
+    Next: Maintain 690101 freeze; current owner is Stage12 Final Completion / Freeze Audit
 
 Integration authority:
 [stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md)
@@ -123,9 +123,9 @@ Battle-side research mirror:
     pytest: 1299 passed
     demo: PASS
     Contract-focused tests: 54 passed across integration + independent audit suites
-    Stage12 Runtime Frozen: 5 / 7
+    Stage12 Runtime Frozen: 7 / 7
     Stage11 Reopen Required: NO
-    Next: Maintain 690107 freeze; current owner is 690109 SABOTAGE Independent Runtime Freeze Audit
+    Next: Maintain 690107 freeze; current owner is Stage12 Final Completion / Freeze Audit
 
 Runtime Freeze authority:
 [stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md](stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md)
@@ -159,11 +159,11 @@ Battle-side mirror:
     Fresh Audit pytest: 1392 passed
     Fresh Audit demo: PASS
     Audit Authority: stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md
-    Stage12 Runtime Frozen: 5 / 7
+    Stage12 Runtime Frozen: 7 / 7
     Research Reopen Required: NO
     Shared Foundation Owner Redesign Required: NO
     Stage11 Reopen Required: NO
-    Next: 690109 SABOTAGE Independent Runtime Freeze Audit
+    Next: Stage12 Final Completion / Freeze Audit
 
 Integration authority / blocker record:
 [stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md)
@@ -189,9 +189,9 @@ Battle-side research mirror:
     Audit Test SHA: 0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96
     Fresh Audit PR CI: 36374443142 / success / 1483 passed / demo PASS\n    Final main release CI: 36375033360 / success / 1483 passed / demo PASS\n    Freeze main SHA: 9e6062a80dcc796e0e94f9e7fd21d7d055d3abe7
     TROOP consumer absence: NON_BLOCKING NOTE
-    Stage12 Runtime Frozen: 5 / 7
+    Stage12 Runtime Frozen: 7 / 7
     Governance CI: 36369968103 / success / 1409 passed / demo PASS
-    Next: Maintain 690222 freeze; current owner is 690109 SABOTAGE Independent Runtime Freeze Audit
+    Next: Maintain 690222 freeze; current owner is Stage12 Final Completion / Freeze Audit
 
 Governance authority:
 [stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md](stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md)
@@ -224,12 +224,12 @@ Battle-side mirror:
     BLOCKER: 0
     unresolved MAJOR: 0
     Dynamic equipment creation/change: B-SAB-09 / UNSUPPORTED_BOUNDARY / NON-BLOCKING NOTE
-    Stage12 Gameplay Implementation: 6 / 7
-    Stage12 Runtime Frozen: 6 / 7
+    Stage12 Gameplay Implementation: 7 / 7
+    Stage12 Runtime Frozen: 7 / 7
     Stage11 Reopen Required: NO
     Research Reopen Required: NO
     Shared Foundation Reopen Required: NO
-    Next: 690110 CAPTURE Runtime Integration
+    Next: Stage12 Final Completion / Freeze Audit
 
 Integration authority:
 [stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md)
@@ -663,3 +663,26 @@ NEXT = Stage12 Final Completion / Freeze Audit
 Freeze authority: `stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`.
 
 The integration CI `36384210914` is not reused as freeze authority; fresh audit PR CI and fresh merged-main CI remain required before release-final closure.
+
+## STAGE12_FINAL_AUDIT_CANDIDATE_GOVERNANCE — 2026-09-28
+
+Current authority superseding undated per-state progress text:
+
+```text
+Stage12 Research = 7 / 7 FROZEN
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen To Contract = 7 / 7
+Stage12 Complete = NO
+STAGE12_RUNTIME_FREEZE = CANDIDATE_PASS / FRESH_MERGED_MAIN_CI_PENDING
+FINAL_40_STATE_RUNTIME_AUDIT = CANDIDATE_PASS / FRESH_MERGED_MAIN_CI_PENDING
+GOVERNANCE_SYNC = CANDIDATE_SYNCED / FRESH_MERGED_MAIN_CI_PENDING
+Research FROZEN = 39 / 40
+Runtime FROZEN TO CONTRACT = 40 / 40
+Strict Complete = 39 / 40
+690086 DSTS9-B02 = OPEN / UNOBSERVED
+Stage13 Readiness = NOT READY UNTIL FINAL GATE
+Stage13 Active = NO
+```
+
+Authority: `stages/stage12/STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
+Explicit dated historical snapshots remain historical and are not rewritten.

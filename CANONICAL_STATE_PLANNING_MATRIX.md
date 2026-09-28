@@ -84,13 +84,13 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690221 | 看破 DAMAGE_REDUCTION_PIERCE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research states/functional/damage_reduction_pierce/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | unsupported damage families remain explicit boundary |
 | 690094 | 倒戈 LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | Share assigned-damage basis + double-stage CEIL integrated; B11-FRZ-001 CLOSED |
 | 690095 | 攻心 STRATEGY_LIFE_STEAL | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 2 | Research strategy_life_steal contract + Stage11 authority resolution | Maintain Stage11 Runtime Freeze; regression only | PROJECT-FROZEN MIRROR CONTRACT; shared RecoverySystem second-CEIL owner |
-| 690089 | 洞察 INSIGHT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/functional/insight/MECHANISM_CONTRACT.md | Maintain 690089 freeze; current audit owner 690109 | Contract v0.4-frozen; independent Runtime Freeze Audit PASS; 690109 protected-overlap amendment PASS; 690110 CAPTURE exclusion preserved; PD-INS-001/002 preserved |
-| 690101 | 计穷 EXHAUSTION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/exhaustion/MECHANISM_CONTRACT.md + STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md | Maintain 690101 freeze; current audit owner 690109 | Contract v0.2-frozen; independent Runtime Freeze Audit PASS; Preparation blockers CLOSED; concrete PREPARING owner + first-effective CREATE/resume interruption audited; RD-SF-004 preserved; CI 36326173066 / 1244 passed / demo PASS; B-EXH-01..05 preserved |
-| 690107 | 伪报 FALSE_REPORT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/false_report/MECHANISM_CONTRACT.md + STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md | Maintain 690107 freeze; current audit owner 690109 | Contract v1.0.1-frozen; independent Runtime Freeze Audit PASS; audit SHA 2feb4b03; CI 36329400436 = 1299 passed + demo PASS; 54 contract-focused tests; TALENT negative discriminator closed; bounded unknowns preserved |
-| 690108 | 挑拨 PROVOCATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/provocation/MECHANISM_CONTRACT.md + STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md | Maintain freeze; current audit owner 690109 | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; audit code/test SHA e0f9e0c24; CI 36334810169 = 1392 passed + demo PASS; RD-SF-005 provenance preserved; BU-P06/BU-P09 remain unsupported |
-| 690222 | 威慑 INTIMIDATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/intimidation/MECHANISM_CONTRACT.md + STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md | Maintain 690222 freeze; current audit owner 690109 | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; RD-SF-006 provenance preserved; full SkillProviderRef binding; REFRESH reroll / RESUME zero-RNG audited; TROOP consumer absence NON_BLOCKING NOTE; source-death/specialized-removal/multi-source boundaries preserved |
-| 690109 | 破坏 SABOTAGE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 5 | Research `states/control/sabotage/MECHANISM_CONTRACT.md` v1.0-frozen + STAGE12_690109_SABOTAGE_RUNTIME_FREEZE_AUDIT.md | Maintain freeze; current owner 690110 CAPTURE | Independent Runtime Freeze Audit PASS; audit-test SHA f698cb97; CI 36380946005 = 1558 passed + demo PASS; BLOCKER 0; MAJOR 0; B-SAB-09 dynamic equipment remains explicit unsupported boundary |
-| 690110 | 捕获 CAPTURE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 5 | Research states/control/capture/MECHANISM_CONTRACT.md + STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md | Stage12 Final Completion / Freeze Audit | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; 33 adversarial tests; local full suite 1640 passed + demo PASS; BLOCKER 0; MAJOR 0; Q16/Q23/Q34/Q42/Q44/Q45/Q63/Q70-Q74/Q78 bounded boundaries preserved |
+| 690089 | 洞察 INSIGHT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Maintain frozen Stage12 runtime; Final Completion Audit | Maintain 690089 freeze; current audit owner 690109 | Contract v0.4-frozen; independent Runtime Freeze Audit PASS; 690109 protected-overlap amendment PASS; 690110 CAPTURE exclusion preserved; PD-INS-001/002 preserved |
+| 690101 | 计穷 EXHAUSTION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Maintain frozen Stage12 runtime; Final Completion Audit | Maintain 690101 freeze; current audit owner 690109 | Contract v0.2-frozen; independent Runtime Freeze Audit PASS; Preparation blockers CLOSED; concrete PREPARING owner + first-effective CREATE/resume interruption audited; RD-SF-004 preserved; CI 36326173066 / 1244 passed / demo PASS; B-EXH-01..05 preserved |
+| 690107 | 伪报 FALSE_REPORT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Maintain frozen Stage12 runtime; Final Completion Audit | Maintain 690107 freeze; current audit owner 690109 | Contract v1.0.1-frozen; independent Runtime Freeze Audit PASS; audit SHA 2feb4b03; CI 36329400436 = 1299 passed + demo PASS; 54 contract-focused tests; TALENT negative discriminator closed; bounded unknowns preserved |
+| 690108 | 挑拨 PROVOCATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Maintain frozen Stage12 runtime; Final Completion Audit | Maintain freeze; current audit owner 690109 | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; audit code/test SHA e0f9e0c24; CI 36334810169 = 1392 passed + demo PASS; RD-SF-005 provenance preserved; BU-P06/BU-P09 remain unsupported |
+| 690222 | 威慑 INTIMIDATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Maintain frozen Stage12 runtime; Final Completion Audit | Maintain 690222 freeze; current audit owner 690109 | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; RD-SF-006 provenance preserved; full SkillProviderRef binding; REFRESH reroll / RESUME zero-RNG audited; TROOP consumer absence NON_BLOCKING NOTE; source-death/specialized-removal/multi-source boundaries preserved |
+| 690109 | 破坏 SABOTAGE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 5 | Maintain frozen Stage12 runtime; Final Completion Audit | Maintain freeze; current owner 690110 CAPTURE | Independent Runtime Freeze Audit PASS; audit-test SHA f698cb97; CI 36380946005 = 1558 passed + demo PASS; BLOCKER 0; MAJOR 0; B-SAB-09 dynamic equipment remains explicit unsupported boundary |
+| 690110 | 捕获 CAPTURE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 5 | Maintain frozen Stage12 runtime; Final Completion Audit | Stage12 Final Completion / Freeze Audit | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; 33 adversarial tests; local full suite 1640 passed + demo PASS; BLOCKER 0; MAJOR 0; Q16/Q23/Q34/Q42/Q44/Q45/Q63/Q70-Q74/Q78 bounded boundaries preserved |
 
 ### Stage12 current Runtime Freeze snapshot
 
@@ -219,3 +219,21 @@ before design freeze or migration. Existing gameplay and tests are preserved.
 Stage11 Runtime FROZEN / Reopen Required NO in this documentation-only phase; Stage12 Active YES;
 Stage12 Runtime Frozen 0 / 7; Stage13 Active NO; Research FROZEN 39 / 40; DSTS9-B02 OPEN / UNOBSERVED.
 NEXT: DQ-SF-15/16 authority reconciliation, then DQ-SF-04/05 taxonomy and Provider identity design.
+
+## STAGE12_FINAL_AUDIT_CANDIDATE_MATRIX — 2026-09-28
+
+Current matrix authority:
+
+```text
+Stage12 Research FROZEN = 7 / 7
+Stage12 Gameplay = 7 / 7
+Stage12 Runtime FROZEN TO CONTRACT = 7 / 7
+Official Runtime FROZEN TO CONTRACT = 40 / 40
+Research FROZEN = 39 / 40
+Strict Complete = 39 / 40
+690086 DSTS9-B02 = OPEN / UNOBSERVED
+Stage12 Complete = NO (fresh merged-main final gate pending)
+Stage13 Active = NO
+```
+
+Final stage-level authority: `stages/stage12/STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
