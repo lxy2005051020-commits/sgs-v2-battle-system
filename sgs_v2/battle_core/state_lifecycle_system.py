@@ -9,6 +9,7 @@ from .official_state_catalog import (
     OfficialStateId,
     get_stage10_persistent_params_type,
 )
+from .provider_identity import SkillProviderRef
 from .skill_runtime import SkillSlot
 from .stage9_state_params import (
     ComboStateParams,
@@ -180,6 +181,11 @@ class StateLifecycleSystem:
                 runtime_params=transaction.final_runtime_params,
                 current_generation_id=transaction.new_generation_id,
                 lifetime_spec=transaction.final_lifetime_spec,
+                bound_provider_ref=(
+                    transaction.binding_payload
+                    if isinstance(transaction.binding_payload, SkillProviderRef)
+                    else existing.bound_provider_ref
+                ),
             )
             context.states.replace(updated)
             payload = {
@@ -228,6 +234,11 @@ class StateLifecycleSystem:
             runtime_params=transaction.final_runtime_params,
             current_generation_id=transaction.new_generation_id,
             lifetime_spec=transaction.final_lifetime_spec,
+            bound_provider_ref=(
+                transaction.binding_payload
+                if isinstance(transaction.binding_payload, SkillProviderRef)
+                else None
+            ),
         )
 
         replaced = None
