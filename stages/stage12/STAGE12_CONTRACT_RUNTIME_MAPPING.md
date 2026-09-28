@@ -1,6 +1,6 @@
 # Stage12 Contract → Runtime Mapping Skeleton
 
-> Status: **ALL SEVEN CONTRACT→RUNTIME INTEGRATIONS COMPLETE / 7 OF 7 INDEPENDENT RUNTIME FREEZES VALID / FINAL STAGE AUDIT CANDIDATE**nsion is mandatory before each state's implementation begins.
+> Status: **ALL SEVEN CONTRACT→RUNTIME INTEGRATIONS FROZEN / FINAL STAGE AUDIT PASS**nsion is mandatory before each state's implementation begins.
 
 | State | Contract Rule Group | Runtime Owner / Hook Candidate | Required discriminator | Mapping Status |
 |---|---|---|---|---|
@@ -733,6 +733,8 @@ NEXT = Stage12 Final Completion / Freeze Audit
 
 Authority: `STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`.
 
-## STAGE12_FINAL_AUDIT_CANDIDATE_MAPPING — 2026-09-28
+## STAGE12_FINAL_COMPLETION_MAPPING — 2026-09-28
 
-All seven Stage12 contract-to-runtime mappings are implemented and independently frozen to contract. Earlier DESIGN_MAPPING / NOT IMPLEMENTED cells are historical design-stage records and are superseded for current implementation status by the seven Runtime Integration + Runtime Freeze authorities and `STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
+All seven Stage12 contract→runtime mappings are implemented, independently frozen, and accepted by the stage-level audit.
+Earlier DESIGN_MAPPING / NOT IMPLEMENTED cells are historical design-stage records.
+Current authority is the seven integration/freeze documents plus `STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
