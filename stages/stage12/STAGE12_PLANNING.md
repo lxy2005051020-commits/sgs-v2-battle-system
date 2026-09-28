@@ -1,12 +1,12 @@
 # 第十二阶段规划 · 官方状态补全（二）
 
-> 状态：**RESEARCH 7/7 FROZEN / GAMEPLAY 7/7 / RUNTIME 7/7 FROZEN TO CONTRACT / FINAL COMPLETION AUDIT ACTIVE**  
+> 状态：**STAGE12 RUNTIME FROZEN / COMPLETE / STAGE13 READINESS READY / STAGE13 ACTIVE NO**  
 > Canonical Scope：**7 states**  
 > Project Stage ownership：Stage12  
 > Research mapping：Wave 4 + Wave 5；研究波次只是执行顺序，不是 Project Stage13/14。  
 > Canonical authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 
-> 状态：Research Wave 4 / 5 已完成；7 个机制均已通过独立 Runtime Freeze Audit；stage-level Final Completion Gate 等待 fresh merged-main CI  
+> 状态：Research Wave 4 / 5 已完成；7 个机制独立 Runtime Freeze + stage-level Final Completion Gate 均 PASS；fresh merged-main CI 36389096961 PASS  
 > 目标：完成剩余复杂控制状态并收口官方 40 状态
 
 ## 1. 阶段责任
@@ -446,6 +446,9 @@ NEXT = Stage12 Final Completion / Freeze Audit
 
 Earlier planning snapshots remain historical and are not retroactively rewritten.
 
-## STAGE12_FINAL_AUDIT_CANDIDATE_PLANNING — 2026-09-28
+## STAGE12_FINAL_COMPLETION_PLANNING — 2026-09-28
 
-Current planning gate: Research 7/7 FROZEN; Gameplay 7/7; Runtime Frozen To Contract 7/7. Stage12 Complete remains NO until the final stage-level authority and fresh merged-main CI close. Stage13 Active remains NO.
+Stage12 Research = 7/7 FROZEN; Gameplay = 7/7; Runtime = FROZEN; Stage12 Complete = YES.
+FINAL_40_STATE_RUNTIME_AUDIT = PASS; GOVERNANCE_SYNC = PASS.
+Stage13 Readiness = READY; Stage13 Active = NO.
+NEXT = Stage13 Runtime Entry / Activation.
