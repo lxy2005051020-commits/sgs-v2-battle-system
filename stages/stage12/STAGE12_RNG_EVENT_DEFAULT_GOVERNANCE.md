@@ -837,6 +837,7 @@ admission or conflict rejection -> 0 binding RNG
 
 No second RNG owner is introduced. The research statement remains only "randomly select exactly one eligible skill"; equal weighting remains unproven as game behavior.
 
-## STAGE12_FINAL_AUDIT_CANDIDATE_RNG — 2026-09-28
+## STAGE12_FINAL_COMPLETION_RNG — 2026-09-28
 
-Final static audit confirms canonical RNG ownership only: production battle_core direct Python `random` construction remains confined to `random_system.py`; Stage12 integrations do not introduce mechanism-local RNG. EventBus remains dispatch/history, not gameplay permission or ordering authority.
+Final RNG/Event audit = PASS. Direct Python `random` construction remains confined to canonical `random_system.py`; Stage12 integrations introduce no mechanism-local RNG.
+EventBus remains dispatch/history rather than gameplay permission or ordering authority.
