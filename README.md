@@ -15,7 +15,7 @@
     Stage9  = FROZEN
     Stage10 = FROZEN
     Stage11 = RUNTIME FROZEN / POST-FREEZE ACCEPTED
-    Stage12 = ACTIVE / RESEARCH COMPLETE / SHARED FOUNDATION DESIGN FROZEN / RUNTIME 4 OF 7
+    Stage12 = ACTIVE / RESEARCH COMPLETE / SHARED FOUNDATION DESIGN FROZEN / RUNTIME 5 OF 7
     Stage13 = NOT ACTIVE
 
 Stage11 Runtime Tested SHA:
@@ -31,8 +31,8 @@ Acceptance CI:
 
     Official States                 = 40
     Research FROZEN                 = 39 / 40
-    Runtime FROZEN TO CONTRACT      = 37 / 40
-    Strict Complete                 = 36 / 40
+    Runtime FROZEN TO CONTRACT      = 38 / 40
+    Strict Complete                 = 37 / 40
 
 Strict Complete 仍严格要求：
 
@@ -114,7 +114,12 @@ Research FROZEN:
 - canonical governance PASS / OPEN_BLOCKING = 0
 - single selected Provider suppression + Refresh/Reroll + source Resume binding frozen
 - Counter semantics separated to source-skill scope
-- Runtime NOT_INTEGRATED
+- Gameplay IMPLEMENTED
+- Independent Runtime Freeze Audit PASS
+- Runtime FROZEN TO CONTRACT
+- TROOP concrete consumer absence = NON_BLOCKING NOTE; future consumer must use ProviderValidity
+- Fresh independent audit PR CI 36374443142 / 1483 passed / demo PASS
+- Freeze authority: stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md
 - Battle mirror: stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md
 
 690109 当前状态：
@@ -138,8 +143,10 @@ Stage12 Shared Foundation Design + Implementation = FROZEN / COMPLETE.
 690107 FALSE_REPORT Runtime = FROZEN.
 690108 PROVOCATION Gameplay = IMPLEMENTED.
 690108 PROVOCATION Runtime = FROZEN TO CONTRACT.
-Stage12 Runtime Frozen = 4 / 7.
-Next: 690222 INTIMIDATION Runtime Integration.
+690222 INTIMIDATION Gameplay = IMPLEMENTED.
+690222 INTIMIDATION Runtime = FROZEN TO CONTRACT.
+Stage12 Runtime Frozen = 5 / 7.
+Next: 690109 SABOTAGE Runtime Integration.
 
 ## Stage sequencing
 
@@ -207,10 +214,13 @@ Audit authority: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`
 690107 FALSE_REPORT Runtime = FROZEN
 690108 PROVOCATION Gameplay = IMPLEMENTED
 690108 PROVOCATION Runtime = FROZEN TO CONTRACT
-Stage12 Runtime Frozen = 4 / 7
+690222 INTIMIDATION Gameplay = IMPLEMENTED
+690222 INTIMIDATION Runtime = FROZEN TO CONTRACT
+Stage12 Runtime Frozen = 5 / 7
 Stage11 Reopen Required = NO
 Stage13 / Stage14 / Stage15 Active = NO
-NEXT = 690222 INTIMIDATION Runtime Integration
+NEXT = 690109 SABOTAGE Runtime Integration
 ```
 
 690108 freeze authority: `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`.
+690222 freeze authority: `stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`.

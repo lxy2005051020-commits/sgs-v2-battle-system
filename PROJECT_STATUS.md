@@ -20,8 +20,8 @@
 
     Official States                 = 40
     Research FROZEN                 = 39
-    Runtime FROZEN TO CONTRACT      = 37
-    Strict Complete                 = 36
+    Runtime FROZEN TO CONTRACT      = 38
+    Strict Complete                 = 37
 
 Strict Complete requires both research freeze and runtime freeze to contract.
 
@@ -59,9 +59,9 @@ Governance:
 
     Research Wave 4: COMPLETE
     Research FROZEN: 7 / 7
-    Runtime Frozen: 4 / 7
+    Runtime Frozen: 5 / 7
 
-Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT and 690108 PROVOCATION have passed independent Runtime Freeze Audits. Stage12 Runtime Frozen is now 4 / 7; 690222 INTIMIDATION is the next Runtime Integration owner.
+Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT, 690108 PROVOCATION and 690222 INTIMIDATION have passed independent Runtime Freeze Audits. Stage12 Runtime Frozen is now 5 / 7; 690109 SABOTAGE is the next Runtime Integration owner.
 
 ### 690089 INSIGHT
 
@@ -71,7 +71,7 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     Runtime: FROZEN TO CONTRACT
     Runtime Freeze Audit: PASS
     Audit Authority: stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md
-    Next: Maintain 690089 freeze; current integration owner is 690222 INTIMIDATION
+    Next: Maintain 690089 freeze; current integration owner is 690109 SABOTAGE
 
 ### 690101 EXHAUSTION
 
@@ -97,8 +97,8 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     Fresh Audit CI: 36326173066 / success
     pytest: 1244 passed
     demo: PASS
-    Stage12 Runtime Frozen: 4 / 7
-    Next: Maintain 690101 freeze; current integration owner is 690222 INTIMIDATION
+    Stage12 Runtime Frozen: 5 / 7
+    Next: Maintain 690101 freeze; current integration owner is 690109 SABOTAGE
 
 Integration authority:
 [stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md)
@@ -123,9 +123,9 @@ Battle-side research mirror:
     pytest: 1299 passed
     demo: PASS
     Contract-focused tests: 54 passed across integration + independent audit suites
-    Stage12 Runtime Frozen: 4 / 7
+    Stage12 Runtime Frozen: 5 / 7
     Stage11 Reopen Required: NO
-    Next: Maintain 690107 freeze; current integration owner is 690222 INTIMIDATION
+    Next: Maintain 690107 freeze; current integration owner is 690109 SABOTAGE
 
 Runtime Freeze authority:
 [stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md](stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md)
@@ -159,11 +159,11 @@ Battle-side mirror:
     Fresh Audit pytest: 1392 passed
     Fresh Audit demo: PASS
     Audit Authority: stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md
-    Stage12 Runtime Frozen: 4 / 7
+    Stage12 Runtime Frozen: 5 / 7
     Research Reopen Required: NO
     Shared Foundation Owner Redesign Required: NO
     Stage11 Reopen Required: NO
-    Next: 690222 INTIMIDATION Runtime Integration
+    Next: 690109 SABOTAGE Runtime Integration
 
 Integration authority / blocker record:
 [stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md)
@@ -183,16 +183,24 @@ Battle-side research mirror:
     Distribution: uniform over RD-SF-002 stable supported eligible Provider pool
     Provenance: PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
     IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001: CLOSED
-    Gameplay: NOT_INTEGRATED
-    Runtime: NOT_FROZEN
-    Stage12 Runtime Frozen: 4 / 7
-    Governance CI: 36369968103 / success / 1409 passed / demo PASS\n    Next: Resume 690222 INTIMIDATION Runtime Integration
+    Gameplay: IMPLEMENTED
+    Runtime: FROZEN TO CONTRACT
+    Independent Runtime Freeze Audit: PASS
+    Audit Test SHA: 0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96
+    Fresh Audit PR CI: 36374443142 / success / 1483 passed / demo PASS
+    TROOP consumer absence: NON_BLOCKING NOTE
+    Stage12 Runtime Frozen: 5 / 7
+    Governance CI: 36369968103 / success / 1409 passed / demo PASS
+    Next: Maintain 690222 freeze; current integration owner is 690109 SABOTAGE
 
 Governance authority:
 [stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md](stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md)
 
-Integration gate record:
+Integration record:
 [stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_INTEGRATION.md)
+
+Runtime Freeze authority:
+[stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md](stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md)
 
 Battle-side mirror:
 [stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md](stages/stage12/STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)
@@ -203,7 +211,7 @@ Battle-side mirror:
     Contract: v1.0-frozen
     Freeze Audit: PASS
     Runtime: NOT_INTEGRATED
-    Next: contract-aligned Runtime Design
+    Next: 690109 SABOTAGE Runtime Integration
 
 ### 690110 CAPTURE
 

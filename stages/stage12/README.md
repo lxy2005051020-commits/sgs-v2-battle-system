@@ -1,6 +1,6 @@
 # 第十二阶段 · 官方状态补全（二）
 
-> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690089 + 690101 + 690107 + 690108 RUNTIME FROZEN / 690222 IMPLEMENTED_PENDING_RUNTIME_AUDIT**
+> 状态：**RESEARCH COMPLETE / PRODUCTION RUNTIME ACTIVE / 690089 + 690101 + 690107 + 690108 + 690222 RUNTIME FROZEN / NEXT 690109 SABOTAGE**
 > Canonical Scope：**7 states**
 > Project Stage authority：[../../CANONICAL_STATE_PLANNING_MATRIX.md](../../CANONICAL_STATE_PLANNING_MATRIX.md)
 > Research mapping：Wave 4（洞察/计穷/伪报/挑拨/威慑）+ Wave 5（破坏/捕获）
@@ -13,9 +13,9 @@
     Stage12 Active: YES
 
     Stage12 Research FROZEN: 7 / 7
-    Stage12 Runtime Frozen: 4 / 7
+    Stage12 Runtime Frozen: 5 / 7
 
-Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 与 Implementation 已完成；690089 INSIGHT、690101 EXHAUSTION、690107 FALSE_REPORT 与 690108 PROVOCATION 均已通过独立 Runtime Freeze Audit，因此 Stage12 Runtime Frozen = 4 / 7。690222 INTIMIDATION gameplay 已完成 contract-aligned integration，但尚未通过独立 Runtime Freeze Audit；690109 / 690110 仍未 gameplay-integrated。
+Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundation Design 与 Implementation 已完成；690089 INSIGHT、690101 EXHAUSTION、690107 FALSE_REPORT、690108 PROVOCATION 与 690222 INTIMIDATION 均已通过独立 Runtime Freeze Audit，因此 Stage12 Runtime Frozen = 5 / 7。690109 / 690110 仍未 gameplay-integrated；当前 owner 转入 690109 SABOTAGE Runtime Integration。
 
 ## 已冻结研究
 
@@ -26,7 +26,7 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - Runtime FROZEN TO CONTRACT
 - Independent Runtime Freeze Audit: PASS
 - Authority: [690089 Runtime Freeze Audit](STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md)
-- Next: Maintain 690089 freeze; current integration owner is 690222 INTIMIDATION
+- Next: Maintain 690089 freeze; current integration owner is 690109 SABOTAGE
 
 ### 690101 计穷 EXHAUSTION
 - Research FROZEN
@@ -48,8 +48,8 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - First effective CREATE interruption: IMPLEMENTED
 - Resident SUPPRESSED -> EFFECTIVE interruption: IMPLEMENTED
 - BLOCKER-690101-PREP-001 / 002: CLOSED
-- Stage12 Runtime Frozen: 4 / 7
-- Next: Maintain freeze; current integration owner is 690222 INTIMIDATION
+- Stage12 Runtime Frozen: 5 / 7
+- Next: Maintain freeze; current integration owner is 690109 SABOTAGE
 - Freeze authority: [690101 Runtime Freeze Audit](STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md)
 - Dependency authority: [690101 Preparation Integration Dependency Resolution](STAGE12_690101_PREPARATION_INTEGRATION_DEPENDENCY.md)
 - Integration record: [690101 Runtime Integration](STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md)
@@ -69,7 +69,7 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - PASSIVE / COMMAND suppression remains exact; TALENT is an explicit negative discriminator
 - Stronger-vs-weaker FalseReport: BOUNDED_UNKNOWN / non-blocking
 - Stage11 Reopen Required: NO
-- Next: Maintain freeze; current integration owner is 690222 INTIMIDATION
+- Next: Maintain freeze; current integration owner is 690109 SABOTAGE
 - Freeze authority: [690107 Runtime Freeze Audit](STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md)
 - Integration record: [690107 Runtime Integration](STAGE12_690107_FALSE_REPORT_RUNTIME_INTEGRATION.md)
 - Battle mirror: [690107 research authority sync](STAGE12_690107_FALSE_REPORT_RESEARCH_SYNC.md)
@@ -94,8 +94,8 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - Independent audit code/test SHA: `e0f9e0c24a4c379918c3b9389a67dcfea138ac13`
 - Fresh audit CI: `36334810169 / success / 1392 passed / demo PASS`
 - Freeze authority: [690108 Runtime Freeze Audit](STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md)
-- Stage12 Runtime Frozen: 4 / 7
-- Next: 690222 INTIMIDATION Runtime Integration
+- Stage12 Runtime Frozen: 5 / 7
+- Next: 690109 SABOTAGE Runtime Integration
 - Governance authority: [690108 BU-P02 Runtime Governance Resolution](STAGE12_690108_BU_P02_RUNTIME_GOVERNANCE_RESOLUTION.md)
 - Integration record: [690108 Runtime Integration Resume](STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION_RESUME.md)
 - Battle mirror: [690108 research authority sync](STAGE12_690108_PROVOCATION_RESEARCH_SYNC.md)
@@ -114,17 +114,22 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - RESUME: retain binding / 0 binding RNG
 - Empty pool and TALENT eligibility remain unsupported boundaries
 - IMPLEMENTATION_BLOCKER-690222-BINDING-WEIGHTS-001: CLOSED
-- Gameplay IMPLEMENTED_PENDING_RUNTIME_AUDIT
-- Runtime NOT_YET_FROZEN
+- Gameplay IMPLEMENTED
+- Runtime FROZEN TO CONTRACT
+- Independent Runtime Freeze Audit: PASS
 - Counter semantics separated from 690222 State Stack
+- TROOP concrete execution consumer absence: NON_BLOCKING NOTE
 - Stage12 Gameplay Implementation: 5 / 7
-- Stage12 Runtime Frozen: 4 / 7
+- Stage12 Runtime Frozen: 5 / 7
 - Governance CI: 36369968103 / success / 1409 passed / demo PASS
 - Integration code SHA: `834f6e7508c8006342ff37593454ef91d8e8d0a4`
 - Integration CI: `36372018782 / success / 1453 passed / demo PASS`
-- Next: 690222 INTIMIDATION Independent Runtime Freeze Audit
+- Independent audit test SHA: `0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96`
+- Fresh audit PR CI: `36374443142 / success / 1483 passed / demo PASS`
+- Next: 690109 SABOTAGE Runtime Integration
+- Freeze authority: [690222 Runtime Freeze Audit](STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md)
 - Governance authority: [690222 binding selection governance](STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md)
-- Integration gate record: [690222 Runtime Integration](STAGE12_690222_INTIMIDATION_RUNTIME_INTEGRATION.md)
+- Integration record: [690222 Runtime Integration](STAGE12_690222_INTIMIDATION_RUNTIME_INTEGRATION.md)
 - Battle mirror: [690222 research authority sync](STAGE12_690222_INTIMIDATION_RESEARCH_SYNC.md)
 
 ### 690109 破坏 SABOTAGE
@@ -132,7 +137,7 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - Contract v1.0-frozen
 - Freeze Audit: PASS
 - Runtime NOT_INTEGRATED
-- Next: contract-aligned Runtime Design
+- Next: 690109 SABOTAGE Runtime Integration
 
 ### 690110 捕获 CAPTURE
 - Research FROZEN
@@ -154,7 +159,7 @@ Wave 5: COMPLETE
 Stage12 Research: 7 / 7 FROZEN
 
 Next project task:
-690222 INTIMIDATION Independent Runtime Freeze Audit
+690109 SABOTAGE Runtime Integration
 
 ## Stage12 responsibility
 

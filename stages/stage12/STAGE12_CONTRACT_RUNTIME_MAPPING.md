@@ -627,3 +627,39 @@ Mapping:
 | RESUME | effectiveness transition | retain binding, zero RNG | GOVERNANCE FROZEN |
 | empty pool | unsupported boundary | no gameplay answer invented | PRESERVED |
 | production adapter | future 690222 integration | absent in this governance round | NOT INTEGRATED |
+
+
+## 690222 production + independent Runtime Freeze checkpoint — 2026-09-28
+
+```text
+690222 INTIMIDATION Gameplay = IMPLEMENTED
+690222 INTIMIDATION Runtime = FROZEN TO CONTRACT
+Independent Runtime Freeze Audit = PASS
+Audit test SHA = 0b3e5d62b1c2e25e4b2177ccfa5dd456819ddc96
+Fresh audit PR CI = 36374443142 / success / 1483 passed / demo PASS
+RD-SF-006 = PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN
+TROOP consumer absence = NON_BLOCKING NOTE
+Stage12 Runtime Frozen = 5 / 7
+NEXT = 690109 SABOTAGE Runtime Integration
+```
+
+Current production mapping:
+
+| Concern | Canonical owner / seam | Production binding | Freeze status |
+|---|---|---|---|
+| eligible Skill Provider identity | SkillRuntimeRegistry + SkillProviderRef | ACTIVE incl. preparation, ASSAULT, PASSIVE, COMMAND, TROOP | FROZEN TO CONTRACT |
+| Formation | Intimidation eligible-pool adapter | filtered before binding RNG | FROZEN EXCLUSION |
+| TALENT / Equipment / Bingshu | Intimidation boundary | not admitted into supported pool | UNSUPPORTED / NOT FROZEN |
+| ordering | RD-SF-002 | slot 0 -> 1 -> 2 + skill_id tiebreaker | FROZEN |
+| binding distribution/topology | BattleContext.random / RandomSystem | 1 candidate = 0 RNG; multi = exactly 1 choice | RD-SF-006 FROZEN PROJECT DEFAULT |
+| CREATE | StateApplicationCoordinator + Intimidation augmentation | new binding decision | FROZEN TO CONTRACT |
+| REFRESH | same physical instance + new generation | new binding decision / reroll | FROZEN TO CONTRACT |
+| RESUME | effectiveness transition | retained binding / zero binding RNG | FROZEN TO CONTRACT |
+| Provider suppression | ProviderValidityPolicy | selected Provider SUPPRESSED without runtime deletion/disable | FROZEN TO CONTRACT |
+| preparation | PreparationStateOwner via PROVIDER scope | exact selected preparation interrupted | FROZEN TO CONTRACT |
+| explicit dependency | DependencyEvaluationSupport | ProviderDependency only | FROZEN TO CONTRACT |
+| source attribution only | attribution metadata | no inferred dependency | FROZEN NEGATIVE |
+| source death / specialized removal / multi-source | preserved boundaries | no gameplay answer invented | UNSUPPORTED / BOUNDED |
+| TROOP execution consumer | future domain consumer | no separate concrete consumer exists today | NON-BLOCKING NOTE; MUST consume ProviderValidity when introduced |
+
+Authority: `STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`.
