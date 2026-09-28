@@ -661,3 +661,7 @@ RD-SF-006
 ```
 
 690222 Research remains FROZEN. The uniform distribution exists only as a simulator Runtime Default. Gameplay remains NOT_INTEGRATED and Stage12 Runtime Frozen remains 4 / 7.
+
+## STAGE12_FINAL_AUDIT_CANDIDATE_DEFAULTS — 2026-09-28
+
+Final provenance audit confirms RD-SF-001 through RD-SF-006 remain `PROJECT_RUNTIME_DEFAULT / NOT_EMPIRICALLY_FROZEN`. No Runtime Default is promoted to Research Fact, Official Truth, or battle-report-confirmed truth by Stage12 completion.
