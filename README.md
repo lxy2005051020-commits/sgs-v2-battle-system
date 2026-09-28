@@ -6,6 +6,8 @@
 - [Canonical State Planning Matrix](CANONICAL_STATE_PLANNING_MATRIX.md)
 - [第十阶段后总路线](POST_STAGE10_STATE_COMPLETION_AND_SKILL_ROADMAP.md)
 - [Stage12](stages/stage12/README.md)
+- [Stage13：游戏底层机制完备化](stages/stage13/README.md)
+- [Stage13 路线重规划决议](stages/stage13/STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN.md)
 - [各阶段索引](stages/README.md)
 - [跨阶段状态研究](research/README.md)
 
@@ -16,7 +18,7 @@
     Stage10 = FROZEN
     Stage11 = RUNTIME FROZEN / POST-FREEZE ACCEPTED
     Stage12 = RUNTIME FROZEN / COMPLETE / RESEARCH 7 OF 7 / RUNTIME 7 OF 7
-    Stage13 = NOT ACTIVE
+    Stage13 = CORE GAMEPLAY MECHANISM COMPLETION / READINESS READY / NOT ACTIVE
 
 Stage11 Runtime Tested SHA:
 ce42bc62cfb26f8ca0b448e74b26533604bb0505
@@ -182,15 +184,21 @@ Stage12 Shared Foundation Design + Implementation = FROZEN / COMPLETE.
 Stage12 Gameplay Implementation = 7 / 7.
 Stage12 Runtime Frozen = 7 / 7.
 Stage12 Complete = YES.
-Next: Stage13 Runtime Entry / Activation.
+Next: Stage13 Core Gameplay Mechanism Inventory Audit / Activation.
 
-## Stage sequencing
+## Stage sequencing — 2026-09-28 Replan
 
-    Stage12 = remaining official states / permission & composite control
-    Stage13 = Assault runtime
-    Stage14 = ordinary Active runtime
-    Stage15 = preparation runtime
-    Stage16+ = Passive / Command / Formation / Troop etc.
+    Stage12 = official state runtime completion / FROZEN / COMPLETE
+    Stage13 = Core Gameplay Mechanism Completion
+              游戏底层机制完备化
+              inventory → gap classification → focused research/governance
+              → architecture → implementation → independent engine audit
+
+    Stage14+ = Skill System / 战法系统
+               exact subtype staging is intentionally deferred until Stage13 exit audit
+
+The previously planned "Stage13 Assault / Stage14 ordinary Active / Stage15 Preparation" sequence is superseded by the 2026-09-28 project replan.
+Assault runtime remains a future skill-system workstream; it is not deleted, only moved behind the Stage13 core-engine completion gate.
 
 Research Wave does not renumber Project Stage, and Research FROZEN does not imply Runtime FROZEN.
 
