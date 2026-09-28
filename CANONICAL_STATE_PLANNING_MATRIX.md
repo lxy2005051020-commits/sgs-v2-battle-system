@@ -89,7 +89,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690107 | 伪报 FALSE_REPORT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/false_report/MECHANISM_CONTRACT.md + STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md | Maintain 690107 freeze; current integration owner 690109 | Contract v1.0.1-frozen; independent Runtime Freeze Audit PASS; audit SHA 2feb4b03; CI 36329400436 = 1299 passed + demo PASS; 54 contract-focused tests; TALENT negative discriminator closed; bounded unknowns preserved |
 | 690108 | 挑拨 PROVOCATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/provocation/MECHANISM_CONTRACT.md + STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md | Maintain freeze; current integration owner 690109 | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; audit code/test SHA e0f9e0c24; CI 36334810169 = 1392 passed + demo PASS; RD-SF-005 provenance preserved; BU-P06/BU-P09 remain unsupported |
 | 690222 | 威慑 INTIMIDATION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage12 | Research Wave 4 | Research states/control/intimidation/MECHANISM_CONTRACT.md + STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md | Maintain 690222 freeze; current integration owner 690109 | Contract v1.0-frozen; independent Runtime Freeze Audit PASS; RD-SF-006 provenance preserved; full SkillProviderRef binding; REFRESH reroll / RESUME zero-RNG audited; TROOP consumer absence NON_BLOCKING NOTE; source-death/specialized-removal/multi-source boundaries preserved |
-| 690109 | 破坏 SABOTAGE | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 5 | Research `states/control/sabotage/MECHANISM_CONTRACT.md` v1.0-frozen | 690109 SABOTAGE Runtime Integration | Freeze Audit PASS; 690089 cross-contract amendment PASS; bounded unknowns explicit/non-blocking |
+| 690109 | 破坏 SABOTAGE | FROZEN | IMPLEMENTED_PENDING_RUNTIME_AUDIT | NO | Stage12 | Research Wave 5 | Research `states/control/sabotage/MECHANISM_CONTRACT.md` v1.0-frozen + STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md | 690109 SABOTAGE Independent Runtime Freeze Audit | Integration Exit Gate PASS; CI 36379462582 = 1525 passed + demo PASS; equipment physical identity retained; explicit ProviderDependency propagation; Insight/Gangyi/FalseReport boundaries covered; bounded unknowns preserved |
 | 690110 | 捕获 CAPTURE | FROZEN | NOT_INTEGRATED | NO | Stage12 | Research Wave 5 | Research states/control/capture/MECHANISM_CONTRACT.md | Stage12 contract-aligned Runtime Design | Contract v1.0-frozen; final falsification PASS; Freeze Audit PASS; source-skill boundary explicit; Q70-Q74 bounded; cross-state Runtime tests required |
 
 ### Stage12 current Runtime Freeze snapshot
@@ -105,10 +105,13 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 690108 PROVOCATION Runtime = FROZEN TO CONTRACT
 690222 INTIMIDATION Gameplay = IMPLEMENTED
 690222 INTIMIDATION Runtime = FROZEN TO CONTRACT
+690109 SABOTAGE Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690109 SABOTAGE Runtime = NOT YET FROZEN
+Stage12 Gameplay Implementation = 6 / 7
 Stage12 Runtime Frozen = 5 / 7
 Stage11 Reopen Required = NO
 Stage13 / Stage14 / Stage15 Active = NO
-NEXT = 690109 SABOTAGE Runtime Integration
+NEXT = 690109 SABOTAGE Independent Runtime Freeze Audit
 ```
 
 Authorities: `stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`, `stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`
