@@ -197,7 +197,12 @@ Mechanism Contract: v1.0-frozen
 Final Adversarial Falsification: PASS
 Independent Freeze Audit: PASS
 Research Maturity: FROZEN
-Runtime Maturity: NOT_INTEGRATED
+Gameplay Maturity: IMPLEMENTED
+Runtime Maturity: RUNTIME_FROZEN_TO_CONTRACT
+Independent Runtime Freeze Audit: PASS
+Audit test commit: f1db21211ce7d01fc867bc8c26c94cb82f11af49
+Independent adversarial tests: 33
+Local full suite: 1640 passed / demo PASS
 Counterattack: no damage
 Previously attached Active-origin DOT: continues
 Insight × Capture: Insight does not block verified Capture
@@ -205,7 +210,9 @@ Restoration: RST1 RESUME
 Missed Trigger Replay: NO / FUTURE ONLY
 Source Death: applied Capture continues
 Q70-Q74: SOURCE_SKILL_BOUNDED_UNKNOWN
-Next: Stage12 contract-aligned Runtime Design
+BLOCKER: 0
+unresolved MAJOR: 0
+Next: Stage12 Final Completion / Freeze Audit
 
 正式研究权威位于 Research repository 的 states/control/capture/MECHANISM_CONTRACT.md。
 本仓镜像记录：[STAGE12_690110_CAPTURE_RESEARCH_SYNC.md](STAGE12_690110_CAPTURE_RESEARCH_SYNC.md)。
@@ -414,3 +421,27 @@ NEXT = 690110 CAPTURE Runtime Integration
 
 690108 authority: `STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`.
 690222 authority: `STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`. Earlier research/runtime-entry snapshots in this planning document remain historical and are not retroactively rewritten.
+
+
+## Stage12 seven-state Runtime Freeze checkpoint — 2026-09-28
+
+```text
+Stage12 Research = 7 / 7 FROZEN
+Stage12 Shared Foundation Design = FROZEN
+Stage12 Shared Foundation Implementation = COMPLETE
+690089 Runtime = FROZEN TO CONTRACT
+690101 Runtime = FROZEN TO CONTRACT
+690107 Runtime = FROZEN TO CONTRACT
+690108 Runtime = FROZEN TO CONTRACT
+690222 Runtime = FROZEN TO CONTRACT
+690109 Runtime = FROZEN TO CONTRACT
+690110 Runtime = FROZEN TO CONTRACT
+690110 Independent Runtime Freeze Audit = PASS
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen = 7 / 7
+Stage12 Complete = NO
+Stage13 / Stage14 / Stage15 Active = NO
+NEXT = Stage12 Final Completion / Freeze Audit
+```
+
+Earlier planning snapshots remain historical and are not retroactively rewritten.

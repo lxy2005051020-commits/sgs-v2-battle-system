@@ -1140,3 +1140,32 @@ Stage12 Gameplay Implementation = 7 / 7
 Stage12 Runtime Frozen = 6 / 7
 NEXT = 690110 CAPTURE Independent Runtime Freeze Audit
 ```
+
+
+## 690110 CAPTURE Independent Runtime Freeze Audit checkpoint — 2026-09-28
+
+Independent executable specification:
+
+```text
+tests/test_stage12_690110_capture_runtime_freeze_audit.py
+```
+
+Audit checkpoint:
+
+```text
+integration baseline = 1607 passed
+audit test commit = f1db21211ce7d01fc867bc8c26c94cb82f11af49
+independent adversarial tests = 33
+local full pytest = 1640 passed
+demo = PASS
+BLOCKER = 0
+unresolved MAJOR = 0
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen = 7 / 7
+Stage12 Complete = NO
+NEXT = Stage12 Final Completion / Freeze Audit
+```
+
+The suite independently attacks Action short-circuit and STUN counter preservation; NEW actor-driven / Counter / attached DOT three-way execution-right behavior; current actor vs historical source; Q16; PASSIVE/COMMAND real-consumer suppression; explicit ProviderDependency vs attribution; FALSE_REPORT and INTIMIDATION multi-cause composition; Recovery/self-target semantics; SINGLE/CHOOSE_N filter-before-RNG; ALL_ALLIES/delayed/locked boundaries; ATTRIBUTE-only equipment suppression vs SABOTAGE broad scope; INSIGHT admission; cleanse; source death; reapplication generation stability; future-only restoration; canonical wiring and source-skill leakage.
+
+Freeze authority: `STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`.
