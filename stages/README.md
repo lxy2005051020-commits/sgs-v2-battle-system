@@ -16,7 +16,7 @@
 - [Stage 10：Persistent State Runtime Integration — FROZEN](stage10/README.md)
 - [Stage 11：官方状态补全（一）— RUNTIME FROZEN / POST-FREEZE ACCEPTED](stage11/README.md)
 - [Stage 12：官方状态补全（二）— RUNTIME FROZEN / COMPLETE](stage12/README.md)
-- [Stage 13：游戏底层机制完备化 — READINESS READY / NOT ACTIVE](stage13/README.md)
+- [Stage 13：游戏底层机制完备化 — ACTIVE / ENTRY GATE PASS](stage13/README.md)
 
 ## 2. 当前阶段
 
@@ -26,7 +26,7 @@ Stage 9  = FROZEN
 Stage10  = FROZEN / MAIN INTEGRATION COMPLETE
 Stage11  = RUNTIME FROZEN / POST-FREEZE ACCEPTED
 Stage12  = RUNTIME FROZEN / COMPLETE
-Stage13  = CORE GAMEPLAY MECHANISM COMPLETION / READINESS READY / NOT ACTIVE
+Stage13  = CORE GAMEPLAY MECHANISM COMPLETION / ACTIVE / ENTRY GATE PASS
 ```
 
 ## 3. 当前统一状态数字
@@ -141,3 +141,16 @@ Stage13 completes and freezes the game-engine substrate before large-scale skill
 Assault remains a future skill-system workstream and is intentionally moved behind the Stage13 engine-completion gate.
 
 Authority: [Stage13 Replan](stage13/STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN.md).
+
+
+## STAGE13_INVENTORY_ACTIVATION — 2026-09-28
+
+~~~text
+STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT = PASS
+CORE_GAMEPLAY_MECHANISM_INVENTORY               = COMPLETE
+Stage13 Active                                   = YES
+Stage13-A                                        = COMPLETE
+NEXT                                             = STAGE13_B_GAP_CLASSIFICATION_AND_CLOSURE_PLANNING
+~~~
+
+The Stage13 index and ledgers are under stages/stage13/. No gameplay implementation was added by the activation audit.
