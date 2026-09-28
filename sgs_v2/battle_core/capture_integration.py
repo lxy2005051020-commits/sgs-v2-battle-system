@@ -198,9 +198,9 @@ def make_capture_actor_permission_adapter(
 def make_capture_provider_suppression_adapter(
     state_effectiveness_policy: StateEffectivenessPolicy,
 ):
-    """Suppress target-owned PASSIVE/COMMAND Providers without deleting them."""
+    """Suppress only explicitly Capture-bound PASSIVE/COMMAND Providers."""
 
-    def capture_provider_suppression_adapter(context, provider_ref, _session):
+    def capture_provider_suppression_adapter(context, provider_ref, session):
         if not isinstance(provider_ref, SkillProviderRef):
             return ()
 
@@ -213,12 +213,33 @@ def make_capture_provider_suppression_adapter(
         if runtime.definition.skill_type not in CAPTURE_SUPPRESSED_SKILL_TYPES:
             return ()
 
-        captures = _effective_captures(
-            state_effectiveness_policy,
-            context,
-            provider_ref.owner_id,
-        )
-        return _state_causes(captures, CAPTURE_PROVIDER_SUPPRESSION_RULE_ID)
+        causes: list[SuppressionCause] = []
+        for prerequisite, decision in session.prerequisite_decisions(
+            ProviderNode(provider_ref)
+        ):
+            if not isinstance(prerequisite, StateNode):
+                continue
+            if not context.states.has_instance(prerequisite.instance_id):
+                continue
+            capture = context.states.get(prerequisite.instance_id)
+            if capture.state_id != OfficialStateId.CAPTURE.value:
+                continue
+            if capture.owner_id != provider_ref.owner_id:
+                continue
+            if decision.status is not StateEffectivenessStatus.EFFECTIVE:
+                continue
+            generation_id = capture.current_generation_id
+            if generation_id is None:
+                raise RuntimeError(
+                    "resident CAPTURE must have application generation identity"
+                )
+            causes.append(
+                SuppressionCause(
+                    CAPTURE_PROVIDER_SUPPRESSION_RULE_ID,
+                    StateCauseRef(capture.instance_id, generation_id),
+                )
+            )
+        return tuple(causes)
 
     return capture_provider_suppression_adapter
 
