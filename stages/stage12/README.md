@@ -155,14 +155,22 @@ Stage12 Active = YES 表示 Runtime 阶段已通过 Entry Gate。Shared Foundati
 - Research FROZEN
 - Contract v1.0-frozen
 - Final adversarial falsification: PASS
-- Freeze Audit: PASS
-- Counterattack / Active-origin DOT / Insight discriminators resolved
-- Restoration: RST1 Resume; missed-trigger replay = NO
-- Source-death lifecycle: independent
-- Q70-Q74: SOURCE_SKILL_BOUNDED_UNKNOWN
-- Runtime NOT_INTEGRATED
-- Next: contract-aligned Runtime Design
+- Research Freeze Audit: PASS
+- Gameplay IMPLEMENTED_PENDING_RUNTIME_AUDIT
+- Runtime NOT YET FROZEN
+- Integration Exit Gate: PASS
+- Integration code/test SHA: `03c18d10fbfafa093e11f08ea779ac83c2e0d751`
+- Integration PR CI: `36383693483 / success / 1607 passed / demo PASS`
+- Net new integration test nodes: +49
+- Composite owners preserved: Action / Damage / Provider / Recovery / Target / Equipment / Lifecycle
+- Counterattack denied independently; attached Active-origin DOT continues
+- Friendly SINGLE / CHOOSE_N exclusion occurs before selector RNG
+- ALL_ALLIES / delayed / locked / reactive-equipment / reapplication boundaries remain explicit
+- Stage12 Gameplay Implementation: 7 / 7
+- Stage12 Runtime Frozen: 6 / 7
+- Integration record: [690110 Runtime Integration](STAGE12_690110_CAPTURE_RUNTIME_INTEGRATION.md)
 - Battle mirror: [690110 research authority sync](STAGE12_690110_CAPTURE_RESEARCH_SYNC.md)
+- Next: 690110 CAPTURE Independent Runtime Freeze Audit
 
 ## Research queue
 
@@ -171,7 +179,7 @@ Wave 5: COMPLETE
 Stage12 Research: 7 / 7 FROZEN
 
 Next project task:
-690110 CAPTURE Runtime Integration
+690110 CAPTURE Independent Runtime Freeze Audit
 
 ## Stage12 responsibility
 
