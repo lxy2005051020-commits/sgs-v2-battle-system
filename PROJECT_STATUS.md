@@ -61,7 +61,7 @@ Governance:
     Research FROZEN: 7 / 7
     Runtime Frozen: 5 / 7
 
-Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT, 690108 PROVOCATION and 690222 INTIMIDATION have passed independent Runtime Freeze Audits. Stage12 Runtime Frozen is now 5 / 7; 690109 SABOTAGE is the next Runtime Integration owner.
+Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. Research remains 7 / 7 FROZEN; 690089 INSIGHT, 690101 EXHAUSTION, 690107 FALSE_REPORT, 690108 PROVOCATION and 690222 INTIMIDATION have passed independent Runtime Freeze Audits. Stage12 Runtime Frozen remains 5 / 7. 690109 SABOTAGE has completed gameplay integration and is IMPLEMENTED_PENDING_RUNTIME_AUDIT; the current owner is its Independent Runtime Freeze Audit.
 
 ### 690089 INSIGHT
 
@@ -71,7 +71,7 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     Runtime: FROZEN TO CONTRACT
     Runtime Freeze Audit: PASS
     Audit Authority: stages/stage12/STAGE12_690089_INSIGHT_RUNTIME_FREEZE_AUDIT.md
-    Next: Maintain 690089 freeze; current integration owner is 690109 SABOTAGE
+    Next: Maintain 690089 freeze; current owner is 690109 SABOTAGE Independent Runtime Freeze Audit
 
 ### 690101 EXHAUSTION
 
@@ -98,7 +98,7 @@ Stage12 production Runtime is ACTIVE after the formal Runtime Entry Gate PASS. R
     pytest: 1244 passed
     demo: PASS
     Stage12 Runtime Frozen: 5 / 7
-    Next: Maintain 690101 freeze; current integration owner is 690109 SABOTAGE
+    Next: Maintain 690101 freeze; current owner is 690109 SABOTAGE Independent Runtime Freeze Audit
 
 Integration authority:
 [stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690101_EXHAUSTION_RUNTIME_INTEGRATION.md)
@@ -125,7 +125,7 @@ Battle-side research mirror:
     Contract-focused tests: 54 passed across integration + independent audit suites
     Stage12 Runtime Frozen: 5 / 7
     Stage11 Reopen Required: NO
-    Next: Maintain 690107 freeze; current integration owner is 690109 SABOTAGE
+    Next: Maintain 690107 freeze; current owner is 690109 SABOTAGE Independent Runtime Freeze Audit
 
 Runtime Freeze authority:
 [stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md](stages/stage12/STAGE12_690107_FALSE_REPORT_RUNTIME_FREEZE_AUDIT.md)
@@ -163,7 +163,7 @@ Battle-side mirror:
     Research Reopen Required: NO
     Shared Foundation Owner Redesign Required: NO
     Stage11 Reopen Required: NO
-    Next: 690109 SABOTAGE Runtime Integration
+    Next: 690109 SABOTAGE Independent Runtime Freeze Audit
 
 Integration authority / blocker record:
 [stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md)
@@ -191,7 +191,7 @@ Battle-side research mirror:
     TROOP consumer absence: NON_BLOCKING NOTE
     Stage12 Runtime Frozen: 5 / 7
     Governance CI: 36369968103 / success / 1409 passed / demo PASS
-    Next: Maintain 690222 freeze; current integration owner is 690109 SABOTAGE
+    Next: Maintain 690222 freeze; current owner is 690109 SABOTAGE Independent Runtime Freeze Audit
 
 Governance authority:
 [stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md](stages/stage12/STAGE12_690222_BINDING_SELECTION_RUNTIME_GOVERNANCE_RESOLUTION.md)
@@ -210,8 +210,22 @@ Battle-side mirror:
     Research: FROZEN
     Contract: v1.0-frozen
     Freeze Audit: PASS
-    Runtime: NOT_INTEGRATED
-    Next: 690109 SABOTAGE Runtime Integration
+    Gameplay: IMPLEMENTED_PENDING_RUNTIME_AUDIT
+    Runtime: NOT YET FROZEN
+    Integration Exit Gate: PASS
+    Validated Code/Test SHA: 9d2b6aa37dffef1ea28ad4a5984ccc147114af89
+    Integration PR CI: 36379462582 / success
+    pytest: 1525 passed
+    demo: PASS
+    Stage12 Gameplay Implementation: 6 / 7
+    Stage12 Runtime Frozen: 5 / 7
+    Stage11 Reopen Required: NO
+    Research Reopen Required: NO
+    Shared Foundation Reopen Required: NO
+    Next: 690109 SABOTAGE Independent Runtime Freeze Audit
+
+Integration authority:
+[stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md](stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md)
 
 ### 690110 CAPTURE
 
@@ -541,3 +555,29 @@ Authority:
 - `stages/stage12/STAGE12_RUNTIME_DEFAULT_LEDGER.md` / RD-SF-006
 
 Governance CI: 36369968103 / success / 1409 passed / demo PASS.\n\nNEXT: Resume 690222 INTIMIDATION Runtime Integration.
+
+
+## Stage12 690109 SABOTAGE Runtime Integration — 2026-09-28
+
+```text
+690109 Research = FROZEN
+690109 Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT
+690109 Runtime = NOT YET FROZEN
+Integration Exit Gate = PASS
+
+Validated code/test SHA = 9d2b6aa37dffef1ea28ad4a5984ccc147114af89
+PR CI = 36379462582 / success
+pytest = 1525 passed
+demo = PASS
+
+Stage12 Gameplay Implementation = 6 / 7
+Stage12 Runtime Frozen = 5 / 7
+Stage11 Reopen Required = NO
+Research repository mutation = NONE
+Research Reopen Required = NO
+Shared Foundation Reopen Required = NO
+
+NEXT = 690109 SABOTAGE Independent Runtime Freeze Audit
+```
+
+Authority: `stages/stage12/STAGE12_690109_SABOTAGE_RUNTIME_INTEGRATION.md`.
