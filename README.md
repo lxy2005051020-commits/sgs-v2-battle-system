@@ -15,7 +15,7 @@
     Stage9  = FROZEN
     Stage10 = FROZEN
     Stage11 = RUNTIME FROZEN / POST-FREEZE ACCEPTED
-    Stage12 = ACTIVE / RESEARCH COMPLETE / SHARED FOUNDATION DESIGN FROZEN / RUNTIME 5 OF 7
+    Stage12 = ACTIVE / RESEARCH COMPLETE / SHARED FOUNDATION DESIGN FROZEN / RUNTIME 7 OF 7 / FINAL COMPLETION AUDIT PENDING
     Stage13 = NOT ACTIVE
 
 Stage11 Runtime Tested SHA:
@@ -31,8 +31,8 @@ Acceptance CI:
 
     Official States                 = 40
     Research FROZEN                 = 39 / 40
-    Runtime FROZEN TO CONTRACT      = 39 / 40
-    Strict Complete                 = 38 / 40
+    Runtime FROZEN TO CONTRACT      = 40 / 40
+    Strict Complete                 = 39 / 40
 
 Strict Complete 仍严格要求：
 
@@ -141,8 +141,9 @@ Research FROZEN:
 - Contract v1.0-frozen
 - final adversarial falsification PASS
 - Research Freeze Audit PASS
-- Gameplay IMPLEMENTED_PENDING_RUNTIME_AUDIT
-- Runtime NOT YET FROZEN
+- Gameplay IMPLEMENTED
+- Independent Runtime Freeze Audit PASS
+- Runtime FROZEN TO CONTRACT
 - Integration Exit Gate PASS
 - code/test SHA 03c18d10fbfafa093e11f08ea779ac83c2e0d751
 - validated code/test CI 36383693483 / 1607 passed / demo PASS
@@ -153,6 +154,10 @@ Research FROZEN:
 - Counter damage blocked independently; attached Active-origin DOT continues
 - friendly SINGLE / CHOOSE_N pre-RNG exclusion implemented
 - bounded target/equipment/reapplication questions remain explicit
+- Independent audit test commit f1db21211ce7d01fc867bc8c26c94cb82f11af49
+- Independent adversarial audit: 33 tests / local full suite 1640 passed / demo PASS
+- BLOCKER 0 / unresolved MAJOR 0
+- Freeze authority: stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md
 - Integration record: stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_INTEGRATION.md
 - Battle mirror: stages/stage12/STAGE12_690110_CAPTURE_RESEARCH_SYNC.md
 
@@ -167,12 +172,13 @@ Stage12 Shared Foundation Design + Implementation = FROZEN / COMPLETE.
 690222 INTIMIDATION Runtime = FROZEN TO CONTRACT.
 690109 SABOTAGE Gameplay = IMPLEMENTED.
 690109 SABOTAGE Runtime = FROZEN TO CONTRACT.
-690110 CAPTURE Gameplay = IMPLEMENTED_PENDING_RUNTIME_AUDIT.
-690110 CAPTURE Runtime = NOT YET FROZEN.
+690110 CAPTURE Gameplay = IMPLEMENTED.
+690110 CAPTURE Runtime = FROZEN TO CONTRACT.
+690110 CAPTURE Independent Runtime Freeze Audit = PASS.
 Stage12 Gameplay Implementation = 7 / 7.
-Stage12 Runtime Frozen = 6 / 7.
+Stage12 Runtime Frozen = 7 / 7.
 Stage12 Complete = NO.
-Next: 690110 CAPTURE Independent Runtime Freeze Audit.
+Next: Stage12 Final Completion / Freeze Audit.
 
 ## Stage sequencing
 
@@ -257,3 +263,27 @@ NEXT = 690110 CAPTURE Independent Runtime Freeze Audit
 
 690108 freeze authority: `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_FREEZE_AUDIT.md`.
 690222 freeze authority: `stages/stage12/STAGE12_690222_INTIMIDATION_RUNTIME_FREEZE_AUDIT.md`.
+
+
+## Stage12 690110 CAPTURE Runtime Freeze — 2026-09-28
+
+```text
+690110 Research = FROZEN
+690110 Gameplay = IMPLEMENTED
+690110 Runtime = FROZEN TO CONTRACT
+Independent Runtime Freeze Audit = PASS
+Independent audit test commit = f1db21211ce7d01fc867bc8c26c94cb82f11af49
+Independent adversarial tests = 33
+Local full pytest = 1640 passed
+Local demo = PASS
+BLOCKER = 0
+unresolved MAJOR = 0
+Stage12 Gameplay Implementation = 7 / 7
+Stage12 Runtime Frozen = 7 / 7
+Stage12 Complete = NO
+Stage13 / Stage14 / Stage15 Active = NO
+NEXT = Stage12 Final Completion / Freeze Audit
+```
+
+Authority: `stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`.
+Fresh PR and merged-main CI are required before release-final closure.
