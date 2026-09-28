@@ -15,7 +15,7 @@
     Stage9  = FROZEN
     Stage10 = FROZEN
     Stage11 = RUNTIME FROZEN / POST-FREEZE ACCEPTED
-    Stage12 = ACTIVE / RESEARCH COMPLETE / SHARED FOUNDATION DESIGN FROZEN / RUNTIME 7 OF 7 / FINAL COMPLETION AUDIT PENDING
+    Stage12 = RUNTIME FROZEN / COMPLETE / RESEARCH 7 OF 7 / RUNTIME 7 OF 7
     Stage13 = NOT ACTIVE
 
 Stage11 Runtime Tested SHA:
@@ -181,8 +181,8 @@ Stage12 Shared Foundation Design + Implementation = FROZEN / COMPLETE.
 690110 CAPTURE Independent Runtime Freeze Audit = PASS.
 Stage12 Gameplay Implementation = 7 / 7.
 Stage12 Runtime Frozen = 7 / 7.
-Stage12 Complete = NO.
-Next: Stage12 Final Completion / Freeze Audit.
+Stage12 Complete = YES.
+Next: Stage13 Runtime Entry / Activation.
 
 ## Stage sequencing
 
@@ -292,6 +292,21 @@ NEXT = Stage12 Final Completion / Freeze Audit
 Authority: `stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md`.
 Fresh PR and merged-main CI are required before release-final closure.
 
-## Stage12 Final Completion Audit Candidate — 2026-09-28
+## Stage12 Final Completion / Freeze — 2026-09-28
 
-Current runtime truth is 7/7 individual Stage12 freezes and 40/40 official runtime coverage. Final stage-level audit adds 27 adversarial acceptance tests; local full suite is 1667 passed + demo PASS. Stage12 Complete remains NO until fresh merged-main CI closes the final gate. Research remains 39/40 and Strict Complete 39/40 because 690086 DSTS9-B02 is still OPEN / UNOBSERVED. Stage13 Active remains NO.
+```text
+STAGE12_RUNTIME_FREEZE = PASS
+Stage12 Runtime = FROZEN
+Stage12 Complete = YES
+FINAL_40_STATE_RUNTIME_AUDIT = PASS
+GOVERNANCE_SYNC = PASS
+Stage13 Readiness = READY
+Stage13 Active = NO
+Research FROZEN = 39 / 40
+Runtime FROZEN TO CONTRACT = 40 / 40
+Strict Complete = 39 / 40
+690086 DSTS9-B02 = OPEN / UNOBSERVED
+```
+
+Final merged-main evidence: `f288adfb615cbb46444a32f77aadd615d22c267a`, GitHub Actions run `36389096961` = 1667 passed / demo PASS.
+Authority: `stages/stage12/STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
