@@ -158,6 +158,10 @@ Research FROZEN:
 - Independent adversarial audit: 33 tests / local full suite 1640 passed / demo PASS
 - BLOCKER 0 / unresolved MAJOR 0
 - Freeze authority: stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_FREEZE_AUDIT.md
+- Final audit PR-head SHA acb2324be3b82153be0556a0bd49ba5e335d0fc1
+- Final audit PR CI 36386542790 / 1640 passed / demo PASS
+- Freeze merge SHA 6d9868c93819bfe6b536dc7d1178c2be5c79e3eb
+- Fresh merged-main CI 36386655272 / 1640 passed / demo PASS
 - Integration record: stages/stage12/STAGE12_690110_CAPTURE_RUNTIME_INTEGRATION.md
 - Battle mirror: stages/stage12/STAGE12_690110_CAPTURE_RESEARCH_SYNC.md
 
