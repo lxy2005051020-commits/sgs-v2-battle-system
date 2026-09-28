@@ -1018,3 +1018,7 @@ Coverage:
 - all supplied candidates are reachable across a deterministic seed set.
 
 This suite is an executable governance specification only. It does not claim that 690222 gameplay has been integrated.
+
+
+Governance validation: `36369968103 / success / 1409 passed / demo PASS`.
+Baseline before RD-SF-006 governance was 1392 passed; net new governance tests = 17.
