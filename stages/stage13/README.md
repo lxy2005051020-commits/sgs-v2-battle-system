@@ -19,10 +19,10 @@ Stage13-A  Core Gameplay Mechanism Inventory Audit
            COMPLETE / ENTRY GATE PASS
 
 Stage13-B  Foundational Empirical Mechanics Research
-           B1 Wounded-Troop / Recoverable-Capacity Mechanics
-           B2 Damage Increase / Reduction Mechanics
-           B3 Recovery / Treatment Formula Mechanics
-           CURRENT
+           B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN
+           B2 Damage Increase / Reduction Mechanics — FROZEN
+           B2.5 Full Damage Advancement / Hidden Mechanism Closure — ACTIVE / CURRENT
+           B3 Recovery / Treatment Formula Mechanics — NEXT AFTER B2.5
 
 Stage13-C  Residual State Mechanism Closure
 
@@ -130,7 +130,9 @@ Skill Runtime Readiness = READY
 
 ~~~text
 NEXT =
-STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
+STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_RESEARCH
 ~~~
 
-B2 damage increase/reduction research follows, then B3 recovery/treatment-formula research, then Stage13-C residual state-mechanism closure.
+Current authority: [STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_REPLAN.md](STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_REPLAN.md).
+
+B1 and B2 research are frozen. B2.5 now reconciles the existing Stage2 base-damage V1 with the frozen Stage13-B2 modifier contract, resolves advancement arithmetic placement, and searches residual `>1` damage errors for hidden mechanisms. B3 treatment-formula research follows B2.5.
