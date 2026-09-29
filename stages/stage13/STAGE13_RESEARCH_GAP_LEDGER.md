@@ -9,10 +9,11 @@
 ## 1. Current research intake verdict
 
 ~~~text
-Foundational empirical research families     3
-  B1 wounded-troop / recoverable capacity
-  B2 damage increase / reduction mechanics
-  B3 recovery / treatment formula mechanics
+Foundational empirical research families     4-step route
+  B1 wounded-troop / recoverable capacity — FROZEN
+  B2 damage increase / reduction mechanics — FROZEN
+  B2.5 full damage advancement / hidden mechanism closure — ACTIVE
+  B3 recovery / treatment formula mechanics — NEXT
 
 Residual-state research phase                AFTER B1-B3
 Known residual state questions               PRESERVED
@@ -26,6 +27,7 @@ Stage1-12 automatic wholesale reopen         NO
 |---|---|---|---|---|---|:---:|---|
 | RQ13-B1 | Wounded troops / recoverable capacity | Is recoverable capacity universally equal to max troops minus current troops, or does an independent wounded / irreversible-loss model exist? | Every recovery formula and healing cap depends on the quantity that can actually be restored | Runtime currently clamps to missing troops; this is implementation behavior, not empirical proof | P0-1 | YES | RESEARCH_REQUIRED |
 | RQ13-B2 | Damage increase / reduction | How do outgoing/incoming increases and reductions stack, order, cap and round across same-family and cross-family contributions? | Future skills will create many simultaneous modifier sources; wrong aggregation contaminates almost every damage result | Typed Runtime phases exist, but no complete empirical global formula is frozen | P0-2 | YES | RESEARCH_REQUIRED |
+| RQ13-B2.5 | Full damage advancement / hidden mechanism closure | Do advancement outgoing/incoming modifiers enter ordinary same-side pools or independent multiplicative layers, and do clean full-event residuals expose any additional hidden damage mechanisms? | A wrong advancement placement or hidden factor prevents per-event damage explanation even with B2 topology frozen | Stage2 Base Damage Formula V1 exists; B2 leaves Q43/Q45 at METHOD_GATE | P0-2.5 | YES | RESEARCH_REQUIRED / ACTIVE |
 | RQ13-B3 | Recovery / treatment formula | How do treatment rate, INT/COMMAND and recovery modifiers map to nominal recovery before final capacity clamp? | Recovery states and healing skills cannot be numerically faithful without this | Trigger/lifecycle contracts are strong; exact formula constants are explicitly FORMULA_RESEARCH_OUT_OF_SCOPE in current state contracts | P0-3 | YES | RESEARCH_REQUIRED |
 | RQ13-001 | 690221 See-Through / ACTIVE_SKILL | Does cap-before-pierce apply to ACTIVE_SKILL damage? | Needed for broad Active Skill interaction fidelity | Frozen contract says UNSUPPORTED_UNKNOWN / zero observed | P1 | YES | DEFER_TO_STAGE13_C / RESEARCH_REQUIRED |
 | RQ13-002 | 690221 See-Through / DOT-DELAYED | Does cap-before-pierce apply to DOT or other delayed damage? | Needed for delayed/persistent skill-produced damage | Frozen contract says UNSUPPORTED_UNKNOWN / zero observed | P1 | YES | DEFER_TO_STAGE13_C / RESEARCH_REQUIRED |
@@ -135,5 +137,7 @@ A Runtime Default may resolve deterministic simulator behavior when original-gam
 ## 8. Current next target
 
 ~~~text
-STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
+STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_RESEARCH
 ~~~
+
+B1 and B2 are frozen. B2.5 must use the existing Stage2 Base Damage Formula V1 as baseline, test advancement same-pool vs independent models with high-separation cases, and treat clean nearest-legal-prediction residuals greater than 1 as anomaly leads.
