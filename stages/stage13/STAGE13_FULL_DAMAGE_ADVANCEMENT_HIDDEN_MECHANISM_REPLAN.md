@@ -104,3 +104,23 @@ governance documentation                = ALLOWED
 ```
 
 Only a later explicit Stage13 implementation authorization may change production runtime behavior.
+
+
+## 8. Execution Checkpoint 01 — Research Reproducibility Blocker
+
+Checkpoint date: 2026-09-29
+
+The Research repository has initialized the Stage13-B2.5 replay / residual toolchain and discovered a reproducibility blocker: the historical advancement and integerization candidate CSV artifacts referenced by Stage13-B2 prose are zero-byte files on current research main, while the raw battle-report corpus remains external local research data.
+
+Governance consequence:
+
+```text
+Stage13-B2 Research                    = FROZEN / unchanged
+Stage13-B2.5 Full Damage Oracle        = ACTIVE
+Stage13-B2.5 Evidence State            = BLOCKED BY DATA REPRODUCIBILITY
+Q43 / Q45                              = METHOD_GATE
+Stage13-B3                             = NOT ACTIVE
+sgs_v2/battle_core/* gameplay changes = FORBIDDEN / NONE AUTHORIZED
+```
+
+This is not a rollback of B2. The inherited same-pool advancement models remain canonical engineering defaults until B2.5 can replay non-empty event evidence. Runtime implementation must not advance on the basis of unreproduced aggregate claims.
