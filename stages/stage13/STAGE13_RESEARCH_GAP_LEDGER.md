@@ -12,8 +12,8 @@
 Foundational empirical research families     4-step route
   B1 wounded-troop / recoverable capacity — FROZEN
   B2 damage increase / reduction mechanics — FROZEN
-  B2.5 full damage advancement / hidden mechanism closure — ACTIVE
-  B3 recovery / treatment formula mechanics — NEXT
+  B2.5 full damage advancement / hidden mechanism closure — ACTIVE / BLOCKED BY DATA REPRODUCIBILITY
+  B3 recovery / treatment formula mechanics — AFTER B2.5 EXIT
 
 Residual-state research phase                AFTER B1-B3
 Known residual state questions               PRESERVED
@@ -27,7 +27,7 @@ Stage1-12 automatic wholesale reopen         NO
 |---|---|---|---|---|---|:---:|---|
 | RQ13-B1 | Wounded troops / recoverable capacity | Independent wounded-pool semantics and recovery-capacity behavior | Foundation for all later recovery math | Frozen Stage13-B1 mechanism contract | P0-1 | CLOSED | FROZEN |
 | RQ13-B2 | Damage increase / reduction | Same-side accumulation, cross-side composition, clamp, crit, morale, temporal and overkill modifier semantics | Foundation for full-event damage replay | Frozen Stage13-B2 unified mechanism contract; official restraint correction = 1.12/1.00/0.88 | P0-2 | CLOSED | FROZEN |
-| RQ13-B2.5 | Full damage advancement / hidden mechanism closure | Do advancement outgoing/incoming modifiers enter ordinary same-side pools or independent multiplicative layers, and do clean full-event residuals expose any additional hidden damage mechanisms? | A wrong advancement placement or hidden factor prevents per-event damage explanation even with B2 topology frozen | Stage2 Base Damage Formula V1 exists; B2 leaves Q43/Q45 at METHOD_GATE | P0-2.5 | YES | RESEARCH_REQUIRED / ACTIVE |
+| RQ13-B2.5 | Full damage advancement / hidden mechanism closure | Do advancement outgoing/incoming modifiers enter ordinary same-side pools or independent multiplicative layers, and do clean full-event residuals expose any additional hidden damage mechanisms? | A wrong advancement placement or hidden factor prevents per-event damage explanation even with B2 topology frozen | Stage2 Base Damage Formula V1 exists; Q43/Q45 remain METHOD_GATE; historical candidate CSVs are zero-byte on current research main | P0-2.5 | YES | ACTIVE / BLOCKED_BY_DATA_REPRODUCIBILITY |
 | RQ13-B3 | Recovery / treatment formula | How do treatment rate, INT/COMMAND and recovery modifiers map to nominal recovery before final capacity clamp? | Recovery states and healing skills cannot be numerically faithful without this | Trigger/lifecycle contracts are strong; exact formula constants are explicitly FORMULA_RESEARCH_OUT_OF_SCOPE in current state contracts | P0-3 | YES | RESEARCH_REQUIRED |
 | RQ13-001 | 690221 See-Through / ACTIVE_SKILL | Does cap-before-pierce apply to ACTIVE_SKILL damage? | Needed for broad Active Skill interaction fidelity | Frozen contract says UNSUPPORTED_UNKNOWN / zero observed | P1 | YES | DEFER_TO_STAGE13_C / RESEARCH_REQUIRED |
 | RQ13-002 | 690221 See-Through / DOT-DELAYED | Does cap-before-pierce apply to DOT or other delayed damage? | Needed for delayed/persistent skill-produced damage | Frozen contract says UNSUPPORTED_UNKNOWN / zero observed | P1 | YES | DEFER_TO_STAGE13_C / RESEARCH_REQUIRED |
@@ -141,3 +141,17 @@ STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_RESEARCH
 ~~~
 
 B1 and B2 are frozen. B2.5 must use the existing Stage2 Base Damage Formula V1 as baseline, test advancement same-pool vs independent models with high-separation cases, and treat clean nearest-legal-prediction residuals greater than 1 as anomaly leads.
+
+
+## 9. B2.5 execution checkpoint
+
+Research has built the B2.5 normalized event / replay / residual-analysis toolchain, but the historical candidate datasets referenced by B2 prose are not reproducible from committed CSV artifacts because those CSVs are empty. This does not reopen B2. It blocks only B2.5 closure until the external raw corpus is replayed.
+
+```text
+RQ13-B2.5 = ACTIVE / BLOCKED_BY_DATA_REPRODUCIBILITY
+Q43 = METHOD_GATE
+Q45 = METHOD_GATE
+FULL_DAMAGE_ORACLE = NOT CLOSED
+B3 START = NOT AUTHORIZED YET
+Runtime gameplay modification = NOT AUTHORIZED
+```
