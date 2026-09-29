@@ -781,3 +781,19 @@ STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
 This amendment explicitly distinguishes a runnable Runtime rule from an empirically established original-game mechanism. The current missing-troop recovery clamp, typed damage-modifier pipeline, and recovery settlement remain valid Runtime behavior, but they are not used as proof that wounded-pool, modifier aggregation, or treatment-value formulas are fully researched.
 
 Authority: `stages/stage13/STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md`.
+
+
+## Stage13 research progression update — 2026-09-29
+
+```text
+Stage13-B1 Wounded / Recoverable Capacity               = FROZEN
+Stage13-B2 Damage Increase / Reduction                  = FROZEN
+Stage13-B2 official restraint values                   = 1.12 / 1.00 / 0.88
+Stage13-B2.5 Full Damage Advancement / Hidden Mechanics = ACTIVE / NEXT
+Stage13-B3 Recovery / Treatment Formula                 = AFTER B2.5
+Runtime gameplay modification                           = NOT AUTHORIZED
+```
+
+B2.5 does not restart base-damage research from zero. It reuses the Stage2 `NORMAL_ATTACK_FORMULA_V1.md` / `STRATEGY_DAMAGE_FORMULA_V1.md` baseline and performs full-event replay to resolve advancement arithmetic placement and identify any clean residual clusters with nearest legal prediction error greater than 1.
+
+Route authority: `stages/stage13/STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_REPLAN.md`.
