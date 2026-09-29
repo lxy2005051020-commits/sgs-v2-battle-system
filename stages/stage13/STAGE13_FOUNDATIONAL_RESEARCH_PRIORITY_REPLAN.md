@@ -29,9 +29,10 @@ Stage13-A  Core Gameplay Mechanism Inventory Audit
            COMPLETE
 
 Stage13-B  Foundational Empirical Mechanics Research
-           B1 Wounded-Troop / Recoverable-Capacity Mechanics
-           B2 Damage Increase / Reduction Mechanics
-           B3 Recovery / Treatment Formula Mechanics
+           B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN
+           B2 Damage Increase / Reduction Mechanics — FROZEN
+           B2.5 Full Damage Advancement / Hidden Mechanism Closure — ACTIVE
+           B3 Recovery / Treatment Formula Mechanics — AFTER B2.5
 
 Stage13-C  Residual State Mechanism Closure
            audit all 40 state contracts for OPEN / UNOBSERVED /
@@ -156,9 +157,13 @@ A frozen state is not automatically reopened wholesale. Only the identified unre
 
 ## 8. Immediate next action
 
+The original 2026-09-28 ordering has progressed: B1 and B2 are now frozen. A 2026-09-29 amendment inserts B2.5 before B3 so the project can reconcile Stage2 Base Damage Formula V1 with the frozen B2 modifier contract and close advancement arithmetic / hidden damage residuals.
+
 ~~~text
 NEXT =
-STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
+STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_RESEARCH
 ~~~
 
-B2 and B3 follow B1 because recovery-formula interpretation depends on knowing what quantity recovery is capped against. B2 may be prepared in parallel, but Stage13-B closure requires B1, B2 and B3 all to reach auditable verdicts.
+Authority: `STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_REPLAN.md`.
+
+B3 follows B2.5. Runtime implementation remains unauthorized.
