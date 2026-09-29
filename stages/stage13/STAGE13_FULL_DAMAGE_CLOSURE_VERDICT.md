@@ -25,16 +25,15 @@ Sign-off: Stage13-B2.5 Research Commander Agent
 
 ### 2.1 Advancement Modifiers ($E_{out}$ & $E_{in}$, Q43 & Q45)
 
-- **Formal Verdict**: **`METHOD_GATE`**.
-- **Canonical Runtime Selection**: **Same-Pool Additive** (`ADV-OUT-A` and `ADV-IN-A`):
-  $$A_{out} = \max(-0.90, \; OI + E_{out} - OD)$$
-  $$F_{out} = 1.0 + A_{out} + Crit$$
-  $$A_{in} = \max(-0.90, \; II - ID - E_{in})$$
-  $$F_{in} = 1.0 + A_{in}$$
-- **Scientific Rationale**:
-  Across 84,673 replayed events, Same-Pool Additive and Independent Multiplier produce **identical nearest legal predictions in 96.31% of events** (81,554 events).
-  In pure PVP battles, Same-Pool was closer in 677 events and Independent was closer in 643 events, with error differences $\le 1$ to $2$ damage points (governed by integer floor/ceil quantization at the discrete RNG boundaries).
-  Under discrete RNG $R \in [86..94]$, the two models are **OBSERVATIONALLY EQUIVALENT**. Neither model is falsified. Same-Pool Additive is retained as the statutory canonical default for engineering consistency.
+- **Formal Verdict**: **`CLOSED-DIRECTIVE (INDEPENDENT MULTIPLIER ADOPTED)`**.
+- **Canonical Runtime Selection**: **Independent Multiplier** (`ADV-OUT-B` and `ADV-IN-B`):
+  $$F_{adv\_out} = 1.0 + 0.02 \times r_{atk} \quad (\text{if military books active, else } 1.0)$$
+  $$F_{adv\_in} = 1.0 - 0.02 \times r_{tgt} \quad (\text{if military books active, else } 1.0)$$
+  $$\text{Damage} = B_0 \times \text{coef} \times K \times M_{morale} \times \frac{R}{100} \times F_{skill\_out} \times F_{skill\_in} \times F_{adv\_out} \times F_{adv\_in}$$
+- **Scientific & Governance Rationale**:
+  Across 84,673 replayed events, Independent Multiplier and Same-Pool Additive produce **identical nearest legal predictions in 96.31% of events** (81,554 events).
+  Under discrete RNG $R \in [86..94]$, both candidate models are proven to be **OBSERVATIONALLY EQUIVALENT**. Neither model is falsified on the real battle corpus.
+  Per User Architectural Directive, the system officially codifies **Independent Multiplier** as the project standard. This cleanly uncouples static hero progression (red-star advancement) from dynamic in-battle skill buff/debuff modifier pools, providing superior architectural clarity and maintainability.
 
 ### 2.2 Stage2 Base Damage Formula V1 Reconciliation
 

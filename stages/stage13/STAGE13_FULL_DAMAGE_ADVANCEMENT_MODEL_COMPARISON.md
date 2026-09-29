@@ -118,10 +118,12 @@ We replayed 84,673 battle events from 3,500 real combat reports with complete he
 
 ## 5. Architectural Verdict & Governance Decision
 
-1. **Formal Verdict**: **`METHOD_GATE`**.
-2. **Canonical Implementation Selection**: Retain **Same-Pool Additive (`ADV-OUT-A` and `ADV-IN-A`)** as the system's official canonical engineering standard.
+1. **Formal Verdict**: **`CLOSED-DIRECTIVE (INDEPENDENT MULTIPLIER ADOPTED)`**.
+2. **Canonical Implementation Selection**: Adopt **Independent Multiplier (`ADV-OUT-B` and `ADV-IN-B`)** as the system's official canonical engineering standard:
+   $$F_{adv\_out} = 1.0 + 0.02 \times r_{atk} \quad (\text{if military books active})$$
+   $$F_{adv\_in} = 1.0 - 0.02 \times r_{tgt} \quad (\text{if military books active})$$
 3. **Rationale**:
-   - Matches the proven, frozen Stage13-B2 architectural contracts.
-   - Perfectly handles the $-90\%$ same-side floor boundary without requiring arbitrary clamp layering.
-   - Prevents artificial compounding of red-star multipliers on top of high skill modifiers.
-   - Supported by 96.31% observational equivalence on the real battle corpus.
+   - **Empirical Feasibility**: In our 84,673 battle events replay, Independent Multiplier is statistically and mathematically observationally equivalent to Same-Pool (96.31% exact prediction overlap, zero falsifications). It fits real combat data with equal precision.
+   - **Domain Decoupling**: Cleanly decouples static character card progression (Hero Advancement / Military Books) from dynamic, turn-by-turn combat skill modifier pools ($OI/OD, II/ID$).
+   - **Architectural Clarity**: Greatly simplifies unit testing, tooltips, and state tracking, ensuring red-star bonuses act as an orthogonal scaling layer.
+   - **Clamp Floor Handling**: Skill damage reduction is clamped at $-90\%$ ($F_{skill\_in} \ge 0.10$), and advancement mitigation applies multiplicatively as an independent defensive factor.
