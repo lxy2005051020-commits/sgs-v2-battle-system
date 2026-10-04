@@ -6,6 +6,11 @@ Stage9 冻结跨机制编排、Target/Redirect/Reaction、Damage partition、Bat
 
 ## Current authority
 
+- [Runtime authority map](docsync/STAGE9_AUTHORITY_MAP.md)
+- [Typed Runtime contracts](hardening/STAGE9_TYPED_RUNTIME_CONTRACTS.md)
+- [Runtime invariants](hardening/STAGE9_RUNTIME_INVARIANTS.md)
+- [Regression contracts](hardening/STAGE9_REGRESSION_CONTRACTS.md)
+- [Global cross-mechanism final audit](audits/STAGE9_GLOBAL_CROSS_MECHANISM_FINAL_AUDIT.md)
 - [Frozen design](STAGE9.md)
 - [Design freeze](STAGE9_DESIGN_FREEZE.md)
 - [Final audit](STAGE9_FINAL_AUDIT.md)
