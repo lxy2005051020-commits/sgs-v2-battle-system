@@ -154,7 +154,7 @@ Reff = Rcap * (1 - pierce_rate)
 
 No rounding occurs inside 690221.
 
-Authorized family classification is explicit. NORMAL_ATTACK and observed/authorized ASSAULT families can transform. Known no-invocation members return no transform. ACTIVE_SKILL, DOT/DELAYED and other unobserved families raise `ContractBoundaryViolation` if 690221 would otherwise be invoked. Silence is not an answer to an unknown contract.
+Authorized family classification is explicit. NORMAL_ATTACK, observed/authorized ASSAULT, ACTIVE_SKILL, and DOT/DELAYED families can transform. ACTIVE_SKILL and DOT/DELAYED were added by the Stage13 2026-10-04 mechanism authority amendment. Known no-invocation members return no transform. Any still-uncovered family remains an explicit contract boundary rather than silently mapping to no pierce.
 
 ALERT is excluded from the See-Through operand.
 

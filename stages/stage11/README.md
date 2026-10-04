@@ -46,7 +46,7 @@ Share RecoveryBasis =
 PrimaryAssignedDamage + SharedAssignedDamage
 ```
 
-Actual troop loss is not the Share recovery basis. Target death and overkill may reduce committed loss without reducing RecoveryBasis. Cleave child Share follows the same assignment-owned rule. Distribution remains separate research debt / project runtime default.
+Actual troop loss is not the Share recovery basis. Target death and overkill may reduce committed loss without reducing RecoveryBasis. Cleave child Share follows the same assignment-owned rule. Distribution remains a separate mechanism; DSTS9-B02 itself was later closed by the Stage13 2026-10-04 authority amendment.
 
 ## B11-FRZ-001 closure
 
@@ -63,7 +63,7 @@ The required 101 / 10% / 110% test resolves to **13**; a forbidden single-stage 
 
 ## Remaining debt
 
-Research debt and bounded unknowns remain explicit, including Distribution / DSTS9-B02, Distribution × LifeSteal project default, ALERT boundaries, Critical timing, DISARM proxy/reflection admission and See-Through unsupported families. Runtime Freeze does not erase them.
+Post-Stage11 amendments have closed Distribution / DSTS9-B02, ALERT threshold basis/equality, and 690221 ACTIVE_SKILL + DOT/DELAYED applicability. Remaining debt still includes Distribution × LifeSteal, ALERT positive-result integerization / selected integration micro-order, Critical timing, DISARM proxy/reflection admission, and any still-uncovered special See-Through families. The original Stage11 freeze checkpoint remains historical provenance.
 
 ## Next stage
 

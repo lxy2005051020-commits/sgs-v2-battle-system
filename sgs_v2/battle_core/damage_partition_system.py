@@ -88,7 +88,7 @@ class DistributionTransactionPlan:
     dtarget: int
     dtransfer: int
     dparticipant: int
-    runtime_authority: DistributionRuntimeAuthority = DistributionRuntimeAuthority.PROJECT_RUNTIME_DEFAULT
+    runtime_authority: DistributionRuntimeAuthority = DistributionRuntimeAuthority.FROZEN_P0
     kind: DamagePartitionKind = DamagePartitionKind.DISTRIBUTION
 
     def __post_init__(self) -> None:

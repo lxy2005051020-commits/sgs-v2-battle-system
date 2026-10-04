@@ -49,13 +49,13 @@ These must not be “solved” with a Runtime Default merely because coding woul
 
 | Question | Correct lane |
 |---|---|
-| Does 690221 apply to ACTIVE_SKILL? | RESEARCH_REQUIRED |
-| Does 690221 apply to DOT / delayed damage? | RESEARCH_REQUIRED |
+| Does 690221 apply to ACTIVE_SKILL? | CLOSED: YES; Stage13 authority amendment |
+| Does 690221 apply to DOT / delayed damage? | CLOSED: YES; Stage13 authority amendment |
 | What is a concrete skill's target priority? | future Skill Contract / Research, not Stage13 generic default |
 | What is a concrete skill's snapshot/JIT attribute rule? | future Skill Contract / existing authority; Stage13 provides both primitives |
 | Is a state a buff/debuff for cleanse purposes? | mechanism/category authority, not UI inference |
 | Does source death cancel a specific already-created effect? | mechanism/work authority; no universal default |
-| 690086 DSTS9-B02 | existing Research Debt; preserve |
+| 690086 DSTS9-B02 | CLOSED: current admitted DistributionTransaction drains before finalization |
 
 ## 4. Governance decision schema
 

@@ -1,6 +1,6 @@
 # Stage13 · Core Gameplay Mechanism Completion
 
-> Current status: ACTIVE / B1+B2+B2.5 RUNTIME FROZEN / B3 ORDINARY-TREATMENT CORE INTEGRATED, SPECIAL FAMILY BOUNDARIES OPEN
+> Current status: ACTIVE / FOUNDATIONAL + RESIDUAL MECHANISM RESEARCH CLOSED / RUNTIME EXIT WORK REMAINS
 >
 > Activated: 2026-09-28 by STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
 >
@@ -22,7 +22,7 @@ Stage13-B  Foundational Empirical Mechanics Research
            B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN
            B2 Damage Increase / Reduction Mechanics — FROZEN
            B2.5 Full Damage Advancement / Hidden Mechanism Closure — CLOSED
-           B3 Recovery / Treatment Formula Mechanics — ORDINARY FORMULA CORE FROZEN / SPECIAL FAMILIES OPEN
+           B3 Recovery / Treatment Formula Mechanics — ORDINARY FORMULA CORE FROZEN / SPECIAL RECOVERY FAMILY SEPARATION FROZEN
 
 Stage13-C  Residual State Mechanism Closure
 
@@ -58,10 +58,10 @@ Stage12 Runtime                         = FROZEN
 Stage12 Complete                        = YES
 Stage1-12 Reopen Required               = NO
 
-Research FROZEN                         = 39 / 40
+Research FROZEN                         = 40 / 40
 Runtime FROZEN TO CONTRACT              = 40 / 40
-Strict Complete                         = 39 / 40
-690086 DSTS9-B02                        = OPEN / UNOBSERVED
+Strict Complete                         = 40 / 40
+690086 DSTS9-B02                        = CLOSED
 ~~~
 
 Inventory activation does not mean the Core Gameplay Engine is frozen:
@@ -99,7 +99,7 @@ H = CEIL(
 
 The selected attribute coefficient is 1. Same-side ordinary modifiers add algebraically, source/target sides multiply, red-degree is an independent pool, and persistent treatment replays application-time formula state. The final HealingBlock and wounded/missing-troop capacity tail remains live in RecoverySystem/TroopSystem.
 
-Special recovery families remain independently owned and are not silently collapsed into this formula.
+Special recovery families are explicitly outside ordinary treatment and must be implemented as separate recovery families. They may share only the canonical final RecoverySystem settlement tail where separately authorized.
 
 ## 5. Residual state research comes after B1-B3
 
@@ -115,7 +115,13 @@ RESEARCH_DEBT
 FORMULA_RESEARCH_OUT_OF_SCOPE
 ~~~
 
-Known entries include 690221 ACTIVE_SKILL, 690221 DOT/DELAYED, 690086 DSTS9-B02 and bounded 690099 issues. Existing frozen state contracts remain frozen outside the exact clause being reopened.
+Stage13 residual authority has now closed the previously blocking entries:
+- 690221 ACTIVE_SKILL applicability = YES;
+- 690221 DOT/DELAYED applicability = YES;
+- 690086 DSTS9-B02 = current DistributionTransaction drains before finalization;
+- 690099 threshold = MaxCarryTroops × 6%, equality triggers.
+
+Remaining bounded unknowns are non-blocking unless a concrete future skill requires them.
 
 ## 6. Runtime architecture boundary
 
@@ -156,12 +162,13 @@ B3 merged-main commit            = a27785a830e6d3f89b0c17d93bdaa31f84c48207
 B3 merged-main CI 37200488246     = PASS / demo PASS / audit snapshot PASS
 ```
 
-B3 ordinary-treatment formula core is now integrated. Special recovery-family boundaries and other residual Stage13 debt remain open.
+B3 ordinary-treatment formula core is integrated, special recovery-family separation is frozen, and the named residual Stage13 mechanism questions are closed. Remaining Stage13 work is Runtime architecture/governance and exit auditing.
 
 ## 9. NEXT
 
 ```text
 NEXT =
-continue residual Stage13 core-engine completion; B3 ordinary-treatment runtime CI/freeze audit is complete
-special recovery families and residual state debt remain bounded/open
+finish Stage13 Runtime architecture/governance gaps
+complete deterministic replay + independent exit audit
+then declare Skill Runtime Readiness = READY
 ```
