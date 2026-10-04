@@ -506,32 +506,48 @@ def test_mt01_supported_non_mateng_commander_passes_with_base_rate() -> None:
     assert pytest.approx(crit_a1.chance, rel=1e-5) == 0.25
 
 
-def test_mt02_mateng_commander_fails_closed_due_to_unresolved_speed_formula() -> None:
-    """MT-02: Ma Teng commander configuration strictly fails closed (REJECTED_COMMANDER_SCALING_UNRESOLVED)."""
+def test_mt02_mateng_commander_uses_frozen_speed_scaling_formula() -> None:
+    """MT-02: Ma Teng commander uses current PRE_BATTLE combat speed."""
+    from sgs_v2.battle_core.troop_admission import calculate_xiliang_crit_chance
+
     context, systems = make_test_context()
     context.units["a1"].name = "马腾"
+    context.units["a1"].speed = 87.684
     runtime = create_xiliang_cavalry_runtime("a1")
 
     adm_res = admit_and_install_troop_skill(context, systems, runtime)
-    assert adm_res.status == TroopAdmissionStatus.REJECTED_COMMANDER_SCALING_UNRESOLVED
-    assert adm_res.special_troop_id is None
-    assert "BOUNDED_UNKNOWN" in (adm_res.reason or "")
+    assert adm_res.status == TroopAdmissionStatus.SUCCESS
+    assert adm_res.special_troop_id == SpecialTroopId.XILIANG_CAVALRY
+
+    outcome = systems.stage11_state_runtime.resolve_critical(
+        context, source_id="a1", damage_type=DamageType.WEAPON
+    )
+    expected = calculate_xiliang_crit_chance(0.25, 87.684)
+    assert outcome.chance == pytest.approx(expected, abs=1e-12)
 
 
-def test_mt03_mateng_rejection_transaction_consistency() -> None:
-    """MT-03: Rejection on Ma Teng commander preserves transactional consistency.
-    No special troop identity is created, and no partial critical states are installed.
-    """
+def test_mt03_mateng_speed_baseline_57_equals_25_percent() -> None:
+    """MT-03: Frozen reference speed 57 produces the nominal 25% LV10 rate."""
     context, systems = make_test_context()
     context.units["a1"].name = "马腾"
+    context.units["a1"].speed = 57.0
     runtime = create_xiliang_cavalry_runtime("a1")
 
     adm_res = admit_and_install_troop_skill(context, systems, runtime)
-    assert adm_res.status == TroopAdmissionStatus.REJECTED_COMMANDER_SCALING_UNRESOLVED
+    assert adm_res.status == TroopAdmissionStatus.SUCCESS
+    outcome = systems.stage11_state_runtime.resolve_critical(
+        context, source_id="a1", damage_type=DamageType.WEAPON
+    )
+    assert outcome.chance == pytest.approx(0.25, abs=1e-12)
 
-    for uid in ("a1", "a2", "a3"):
-        assert context.units[uid].special_troop_id is None
-        assert len(context.states.find(owner_id=uid, state_id=OfficialStateId.CRITICAL.value)) == 0
+
+def test_mt04_generalized_formula_lv1_reference() -> None:
+    """The frozen level-normalized formula also reproduces the LV1 slope."""
+    from sgs_v2.battle_core.troop_admission import calculate_xiliang_crit_chance
+
+    assert calculate_xiliang_crit_chance(0.125, 57.0) == pytest.approx(0.125)
+    # +64 speed from baseline => +1 percentage point for LV1.
+    assert calculate_xiliang_crit_chance(0.125, 121.0) == pytest.approx(0.135)
 
 
 # ===========================================================================
@@ -813,33 +829,43 @@ def test_pb02_duplicate_installation_rejected_idempotently() -> None:
 # Pilot 01C: Canonical Commander Identity (LineupPosition vs is_commander)
 # ===========================================================================
 def test_commander_identity_canonical_lineup_position_overrides_is_commander() -> None:
-    """Canonical Truth: LineupPosition.COMMANDER is authoritative.
-    Case 1: unit named '马腾' has lineup_position=COMMANDER but is_commander=False -> Still recognized as commander -> FAIL CLOSED.
-    Case 2: unit named '马腾' has lineup_position=DEPUTY_1 but is_commander=True -> Not commander -> PASS.
-    """
-    # Case 1: Ma Teng is canonical commander (even if is_commander=False)
+    """LineupPosition.COMMANDER is authoritative for the Ma Teng scaling clause."""
+    from sgs_v2.battle_core.troop_admission import calculate_xiliang_crit_chance
+
+    # Case 1: Ma Teng is canonical commander even if compatibility flag is false.
     context, systems = make_test_context()
     context.units["a1"].name = "马腾"
+    context.units["a1"].speed = 121.0
     context.units["a1"].lineup_position = LineupPosition.COMMANDER
     context.units["a1"].is_commander = False
 
     runtime = create_xiliang_cavalry_runtime("a1")
     res1 = admit_and_install_troop_skill(context, systems, runtime)
-    assert res1.status == TroopAdmissionStatus.REJECTED_COMMANDER_SCALING_UNRESOLVED
+    assert res1.status == TroopAdmissionStatus.SUCCESS
+    crit1 = systems.stage11_state_runtime.resolve_critical(
+        context, source_id="a1", damage_type=DamageType.WEAPON
+    )
+    assert crit1.chance == pytest.approx(
+        calculate_xiliang_crit_chance(0.25, 121.0),
+        abs=1e-12,
+    )
 
-    # Case 2: Ma Teng is deputy (even if is_commander=True by accident)
+    # Case 2: Ma Teng is only a deputy; the canonical commander is not Ma Teng.
     context2, systems2 = make_test_context()
     context2.units["a1"].name = "韩遂"
     context2.units["a1"].lineup_position = LineupPosition.COMMANDER
     context2.units["a1"].is_commander = True
-
     context2.units["a2"].name = "马腾"
     context2.units["a2"].lineup_position = LineupPosition.DEPUTY_1
-    context2.units["a2"].is_commander = True  # Erroneous compatibility flag
+    context2.units["a2"].is_commander = True
 
     runtime2 = create_xiliang_cavalry_runtime("a1")
     res2 = admit_and_install_troop_skill(context2, systems2, runtime2)
     assert res2.status == TroopAdmissionStatus.SUCCESS
+    crit2 = systems2.stage11_state_runtime.resolve_critical(
+        context2, source_id="a1", damage_type=DamageType.WEAPON
+    )
+    assert crit2.chance == pytest.approx(0.25, abs=1e-12)
 
 
 # ===========================================================================
@@ -899,6 +925,68 @@ def test_team_troop_invariant_preflight_rejects_mixed_troops() -> None:
     # Atomic: no unit converted
     for uid in ("a1", "a2", "a3"):
         assert context.units[uid].special_troop_id is None
+
+
+# ===========================================================================
+# Pilot 01D: Baseline-disabled admission atomicity
+# ===========================================================================
+def test_bd01_disabled_runtime_auto_path_does_not_convert_or_install() -> None:
+    context, systems = make_test_context()
+    context.current_phase = "NOT_STARTED"
+    runtime = create_xiliang_cavalry_runtime("a1", enabled=False)
+    context.skill_runtimes.register(runtime)
+
+    result = BattleEngine(context=context, systems=systems).run()
+    assert result is not None
+    for uid in ("a1", "a2", "a3"):
+        assert context.units[uid].special_troop_id is None
+        assert not context.states.find(
+            owner_id=uid,
+            state_id=OfficialStateId.CRITICAL.value,
+        )
+
+
+def test_bd02_direct_disabled_admission_rejected_before_mutation() -> None:
+    context, systems = make_test_context()
+    runtime = create_xiliang_cavalry_runtime("a1", enabled=False)
+
+    result = admit_and_install_troop_skill(context, systems, runtime)
+    assert result.status == TroopAdmissionStatus.REJECTED_BASELINE_DISABLED
+    for uid in ("a1", "a2", "a3"):
+        assert context.units[uid].special_troop_id is None
+        assert not context.states.find(
+            owner_id=uid,
+            state_id=OfficialStateId.CRITICAL.value,
+        )
+
+
+def test_bd03_enabled_runtime_still_installs_normally() -> None:
+    context, systems = make_test_context()
+    runtime = create_xiliang_cavalry_runtime("a1", enabled=True)
+    result = admit_and_install_troop_skill(context, systems, runtime)
+    assert result.status == TroopAdmissionStatus.SUCCESS
+    for uid in ("a1", "a2", "a3"):
+        assert context.units[uid].special_troop_id == SpecialTroopId.XILIANG_CAVALRY
+
+
+def test_bd04_temporary_suppression_preserves_installed_identity() -> None:
+    context, systems = make_test_context()
+    runtime = create_xiliang_cavalry_runtime("a1")
+    assert admit_and_install_troop_skill(context, systems, runtime).status == TroopAdmissionStatus.SUCCESS
+
+    systems.state_application_coordinator.apply_candidate(
+        context,
+        StateCandidate(
+            state_id=OfficialStateId.INTIMIDATION.value,
+            owner_id="a1",
+            source_id="b1",
+            source_skill_id="690222",
+            lifetime_spec=StateLifetimeSpec.round_calendar(expires_round=2),
+            runtime_params_candidate=EmptyStateRuntimeParams(),
+        ),
+    )
+    for uid in ("a1", "a2", "a3"):
+        assert context.units[uid].special_troop_id == SpecialTroopId.XILIANG_CAVALRY
 
 
 # ===========================================================================
@@ -998,26 +1086,22 @@ def test_auto01_detail_auto_pre_battle_lifecycle_and_provider_dependency() -> No
     assert pytest.approx(crit_a1_r4.chance, rel=1e-5) == 0.0
 
 
-def test_auto02_mateng_commander_auto_path_fails_closed() -> None:
-    """AUTO-02: Ma Teng commander registered with Xiliang Cavalry fails closed on BattleEngine.run()."""
-    from sgs_v2.battle_core import TroopAdmissionRejectedError
-
+def test_auto02_mateng_commander_auto_path_is_supported() -> None:
+    """AUTO-02: Ma Teng commander now runs normally through BattleEngine PRE_BATTLE auto wiring."""
     context, systems = make_test_context()
     context.current_phase = "NOT_STARTED"
     context.units["a1"].name = "马腾"
+    context.units["a1"].speed = 121.0
     context.units["a1"].lineup_position = LineupPosition.COMMANDER
 
     runtime = create_xiliang_cavalry_runtime("a1", slot=SkillSlot.LEARNED_1)
     context.skill_runtimes.register(runtime)
 
     engine = BattleEngine(context=context, systems=systems)
-    with pytest.raises(TroopAdmissionRejectedError) as exc_info:
-        engine.run()
-
-    assert exc_info.value.status == TroopAdmissionStatus.REJECTED_COMMANDER_SCALING_UNRESOLVED
-    # Transaction consistency: no unit mutated
+    result = engine.run()
+    assert result is not None
     for uid in ("a1", "a2", "a3"):
-        assert context.units[uid].special_troop_id is None
+        assert context.units[uid].special_troop_id == SpecialTroopId.XILIANG_CAVALRY
 
 
 def test_auto03_invalid_troop_auto_path_fails_closed() -> None:
