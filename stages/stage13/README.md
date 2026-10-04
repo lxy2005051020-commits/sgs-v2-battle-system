@@ -30,7 +30,7 @@ Stage13-D  Consolidated Gap Classification + Runtime Governance
 Stage13-E  Core Runtime Architecture Design
 Stage13-F  Core Mechanism Implementation
            Foundational slice B1/B2/B2.5 — IMPLEMENTED / RUNTIME FREEZE AUDIT PASS
-           B3 ordinary-treatment core — IMPLEMENTED / CI AUDIT PENDING
+           B3 ordinary-treatment core — IMPLEMENTED / MERGED-MAIN CI PASS / RUNTIME CORE FROZEN
 Stage13-G  Independent Engine Completion / Deterministic Replay Audit
 ~~~
 
@@ -148,10 +148,12 @@ Skill Runtime Readiness = READY
 Stage13-B1 Runtime Integration   = IMPLEMENTED
 Stage13-B2 Runtime Integration   = IMPLEMENTED
 Stage13-B2.5 Runtime Integration = IMPLEMENTED
-Stage13-B3 Treatment Core        = IMPLEMENTED / CI AUDIT PENDING
+Stage13-B3 Treatment Core        = IMPLEMENTED / RUNTIME CORE FROZEN
 Branch CI 37198181258            = 1683 passed / demo PASS
 Independent PR/Main Audit        = PASS
 Merged-main CI 37198353900        = 1683 passed / demo PASS
+B3 merged-main commit            = a27785a830e6d3f89b0c17d93bdaa31f84c48207
+B3 merged-main CI 37200488246     = PASS / demo PASS / audit snapshot PASS
 ```
 
 B3 ordinary-treatment formula core is now integrated. Special recovery-family boundaries and other residual Stage13 debt remain open.
@@ -160,6 +162,6 @@ B3 ordinary-treatment formula core is now integrated. Special recovery-family bo
 
 ```text
 NEXT =
-finish B3 runtime CI/freeze audit, then continue residual Stage13 core-engine completion
+continue residual Stage13 core-engine completion; B3 ordinary-treatment runtime CI/freeze audit is complete
 special recovery families and residual state debt remain bounded/open
 ```
