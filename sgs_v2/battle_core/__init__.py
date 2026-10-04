@@ -7,6 +7,7 @@ from .enums import (
     DamageSourceType,
     DamageType,
     LineupPosition,
+    SpecialTroopId,
     TroopType,
 )
 from .events import BattleEvent, EventBus, EventType
@@ -516,6 +517,7 @@ __all__ = [
     "DamageSourceType",
     "DamageType",
     "LineupPosition",
+    "SpecialTroopId",
     "TroopType",
     "BattleEvent",
     "EventBus",
@@ -811,6 +813,19 @@ from .pending_work import (
 )
 from .operation_identity import PendingWorkId, SkillOperationId, EffectOperationId, RecoveryOperationId
 
+from .troop_admission import (
+    TroopAdmissionResult,
+    TroopAdmissionStatus,
+    XILIANG_CAVALRY_CRIT_BONUS,
+    XILIANG_CAVALRY_CRIT_CHANCE,
+    XILIANG_CAVALRY_DURATION_EXPIRES_ROUND,
+    XILIANG_CAVALRY_SKILL_ID,
+    XILIANG_CAVALRY_SKILL_NAME,
+    admit_and_install_troop_skill,
+    create_xiliang_cavalry_definition,
+    create_xiliang_cavalry_runtime,
+)
+
 __all__ += [
     "PendingWork", "PendingWorkRegistry", "PendingWorkSystem", "PendingWorkStatus",
     "PendingWorkScheduleSpec", "ScheduleKind", "PendingWorkTimingPoint",
@@ -818,4 +833,15 @@ __all__ += [
     "SourceValidityMode", "TargetValidityMode", "PendingWorkReadPolicy", "WorkReadMode",
     "PendingWorkExecutionFrame", "PendingWorkDispatchResult", "PendingWorkTrace",
     "PendingWorkId", "SkillOperationId", "EffectOperationId", "RecoveryOperationId",
+    "TroopAdmissionResult",
+    "TroopAdmissionStatus",
+    "XILIANG_CAVALRY_CRIT_BONUS",
+    "XILIANG_CAVALRY_CRIT_CHANCE",
+    "XILIANG_CAVALRY_DURATION_EXPIRES_ROUND",
+    "XILIANG_CAVALRY_SKILL_ID",
+    "XILIANG_CAVALRY_SKILL_NAME",
+    "admit_and_install_troop_skill",
+    "create_xiliang_cavalry_definition",
+    "create_xiliang_cavalry_runtime",
 ]
+

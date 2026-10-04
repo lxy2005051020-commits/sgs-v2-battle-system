@@ -337,6 +337,14 @@ class SkillResolver:
                 TargetPurpose.FRIENDLY_SUPPORT,
                 None,
             )
+        if mode is SkillTargetMode.FIXED_ALL_TEAM:
+            return (
+                TargetRelation.ALLY,
+                TargetCardinality.FIXED_ALL,
+                TargetSelectorKind.DETERMINISTIC,
+                TargetPurpose.FRIENDLY_SUPPORT,
+                None,
+            )
         if mode is SkillTargetMode.SELF:
             return (
                 TargetRelation.SELF,
@@ -402,11 +410,12 @@ class SkillResolver:
                 alive_only=True,
             )
         if relation is TargetRelation.ALLY:
+            include_self = definition.target_mode is SkillTargetMode.FIXED_ALL_TEAM
             return self._target_system.allies(
                 context,
                 owner,
                 alive_only=True,
-                include_self=False,
+                include_self=include_self,
             )
         if relation is TargetRelation.SELF:
             return [owner] if owner.is_alive else []
@@ -522,13 +531,20 @@ class SkillResolver:
                 source_ref=source_ref,
             )
         if isinstance(spec, ApplyStateSkillEffectSpec):
-            return ApplyStateEffect(
-                state_id=spec.state_id,
-                owner_id=target.unit_id,
-                source_id=runtime.owner_id,
-                source_skill_id=definition.skill_id,
-                source_ref=source_ref,
-            )
+            kwargs = {
+                "state_id": spec.state_id,
+                "owner_id": target.unit_id,
+                "source_id": runtime.owner_id,
+                "source_skill_id": definition.skill_id,
+                "source_ref": source_ref,
+            }
+            if spec.runtime_params is not None:
+                kwargs["runtime_params"] = spec.runtime_params
+            if spec.expires_round is not None:
+                kwargs["expires_round"] = spec.expires_round
+            if spec.expires_phase is not None:
+                kwargs["expires_phase"] = spec.expires_phase
+            return ApplyStateEffect(**kwargs)
         raise TypeError(f"unsupported skill effect spec: {type(spec).__name__}")
 
     @staticmethod
