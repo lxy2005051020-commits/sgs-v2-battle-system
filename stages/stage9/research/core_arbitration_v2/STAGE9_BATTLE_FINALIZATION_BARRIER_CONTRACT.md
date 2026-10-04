@@ -16,7 +16,7 @@ Resolves Findings:
   - CBS9-B03 = CLOSED
   - CLVS9-B04 = CLOSED
   - CTS9-H02  = CLOSED / HARDENED
-  - DSTS9-B02 = EMPIRICAL OPEN / RUNTIME CLOSED BY ENGINEERING DEFAULT
+  - DSTS9-B02 = CLOSED / CURRENT DISTRIBUTION TRANSACTION DRAINS BEFORE FINALIZATION
 ```
 
 ---
@@ -111,10 +111,11 @@ Resolves Findings:
 - **完成边界**：`PARTICIPANTS-FIRST` 顺序下，所有承担者及原目标扣兵提交完成。
 - **死亡与屏障语义**：
   - 普通承担者阵亡：后续承担者与原目标继续执行提交（战报实证闭环）。
-  - **主将承担者阵亡 (`DSTS9-B02`)**：
-    - 实证状态：`EMPIRICALLY UNOBSERVED`（32,999 战报库中无主将作为分摊承担者阵亡的样本）。
-    - **模拟器工程默认规范 (`PROJECT_RUNTIME_DEFAULT`)**：
-      已合法准入的微事务将按既定规划完成其余承担者和原目标的提交，随后移交终战屏障。未来如有新实证战报推翻此项，可直接替换局部策略。
+  - **主将承担者阵亡 (`DSTS9-B02 CLOSED`)**：
+    - 2026-10-04 项目机制权威冻结：主将承担者被分摊扣至 0 时，记录死亡并锁定胜负条件，但**不得中断当前已准入的 DistributionTransaction**；
+    - 剩余已规划承担者继续提交，原目标最后继续提交 $D_{\text{target}}$；
+    - 当前 DistributionTransaction 完成后才移交终战屏障并宣布战斗结束。
+    - 历史语料“未找到直接致死样本”仅作为 provenance 保留，不再构成 OPEN research debt。
 
 ### 4.6 普通攻击与连击分支 (NormalAttack & Combo)
 - **权威属主**：`Core Lifecycle / COMBO P0`
@@ -194,4 +195,4 @@ Resolves Findings:
 5. **`FINAL_05_SHARE_COMMANDER_TARGET`**：
    - 分担受保护目标主将因 $D_{\text{target}}$ 阵亡，触发 `TARGET_DEATH_INTERRUPT`，挂起的分担者损耗作废（0 损耗），事务终止后进入终战。
 6. **`FINAL_06_DISTRIBUTION_COMMANDER_PARTICIPANT`**：
-   - 主将作为分摊承担者阵亡时，采用工程默认规范，完成已规划承担者与目标扣兵后进入终战屏障。
+   - 主将作为分摊承担者阵亡时，按冻结机制规则完成已规划承担者与原目标扣兵，当前分摊事务排空后进入终战屏障。
