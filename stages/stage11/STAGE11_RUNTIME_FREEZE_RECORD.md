@@ -58,7 +58,7 @@ Primary test: `test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_
 
 | State ID | Runtime Owner | Runtime Freeze | Remaining Debt |
 |---|---|---|---|
-| 690086 DISTRIBUTION | DamagePartitionCoordinator | FROZEN | DSTS9-B02; Distribution × LifeSteal exclusion is PROJECT_RUNTIME_DEFAULT |
+| 690086 DISTRIBUTION | DamagePartitionCoordinator | FROZEN | DSTS9-B02 CLOSED on 2026-10-04; current DistributionTransaction drains before finalization |
 | 690090 FIRST_STRIKE | ActionOrder + lifecycle | FROZEN | legacy metadata fallback project default |
 | 690091 SURPRISE | ActionOrder + lifecycle | FROZEN | mirror provenance |
 | 690102 DISARM | NormalAttack admission | FROZEN | reflected/proxy admission boundary |
@@ -69,10 +69,10 @@ Primary test: `test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_
 | 690083 RESISTANCE | Stage11 hit arbitration | FROZEN | none blocking |
 | 690092 SURE_HIT | Stage11 hit arbitration | FROZEN | none blocking |
 | 690093 BREAK_FORMATION | DamageFormulaPolicy | FROZEN | persistent/application limits |
-| 690099 ALERT | single-hit adjustment + lifecycle | FROZEN | equality 600; threshold; integerization; holder death; Share micro-order |
+| 690099 ALERT | single-hit adjustment + lifecycle | FROZEN | threshold = MaxCarryTroops × 6%, equality triggers; integerization/holder-death/Share micro-order remain bounded |
 | 690070 CRITICAL | CriticalResolution / damage rules | FROZEN | micro-read / bonus-latch timing |
 | 690069 STRATEGY_CRITICAL | CriticalResolution / lane routing | FROZEN | mirror provenance; same timing debt |
-| 690221 DAMAGE_REDUCTION_PIERCE | incoming reduction transform | FROZEN | unsupported damage families |
+| 690221 DAMAGE_REDUCTION_PIERCE | incoming reduction transform | FROZEN | ACTIVE_SKILL and DOT/DELAYED applicable; only still-unobserved special command/reaction/counter families remain bounded |
 | 690094 LIFE_STEAL | Stage11AttackerRecovery + RecoverySystem | FROZEN | generic partial recovery reduction research boundary |
 | 690095 STRATEGY_LIFE_STEAL | Stage11AttackerRecovery + RecoverySystem | FROZEN | mirror provenance; same partial-reduction boundary |
 
@@ -96,7 +96,6 @@ Primary test: `test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_
 
 ## Remaining Research Debt / Project Runtime Defaults
 
-- 690086 Distribution / DSTS9-B02 research debt.
 - Distribution × LifeSteal participant-loss exclusion as PROJECT_RUNTIME_DEFAULT.
 - ALERT threshold equality, generic threshold source, positive integerization, holder-death and Share micro-order.
 - Critical / StrategyCritical exact micro-read / bonus-latch timing.
@@ -104,7 +103,7 @@ Primary test: `test_recovery_modifier_double_stage_ceil_discriminator_101_10pct_
 - See-Through unsupported damage families.
 - generic partial recovery reduction remains unobserved.
 
-Runtime Freeze preserves these labels. It does not relabel project defaults as empirical game truth.
+2026-10-04 authority amendments supersede the former DSTS9-B02, ALERT-threshold, and 690221 ACTIVE/DOT residual labels. Other explicitly bounded project defaults retain their provenance.
 
 ## Post-Freeze Acceptance Confirmation
 
