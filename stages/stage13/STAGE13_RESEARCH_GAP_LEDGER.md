@@ -9,10 +9,10 @@
 ## 1. Foundational research verdict
 
 ```text
-B1 wounded / recoverable capacity     = FROZEN
-B2 damage increase / reduction        = FROZEN
-B2.5 advancement / hidden damage      = CLOSED
-B3 ordinary treatment formula         = CORE FROZEN
+RQ13-B1   wounded / recoverable capacity = FROZEN
+RQ13-B2   damage increase / reduction    = FROZEN
+RQ13-B2.5 advancement / hidden damage    = CLOSED
+RQ13-B3   ordinary treatment formula     = CORE FROZEN
 ```
 
 Ordinary treatment:
@@ -31,14 +31,14 @@ Persistent ordinary treatment reads formula state at application time. Special r
 
 ## 2. Residual closures
 
-| Question | Current verdict |
-|---|---|
-| 690221 ACTIVE_SKILL | CLOSED: See-Through applies |
-| 690221 DOT / DELAYED | CLOSED: See-Through applies |
-| 690086 DSTS9-B02 | CLOSED: commander death does not abort the current admitted DistributionTransaction; finish distribution, then finalize battle |
-| 690099 threshold basis | CLOSED: MaxCarryTroops × 6% |
-| 690099 equality | CLOSED: equality triggers |
-| special recovery family boundary | CLOSED: not ordinary treatment; separate implementation |
+| Question ID | Mechanism | Current verdict |
+|---|---|---|
+| RQ13-001 | 690221 ACTIVE_SKILL | CLOSED: See-Through applies |
+| RQ13-002 | 690221 DOT / DELAYED | CLOSED: See-Through applies |
+| RQ13-003 | 690086 DSTS9-B02 | CLOSED: commander death does not abort the current admitted DistributionTransaction; finish distribution, then finalize battle |
+| RQ13-004 | 690099 threshold basis/equality | CLOSED: MaxCarryTroops × 6%; equality triggers |
+| RQ13-005 | 690070 hidden micro-read timing | NON_BLOCKING / RUNTIME_GOVERNANCE_REQUIRED where empirically indistinguishable |
+| RQ13-006 | special recovery family boundary | CLOSED: not ordinary treatment; separate implementation |
 
 ## 3. Preserved non-blocking boundaries
 
