@@ -40,6 +40,7 @@ class UnitRuntime:
     wounded_troops: int | None = field(default=None, kw_only=True)
     advancement_stars: int = field(default=0, kw_only=True)
     military_books_active: bool = field(default=False, kw_only=True)
+    _wounded_pool_authoritative: bool = field(default=False, init=False, repr=False)
 
     def __post_init__(self) -> None:
         if not self.unit_id:
@@ -56,11 +57,13 @@ class UnitRuntime:
             raise ValueError("morale must be within [0, 100]")
         if self.intelligence is not None and self.intelligence < 0:
             raise ValueError("intelligence must be >= 0")
+        wounded_supplied = self.wounded_troops is not None
         if self.wounded_troops is None:
             # Compatibility for externally constructed mid-battle snapshots:
-            # absent explicit pool data, the legacy missing-troop capacity is used
-            # only at construction. Runtime mutation thereafter is pool-authoritative.
+            # absent explicit pool data, initialize from missing troops. This remains
+            # migration-only until a canonical TroopSystem mutation claims authority.
             self.wounded_troops = self.max_troops - self.troops
+        self._wounded_pool_authoritative = wounded_supplied
         if isinstance(self.wounded_troops, bool) or not isinstance(self.wounded_troops, int):
             raise TypeError("wounded_troops must be an int or None")
         if not 0 <= self.wounded_troops <= self.max_troops - self.troops:
