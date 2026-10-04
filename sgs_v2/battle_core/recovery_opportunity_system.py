@@ -240,15 +240,14 @@ class RecoveryOpportunitySystem:
                 else 0.0
             )
             nominal_amount = int(round(loss * ratio))
-        else:  # TREATMENT_AMOUNT
+        elif opportunity.recovery_model_kind == RecoveryModelKind.RESOLVED_SPECIAL_AMOUNT:
+            potency = opportunity.recovery_potency_context
+            nominal_amount = 0 if potency is None else potency.treatment_amount
+        else:  # TREATMENT_AMOUNT = ordinary FB1, with legacy resolved-amount compatibility
             nominal_amount = 0
             if opportunity.recovery_potency_context is not None:
                 potency = opportunity.recovery_potency_context
-                if potency.treatment_amount > 0:
-                    # Explicit already-resolved amount. This remains the compatibility
-                    # and special-family lane and is not reinterpreted as ordinary FB1.
-                    nominal_amount = potency.treatment_amount
-                elif potency.base_rate > 0:
+                if potency.base_rate > 0:
                     source_troops = potency.source_troops_at_application
                     source_attribute = potency.frozen_treatment_attribute()
                     if source_troops is None or source_attribute is None:
@@ -262,6 +261,10 @@ class RecoveryOpportunitySystem:
                         source_attribute=source_attribute,
                         modifiers=potency.treatment_modifier_snapshot,
                     ).nominal_recovery
+                elif potency.treatment_amount > 0:
+                    # Legacy Stage10 compatibility only. New special recovery
+                    # families must use RESOLVED_SPECIAL_AMOUNT explicitly.
+                    nominal_amount = potency.treatment_amount
 
         source_ref = opportunity.execution_descriptor.source_ref
         source_id = source_ref.source_unit_id if source_ref else None
