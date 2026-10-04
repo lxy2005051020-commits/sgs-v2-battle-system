@@ -18,7 +18,7 @@
     Stage10 = FROZEN
     Stage11 = RUNTIME FROZEN / POST-FREEZE ACCEPTED
     Stage12 = RUNTIME FROZEN / COMPLETE / RESEARCH 7 OF 7 / RUNTIME 7 OF 7
-    Stage13 = CORE GAMEPLAY MECHANISM COMPLETION / READINESS READY / NOT ACTIVE
+    Stage13 = ACTIVE / D1 IMPLEMENTED / CORE ENGINE EXIT REMAINS
 
 Stage11 Runtime Tested SHA:
 ce42bc62cfb26f8ca0b448e74b26533604bb0505
@@ -32,9 +32,9 @@ Acceptance CI:
 ## 官方状态统一完成度
 
     Official States                 = 40
-    Research FROZEN                 = 39 / 40
+    Research FROZEN                 = 40 / 40
     Runtime FROZEN TO CONTRACT      = 40 / 40
-    Strict Complete                 = 39 / 40
+    Strict Complete                 = 40 / 40
 
 Strict Complete 仍严格要求：
 
@@ -42,7 +42,9 @@ Strict Complete 仍严格要求：
     +
     Runtime FROZEN TO CONTRACT
 
-690086 Distribution 保留 research debt，因此虽然 Runtime frozen，仍不计 Strict Complete。
+690086 DSTS9-B02 已在 Stage13 residual authority 中 CLOSED / FROZEN_P0，现计入 Strict Complete。
+
+以下 Stage11/Stage12 快照属于历史记录；当前状态以 [Stage13](stages/stage13/README.md) 及其 D1 审计为准。
 
 ## Stage12 research snapshot
 
@@ -318,3 +320,12 @@ Strict Complete = 39 / 40
 
 Final merged-main evidence: `f288adfb615cbb46444a32f77aadd615d22c267a`, GitHub Actions run `36389096961` = 1667 passed / demo PASS.
 Authority: `stages/stage12/STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
+
+## Current Stage13-D1 checkpoint — 2026-10-04
+
+Research / Runtime-to-contract / Strict Complete = 40/40 each.
+B1/B2/B2.5/B3 ordinary-treatment and residual runtime slices remain frozen.
+D1 PendingWork = IMPLEMENTED / LOCAL AUDIT PASS / MAIN CI REQUIRED.
+1739 tests passed; demo PASS; independent audit PASS. Repeated execution is RESERVED.
+Remaining Stage13 work: D2, D3, D4, D5, G. Engine not yet frozen; Skill Runtime not yet ready.
+Authority: [D1 freeze audit](stages/stage13/STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md).

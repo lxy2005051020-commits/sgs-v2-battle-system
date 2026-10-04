@@ -1,5 +1,7 @@
 # Canonical State Planning Matrix
 
+> Current checkpoint (2026-10-04): Research FROZEN = 40/40; Runtime FROZEN TO CONTRACT = 40/40; Strict Complete = 40/40. DSTS9-B02 = CLOSED / FROZEN_P0. Stage13-D1 PendingWork = IMPLEMENTED / LOCAL AUDIT PASS / MAIN CI REQUIRED. Earlier dated status entries below are historical snapshots, superseded by [Stage13 current authority](stages/stage13/README.md) and [D1 audit](stages/stage13/STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md). Stage13 remains ACTIVE; whole-engine freeze/readiness exit remains open.
+
 > Status: **CURRENT CROSS-REPO PROJECT AUTHORITY**
 >
 > Reconciled: 2026-09-28
@@ -66,7 +68,7 @@ Research Wave is a separate research-order label and never renumbers Project Sta
 | 690098 | 援护 GUARD | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Research guard contract + frozen runtime | Frozen; regression only |  |
 | 690103 | 混乱 CONFUSION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Research confusion contract + frozen runtime | Frozen; regression only |  |
 | 690106 | 嘲讽 TAUNT | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage≤9 | Historical | Stage9 taunt freeze record | Frozen; regression only |  |
-| 690086 | 分摊 DISTRIBUTION | RUNTIME_READY_WITH_RESEARCH_DEBT | RUNTIME_FROZEN_TO_CONTRACT | NO | Stage11 | Research Debt Closure | Stage9 distribution freeze record | Maintain Stage11 Runtime Freeze; regression only | DSTS9-B02 OPEN / UNOBSERVED; Distribution × LifeSteal participant exclusion is PROJECT_RUNTIME_DEFAULT |
+| 690086 | 分摊 DISTRIBUTION | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 / Stage13 residual | CLOSED | Stage13 residual authority / Research current main | Preserve frozen transaction; regression only | DSTS9-B02 CLOSED / FROZEN_P0; current DistributionTransaction drains before finalization |
 | 690090 | 先攻 FIRST_STRIKE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 3 | Research states/functional/first_strike/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | Q1-Q17 CLOSED; deterministic tie migration green |
 | 690091 | 遇袭 SURPRISE | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 3 | Research states/functional/surprise/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | PROJECT-FROZEN MIRROR CONTRACT |
 | 690102 | 缴械 DISARM | FROZEN | RUNTIME_FROZEN_TO_CONTRACT | YES | Stage11 | Research Wave 3 | Research states/control/disarm/MECHANISM_CONTRACT.md | Maintain Stage11 Runtime Freeze; regression only | reflected/proxy admission boundary preserved |

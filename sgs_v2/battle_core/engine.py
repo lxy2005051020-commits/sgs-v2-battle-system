@@ -14,6 +14,7 @@ from .execution_right_system import (
 )
 from .rule_hooks import RoundStartHook, UnitActionStartHook
 from .dependency_evaluation import StateNode
+from .pending_work import PendingWorkTimingPoint
 
 
 @dataclass(slots=True)
@@ -75,6 +76,9 @@ class BattleEngine:
             )
 
             # Barrier 2: ROUND_START_HOOKS_SETTLED
+            self.systems.pending_work_system.process(
+                self.context, PendingWorkTimingPoint(round_no, BattlePhase.ROUND_START),
+            )
             self.systems.finalization_coordinator.observe_legacy_barrier(
                 self.context,
                 LegacyFinalizationBarrier.ROUND_START_HOOKS_SETTLED,
@@ -115,6 +119,11 @@ class BattleEngine:
                     ),
                 )
                 self._settle_action_start_lifetimes(actor.unit_id)
+                self.systems.pending_work_system.process(
+                    self.context, PendingWorkTimingPoint(
+                        round_no, BattlePhase.UNIT_ACTION_START, actor.unit_id,
+                    ),
+                )
 
                 # Barrier 3: UNIT_ACTION_START_HOOKS_SETTLED
                 self.systems.finalization_coordinator.observe_legacy_barrier(
@@ -186,6 +195,9 @@ class BattleEngine:
             )
 
             # Barrier 5: ROUND_END_SETTLED
+            self.systems.pending_work_system.process(
+                self.context, PendingWorkTimingPoint(round_no, BattlePhase.ROUND_END),
+            )
             self.systems.finalization_coordinator.observe_legacy_barrier(
                 self.context,
                 LegacyFinalizationBarrier.ROUND_END_SETTLED,
@@ -264,6 +276,7 @@ class BattleEngine:
         self,
         result: FinalizationResult,
     ) -> BattleResult:
+        self.systems.pending_work_system.cancel_future(self.context)
         self.systems.state_lifecycle_system.clear_all_on_battle_end(self.context)
         legacy_result = BattleResult(
             winner_team_id=result.winner_team_id,

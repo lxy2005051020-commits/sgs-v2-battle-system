@@ -110,3 +110,20 @@ Stage13-F Freeze
 ~~~
 
 A green full suite is necessary but not sufficient. The Stage13 exit gate additionally requires owner uniqueness, explicit governance provenance, zero unresolved implementation-required gaps, and independent freeze audit.
+
+## Stage13-D1 executable test closure — 2026-10-04
+
+| Required discriminator | Executable evidence | Result |
+|---|---|---|
+| T1 one-shot delay | test_t1_delay_exactly_once_and_no_terminal_replay | PASS |
+| T2 independent source death / T3 required source | test_t2_t3_source_death_policy | PASS / COMPLETED vs CANCELLED |
+| T4 provider invalidation | test_t4_live_provider_invalidation_zero_dispatch_zero_rng | PASS / slot 0 included |
+| T5 target death | test_t5_target_death_cancels | PASS |
+| T6 deterministic order | test_t6_order_is_explicit_sequence_not_lexical_ids_or_dictionary | PASS |
+| T7 finalization barrier | test_t7_pending_never_holds_finalization_barrier_and_no_resurrection; independent same-batch and lethal-domain tests | PASS |
+| T8 snapshot/JIT split | test_t8_snapshot_deep_freeze_and_live_read_split | PASS |
+| Real mechanism adapter | test_real_recuperation_adapter_same_results_rng_and_entire_domain_event_trace; test_real_state_producer_recuperation_adapter_keeps_generation_events_and_rng | PASS |
+| Independent adversarial ownership audit | tests/test_stage13_d1_adversarial_audit.py; scripts/audit_stage13_d1.py | 11 PASS / 21 frozen-owner hashes identical |
+
+Focused: 48 PASS. Full: 1739 PASS. Demo: PASS. D1 does not satisfy Stage13-G whole-battle
+replay or engine-exit readiness. See D1 freeze audit for the latest-main CI gate.

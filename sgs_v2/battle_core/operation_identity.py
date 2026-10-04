@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
+from .state_generation import StateApplicationGenerationId
+
 
 def _forbid_ordering(cls_name: str, op: str) -> None:
     raise TypeError(
@@ -327,6 +329,110 @@ class FinalizationId:
         _forbid_ordering("FinalizationId", ">=")
 
 
+@dataclass(frozen=True, slots=True, order=False)
+class PendingWorkId:
+    value: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.value, str):
+            raise TypeError("PendingWorkId value must be a str")
+        if not self.value.strip():
+            raise ValueError("PendingWorkId value cannot be empty or whitespace")
+
+    def __str__(self) -> str:
+        return self.value
+
+    def __lt__(self, other: Any) -> bool:
+        _forbid_ordering("PendingWorkId", "<")
+
+    def __le__(self, other: Any) -> bool:
+        _forbid_ordering("PendingWorkId", "<=")
+
+    def __gt__(self, other: Any) -> bool:
+        _forbid_ordering("PendingWorkId", ">")
+
+    def __ge__(self, other: Any) -> bool:
+        _forbid_ordering("PendingWorkId", ">=")
+
+
+@dataclass(frozen=True, slots=True, order=False)
+class SkillOperationId:
+    value: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.value, str):
+            raise TypeError("SkillOperationId value must be a str")
+        if not self.value.strip():
+            raise ValueError("SkillOperationId value cannot be empty or whitespace")
+
+    def __str__(self) -> str:
+        return self.value
+
+    def __lt__(self, other: Any) -> bool:
+        _forbid_ordering("SkillOperationId", "<")
+
+    def __le__(self, other: Any) -> bool:
+        _forbid_ordering("SkillOperationId", "<=")
+
+    def __gt__(self, other: Any) -> bool:
+        _forbid_ordering("SkillOperationId", ">")
+
+    def __ge__(self, other: Any) -> bool:
+        _forbid_ordering("SkillOperationId", ">=")
+
+
+@dataclass(frozen=True, slots=True, order=False)
+class EffectOperationId:
+    value: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.value, str):
+            raise TypeError("EffectOperationId value must be a str")
+        if not self.value.strip():
+            raise ValueError("EffectOperationId value cannot be empty or whitespace")
+
+    def __str__(self) -> str:
+        return self.value
+
+    def __lt__(self, other: Any) -> bool:
+        _forbid_ordering("EffectOperationId", "<")
+
+    def __le__(self, other: Any) -> bool:
+        _forbid_ordering("EffectOperationId", "<=")
+
+    def __gt__(self, other: Any) -> bool:
+        _forbid_ordering("EffectOperationId", ">")
+
+    def __ge__(self, other: Any) -> bool:
+        _forbid_ordering("EffectOperationId", ">=")
+
+
+@dataclass(frozen=True, slots=True, order=False)
+class RecoveryOperationId:
+    value: str
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.value, str):
+            raise TypeError("RecoveryOperationId value must be a str")
+        if not self.value.strip():
+            raise ValueError("RecoveryOperationId value cannot be empty or whitespace")
+
+    def __str__(self) -> str:
+        return self.value
+
+    def __lt__(self, other: Any) -> bool:
+        _forbid_ordering("RecoveryOperationId", "<")
+
+    def __le__(self, other: Any) -> bool:
+        _forbid_ordering("RecoveryOperationId", "<=")
+
+    def __gt__(self, other: Any) -> bool:
+        _forbid_ordering("RecoveryOperationId", ">")
+
+    def __ge__(self, other: Any) -> bool:
+        _forbid_ordering("RecoveryOperationId", ">=")
+
+
 class SourceType(str, Enum):
     NORMAL_ATTACK = "NORMAL_ATTACK"
     ACTIVE_SKILL = "ACTIVE_SKILL"
@@ -348,6 +454,11 @@ class OperationLineage:
     physical_attacker: str | None = None
     physical_skill: str | None = None
     credit_owner: str | None = None
+    parent_skill_operation_id: SkillOperationId | None = None
+    parent_state_generation_id: StateApplicationGenerationId | None = None
+    parent_effect_operation_id: EffectOperationId | None = None
+    parent_recovery_operation_id: RecoveryOperationId | None = None
+    parent_pending_work_id: PendingWorkId | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.source_type, SourceType):
@@ -358,6 +469,15 @@ class OperationLineage:
             raise TypeError(f"parent_normal_attack_id must be NormalAttackInstanceId or None, got {type(self.parent_normal_attack_id)}")
         if self.parent_damage_instance_id is not None and not isinstance(self.parent_damage_instance_id, DamageInstanceId):
             raise TypeError(f"parent_damage_instance_id must be DamageInstanceId or None, got {type(self.parent_damage_instance_id)}")
+        for value, expected in (
+            (self.parent_skill_operation_id, SkillOperationId),
+            (self.parent_state_generation_id, StateApplicationGenerationId),
+            (self.parent_effect_operation_id, EffectOperationId),
+            (self.parent_recovery_operation_id, RecoveryOperationId),
+            (self.parent_pending_work_id, PendingWorkId),
+        ):
+            if value is not None and not isinstance(value, expected):
+                raise TypeError(f"parent reference must be {expected.__name__} or None")
         if self.physical_attacker is not None:
             if not isinstance(self.physical_attacker, str) or not self.physical_attacker.strip():
                 raise ValueError("physical_attacker cannot be empty or whitespace when provided")
@@ -397,6 +517,10 @@ class OperationIdAllocator:
         "_chain_traversal_seq",
         "_direct_troop_loss_seq",
         "_finalization_seq",
+        "_pending_work_seq",
+        "_skill_operation_seq",
+        "_effect_operation_seq",
+        "_recovery_operation_seq",
         "_permit_seq",
     )
 
@@ -413,6 +537,10 @@ class OperationIdAllocator:
         self._chain_traversal_seq = 0
         self._direct_troop_loss_seq = 0
         self._finalization_seq = 0
+        self._pending_work_seq = 0
+        self._skill_operation_seq = 0
+        self._effect_operation_seq = 0
+        self._recovery_operation_seq = 0
         self._permit_seq = 0
 
     def allocate_action_id(self) -> ActionId:
@@ -466,3 +594,19 @@ class OperationIdAllocator:
     def allocate_permit_id(self, prefix: str = "prm") -> str:
         self._permit_seq += 1
         return f"{prefix}_{self._permit_seq}"
+
+    def allocate_pending_work_id(self) -> PendingWorkId:
+        self._pending_work_seq += 1
+        return PendingWorkId(f"pw_{self._pending_work_seq}")
+
+    def allocate_skill_operation_id(self) -> SkillOperationId:
+        self._skill_operation_seq += 1
+        return SkillOperationId(f"skillop_{self._skill_operation_seq}")
+
+    def allocate_effect_operation_id(self) -> EffectOperationId:
+        self._effect_operation_seq += 1
+        return EffectOperationId(f"effectop_{self._effect_operation_seq}")
+
+    def allocate_recovery_operation_id(self) -> RecoveryOperationId:
+        self._recovery_operation_seq += 1
+        return RecoveryOperationId(f"recoveryop_{self._recovery_operation_seq}")

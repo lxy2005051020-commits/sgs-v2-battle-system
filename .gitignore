@@ -7,3 +7,7 @@ __pycache__/
 demo_output.txt
 pytest_output.txt
 VALIDATION.txt
+.venv/
+*.egg-info/
+.artifacts/
+/AUDIT_STAGE13_D1.json

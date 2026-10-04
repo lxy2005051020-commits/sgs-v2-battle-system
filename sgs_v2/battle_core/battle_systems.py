@@ -80,6 +80,7 @@ from .trigger_system import TriggerSystem
 from .troop_system import TroopSystem
 from .treatment_formula import TreatmentFormulaSystem
 from .victory_system import VictorySystem
+from .pending_work import PendingWorkSystem
 
 
 @dataclass(slots=True)
@@ -131,6 +132,7 @@ class BattleSystems:
     rule_hook_system: RuleHookSystem = field(init=False)
     finalization_coordinator: BattleFinalizationCoordinator = field(init=False)
     future_admission_gate: FutureAdmissionGate = field(init=False)
+    pending_work_system: PendingWorkSystem = field(init=False)
     legacy_action_dispatch_adapter: LegacyActionDispatchAdapter = field(init=False)
     assault_dispatch_port: AssaultDispatchPort = field(init=False)
     stage9_state_runtime: Stage9StateRuntime = field(init=False)
@@ -371,6 +373,9 @@ class BattleSystems:
         )
         self.future_admission_gate = FutureAdmissionGate(
             coordinator=self.finalization_coordinator,
+        )
+        self.pending_work_system = PendingWorkSystem(
+            self.execution_right_support, self.future_admission_gate,
         )
         self.chain_system = ChainSystem(
             self.stage9_state_runtime,

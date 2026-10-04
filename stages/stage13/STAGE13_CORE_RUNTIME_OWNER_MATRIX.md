@@ -106,3 +106,24 @@ This matrix is inventory authority only. It does not freeze new owners. Any Stag
 5. explicit freeze record.
 
 Existing Stage1-12 canonical owners remain frozen unless an authority-driven reopen is explicitly declared.
+
+## Stage13-D1 canonical owners — 2026-10-04
+
+| Responsibility | Unique canonical owner | Supporting owner | D1 boundary |
+|---|---|---|---|
+| PendingWork storage | PendingWorkRegistry in BattleContext | none | immutable records and typed trace; no dispatch |
+| PendingWork identity | OperationIdAllocator | PendingWorkId | independent monotonic counter; never priority |
+| PendingWork scheduling/lifecycle | PendingWorkSystem | BattleEngine timing calls | create/due/dispatch/cancel/expire/complete; no other generic queue |
+| PendingWork physical source/target validity | PendingWorkSystem via PendingWorkValidityPolicy | UnitRuntime facts | explicitly independent or alive-required; no relation inference |
+| ExecutionRight validity/eligibility | ExecutionRightSupport | ProviderValidityPolicy, ExecutionTargetEligibilityPolicy, state/equipment/actor policies | canonical admission snapshot and JIT decisions |
+| Effect execution | EffectExecutor and existing domain ingress | DamageInstanceCoordinator / RecoveryOpportunitySystem | mechanism adapter delegates; scheduling owns no formula |
+| Battle finalization | BattleFinalizationCoordinator | FutureAdmissionGate | pending storage is never admitted transaction/barrier |
+
+Existing state-owned DOT/Recuperation/Sabotage/preparation mechanisms remain preserved;
+the opt-in Recuperation bridge is a proof, not an automatic migration. Per-registry creation
+sequence owns D1 order; Operation IDs cannot be used as ordering comparators. D1 generic
+work/lifetime/identity gaps are closed for the explicitly one-shot slice. Broader generic
+lifetime/modifier/operation producers remain within the remaining Stage13 workstreams.
+
+Design: STAGE13_D1_PENDING_WORK_RUNTIME_DESIGN.md.
+Audit: STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md (main CI gate recorded there).

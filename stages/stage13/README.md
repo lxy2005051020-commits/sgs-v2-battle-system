@@ -172,3 +172,29 @@ NEXT =
 complete the remaining Stage13 core-engine architecture/governance and deterministic replay audit
 special recovery families remain separate from ordinary treatment and are implemented under dedicated family contracts
 ```
+
+## 10. Stage13-D1 PendingWork foundation — 2026-10-04
+
+Current authorized runtime sequence within the Stage13 core-engine route:
+
+```text
+D1 PendingWork / delayed work foundation = IMPLEMENTED / LOCAL AUDIT PASS / MAIN CI REQUIRED
+D2 UsageBudget / Frequency              = REMAINS
+D3 Multi-effect Composition             = REMAINS
+D4 Attribute Snapshot/JIT + Provenance  = REMAINS
+D5 RNG Trace / Replay Topology          = REMAINS
+G  Whole-Battle Replay / Exit Audit     = REMAINS
+```
+
+D1 adds a unique battle-scoped owner for future work and preserves existing delayed
+mechanisms. ONE_SHOT, UNTIL_EXECUTED and UNTIL_ROUND are implemented; REPEAT_N_TIMES
+is explicitly RESERVED and rejected. No concrete tactics or full preparation are added.
+Only D1 can freeze from this slice; Stage13 remains ACTIVE and the engine/readiness exit
+claims remain NOT YET FROZEN / NOT YET READY.
+
+- [D1 design and pre-implementation inventory](STAGE13_D1_PENDING_WORK_RUNTIME_DESIGN.md)
+- [D1 implementation and supported boundaries](STAGE13_D1_PENDING_WORK_IMPLEMENTATION.md)
+- [D1 freeze/adversarial audit and CI evidence](STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md)
+
+Local regression: 1739 passed; demo PASS; independent audit PASS (21 unchanged owner
+hashes + 11 independent adversarial cases). Final GitHub evidence is maintained in the D1 audit.

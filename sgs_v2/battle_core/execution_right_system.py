@@ -193,6 +193,14 @@ class FutureAdmissionGate:
             )
         return self._coordinator.termination_state == BattleTerminationState.RUNNING
 
+    def can_admit_pending_work(self) -> bool:
+        """D1 synchronous future-work boundary; not a seventh Stage9 branch.
+
+        Stored PendingWork holds no admitted Action/Damage transaction capability.
+        Domain dispatch continues to obtain its own existing capabilities.
+        """
+        return self._coordinator.termination_state == BattleTerminationState.RUNNING
+
     def request_admission(
         self,
         branch_kind: FutureBranchKind,

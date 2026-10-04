@@ -11,6 +11,7 @@ from .operation_identity import OperationIdAllocator
 from .action_progress_tracker import ActionProgressTracker
 from .skill_runtime_registry import SkillRuntimeRegistry
 from .state_generation import StateGenerationAllocator
+from .pending_work import PendingWorkRegistry
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,6 +48,7 @@ class BattleContext:
 
     metadata: dict[str, object] = field(default_factory=dict)
     id_allocator: OperationIdAllocator = field(default_factory=OperationIdAllocator)
+    pending_work: PendingWorkRegistry = field(default_factory=PendingWorkRegistry)
 
     def __post_init__(self) -> None:
         if not self.battle_id:

@@ -802,3 +802,20 @@ __all__ = [
 ]
 
 from .effectiveness_transition_events import StateEffectivenessEventAdapter
+from .pending_work import (
+    PendingWork, PendingWorkRegistry, PendingWorkSystem, PendingWorkStatus,
+    PendingWorkScheduleSpec, ScheduleKind, PendingWorkTimingPoint,
+    WorkLifetimeSpec, WorkLifetimeKind, PendingWorkValidityPolicy,
+    SourceValidityMode, TargetValidityMode, PendingWorkReadPolicy, WorkReadMode,
+    PendingWorkExecutionFrame, PendingWorkDispatchResult, PendingWorkTrace,
+)
+from .operation_identity import PendingWorkId, SkillOperationId, EffectOperationId, RecoveryOperationId
+
+__all__ += [
+    "PendingWork", "PendingWorkRegistry", "PendingWorkSystem", "PendingWorkStatus",
+    "PendingWorkScheduleSpec", "ScheduleKind", "PendingWorkTimingPoint",
+    "WorkLifetimeSpec", "WorkLifetimeKind", "PendingWorkValidityPolicy",
+    "SourceValidityMode", "TargetValidityMode", "PendingWorkReadPolicy", "WorkReadMode",
+    "PendingWorkExecutionFrame", "PendingWorkDispatchResult", "PendingWorkTrace",
+    "PendingWorkId", "SkillOperationId", "EffectOperationId", "RecoveryOperationId",
+]
