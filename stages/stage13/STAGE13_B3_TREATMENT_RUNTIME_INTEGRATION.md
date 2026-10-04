@@ -90,14 +90,18 @@ TroopSystem restore
 
 This preserves Stage13-B1 capacity ownership and the Stage10 persistent-state lifecycle architecture.
 
-## 4. Explicitly preserved separate families
+## 4. Explicitly separate recovery families
 
-This integration does not reinterpret these as ordinary treatment:
+The 2026-10-04 Stage13 authority freezes the family boundary: special recovery is **not ordinary treatment** and must be implemented through separate family owners.
+
+The ordinary `Rate(F(N)+Attr)` lane does not reinterpret:
 
 - fixed already-resolved recovery amounts;
 - trigger-damage-ratio recovery;
 - Stage11 damage-derived attacker recovery / lifesteal;
 - other separately frozen recovery bases.
+
+Separate families may reuse the final canonical RecoverySystem settlement tail only where their own contracts authorize it. They must not be routed through the ordinary-treatment nominal formula for implementation convenience.
 
 ## 5. Regression discriminators
 
