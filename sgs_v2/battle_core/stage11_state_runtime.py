@@ -381,6 +381,8 @@ class Stage11StateRuntime:
         if family in {
             Stage11DamageFamily.NORMAL_ATTACK,
             Stage11DamageFamily.ASSAULT_SKILL,
+            Stage11DamageFamily.ACTIVE_SKILL,
+            Stage11DamageFamily.PERIODIC_DAMAGE,
             Stage11DamageFamily.COMMAND_XIEFANWEI,
             Stage11DamageFamily.REACTION_YIZHIBAOYUAN,
         }:
@@ -394,6 +396,23 @@ class Stage11StateRuntime:
             return SeeThroughEligibility.SUPPORTED_NO_INVOCATION
         return SeeThroughEligibility.UNSUPPORTED_UNKNOWN
 
+    @staticmethod
+    def alert_threshold(max_carry_troops: int) -> float:
+        """Frozen 690099 threshold: six percent of maximum carrying troops."""
+        if isinstance(max_carry_troops, bool) or not isinstance(max_carry_troops, int):
+            raise TypeError("max_carry_troops must be an int")
+        if max_carry_troops < 0:
+            raise ValueError("max_carry_troops cannot be negative")
+        return max_carry_troops * 0.06
+
+    @classmethod
+    def alert_threshold_satisfied(
+        cls,
+        candidate_damage: float,
+        max_carry_troops: int,
+    ) -> bool:
+        return candidate_damage >= cls.alert_threshold(max_carry_troops)
+
     def adjust_alert(
         self,
         context: BattleContext,
@@ -403,14 +422,14 @@ class Stage11StateRuntime:
     ) -> AlertAdjustment:
         if candidate_damage <= 0.0:
             return AlertAdjustment(candidate_damage, candidate_damage, None)
+        target = context.get_unit(target_id)
         for instance in self.effective_instances(
             context, target_id, OfficialStateId.VIGILANCE
         ):
             params = instance.runtime_params
             if not isinstance(params, AlertStateParams):
                 raise TypeError("690099 ALERT requires AlertStateParams")
-            # PROJECT_RUNTIME_DEFAULT: strict greater-than; equality is unobserved.
-            if candidate_damage <= params.threshold:
+            if not self.alert_threshold_satisfied(candidate_damage, target.max_troops):
                 continue
             factor = 1.0 - (params.reduction_rate.numerator / params.reduction_rate.denominator)
             output = candidate_damage * factor
