@@ -302,10 +302,12 @@ Overflow = Dparticipant - ActualParticipantTroopLoss
 → 原目标最后继续 commit
 ```
 
-#### 经验实证与边界（DSTS9-B02 状态）
-- **普通副将承担者致死（对照组确认）**：经 RF-P05 提取器验证（`战报_596995_pid594340.json`，副将程普在 Slot 2 承担扣兵至 0 阵亡，原目标刘备后续仍完整提交 $D_{\text{target}} = 266$），直接战报 Grade A 证实普通承担者阵亡绝不中断后续提交；
-- **主将承担者致死（DSTS9-B02）**：全库 32,999 份战报中仅有 20 份涉及【义心昭烈】（68 次分摊执行，28 次主将作为承担者），主将在承担分摊扣兵后无一例致死（最低剩余兵力 61）。全库有效致死样本严格为 **0 例（EMPIRICALLY UNOBSERVED）**。
-- **裁决**：Finding **`DSTS9-B02 保持 OPEN / UNRESOLVED`**。实现层可遵循普通承担者一致的工程默认（微事务执行完毕后委托 RF-P04 终战判定），但禁止宣称已有直接战报冻结。
+#### DSTS9-B02 最终裁决（2026-10-04）
+- **普通副将承担者致死**：既有 Grade A 战报已经证明，承担者死亡不会中断后续分摊提交。
+- **主将承担者致死**：项目机制权威现正式裁决为同一事务语义。主将作为分摊承担者被本次分摊扣至 0 时，先记录主将阵亡与胜负条件满足，但**不得中断当前已经准入的 DistributionTransaction**。
+- **继续提交**：其余已规划合法承担者按既定顺序继续扣兵，随后原目标继续提交 `Dtarget`。
+- **终战时点**：仅在当前 DistributionTransaction 完整结束后，才进入 Battle Finalization Barrier 并宣布战斗结束。
+- **裁决结果**：`DSTS9-B02 = CLOSED`。历史语料中“0 个主将承担者致死样本”保留为证据 provenance，不再构成机制未知或研究债。
 
 ---
 
@@ -676,7 +678,7 @@ T24 actual participant loss enters wounded processing
 - same-camp / alive / exclude actualTarget；
 - participant Slot ASC 顺序；
 - participants-first / target-last Commit；
-- 承担者死亡不中断后续分摊；
+- 承担者死亡不中断后续分摊；主将承担者死亡同样必须排空当前 DistributionTransaction 后再终战（DSTS9-B02 CLOSED）；
 - 残兵截断与 overflow 丢弃；
 - attribution / statistics / wounded 基于实际 commit；
 - same-source refresh；
@@ -697,7 +699,6 @@ CrossSource DISTRIBUTION → REPLACE
 本合同不冻结：
 
 - 【义心昭烈】内部具体比例公式；
-- 主将承担者致死时对后续承担者/原目标的提交边界（DSTS9-B02：实证状态保持 EMPIRICALLY UNOBSERVED / OPEN；模拟器运行层通过 `STAGE9_BATTLE_FINALIZATION_BARRIER_CONTRACT.md` 采纳显式工程默认完成规划提交后移交终战屏障，达成运行时确定性，不阻塞 Stage 9 设计准入）；
 - 普通基础兵刃/谋略伤害公式；
 - 伤兵系统自身精确比例、取整和回合死淘；
 - 官方源码内部类名、函数名、字段名；
