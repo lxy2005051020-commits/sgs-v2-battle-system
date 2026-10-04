@@ -103,12 +103,13 @@ def test_stage13_does_not_activate_skill_runtime() -> None:
     assert "Skill Runtime Readiness           = NOT YET READY" in index
 
 
-def test_stage13_next_is_foundational_wounded_research() -> None:
+def test_stage13_foundational_route_preserves_history_and_current_progress() -> None:
     inventory = _read("STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY.md")
     index = _read("README.md")
     replan = _read("STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md")
-    token = "STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH"
-    assert token in inventory
-    assert token in index
-    assert token in replan
+    historical = "STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH"
+    assert historical in inventory
+    assert historical in replan
     assert "HISTORICAL_NEXT" in inventory
+    assert "B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN" in index
+    assert "B2 Damage Increase / Reduction Mechanics — FROZEN" in index
