@@ -179,6 +179,8 @@ class LifeStealStateParams(StateRuntimeParams):
 class AlertStateParams(StateRuntimeParams):
     remaining_uses: int = 1
     reduction_rate: ExactRatio = ExactRatio(0, 1)
+    # Legacy serialized compatibility only. Runtime authority derives the trigger
+    # threshold from holder.max_troops * 6% and ignores this field for admission.
     threshold: int = 600
     remaining_action_starts: int | None = None
     is_suppressed: bool = False
