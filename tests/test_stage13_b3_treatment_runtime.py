@@ -97,7 +97,7 @@ def test_persistent_treatment_replays_application_time_formula_snapshot() -> Non
     )
     target = _unit(
         "target",
-        "A",
+        "B",
         troops=100,
         wounded_troops=900,
         intelligence=50.0,
@@ -149,9 +149,15 @@ def test_formula_lane_requires_complete_application_time_snapshot() -> None:
         troops=100,
         wounded_troops=900,
     )
+    enemy = _unit(
+        "enemy",
+        "B",
+        troops=1000,
+        wounded_troops=0,
+    )
     context = BattleContext(
         battle_id="stage13-b3-incomplete-snapshot",
-        units={"target": target},
+        units={"target": target, "enemy": enemy},
         event_bus=EventBus(),
         random=RandomSystem(7),
     )
