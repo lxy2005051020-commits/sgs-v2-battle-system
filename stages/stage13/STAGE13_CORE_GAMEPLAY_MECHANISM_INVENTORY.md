@@ -65,6 +65,8 @@ Strict Complete                         39 / 40
 
 The latest recorded merged-main validation before the Stage13 replan is 1667 passed / demo PASS. The Stage13 replan commit is documentation-only and does not alter gameplay.
 
+> **2026-10-04 closure amendment:** the `Research FROZEN 39/40`, `Strict Complete 39/40`, `DSTS9-B02 OPEN / UNOBSERVED`, and CGM-045/046 `RESEARCH_REQUIRED` entries above are preserved as the historical Stage13-A intake snapshot only. Current authority supersedes them: Research FROZEN = 40/40, Strict Complete = 40/40, DSTS9-B02 = CLOSED, and 690221 ACTIVE_SKILL plus DOT/DELAYED applicability = CLOSED/APPLICABLE. Current execution status lives in `STAGE13_RESEARCH_GAP_LEDGER.md` and `STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md`.
+
 ## 3. Inventory method
 
 Production owners, public contracts, tests and research authorities were inspected from the two locked repository heads. Candidate domains from the Stage13 replan were treated as inventory seeds, not presumed gaps.
