@@ -102,13 +102,13 @@ def test_wounded_generation_is_event_local_floor_not_aggregate_floor() -> None:
     unit = _unit("a", "A", wounded_troops=0)
     troops = TroopSystem()
 
-    first = troops.apply_damage(unit, 78)
-    second = troops.apply_damage(unit, 78)
+    first = troops.apply_damage(unit, 73)
+    second = troops.apply_damage(unit, 73)
 
-    assert first.wounded_generated == 70
-    assert second.wounded_generated == 70
-    assert unit.wounded_troops == 140
-    assert unit.wounded_troops != (156 * 90) // 100
+    assert first.wounded_generated == 65
+    assert second.wounded_generated == 65
+    assert unit.wounded_troops == 130
+    assert unit.wounded_troops != (146 * 90) // 100
 
 
 def test_recovery_is_clamped_by_wounded_pool_and_consumes_it_one_for_one() -> None:
