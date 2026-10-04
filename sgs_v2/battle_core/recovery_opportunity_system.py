@@ -23,6 +23,7 @@ from .skill_runtime_registry import (
     SkillRuntimeRegistry,
 )
 from .stage10_state_params import RecoveryModelKind, RecoveryPotencyContext
+from .treatment_formula import TreatmentFormulaSystem
 from .state_generation import PersistentLifecycleWindow, StateGenerationSnapshot
 from .state_instance import StateInstance
 
@@ -51,12 +52,20 @@ class RecoveryOpportunitySystem:
         recovery_system: RecoverySystem,
         skill_runtime_registry: SkillRuntimeRegistry | None = None,
         provider_validity_policy: ProviderValidityPolicy | None = None,
+        treatment_formula_system: TreatmentFormulaSystem | None = None,
     ) -> None:
         if not isinstance(recovery_system, RecoverySystem):
             raise TypeError(f"recovery_system must be a RecoverySystem, got {type(recovery_system)}")
+        if treatment_formula_system is not None and not isinstance(
+            treatment_formula_system, TreatmentFormulaSystem
+        ):
+            raise TypeError(
+                "treatment_formula_system must be a TreatmentFormulaSystem or None"
+            )
         self._recovery_system = recovery_system
         self._skill_runtimes = skill_runtime_registry
         self._provider_validity_policy = provider_validity_policy
+        self._treatment_formula = treatment_formula_system or TreatmentFormulaSystem()
 
     def execute(
         self,
@@ -236,14 +245,23 @@ class RecoveryOpportunitySystem:
             if opportunity.recovery_potency_context is not None:
                 potency = opportunity.recovery_potency_context
                 if potency.treatment_amount > 0:
+                    # Explicit already-resolved amount. This remains the compatibility
+                    # and special-family lane and is not reinterpreted as ordinary FB1.
                     nominal_amount = potency.treatment_amount
                 elif potency.base_rate > 0:
-                    if potency.source_intellect is not None:
-                        nominal_amount = int(
-                            round(potency.base_rate * (100 + potency.source_intellect))
+                    source_troops = potency.source_troops_at_application
+                    source_attribute = potency.frozen_treatment_attribute()
+                    if source_troops is None or source_attribute is None:
+                        raise ValueError(
+                            "ordinary treatment formula requires application-time "
+                            "source_troops and selected source_attribute"
                         )
-                    else:
-                        nominal_amount = int(round(potency.base_rate))
+                    nominal_amount = self._treatment_formula.calculate(
+                        rate=potency.base_rate,
+                        source_troops=source_troops,
+                        source_attribute=source_attribute,
+                        modifiers=potency.treatment_modifier_snapshot,
+                    ).nominal_recovery
 
         source_ref = opportunity.execution_descriptor.source_ref
         source_id = source_ref.source_unit_id if source_ref else None
