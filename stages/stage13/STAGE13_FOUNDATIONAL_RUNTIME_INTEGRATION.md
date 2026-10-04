@@ -1,6 +1,6 @@
 # Stage13 Foundational Runtime Integration — B1 / B2 / B2.5
 
-Status: IMPLEMENTED / BRANCH REGRESSION PASS / INDEPENDENT MAIN FREEZE AUDIT PENDING  
+Status: IMPLEMENTED / INDEPENDENT RUNTIME FREEZE AUDIT PASS  
 Date: 2026-10-04
 
 ## 1. Scope
@@ -100,7 +100,18 @@ Not closed or implemented by this integration:
 - generic delayed-work infrastructure beyond already frozen mechanism-specific paths;
 - any unnamed hidden damage term, because B2.5 promoted none.
 
-## 6. Current verdict
+## 6. Main evidence
+
+```text
+merge SHA = d4eea5b0d4725336777e7b0ecb131c7f55d3dca2
+main CI = 37198353900
+pytest = 1683 passed
+demo = PASS
+```
+
+Audit authority: `STAGE13_FOUNDATIONAL_RUNTIME_FREEZE_AUDIT.md`.
+
+## 7. Current verdict
 
 ```text
 Stage13-B1 Runtime Integration   = IMPLEMENTED
@@ -108,7 +119,9 @@ Stage13-B2 Runtime Integration   = IMPLEMENTED
 Stage13-B2.5 Runtime Integration = IMPLEMENTED
 
 Branch Regression               = PASS
-Independent PR/Main Audit       = PENDING
+Independent PR/Main Audit       = PASS
+Merged-main Regression          = PASS
+Integrated Slice                = FROZEN
 Core Gameplay Engine            = NOT YET FROZEN
 Skill Runtime Readiness         = NOT YET READY
 ```
