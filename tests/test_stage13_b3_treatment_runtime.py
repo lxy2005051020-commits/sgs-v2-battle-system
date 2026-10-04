@@ -179,3 +179,52 @@ def test_formula_lane_requires_complete_application_time_snapshot() -> None:
 
     with pytest.raises(ValueError, match="application-time source_troops"):
         systems.recovery_opportunity_system.execute(context, opportunity)
+
+
+
+def test_special_pre_resolved_recovery_does_not_enter_ordinary_treatment_formula() -> None:
+    systems = BattleSystems(weapon_troop_function_table=_identity_troop_table())
+    source = _unit(
+        "source",
+        "A",
+        troops=1000,
+        wounded_troops=0,
+        intelligence=999.0,
+    )
+    target = _unit(
+        "target",
+        "A",
+        troops=100,
+        wounded_troops=900,
+        intelligence=50.0,
+    )
+    context = BattleContext(
+        battle_id="stage13-b3-special-recovery-isolation",
+        units={"source": source, "target": target},
+        event_bus=EventBus(),
+        random=RandomSystem(7),
+    )
+
+    # Special recovery families provide an already-resolved amount through their
+    # dedicated owner. No FB1 source-troop/attribute snapshot is required or read.
+    opportunity = RecoveryOpportunity(
+        opportunity_kind=RecoveryOpportunityKind.RECUPERATION_ACTION_START,
+        execution_descriptor=RuleIntentExecutionDescriptor(
+            intent_kind=RuleIntentKind.RECOVERY_OPPORTUNITY,
+            intent_owner_id="target",
+            target_id="target",
+        ),
+        probability=1.0,
+        recovery_model_kind=RecoveryModelKind.TREATMENT_AMOUNT,
+        recovery_potency_context=RecoveryPotencyContext(
+            treatment_amount=321,
+        ),
+        aftermath_fact=None,
+    )
+
+    resolved = systems.recovery_opportunity_system.execute(context, opportunity)
+
+    assert resolved.executed is True
+    assert resolved.resolution is not None
+    assert resolved.resolution.actual_recovery == 321
+    assert target.troops == 421
