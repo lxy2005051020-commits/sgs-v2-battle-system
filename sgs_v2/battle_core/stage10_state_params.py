@@ -23,6 +23,7 @@ from .state_generation import (
     StateApplicationGenerationId,
 )
 from .state_runtime_params import StateRuntimeParams
+from .treatment_formula import TreatmentModifierSnapshot
 
 
 def _validate_probability(val: float, name: str = "probability") -> float:
@@ -50,7 +51,11 @@ class RecoveryModelKind(str, Enum):
 class RecoveryPotencyContext:
     """
     Application-time frozen recovery potency facts (STAGE10.md §13.3, §29).
-    Contains base rates, ratios, amounts, and application-time caster attributes.
+
+    Stage13-B3 ordinary-treatment lane snapshots every formula input needed by:
+        CEIL(Rate * (F(N) + Attr) * SourcePool * TargetPool * RedPool)
+
+    treatment_amount remains an explicit already-resolved compatibility/special-family lane.
     """
 
     base_rate: float = 0.0
@@ -58,6 +63,11 @@ class RecoveryPotencyContext:
     treatment_amount: int = 0
     source_intellect: int | None = None
     source_command: int | None = None
+    source_troops_at_application: int | None = None
+    source_attribute_at_application: float | None = None
+    treatment_modifier_snapshot: TreatmentModifierSnapshot = field(
+        default_factory=TreatmentModifierSnapshot
+    )
 
     def __post_init__(self) -> None:
         base_rate = validate_nonnegative_finite(self.base_rate, "base_rate")
@@ -78,6 +88,44 @@ class RecoveryPotencyContext:
                 raise TypeError("source_command must be an int or None")
             if self.source_command < 0:
                 raise ValueError("source_command cannot be negative")
+        if self.source_troops_at_application is not None:
+            if (
+                isinstance(self.source_troops_at_application, bool)
+                or not isinstance(self.source_troops_at_application, int)
+            ):
+                raise TypeError("source_troops_at_application must be an int or None")
+            if not 1 <= self.source_troops_at_application <= 10000:
+                raise ValueError(
+                    "source_troops_at_application must be within lookup-table range [1, 10000]"
+                )
+        if self.source_attribute_at_application is not None:
+            attr = validate_nonnegative_finite(
+                self.source_attribute_at_application,
+                "source_attribute_at_application",
+            )
+            object.__setattr__(self, "source_attribute_at_application", attr)
+        if not isinstance(self.treatment_modifier_snapshot, TreatmentModifierSnapshot):
+            raise TypeError(
+                "treatment_modifier_snapshot must be a TreatmentModifierSnapshot"
+            )
+
+    def frozen_treatment_attribute(self) -> float | None:
+        """Return the application-time selected treatment attribute.
+
+        New Stage13 callers should set source_attribute_at_application explicitly.
+        source_intellect/source_command remain supported as typed legacy aliases.
+        """
+        if self.source_attribute_at_application is not None:
+            return self.source_attribute_at_application
+        if self.source_intellect is not None and self.source_command is not None:
+            raise ValueError(
+                "treatment formula requires exactly one selected source attribute"
+            )
+        if self.source_intellect is not None:
+            return float(self.source_intellect)
+        if self.source_command is not None:
+            return float(self.source_command)
+        return None
 
 
 @dataclass(frozen=True, slots=True)
