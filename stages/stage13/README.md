@@ -1,6 +1,6 @@
 # Stage13 · Core Gameplay Mechanism Completion
 
-> Current status: ACTIVE / B1+B2+B2.5 RUNTIME FROZEN / B3 ORDINARY-TREATMENT CORE INTEGRATED, SPECIAL FAMILY BOUNDARIES OPEN
+> Current status: ACTIVE / FOUNDATIONAL + RESIDUAL MECHANISM RUNTIME SLICES FROZEN / CORE ENGINE EXIT WORK REMAINS
 >
 > Activated: 2026-09-28 by STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
 >
@@ -25,12 +25,17 @@ Stage13-B  Foundational Empirical Mechanics Research
            B3 Recovery / Treatment Formula Mechanics — ORDINARY FORMULA CORE FROZEN / SPECIAL FAMILIES OPEN
 
 Stage13-C  Residual State Mechanism Closure
+           690221 ACTIVE_SKILL + DOT/DELAYED — CLOSED / RUNTIME INTEGRATED
+           690099 MaxCarry × 6% inclusive threshold — CLOSED / RUNTIME INTEGRATED
+           690086 DSTS9-B02 — CLOSED / FROZEN_P0
 
 Stage13-D  Consolidated Gap Classification + Runtime Governance
 Stage13-E  Core Runtime Architecture Design
 Stage13-F  Core Mechanism Implementation
            Foundational slice B1/B2/B2.5 — IMPLEMENTED / RUNTIME FREEZE AUDIT PASS
            B3 ordinary-treatment core — IMPLEMENTED / MERGED-MAIN CI PASS / RUNTIME CORE FROZEN
+           residual mechanism slice — IMPLEMENTED / 1691 TESTS PASS / RUNTIME SLICE FROZEN
+           special recovery isolation — EXPLICIT SPECIAL_RECOVERY_AMOUNT LANE
 Stage13-G  Independent Engine Completion / Deterministic Replay Audit
 ~~~
 
@@ -99,7 +104,7 @@ H = CEIL(
 
 The selected attribute coefficient is 1. Same-side ordinary modifiers add algebraically, source/target sides multiply, red-degree is an independent pool, and persistent treatment replays application-time formula state. The final HealingBlock and wounded/missing-troop capacity tail remains live in RecoverySystem/TroopSystem.
 
-Special recovery families remain independently owned and are not silently collapsed into this formula.
+Special recovery families remain independently owned and are not silently collapsed into this formula. Runtime now exposes an explicit `SPECIAL_RECOVERY_AMOUNT` lane so dedicated family owners can share only the canonical RecoverySystem settlement tail.
 
 ## 5. Residual state research comes after B1-B3
 
@@ -154,9 +159,11 @@ Independent PR/Main Audit        = PASS
 Merged-main CI 37198353900        = 1683 passed / demo PASS
 B3 merged-main commit            = a27785a830e6d3f89b0c17d93bdaa31f84c48207
 B3 merged-main CI 37200488246     = PASS / demo PASS / audit snapshot PASS
+Residual runtime commit            = 43c5b4e335895b0fb2c21fe49875480f49158206
+Residual runtime CI 37206514602    = 1691 passed / demo PASS / audit snapshot PASS
 ```
 
-B3 ordinary-treatment formula core is now integrated. Special recovery-family boundaries and other residual Stage13 debt remain open.
+B3 ordinary-treatment formula core and the newly closed residual mechanism slice are integrated and audited. Special recovery-family formula internals remain separately owned rather than being treated as ordinary treatment.
 
 ## 9. NEXT
 
