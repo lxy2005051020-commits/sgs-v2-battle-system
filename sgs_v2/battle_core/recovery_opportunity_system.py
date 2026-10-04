@@ -240,13 +240,22 @@ class RecoveryOpportunitySystem:
                 else 0.0
             )
             nominal_amount = int(round(loss * ratio))
-        else:  # TREATMENT_AMOUNT
+        elif opportunity.recovery_model_kind == RecoveryModelKind.SPECIAL_RECOVERY_AMOUNT:
+            potency = opportunity.recovery_potency_context
+            if potency is None:
+                raise ValueError(
+                    "special recovery amount requires a dedicated potency context"
+                )
+            # Dedicated special-family owners resolve their own basis math before
+            # entering the shared RecoverySystem settlement tail.
+            nominal_amount = potency.treatment_amount
+        else:  # ordinary FB1 TREATMENT_AMOUNT
             nominal_amount = 0
             if opportunity.recovery_potency_context is not None:
                 potency = opportunity.recovery_potency_context
                 if potency.treatment_amount > 0:
-                    # Explicit already-resolved amount. This remains the compatibility
-                    # and special-family lane and is not reinterpreted as ordinary FB1.
+                    # Legacy compatibility for already-materialized ordinary amounts.
+                    # New special-family callers must use SPECIAL_RECOVERY_AMOUNT.
                     nominal_amount = potency.treatment_amount
                 elif potency.base_rate > 0:
                     source_troops = potency.source_troops_at_application
