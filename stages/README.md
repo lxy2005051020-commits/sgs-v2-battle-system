@@ -16,7 +16,8 @@
 | 10 | Persistent State Runtime Integration | FROZEN |
 | 11 | 官方状态补全（一） | RUNTIME FROZEN / POST-FREEZE ACCEPTED |
 | 12 | 官方状态补全（二） | FROZEN / COMPLETE |
-| 13 | Core Gameplay Mechanism Completion | ACTIVE |
+| 13 | Core Gameplay Mechanism Completion | ACTIVE / EXIT AUDIT REMAINS |
+| 14 | Concrete Skill Integration | PILOT PREPARATION ACTIVE / MAINLINE GATED |
 
 ## 当前统一状态
 
@@ -25,6 +26,8 @@ Official States            = 40
 Research FROZEN            = 40 / 40
 Runtime FROZEN TO CONTRACT = 40 / 40
 Strict Complete            = 40 / 40
+
+Stage14 Troop Foundation   = FROZEN in Research
 ```
 
 ## 当前导航
@@ -34,5 +37,6 @@ Strict Complete            = 40 / 40
 - [Stage11](stage11/README.md)
 - [Stage12](stage12/README.md)
 - [Stage13](stage13/README.md)
+- [Stage14](stage14/README.md)
 
-Stage13-D1 PendingWork 已冻结。整个 Core Gameplay Engine 尚未最终冻结。
+Stage14 允许单战法 Pilot 在隔离分支准备/实现；合并进入 main 仍受 Stage13 exit gate 与单战法 Research Contract 双重约束。
