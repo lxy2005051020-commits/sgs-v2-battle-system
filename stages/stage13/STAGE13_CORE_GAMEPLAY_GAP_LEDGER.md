@@ -46,7 +46,7 @@ The two 690221 inventory rows remain one focused residual-state research family 
 | G13-016 | CGM-036 | ExecutionRight coverage for new core work | actor/provider/target/equipment/state dimensions exist | PARTIAL | YES | G13-015, attribute model | extend only dimensions demanded by delayed/composite work |
 | G13-017 | CGM-038 | Generic cleanse/dispel/category removal | exact removal strong; category semantics are bounded/adapters only | PARTIAL | YES | StateRemovalPolicy, actual state taxonomy | typed category-removal query after authority review; never infer from UI labels |
 | G13-018 | CGM-043 | Whole-battle deterministic replay audit | seeded RNG and golden traces exist but no Stage13 replay gate | PARTIAL | YES | G13-007, all other core work | trace schema + repeated same-input/same-seed audit across operations/RNG/targets/damage/recovery/states/result |
-| G13-019 | CGM-045/046 | 690221 See-Through active / DOT family applicability | ACTIVE_SKILL and DOT/DELAYED both authorized as applicable by 2026-10-04 authority amendment | CLOSED_RESEARCH | NO | 690221 mechanism contract | CLOSED |
+| G13-019 | CGM-045/046 | 690221 See-Through active / DOT family applicability | ACTIVE_SKILL and DOT/DELAYED authorized and integrated; merged-main residual runtime audit PASS | IMPLEMENTED_AUDITED | NO | 690221 mechanism contract; Stage13 residual runtime integration | CLOSED |
 | G13-020 | Post-inventory foundation audit | Wounded-troop / recoverable-capacity mechanics | B1 research FROZEN; explicit wounded pool integrated and audited | IMPLEMENTED_AUDITED | NO | damage settlement, RecoverySystem, TroopSystem | CLOSED for current integrated slice |
 | G13-021 | Post-inventory foundation audit | Damage increase / reduction aggregation mathematics | B2/B2.5 closed slice integrated and audited: same-side algebraic pools, cross-side multiplication, -90% floor, independent advancement multipliers | IMPLEMENTED_AUDITED | NO | DamageModifierSystem, critical families, morale/troop-restraint layers | CLOSED for current integrated slice |
 | G13-022 | Post-inventory foundation audit | General recovery / treatment formula mechanics | ordinary treatment core integrated and merged-main audited: Rate(F(N)+Attr), coefficient 1, same-side algebraic pools, cross-side multiplication, independent red pool, CEIL, application-time persistent snapshot | IMPLEMENTED_AUDITED | NO | G13-020, RecoverySystem, FirstAid/Recuperation authorities | CLOSED for ordinary-treatment core; special recovery families remain separately bounded |
@@ -90,6 +90,7 @@ Remaining participants       = continue
 Original target Dtarget      = continue
 Battle finalization          = after DistributionTransaction completes
 Research Debt                = NO
+Runtime Authority             = FROZEN_P0
 ~~~
 
 The historical absence of a lethal commander-participant corpus sample remains provenance only; it is no longer an open mechanism boundary.
