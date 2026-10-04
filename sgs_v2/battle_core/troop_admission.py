@@ -25,6 +25,7 @@ class TroopAdmissionStatus(str, Enum):
     SUCCESS = "SUCCESS"
     REJECTED_PHASE_ILLEGAL = "REJECTED_PHASE_ILLEGAL"
     REJECTED_ALREADY_INSTALLED = "REJECTED_ALREADY_INSTALLED"
+    REJECTED_BASELINE_DISABLED = "REJECTED_BASELINE_DISABLED"
     REJECTED_INVALID_TROOP = "REJECTED_INVALID_TROOP"
     REJECTED_TEAM_INVARIANT_VIOLATION = "REJECTED_TEAM_INVARIANT_VIOLATION"
     REJECTED_COMMANDER_SCALING_UNRESOLVED = "REJECTED_COMMANDER_SCALING_UNRESOLVED"
@@ -58,7 +59,7 @@ def process_pre_battle_troop_skills(context: BattleContext, systems: object) -> 
     """Scan registered SkillRuntimes for TROOP skills and auto-admit them during PRE_BATTLE."""
     troop_runtimes = [
         rt for rt in context.skill_runtimes.values()
-        if rt.definition.skill_type == SkillType.TROOP
+        if rt.definition.skill_type == SkillType.TROOP and rt.enabled
     ]
     for rt in troop_runtimes:
         result = admit_and_install_troop_skill(context, systems, rt)
@@ -78,6 +79,8 @@ XILIANG_CAVALRY_SKILL_NAME = "西凉铁骑"
 XILIANG_CAVALRY_CRIT_CHANCE = 0.25
 XILIANG_CAVALRY_CRIT_BONUS = 1.0
 XILIANG_CAVALRY_DURATION_EXPIRES_ROUND = 4
+XILIANG_CAVALRY_SPEED_BASELINE = 57.0
+XILIANG_CAVALRY_SPEED_SCALE_DENOMINATOR = 800.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -89,43 +92,27 @@ class TroopSkillConfig:
     required_troop_type: TroopType
     target_special_troop_id: SpecialTroopId
     definition_factory: Callable[[], SkillDefinition]
-    # 统领特殊加成校验函数：返回 None 表示通过，返回错误字符串表示触发 Fail Closed
+    definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition] | None = None
+    # 保留通用准入校验扩展点；西凉铁骑的马腾速度公式已冻结，不再通过此处 Fail Closed。
     commander_clause_validator: Callable[[BattleContext, UnitRuntime], str | None] | None = None
 
 
-def _validate_xiliang_commander_clause(context: BattleContext, owner: UnitRuntime) -> str | None:
-    """校验西凉铁骑马腾统领条款。
-
-    根据合同与规范：
-    - 若马腾统领，则提高会心几率受速度影响；
-    - 当前官方未公开速度拟合数学公式，属于 BOUNDED_UNKNOWN；
-    - 依据项目治理准则，系统必须明确 Fail Closed，严禁静默降级为固定 25% 或胡乱猜测公式。
-    - 统领身份识别统一采用 Canonical Truth: lineup_position == LineupPosition.COMMANDER。
-      is_commander 仅为兼容字段，不得作为主将判定依据。
-    - 注意：当前 Runtime 尚未建立独立的 general_id/hero_id 模板体系，name-based 识别为显式临时边界 (TEMPORARY EXPLICIT BOUNDARY)。
-    """
-    team_units = [u for u in context.units.values() if u.team_id == owner.team_id]
-    commander = next((u for u in team_units if u.lineup_position is LineupPosition.COMMANDER), None)
-    if commander is not None and commander.name == "马腾":
-        return (
-            "Ma Teng commander scaling clause ('若马腾统领，则提高会心几率受速度影响') "
-            "is BOUNDED_UNKNOWN (speed formula unverified). Configuration fails closed."
-        )
-    return None
+def calculate_xiliang_crit_chance(base_rate: float, combat_speed: float) -> float:
+    """冻结公式：BaseRate(LV) * (1 + (CombatSpeed - 57) / 800)."""
+    if isinstance(base_rate, bool) or not isinstance(base_rate, (int, float)):
+        raise TypeError("base_rate must be numeric")
+    if isinstance(combat_speed, bool) or not isinstance(combat_speed, (int, float)):
+        raise TypeError("combat_speed must be numeric")
+    return float(base_rate) * (
+        1.0
+        + (float(combat_speed) - XILIANG_CAVALRY_SPEED_BASELINE)
+        / XILIANG_CAVALRY_SPEED_SCALE_DENOMINATOR
+    )
 
 
-def create_xiliang_cavalry_definition() -> SkillDefinition:
-    """创建符合冻结合同的西凉铁骑技能规格定义。
-
-    合同要点：
-    - 类型：TROOP (兵种战法)
-    - 准备模式：NONE
-    - 发动率：1.0 (战前必定生效)
-    - 目标域：FIXED_ALL_TEAM (我军全体 3 人)
-    - 效果：挂载 OfficialStateId.CRITICAL (690070)，会心几率 25%，持续前 3 回合 (expires_round=4, phase=ROUND_START)
-    """
+def _create_xiliang_cavalry_definition_with_crit(crit_chance: float) -> SkillDefinition:
     params = CriticalStateParams(
-        chance=XILIANG_CAVALRY_CRIT_CHANCE,
+        chance=float(crit_chance),
         bonus=XILIANG_CAVALRY_CRIT_BONUS,
     )
     return SkillDefinition(
@@ -146,13 +133,46 @@ def create_xiliang_cavalry_definition() -> SkillDefinition:
     )
 
 
+def _resolve_xiliang_definition(
+    context: BattleContext,
+    systems: object,
+    owner: UnitRuntime,
+) -> SkillDefinition:
+    """Resolve the current PRE_BATTLE Xiliang crit rate.
+
+    If the canonical team commander is Ma Teng, read his current final combat
+    speed from AttributeSystem and apply the frozen speed-scaling formula.
+    Otherwise use the frozen full-level base rate (25%).
+    """
+    team_units = [u for u in context.units.values() if u.team_id == owner.team_id]
+    commander = next(
+        (u for u in team_units if u.lineup_position is LineupPosition.COMMANDER),
+        None,
+    )
+    crit_chance = XILIANG_CAVALRY_CRIT_CHANCE
+    if commander is not None and commander.name == "马腾":
+        attribute_system = getattr(systems, "attribute_system", None)
+        if attribute_system is None:
+            raise RuntimeError("Xiliang Cavalry Ma Teng scaling requires AttributeSystem")
+        combat_speed = attribute_system.get_speed(context, commander)
+        crit_chance = calculate_xiliang_crit_chance(
+            XILIANG_CAVALRY_CRIT_CHANCE,
+            combat_speed,
+        )
+    return _create_xiliang_cavalry_definition_with_crit(crit_chance)
+
+def create_xiliang_cavalry_definition() -> SkillDefinition:
+    """创建满级西凉铁骑基础定义；马腾缩放在 PRE_BATTLE 通过 AttributeSystem 动态解析。"""
+    return _create_xiliang_cavalry_definition_with_crit(XILIANG_CAVALRY_CRIT_CHANCE)
+
+
 XILIANG_CAVALRY_CONFIG = TroopSkillConfig(
     skill_id=XILIANG_CAVALRY_SKILL_ID,
     name=XILIANG_CAVALRY_SKILL_NAME,
     required_troop_type=TroopType.CAVALRY,
     target_special_troop_id=SpecialTroopId.XILIANG_CAVALRY,
     definition_factory=create_xiliang_cavalry_definition,
-    commander_clause_validator=_validate_xiliang_commander_clause,
+    definition_resolver=_resolve_xiliang_definition,
 )
 
 # Canonical Registry: key is strictly the canonical skill_id
@@ -204,6 +224,15 @@ def admit_and_install_troop_skill(
             skill_id=runtime.definition.skill_id,
             owner_id=runtime.owner_id,
             reason=f"Troop skills can only be admitted during PRE_BATTLE phase, current phase is {context.current_phase}",
+        )
+
+    # Baseline-disabled runtimes never enter troop admission and must not mutate identity/effects.
+    if not runtime.enabled:
+        return TroopAdmissionResult(
+            status=TroopAdmissionStatus.REJECTED_BASELINE_DISABLED,
+            skill_id=runtime.definition.skill_id,
+            owner_id=runtime.owner_id,
+            reason="baseline-disabled troop runtime is not admitted",
         )
 
     owner = context.get_unit(runtime.owner_id)
@@ -261,16 +290,19 @@ def admit_and_install_troop_skill(
                 ),
             )
 
-    # 5. 统领特殊加成检查 (Fail Closed)
-    if cfg.commander_clause_validator is not None:
-        rejection_reason = cfg.commander_clause_validator(context, owner)
-        if rejection_reason is not None:
-            return TroopAdmissionResult(
-                status=TroopAdmissionStatus.REJECTED_COMMANDER_SCALING_UNRESOLVED,
-                skill_id=runtime.definition.skill_id,
-                owner_id=runtime.owner_id,
-                reason=rejection_reason,
-            )
+    # 5. Skill-specific PRE_BATTLE definition resolution happens before mutation.
+    # 西凉铁骑在马腾统领时通过 AttributeSystem 读取当前最终实战速度并套用冻结公式。
+    effective_definition = (
+        cfg.definition_resolver(context, systems, owner)
+        if cfg.definition_resolver is not None
+        else runtime.definition
+    )
+    effective_runtime = SkillRuntime(
+        definition=effective_definition,
+        owner_id=runtime.owner_id,
+        skill_slot=runtime.skill_slot,
+        enabled=runtime.enabled,
+    )
 
     # --- ATOMIC PREFLIGHT COMPLETE; PERFORM MUTATION ---
 
@@ -297,7 +329,7 @@ def admit_and_install_troop_skill(
     )
 
     # 8. PRE_BATTLE 解析技能并执行 Effect
-    res = systems.skill_resolver.resolve(context, runtime)
+    res = systems.skill_resolver.resolve(context, effective_runtime)
     for effect in res.effects:
         exec_res = systems.effect_executor.execute(context, effect)
         # 9. 自动挂接 Provider 依赖边，以实现威慑抑制传播
