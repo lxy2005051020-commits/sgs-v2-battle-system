@@ -12,6 +12,7 @@ from sgs_v2.battle_core import (
     create_xiliang_cavalry_runtime,
     register_official_state_definitions,
 )
+from sgs_v2.battle_core.troop_admission import calculate_xiliang_crit_chance
 
 
 def format_event(event, context: BattleContext) -> str:
@@ -96,43 +97,13 @@ def format_event(event, context: BattleContext) -> str:
     return f"第 {round_no} 回合，发生事件：{event.event_type.value}。"
 
 
-def describe_xiliang_pilot(context: BattleContext) -> None:
-    """显示当前 Pilot 分支中西凉铁骑已经安装到战斗上下文的结果。"""
-
-    print("=== Stage14 Pilot 01：西凉铁骑 ===")
-    print("接入模式：手动 PRE_BATTLE 安装（01C 完成后改为 BattleEngine 自动调度）")
-
-    for unit_id in ("a1", "a2"):
-        unit = context.units[unit_id]
-        critical_states = context.states.find(
-            owner_id=unit_id,
-            state_id=OfficialStateId.CRITICAL.value,
-        )
-        crit = 0.0
-        for state in critical_states:
-            crit += float(getattr(state.runtime_params, "chance", 0.0))
-
-        special = (
-            unit.special_troop_id.value
-            if unit.special_troop_id is not None
-            else "NONE"
-        )
-        troop = unit.troop_type.value if unit.troop_type is not None else "NONE"
-        print(
-            f"{unit.name}: 基础兵种={troop}，特殊兵种={special}，"
-            f"西凉铁骑会心加成={crit:.0%}"
-        )
-
-    print()
-
-
 def main() -> None:
     event_bus = EventBus()
 
     units = {
         "a1": UnitRuntime(
             unit_id="a1",
-            name="A队主将",
+            name="马腾",
             team_id="A",
             max_troops=1000,
             troops=1000,
@@ -190,6 +161,15 @@ def main() -> None:
     register_official_state_definitions(context.states)
 
     systems = BattleSystems()
+
+    # 当前 demo 使用马腾统领，直接展示冻结后的速度缩放公式。
+    combat_speed = systems.attribute_system.get_speed(context, context.units["a1"])
+    xiliang_crit = calculate_xiliang_crit_chance(0.25, combat_speed)
+    print("=== Stage14 Pilot 01：西凉铁骑（马腾统领）===")
+    print(f"PRE_BATTLE 实战速度：{combat_speed:.3f}")
+    print(f"西凉铁骑满级会心率：{xiliang_crit:.6%}")
+    print("接入模式：BattleEngine PRE_BATTLE 自动调度")
+    print()
 
     # Stage14 Pilot 01C: 将西凉铁骑注册至 BattleContext.skill_runtimes，
     # 由 BattleEngine.run() 在 PRE_BATTLE 阶段自动执行准入、身份赋予与战法挂载。
