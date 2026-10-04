@@ -65,13 +65,13 @@ These remaining items are architecture decisions, not new Research questions unl
 ## SF-0 owner qualification — 2026-09-27
 
 Historical Round-10 note: at that checkpoint this matrix remained DESIGN INPUT. Current owner implementation is COMPLETE and is revalidated by the final audit amendment below.
-The [current capability inventory and gap ledger](STAGE12_SHARED_FOUNDATION_ARCHITECTURE_RECONNAISSANCE.md)
+The [current capability inventory and gap ledger](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/blob/f0339729a94685f1d1ae226e1975ad4298b7f81f/stages/stage12/STAGE12_SHARED_FOUNDATION_ARCHITECTURE_RECONNAISSANCE.md)
 adds omitted owners: Stage9StateRuntime (Taunt/Insight effective read),
 RecoveryOpportunitySystem (existing JIT source-skill gate), AttributeSystem and modifier-provider
 seams. Stage11ApplicationPolicy is a module of conflict/ingress functions, not a general immunity class.
 Shared effectiveness must migrate/delegate existing Stage9 and Stage11 readers, not duplicate them.
 AR-SF-01 legacy Confusion semantics requires authority disposition first.
-The [28-question ledger](STAGE12_SHARED_FOUNDATION_DESIGN_QUESTION_LEDGER.md) precedes method-level owner freeze.
+The [28-question ledger](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/blob/f0339729a94685f1d1ae226e1975ad4298b7f81f/stages/stage12/STAGE12_SHARED_FOUNDATION_DESIGN_QUESTION_LEDGER.md) precedes method-level owner freeze.
 
 
 ## SF Round 2 owner decisions — 2026-09-27

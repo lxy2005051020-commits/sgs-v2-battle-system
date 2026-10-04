@@ -1,12 +1,17 @@
 # 三国志战略版 V2 战斗系统
 
-本仓库是战斗 Runtime 与项目阶段治理仓库。机制研究权威位于 `lxy2005051020-commits/sgs-state-mechanics-research`。
+This repository owns runtime implementation.
+Runtime Implementation Owner = Battle Repository.
+Gameplay truth belongs to the [Research repository](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/RESEARCH_AUTHORITY_INDEX.md).
+Research truth = consumed by reference. Research body != duplicated locally.
+
+本仓库只维护生产代码、Runtime 数据、行为测试、实现/冻结审计与项目进度治理。
 
 ## 当前状态
 
 ```text
 Official States                 = 40
-Research FROZEN                 = 40 / 40
+Research FROZEN (MIRROR ONLY)   = 40 / 40
 Runtime FROZEN TO CONTRACT      = 40 / 40
 Strict Complete                 = 40 / 40
 

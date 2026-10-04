@@ -273,7 +273,7 @@ healing_ban / 禁疗
 = 无法恢复兵力
 ```
 
-`research/state_catalog_v1/STATE_CATALOG_V1.md` 还提供战法描述 / 战报级研究：
+[research/state_catalog_v1/STATE_CATALOG_V1.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/catalogs/state_catalog_v1/STATE_CATALOG_V1.md) 还提供战法描述 / 战报级研究：
 
 ```text
 灼烧 / 水攻 / 中毒 / 沙暴
@@ -2481,3 +2481,10 @@ TARGET_DEFEATED
 ```
 
 只要这些路径保持单向、类型安全、来源可追踪、确定可测试，后续 Stage 8 Damage Modifier、Stage 9 Reaction / Redirect 和真实技能接入才不需要靠 EventBus 回调、状态对象 execute()、丢失来源的事件或散落 if 分支勉强拼起来。
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

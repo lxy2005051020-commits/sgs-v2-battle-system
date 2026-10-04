@@ -10,7 +10,7 @@
 >
 > Scope: inventory / classification / governance only. No new gameplay implementation.
 
-> **2026-09-28 route amendment:** this document remains the historical Stage13-A inventory authority. Its conclusion that only CGM-045/046 require new blocking empirical research is superseded for subsequent execution by `STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md`, which adds wounded/recoverable-capacity, damage increase/reduction, and recovery/treatment-formula research gates. The 48-row inventory counts are intentionally not rewritten retroactively.
+> **2026-09-28 route amendment:** this document remains the historical Stage13-A inventory authority. Its conclusion that only CGM-045/046 require new blocking empirical research is superseded for subsequent execution by [STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md), which adds wounded/recoverable-capacity, damage increase/reduction, and recovery/treatment-formula research gates. The 48-row inventory counts are intentionally not rewritten retroactively.
 
 ## 1. Verdict
 
@@ -65,7 +65,7 @@ Strict Complete                         39 / 40
 
 The latest recorded merged-main validation before the Stage13 replan is 1667 passed / demo PASS. The Stage13 replan commit is documentation-only and does not alter gameplay.
 
-> **2026-10-04 closure amendment:** the `Research FROZEN 39/40`, `Strict Complete 39/40`, `DSTS9-B02 OPEN / UNOBSERVED`, and CGM-045/046 `RESEARCH_REQUIRED` entries above are preserved as the historical Stage13-A intake snapshot only. Current authority supersedes them: Research FROZEN = 40/40, Strict Complete = 40/40, DSTS9-B02 = CLOSED, and 690221 ACTIVE_SKILL plus DOT/DELAYED applicability = CLOSED/APPLICABLE. Current execution status lives in `STAGE13_RESEARCH_GAP_LEDGER.md` and `STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md`.
+> **2026-10-04 closure amendment:** the `Research FROZEN 39/40`, `Strict Complete 39/40`, `DSTS9-B02 OPEN / UNOBSERVED`, and CGM-045/046 `RESEARCH_REQUIRED` entries above are preserved as the historical Stage13-A intake snapshot only. Current authority supersedes them: Research FROZEN = 40/40, Strict Complete = 40/40, DSTS9-B02 = CLOSED, and 690221 ACTIVE_SKILL plus DOT/DELAYED applicability = CLOSED/APPLICABLE. Current execution status lives in [STAGE13_RESEARCH_GAP_LEDGER.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/STAGE13_RESEARCH_GAP_LEDGER.md) and `STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md`.
 
 ## 3. Inventory method
 
@@ -210,3 +210,10 @@ STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH
 ~~~
 
 No gameplay implementation is authorized by this inventory document.
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

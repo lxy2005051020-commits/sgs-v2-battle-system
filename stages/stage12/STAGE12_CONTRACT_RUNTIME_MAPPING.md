@@ -53,7 +53,7 @@ Bounded unknowns that require an engineering choice must be linked to `STAGE12_R
 
 ## SF-0 mapping qualification — 2026-09-27
 
-This remains a skeleton. [Reconnaissance](STAGE12_SHARED_FOUNDATION_ARCHITECTURE_RECONNAISSANCE.md)
+This remains a skeleton. [Reconnaissance](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/blob/f0339729a94685f1d1ae226e1975ad4298b7f81f/stages/stage12/STAGE12_SHARED_FOUNDATION_ARCHITECTURE_RECONNAISSANCE.md)
 section 2 maps all seven current contracts to rule groups; the method-level completed design is future work.
 INSIGHT existing-control suppression must include the AR-SF-01 legacy CONFUSION discriminator.
 Provider validity must cover RecoveryOpportunitySystem's existing gate, not TriggerSystem alone.

@@ -137,7 +137,7 @@ Total files entering `main`: **59 files** (21,044 insertions, 91 deletions).
   - `stage10_state_params.py`
   - `state_generation.py`
 - **Modified production modules (24 files)**:
-  - `__init__.py`, `battle_finalization_coordinator.py`, `battle_systems.py`, `chain_system.py`, `cleave_derived_damage_system.py`, `context.py`, `damage_instance_coordinator.py`, `damage_pipeline_trace.py`, `damage_resolution_system.py`, `damage_system.py`, `direct_troop_loss_system.py`, `effects.py`, `engine.py`, `enums.py`, `events.py`, `execution_right_system.py`, `official_state_catalog.py`, `reaction_permission_policy.py`, `recovery_system.py`, `rule_hook_system.py`, `state_instance.py`, `state_lifecycle_system.py`, `state_registry.py`, `trigger_system.py`.
+  - [__init__.py](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v2/evidence/lib/__init__.py), `battle_finalization_coordinator.py`, `battle_systems.py`, `chain_system.py`, `cleave_derived_damage_system.py`, `context.py`, `damage_instance_coordinator.py`, `damage_pipeline_trace.py`, `damage_resolution_system.py`, `damage_system.py`, `direct_troop_loss_system.py`, `effects.py`, `engine.py`, `enums.py`, `events.py`, `execution_right_system.py`, `official_state_catalog.py`, `reaction_permission_policy.py`, `recovery_system.py`, `rule_hook_system.py`, `state_instance.py`, `state_lifecycle_system.py`, `state_registry.py`, `trigger_system.py`.
 
 ### 4.2 Test Suites (`tests/`): 7 files
 - `test_stage10_phase1_primitives.py` (28 tests)
@@ -263,3 +263,10 @@ GATE VERDICT: PASS / MAIN MERGE AUTHORIZED
 ```
 
 The frozen branch `stage10-persistent-state-research` at `953ede0f9b31699cf6daff02792b2901da1d90aa` satisfies every prerequisite of the Main Integration Gate. It is certified safe, complete, and free of semantic drift for formal merge integration into `main`.
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

@@ -26,8 +26,8 @@ The total independently re-extracted from audit originals is exactly `29`; it wa
 | Finding | Audit | Stale file / surface | Stale statement | Current authority | Required edit / disposition | Status |
 |---|---|---|---|---|---|---|
 | CFS9-D01 | CONFUSION | `core_arbitration_v2/README.md` | CONFUSION / COMBO still future research | mechanism P0 + RF-P02/P03/P04 | remove future-target wording; route to current P0 | CLOSED BY DOC SYNC |
-| CFS9-D02 | CONFUSION | `STAGE9_EVIDENCE_MATRIX_V2.md` | CONFUSION rows only historical/pending | CONFUSION P0 + RF-P03 | add FROZEN current overlay; retain historical evidence trace | CLOSED BY DOC SYNC |
-| CFS9-D03 | CONFUSION | state root `README.md` | COMBO first research target + blanket Target Death | RF-P03 execution/death P0 | replace with current navigation/scoped death model | CLOSED BY DOC SYNC |
+| CFS9-D02 | CONFUSION | [STAGE9_EVIDENCE_MATRIX_V2.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v2/STAGE9_EVIDENCE_MATRIX_V2.md) | CONFUSION rows only historical/pending | CONFUSION P0 + RF-P03 | add FROZEN current overlay; retain historical evidence trace | CLOSED BY DOC SYNC |
+| CFS9-D03 | CONFUSION | state root [README.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v1/README.md) | COMBO first research target + blanket Target Death | RF-P03 execution/death P0 | replace with current navigation/scoped death model | CLOSED BY DOC SYNC |
 | CFS9-D04 | CONFUSION | battle Stage9 navigation / COMBO sync | COMBO P0 omitted from current battle navigation | state COMBO P0 + RF-P02/P03/P04 | authority map points to sole state P0; no duplicate P0 mirror created | CLOSED BY DOC SYNC |
 | TAS9-D01 | TAUNT | state `STATE_MECHANICS_INDEX.md` | TAUNT = MINIMUM_USABLE | Taunt Freeze Record | index = FROZEN; old skeleton = SUPERSEDED | CLOSED BY DOC SYNC |
 | TAS9-D02 | TAUNT | `core_arbitration_v2/README.md` | CONFUSION/COMBO future + old death summary | current P0 + RF-P03/P04 | rewrite as research archive/current authority nav | CLOSED BY DOC SYNC |
@@ -70,3 +70,10 @@ CLOSED disposition total               = 29
 ## Immutable history
 
 The nine independent audit files were not rewritten. Their original findings, counts and then-current verdicts remain immutable history. The old consolidation is also retained as a historical snapshot; current navigation explicitly marks it superseded for present status.
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

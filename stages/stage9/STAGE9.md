@@ -207,10 +207,10 @@ Mandatory inputs remain:
 - `stages/stage9/hardening/STAGE9_TYPED_RUNTIME_CONTRACTS.md`
 - `stages/stage9/hardening/STAGE9_RUNTIME_INVARIANTS.md`
 - `stages/stage9/hardening/STAGE9_REGRESSION_CONTRACTS.md`
-- `stages/stage9/repairs/RF_P01_STAGE9_INTEGERIZATION_REFREEZE.md` ... `RF_P07_CLEAVE_STATE_AND_SECONDARY_TARGET_REFREEZE.md`
-- `stages/stage9/research/core_arbitration_v2/STAGE9_CORE_ARBITRATION_RULES_V2.md`
-- `STAGE9_EXECUTION_RIGHT_AND_DEATH_SCOPE_CONTRACT.md`
-- `STAGE9_BATTLE_FINALIZATION_BARRIER_CONTRACT.md`
+- [stages/stage9/repairs/RF_P01_STAGE9_INTEGERIZATION_REFREEZE.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/repairs/RF_P01_STAGE9_INTEGERIZATION_REFREEZE.md) ... [RF_P07_CLEAVE_STATE_AND_SECONDARY_TARGET_REFREEZE.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/repairs/RF_P07_CLEAVE_STATE_AND_SECONDARY_TARGET_REFREEZE.md)
+- [stages/stage9/research/core_arbitration_v2/STAGE9_CORE_ARBITRATION_RULES_V2.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v2/STAGE9_CORE_ARBITRATION_RULES_V2.md)
+- [STAGE9_EXECUTION_RIGHT_AND_DEATH_SCOPE_CONTRACT.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v2/STAGE9_EXECUTION_RIGHT_AND_DEATH_SCOPE_CONTRACT.md)
+- [STAGE9_BATTLE_FINALIZATION_BARRIER_CONTRACT.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v2/STAGE9_BATTLE_FINALIZATION_BARRIER_CONTRACT.md)
 - current mechanism P0 / Freeze Records identified by `STAGE9_AUTHORITY_MAP.md`
 - `stages/stage8/STAGE8.md`
 - `stages/stage8/STAGE8_DESIGN_FREEZE.md`
@@ -2228,7 +2228,7 @@ FinalizationProjectionPermit-> battle_finalization_coordinator.py
 | `official_state_catalog.py` | bind Stage9 typed runtime params where required | IDs/text unchanged |
 | `events.py` | Stage9 observation facts where needed | EventBus never controls flow |
 | `trigger_system.py` | **periodic EffectSourceRef producer** | Stage7 trigger timing/selection semantics unchanged |
-| `__init__.py` | intentional public exports only | minimize surface |
+| [__init__.py](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v2/evidence/lib/__init__.py) | intentional public exports only | minimize surface |
 
 ```text
 Planned MODIFY = 17
@@ -2710,3 +2710,10 @@ Stage9 Design Freeze Audit
 ```
 
 Do not create `STAGE9_BUILD_PROMPT.md` and do not begin production implementation before the separate Freeze Audit verifies this freeze commit.
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

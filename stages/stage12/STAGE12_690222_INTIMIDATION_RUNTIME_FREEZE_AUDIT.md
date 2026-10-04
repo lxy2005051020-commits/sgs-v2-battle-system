@@ -612,7 +612,7 @@ Created:
 
 Canonical governance synchronization includes:
 
-- `README.md`
+- [README.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v1/README.md)
 - `PROJECT_STATUS.md`
 - `CANONICAL_STATE_PLANNING_MATRIX.md`
 - `stages/stage12/README.md`
@@ -662,3 +662,10 @@ Stage13 / Stage14 / Stage15 Active = NO
 ```text
 690109 SABOTAGE Runtime Integration
 ```
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

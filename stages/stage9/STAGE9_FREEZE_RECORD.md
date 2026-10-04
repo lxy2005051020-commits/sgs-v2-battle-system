@@ -1,6 +1,6 @@
 # Stage9 Freeze Record
 
-> **2026-09-25 scoped authority reopen:** The Cleave secondary + Share attacker-recovery clause below is disputed and not current combined Stage11 authority. This does not reopen Cleave damage derivation/integerization or the Stage9 transaction architecture. See [Stage11 reopen](../stage11/STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md).
+> **2026-09-25 scoped authority reopen:** The Cleave secondary + Share attacker-recovery clause below is disputed and not current combined Stage11 authority. This does not reopen Cleave damage derivation/integerization or the Stage9 transaction architecture. See [Stage11 reopen](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/STAGE11_SHARE_LIFESTEAL_AUTHORITY_RESOLUTION.md).
 
 ## Purpose
 

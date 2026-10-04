@@ -24,7 +24,7 @@ stages/stage8/
 
 - `STAGE8.md`：第二轮独立设计复审通过的 v2 主设计合同。
 - `STAGE8_DESIGN_FREEZE.md`：DESIGN FROZEN 的 normative freeze-prep addendum；只补充 numeric validation ownership 与 typed StageEvaluationStatus，两者与主设计共同构成冻结合同。
-- `STAGE8_EVIDENCE_MATRIX.md`：官方状态 production mapping 的 Evidence Gate。
+- [STAGE8_EVIDENCE_MATRIX.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/historical_stage_gates/stage8/STAGE8_EVIDENCE_MATRIX.md)：官方状态 production mapping 的 Evidence Gate。
 - `STAGE8_BUILD_PROMPT.md`：Stage 8 正式施工 Prompt。
 - `STAGE8_IMPLEMENTATION_REPORT.md`：production implementation 施工报告与独立实现审计入口记录；保留其历史时间点描述，不作为当前状态文档。
 - `STAGE8_FINAL_AUDIT.md`：锁定 Final Audit approved exact SHA、审计 findings、CI 与 artifact provenance 的正式 Final Audit 记录。
@@ -203,3 +203,10 @@ stages/stageN/
 ```
 
 历史 Stage 1～7 暂不因 Stage 8 封版而迁移。Stage 9 必须作为新的独立阶段设计，不得顺手重写 Stage 8 frozen contracts。
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status
