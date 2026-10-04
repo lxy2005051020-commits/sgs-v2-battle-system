@@ -145,7 +145,7 @@ def test_formula_lane_requires_complete_application_time_snapshot() -> None:
     systems = BattleSystems(weapon_troop_function_table=_identity_troop_table())
     target = _unit(
         "target",
-        "B",
+        "A",
         troops=100,
         wounded_troops=900,
     )
@@ -198,9 +198,16 @@ def test_special_pre_resolved_recovery_does_not_enter_ordinary_treatment_formula
         wounded_troops=900,
         intelligence=50.0,
     )
+    enemy = _unit(
+        "enemy",
+        "B",
+        troops=1000,
+        wounded_troops=0,
+        intelligence=50.0,
+    )
     context = BattleContext(
         battle_id="stage13-b3-special-recovery-isolation",
-        units={"source": source, "target": target},
+        units={"source": source, "target": target, "enemy": enemy},
         event_bus=EventBus(),
         random=RandomSystem(7),
     )
