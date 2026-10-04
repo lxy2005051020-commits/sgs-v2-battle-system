@@ -1,6 +1,6 @@
 # Stage13-D1 PendingWork Freeze Audit
 
-Date: 2026-10-04. Verdict: IMPLEMENTED / LOCAL GATES PASS / MAIN CI REQUIRED.
+Date: 2026-10-04. Verdict: Stage13-D1 PendingWork = FROZEN.
 Scope: one-shot PendingWork foundation, not Stage13 completion.
 
 ## Baseline authority and architecture audit
@@ -42,7 +42,7 @@ extensions are limited to scheduling boundaries and leave existing branch/transa
 | Full regression | PASS | 1739 passed, all 1691 existing tests retained |
 | Demo | PASS | python demo.py exit 0 |
 | Independent audit | PASS | scripts/audit_stage13_d1.py, 21 source hashes + independent harness |
-| Latest main CI | REQUIRED | final publication evidence appended after GitHub verification |
+| Implementation main CI | PASS | 37208784372; all tests/demo/independent audit/artifact upload SUCCESS |
 
 ## Adversarial routes, not a blanket no-issue claim
 
@@ -69,3 +69,31 @@ the pure-reader contract to test the fail-closed boundary.
 D2, D3, D4, D5, G only. Core Gameplay Engine remains NOT YET FROZEN;
 Skill Runtime Readiness remains NOT YET READY. Repeated execution is explicitly RESERVED;
 the D1 freeze claim applies to the permitted minimal one-shot foundation.
+
+## Verified GitHub publication and final freeze decision
+
+```text
+Stage13-D1 PendingWork = FROZEN
+Canonical Owner / Identity / Lineage / Schedule / Lifetime = FROZEN
+Snapshot-JIT / Source-Provider-Target validity = FROZEN
+Cancellation-Completion / Finalization boundary / Due order = FROZEN
+Focused = 48 PASS
+Full regression = 1739 PASS
+Demo = PASS
+Independent executable audit = PASS (11 adversarial cases, 21 frozen-source hashes)
+Implementation main HEAD = f504f45d67ec3afce807367adb0435fdbaeba4e2
+Implementation main CI run = 37208784372
+Implementation CI conclusion = SUCCESS
+```
+
+[Verified implementation main CI](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/37208784372)
+completed all test/demo/independent-audit/snapshot-upload steps successfully. The downloaded
+`stage8-independent-audit-f504f45d67ec3afce807367adb0435fdbaeba4e2` artifact's
+AUDIT_SOURCE_SHA.txt matches that HEAD; AUDIT_STAGE13_D1.json is PASS with 21/21 source checks.
+Research main was rechecked and remains `f7b646876c976c8cdfb8ebb5c5a9ce11b909906a`.
+
+This freeze-record commit changes governance only. Its own final HEAD and CI are resolved
+from Git history/GitHub Checks and reported after that latest-main CI completes; embedding
+this commit's own hash in its content would be self-referential. The proof above identifies
+the executable implementation revision; the latest freeze-record revision is also required
+to pass the unchanged full CI workflow before final delivery. Only D1 is frozen.

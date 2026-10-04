@@ -1,6 +1,6 @@
 # 三国志战略版战斗模拟器 V2 · 当前项目状态
 
-> Current checkpoint (2026-10-04): Research FROZEN = 40/40; Runtime FROZEN TO CONTRACT = 40/40; Strict Complete = 40/40. DSTS9-B02 = CLOSED / FROZEN_P0. Stage13-D1 PendingWork = IMPLEMENTED / LOCAL AUDIT PASS / MAIN CI REQUIRED. Earlier dated status entries below are historical snapshots, superseded by [Stage13 current authority](stages/stage13/README.md) and [D1 audit](stages/stage13/STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md). Stage13 remains ACTIVE; whole-engine freeze/readiness exit remains open.
+> Current checkpoint (2026-10-04): Research FROZEN = 40/40; Runtime FROZEN TO CONTRACT = 40/40; Strict Complete = 40/40. DSTS9-B02 = CLOSED / FROZEN_P0. Stage13-D1 PendingWork = FROZEN / IMPLEMENTED / MAIN CI PASS. Earlier dated status entries below are historical snapshots, superseded by [Stage13 current authority](stages/stage13/README.md) and [D1 audit](stages/stage13/STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md). Stage13 remains ACTIVE; whole-engine freeze/readiness exit remains open.
 
 > Current governance snapshot: **2026-09-28**
 

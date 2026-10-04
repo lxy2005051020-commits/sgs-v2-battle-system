@@ -163,7 +163,7 @@ No row may move directly from this ledger to implementation merely because its d
 
 ## Stage13-D1 closure boundary — 2026-10-04
 
-D1 PendingWork foundation is IMPLEMENTED / LOCAL AUDIT PASS; latest-main publication
+D1 PendingWork foundation is FROZEN / MAIN CI PASS; latest-main publication
 gate is recorded in STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md. G13-010/012/014/015/016
 now have a concrete one-shot reusable foundation. Broad ledger blocking flags remain
 conservative for the Stage13 exit audit rather than implying all lifetime/modifier/operation

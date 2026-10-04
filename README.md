@@ -325,7 +325,7 @@ Authority: `stages/stage12/STAGE12_FINAL_COMPLETION_FREEZE_AUDIT.md`.
 
 Research / Runtime-to-contract / Strict Complete = 40/40 each.
 B1/B2/B2.5/B3 ordinary-treatment and residual runtime slices remain frozen.
-D1 PendingWork = IMPLEMENTED / LOCAL AUDIT PASS / MAIN CI REQUIRED.
+D1 PendingWork = FROZEN / IMPLEMENTED / MAIN CI PASS.
 1739 tests passed; demo PASS; independent audit PASS. Repeated execution is RESERVED.
 Remaining Stage13 work: D2, D3, D4, D5, G. Engine not yet frozen; Skill Runtime not yet ready.
 Authority: [D1 freeze audit](stages/stage13/STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md).

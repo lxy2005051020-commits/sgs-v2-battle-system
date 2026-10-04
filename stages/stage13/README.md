@@ -1,6 +1,6 @@
 # Stage13 · Core Gameplay Mechanism Completion
 
-> Current status: ACTIVE / FOUNDATIONAL + RESIDUAL MECHANISM RUNTIME SLICES FROZEN / CORE ENGINE EXIT WORK REMAINS
+> Current status: ACTIVE / FOUNDATIONAL + RESIDUAL + D1 PENDINGWORK SLICES FROZEN / CORE ENGINE EXIT WORK REMAINS
 >
 > Activated: 2026-09-28 by STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
 >
@@ -178,7 +178,7 @@ special recovery families remain separate from ordinary treatment and are implem
 Current authorized runtime sequence within the Stage13 core-engine route:
 
 ```text
-D1 PendingWork / delayed work foundation = IMPLEMENTED / LOCAL AUDIT PASS / MAIN CI REQUIRED
+D1 PendingWork / delayed work foundation = FROZEN / IMPLEMENTED / MAIN CI PASS
 D2 UsageBudget / Frequency              = REMAINS
 D3 Multi-effect Composition             = REMAINS
 D4 Attribute Snapshot/JIT + Provenance  = REMAINS
