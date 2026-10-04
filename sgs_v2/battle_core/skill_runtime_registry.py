@@ -158,5 +158,15 @@ class SkillRuntimeRegistry:
     def __contains__(self, key: tuple[str, SkillSlot]) -> bool:
         return key in self._runtimes
 
+    def __iter__(self):
+        return iter(self._runtimes.values())
+
+    def values(self) -> tuple[SkillRuntime, ...]:
+        return tuple(self._runtimes.values())
+
+    def all(self) -> tuple[SkillRuntime, ...]:
+        return tuple(self._runtimes.values())
+
     def __len__(self) -> int:
         return len(self._runtimes)
+

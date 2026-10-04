@@ -825,6 +825,7 @@ from .troop_admission import (
     create_xiliang_cavalry_definition,
     create_xiliang_cavalry_runtime,
 )
+from .troop_system import TroopAdmissionRejectedError
 
 __all__ += [
     "PendingWork", "PendingWorkRegistry", "PendingWorkSystem", "PendingWorkStatus",
@@ -835,6 +836,7 @@ __all__ += [
     "PendingWorkId", "SkillOperationId", "EffectOperationId", "RecoveryOperationId",
     "TroopAdmissionResult",
     "TroopAdmissionStatus",
+    "TroopAdmissionRejectedError",
     "XILIANG_CAVALRY_CRIT_BONUS",
     "XILIANG_CAVALRY_CRIT_CHANCE",
     "XILIANG_CAVALRY_DURATION_EXPIRES_ROUND",
@@ -844,4 +846,5 @@ __all__ += [
     "create_xiliang_cavalry_definition",
     "create_xiliang_cavalry_runtime",
 ]
+
 

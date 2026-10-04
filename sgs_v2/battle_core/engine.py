@@ -31,6 +31,7 @@ class BattleEngine:
             return self.context.result
 
         self._enter_phase(BattlePhase.PRE_BATTLE)
+        self.systems.troop_system.process_pre_battle_troop_skills(self.context, self.systems)
         self.context.event_bus.publish(
             event_type=EventType.BATTLE_STARTED,
             phase=self.context.current_phase,
