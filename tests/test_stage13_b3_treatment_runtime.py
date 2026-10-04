@@ -222,7 +222,7 @@ def test_special_pre_resolved_recovery_does_not_enter_ordinary_treatment_formula
             target_id="target",
         ),
         probability=1.0,
-        recovery_model_kind=RecoveryModelKind.TREATMENT_AMOUNT,
+        recovery_model_kind=RecoveryModelKind.SPECIAL_RECOVERY_AMOUNT,
         recovery_potency_context=RecoveryPotencyContext(
             treatment_amount=321,
         ),
