@@ -49,6 +49,7 @@ A migration-only compatibility seam exists for historical tests/snapshots that m
 - each side has an absolute `-90%` net floor, equivalent to a minimum multiplier of `0.10`;
 - outgoing and incoming sides remain separate multiplicative layers;
 - reduction pierce scales only the incoming-reduction component before net incoming composition;
+- typed fixed-value reduction subtracts after multiplicative phases and may reduce final damage to zero;
 - typed CRITICAL and SINGLE_HIT lanes remain distinct.
 
 ### Advancement
@@ -82,9 +83,9 @@ The Stage13 integration does not invent a new base-damage formula.
 Branch checkpoint:
 
 ```text
-head = 4cd32002d2f2283f28fe956c7300db7b44c8139a
-GitHub Actions run = 37198006176
-pytest = 1682 passed
+head = 23b48587f05ea4a84df90a7f8c54582e3f063e4e
+GitHub Actions run = 37198181258
+pytest = 1683 passed
 demo = PASS
 ```
 
