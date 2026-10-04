@@ -56,6 +56,10 @@ class BattleEngine:
             self.context.current_round = round_no
 
             self._enter_phase(BattlePhase.ROUND_START)
+            if round_no > 1:
+                self.systems.troop_system.decay_wounded_all(
+                    self.context.units.values()
+                )
             self._settle_phase_expiry(
                 round_no=round_no,
                 phase=BattlePhase.ROUND_START.value,
