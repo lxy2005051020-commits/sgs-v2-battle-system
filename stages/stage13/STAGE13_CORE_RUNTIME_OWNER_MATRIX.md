@@ -55,7 +55,7 @@ One gameplay truth gets one canonical owner. Adapters may translate, policies ma
 | Damage modifier resolution | DamageModifierSystem | typed contributions | CANONICAL / STAGE13-B2 EXTENDED | ordinary same-side increase/reduction pools are algebraic; cross-side composition remains multiplicative |
 | Critical family state resolution | Stage11StateRuntime | DamageSystem | CANONICAL FOR FROZEN STATES | Stage13 must not generalize state IDs into DamageSystem |
 | Damage aftermath fact | DamageAftermathSystem / DamageAftermathPort | DamageInstanceCoordinator | CANONICAL | opportunity consumers observe committed fact |
-| Recovery settlement | RecoverySystem | TroopSystem | CANONICAL | second CEIL/healing block/capacity order preserved |
+| Recovery settlement | RecoverySystem | TroopSystem | CANONICAL | second CEIL/healing block/capacity order preserved |\n| Ordinary treatment nominal formula | TreatmentFormulaSystem | RecoveryOpportunitySystem / RecoveryPotencyContext | CANONICAL FOR STAGE13-B3 CORE | Rate(F(N)+Attr), same-side algebraic pools, cross-side multiplication, independent red pool, CEIL; persistent inputs are application-time snapshots |
 | Attacker damage-derived recovery basis | Stage11AttackerRecoverySystem | Damage aftermath/partition facts | CANONICAL FOR FROZEN STATES | generic work must not duplicate lifesteal math |
 | Recovery opportunity admission | RecoveryOpportunitySystem | TriggerSystem / RuleHookSystem | CANONICAL FOR CURRENT FAMILIES | Stage13 may generalize descriptor, not settlement |
 | Effect dispatch | EffectExecutor | domain owners | CANONICAL | executor routes; it does not own domain math |

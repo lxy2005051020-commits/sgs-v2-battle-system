@@ -338,6 +338,11 @@ from .trigger_system import (
     TriggerSystem,
 )
 from .troop_system import TroopChangeResult, TroopSystem
+from .treatment_formula import (
+    TreatmentFormulaResult,
+    TreatmentFormulaSystem,
+    TreatmentModifierSnapshot,
+)
 from .victory_system import VictorySystem
 from .weapon_damage_formula import WeaponBaseDamageFormula
 from .state_generation import (
@@ -685,6 +690,9 @@ __all__ = [
     "TriggerSystem",
     "TroopChangeResult",
     "TroopSystem",
+    "TreatmentModifierSnapshot",
+    "TreatmentFormulaResult",
+    "TreatmentFormulaSystem",
     "VictorySystem",
     "WeaponBaseDamageFormula",
     # Stage9 Phase 9.1 Foundational Contracts

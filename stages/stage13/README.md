@@ -1,6 +1,6 @@
 # Stage13 · Core Gameplay Mechanism Completion
 
-> Current status: ACTIVE / B1+B2+B2.5 RUNTIME FROZEN / B3 RESEARCH STILL OPEN
+> Current status: ACTIVE / B1+B2+B2.5 RUNTIME FROZEN / B3 ORDINARY-TREATMENT CORE INTEGRATED, SPECIAL FAMILY BOUNDARIES OPEN
 >
 > Activated: 2026-09-28 by STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
 >
@@ -22,7 +22,7 @@ Stage13-B  Foundational Empirical Mechanics Research
            B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN
            B2 Damage Increase / Reduction Mechanics — FROZEN
            B2.5 Full Damage Advancement / Hidden Mechanism Closure — CLOSED
-           B3 Recovery / Treatment Formula Mechanics — RESEARCH NOT YET FROZEN
+           B3 Recovery / Treatment Formula Mechanics — ORDINARY FORMULA CORE FROZEN / SPECIAL FAMILIES OPEN
 
 Stage13-C  Residual State Mechanism Closure
 
@@ -30,6 +30,7 @@ Stage13-D  Consolidated Gap Classification + Runtime Governance
 Stage13-E  Core Runtime Architecture Design
 Stage13-F  Core Mechanism Implementation
            Foundational slice B1/B2/B2.5 — IMPLEMENTED / RUNTIME FREEZE AUDIT PASS
+           B3 ordinary-treatment core — IMPLEMENTED / CI AUDIT PENDING
 Stage13-G  Independent Engine Completion / Deterministic Replay Audit
 ~~~
 
@@ -84,7 +85,21 @@ B2 and B2.5 research are closed for the implemented slice. Runtime now uses same
 
 ### B3 — Recovery / treatment formula
 
-Recovery timing and lifecycle are mature, and LifeSteal has strong frozen arithmetic. The general treatment-rate/attribute-to-recovery mapping is not equivalently closed. Stage13 must research the numerical family and modifier ordering before declaring the recovery foundation complete.
+The ordinary treatment-rate core is now contract-frozen and integrated:
+
+```text
+H = CEIL(
+    Rate
+    × (F(N) + Attr)
+    × SourceOrdinaryPool
+    × TargetOrdinaryPool
+    × RedPool
+)
+```
+
+The selected attribute coefficient is 1. Same-side ordinary modifiers add algebraically, source/target sides multiply, red-degree is an independent pool, and persistent treatment replays application-time formula state. The final HealingBlock and wounded/missing-troop capacity tail remains live in RecoverySystem/TroopSystem.
+
+Special recovery families remain independently owned and are not silently collapsed into this formula.
 
 ## 5. Residual state research comes after B1-B3
 
@@ -133,17 +148,18 @@ Skill Runtime Readiness = READY
 Stage13-B1 Runtime Integration   = IMPLEMENTED
 Stage13-B2 Runtime Integration   = IMPLEMENTED
 Stage13-B2.5 Runtime Integration = IMPLEMENTED
+Stage13-B3 Treatment Core        = IMPLEMENTED / CI AUDIT PENDING
 Branch CI 37198181258            = 1683 passed / demo PASS
 Independent PR/Main Audit        = PASS
 Merged-main CI 37198353900        = 1683 passed / demo PASS
 ```
 
-B3 treatment-formula research remains open and is not hardcoded by this runtime integration.
+B3 ordinary-treatment formula core is now integrated. Special recovery-family boundaries and other residual Stage13 debt remain open.
 
 ## 9. NEXT
 
 ```text
 NEXT =
-continue unresolved Stage13 research and core-engine completion
-B3 exact treatment formula remains open
+finish B3 runtime CI/freeze audit, then continue residual Stage13 core-engine completion
+special recovery families and residual state debt remain bounded/open
 ```

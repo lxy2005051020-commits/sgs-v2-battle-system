@@ -78,6 +78,7 @@ from .target_resolution_system import TargetResolutionSystem
 from .target_system import TargetSystem
 from .trigger_system import TriggerSystem
 from .troop_system import TroopSystem
+from .treatment_formula import TreatmentFormulaSystem
 from .victory_system import VictorySystem
 
 
@@ -121,6 +122,7 @@ class BattleSystems:
     normal_attack_system: NormalAttackSystem = field(init=False)
     action_system: ActionSystem = field(init=False)
     recovery_system: RecoverySystem = field(init=False)
+    treatment_formula_system: TreatmentFormulaSystem = field(init=False)
     recovery_opportunity_system: RecoveryOpportunitySystem = field(init=False)
     damage_aftermath_system: DamageAftermathSystem = field(init=False)
     effect_executor: EffectExecutor = field(init=False)
@@ -314,9 +316,13 @@ class BattleSystems:
             equipment_effectiveness_policy=self.equipment_effectiveness_policy,
             execution_prevention_policy=self.recovery_execution_prevention_policy,
         )
+        self.treatment_formula_system = TreatmentFormulaSystem(
+            troop_function_table=self.weapon_troop_function_table,
+        )
         self.recovery_opportunity_system = RecoveryOpportunitySystem(
             self.recovery_system,
             provider_validity_policy=self.provider_validity_policy,
+            treatment_formula_system=self.treatment_formula_system,
         )
         self.stage11_attacker_recovery_system = Stage11AttackerRecoverySystem(
             self.recovery_system,
