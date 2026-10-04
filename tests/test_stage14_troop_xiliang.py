@@ -40,6 +40,10 @@ from sgs_v2.battle_core import (
     SkillProviderRef,
     SkillRuntime,
     SkillSlot,
+    SkillDefinition,
+    SkillTargetMode,
+    SkillType,
+    ApplyStateSkillEffectSpec,
     SpecialTroopId,
     StateCandidate,
     StateLifetimeSpec,
@@ -73,7 +77,7 @@ def make_test_context(
     units = {
         "a1": UnitRuntime(
             unit_id="a1",
-            name="马腾",
+            name="韩遂",
             team_id="A",
             max_troops=10000,
             troops=10000,
@@ -472,3 +476,286 @@ def test_t10_full_battle_lifecycle_and_cleanup() -> None:
     assert context.ended
     # Post-battle cleanup removes all active states
     assert len(context.states.find()) == 0
+
+
+# ===========================================================================
+# Target A: Ma Teng Commander Clause Fail Closed (MT-01, MT-02, MT-03)
+# ===========================================================================
+def test_mt01_supported_non_mateng_commander_passes_with_base_rate() -> None:
+    """MT-01: Non-Ma Teng commander configuration succeeds with standard 25% crit."""
+    context, systems = make_test_context()
+    assert context.units["a1"].name == "韩遂"
+    runtime = create_xiliang_cavalry_runtime("a1")
+
+    adm_res = admit_and_install_troop_skill(context, systems, runtime)
+    assert adm_res.status == TroopAdmissionStatus.SUCCESS
+    assert adm_res.special_troop_id == SpecialTroopId.XILIANG_CAVALRY
+
+    context.current_round = 1
+    crit_a1 = systems.stage11_state_runtime.resolve_critical(
+        context, source_id="a1", damage_type=DamageType.WEAPON
+    )
+    assert pytest.approx(crit_a1.chance, rel=1e-5) == 0.25
+
+
+def test_mt02_mateng_commander_fails_closed_due_to_unresolved_speed_formula() -> None:
+    """MT-02: Ma Teng commander configuration strictly fails closed (REJECTED_COMMANDER_SCALING_UNRESOLVED)."""
+    context, systems = make_test_context()
+    context.units["a1"].name = "马腾"
+    runtime = create_xiliang_cavalry_runtime("a1")
+
+    adm_res = admit_and_install_troop_skill(context, systems, runtime)
+    assert adm_res.status == TroopAdmissionStatus.REJECTED_COMMANDER_SCALING_UNRESOLVED
+    assert adm_res.special_troop_id is None
+    assert "BOUNDED_UNKNOWN" in (adm_res.reason or "")
+
+
+def test_mt03_mateng_rejection_transaction_consistency() -> None:
+    """MT-03: Rejection on Ma Teng commander preserves transactional consistency.
+    No special troop identity is created, and no partial critical states are installed.
+    """
+    context, systems = make_test_context()
+    context.units["a1"].name = "马腾"
+    runtime = create_xiliang_cavalry_runtime("a1")
+
+    adm_res = admit_and_install_troop_skill(context, systems, runtime)
+    assert adm_res.status == TroopAdmissionStatus.REJECTED_COMMANDER_SCALING_UNRESOLVED
+
+    for uid in ("a1", "a2", "a3"):
+        assert context.units[uid].special_troop_id is None
+        assert len(context.states.find(owner_id=uid, state_id=OfficialStateId.CRITICAL.value)) == 0
+
+
+# ===========================================================================
+# Target B: Provider Disable Actual Critical Resolution (PD-01 .. PD-05)
+# ===========================================================================
+def test_pd01_baseline_critical_resolution() -> None:
+    """PD-01: Baseline active Xiliang Cavalry grants exactly 25% critical chance via resolve_critical."""
+    context, systems = make_test_context()
+    runtime = create_xiliang_cavalry_runtime("a1")
+    admit_and_install_troop_skill(context, systems, runtime)
+
+    context.current_round = 1
+    for uid in ("a1", "a2", "a3"):
+        res = systems.stage11_state_runtime.resolve_critical(
+            context, source_id=uid, damage_type=DamageType.WEAPON
+        )
+        assert pytest.approx(res.chance, rel=1e-5) == 0.25
+
+
+def test_pd02_provider_suppressed_critical_resolution_zero() -> None:
+    """PD-02: Provider under 690222 Intimidation suppresses critical modifier in resolve_critical.
+    Special troop identity and StateInstance remain mounted, but effective critical contribution is 0.0.
+    """
+    context, systems = make_test_context()
+    runtime = create_xiliang_cavalry_runtime("a1")
+    admit_and_install_troop_skill(context, systems, runtime)
+
+    # Intimidate provider a1
+    systems.state_application_coordinator.apply_candidate(
+        context,
+        StateCandidate(
+            state_id=OfficialStateId.INTIMIDATION.value,
+            owner_id="a1",
+            source_id="b1",
+            source_skill_id="690222",
+            lifetime_spec=StateLifetimeSpec.round_calendar(expires_round=2),
+            runtime_params_candidate=EmptyStateRuntimeParams(),
+        ),
+    )
+
+    # Verify identities still preserved
+    assert context.units["a1"].special_troop_id == SpecialTroopId.XILIANG_CAVALRY
+    assert len(context.states.find(owner_id="a1", state_id=OfficialStateId.CRITICAL.value)) == 1
+
+    # Verify resolve_critical sees 0.0 effective crit chance while suppressed
+    context.current_round = 1
+    crit_a1 = systems.stage11_state_runtime.resolve_critical(
+        context, source_id="a1", damage_type=DamageType.WEAPON
+    )
+    assert pytest.approx(crit_a1.chance, rel=1e-5) == 0.0
+
+
+def test_pd03_duration_clock_continues_during_suppression() -> None:
+    """PD-03: Suppression during Round 2 does not extend state lifetime.
+    Clock continues, and state strictly expires at Round 4 without extension.
+    """
+    context, systems = make_test_context()
+    runtime = create_xiliang_cavalry_runtime("a1")
+    admit_and_install_troop_skill(context, systems, runtime)
+
+    # Intimidate provider a1 for R1-R2
+    systems.state_application_coordinator.apply_candidate(
+        context,
+        StateCandidate(
+            state_id=OfficialStateId.INTIMIDATION.value,
+            owner_id="a1",
+            source_id="b1",
+            source_skill_id="690222",
+            lifetime_spec=StateLifetimeSpec.round_calendar(expires_round=2),
+            runtime_params_candidate=EmptyStateRuntimeParams(),
+        ),
+    )
+
+    # In Round 2 end, intimidation expires
+    settle_due(systems, context, round_no=2, phase=BattlePhase.ROUND_END.value)
+
+    # In Round 3, provider is restored and crit is active again
+    context.current_round = 3
+    crit_a1_r3 = systems.stage11_state_runtime.resolve_critical(
+        context, source_id="a1", damage_type=DamageType.WEAPON
+    )
+    assert pytest.approx(crit_a1_r3.chance, rel=1e-5) == 0.25
+
+    # In Round 4, natural expiration occurs at ROUND_START
+    context.current_round = 4
+    systems.state_lifecycle_system.expire_at(
+        context, round_no=4, phase=BattlePhase.ROUND_START.value
+    )
+    crit_a1_r4 = systems.stage11_state_runtime.resolve_critical(
+        context, source_id="a1", damage_type=DamageType.WEAPON
+    )
+    assert pytest.approx(crit_a1_r4.chance, rel=1e-5) == 0.0
+
+
+def test_pd04_restore_without_catchup_compensation() -> None:
+    """PD-04: Expiration of intimidation restores crit to exactly 25% without catch-up bonus."""
+    context, systems = make_test_context()
+    runtime = create_xiliang_cavalry_runtime("a1")
+    admit_and_install_troop_skill(context, systems, runtime)
+
+    systems.state_application_coordinator.apply_candidate(
+        context,
+        StateCandidate(
+            state_id=OfficialStateId.INTIMIDATION.value,
+            owner_id="a1",
+            source_id="b1",
+            source_skill_id="690222",
+            lifetime_spec=StateLifetimeSpec.round_calendar(expires_round=2),
+            runtime_params_candidate=EmptyStateRuntimeParams(),
+        ),
+    )
+
+    # Expire intimidation
+    settle_due(systems, context, round_no=2, phase=BattlePhase.ROUND_END.value)
+
+    # Restored crit rate is standard 25%, not 25% + missed bonus
+    context.current_round = 3
+    crit_a1 = systems.stage11_state_runtime.resolve_critical(
+        context, source_id="a1", damage_type=DamageType.WEAPON
+    )
+    assert pytest.approx(crit_a1.chance, rel=1e-5) == 0.25
+
+
+def test_pd05_provider_death_preserves_living_teammate_crit() -> None:
+    """PD-05: Model DEATH-E: Provider death does not invalidate or suppress teammate crit states."""
+    context, systems = make_test_context()
+    runtime = create_xiliang_cavalry_runtime("a1")
+    admit_and_install_troop_skill(context, systems, runtime)
+
+    # Provider a1 dies in Round 2
+    context.current_round = 2
+    context.units["a1"].troops = 0
+    assert not context.units["a1"].is_alive
+
+    # Living teammate a2 still gets 25% crit in Round 2 and Round 3
+    for r in (2, 3):
+        context.current_round = r
+        crit_a2 = systems.stage11_state_runtime.resolve_critical(
+            context, source_id="a2", damage_type=DamageType.WEAPON
+        )
+        assert pytest.approx(crit_a2.chance, rel=1e-5) == 0.25
+
+
+# ===========================================================================
+# Target C: FIXED_ALL_TEAM vs FIXED_ALL_ALLIES Semantic Distinction
+# ===========================================================================
+def test_target_mode_all_team_includes_self_while_all_allies_excludes_self() -> None:
+    """Target C: FIXED_ALL_TEAM selects all 3 team units (include_self=True).
+    FIXED_ALL_ALLIES selects only surviving friendly teammates (include_self=False, 2 units).
+    """
+    context, systems = make_test_context()
+
+    # Case 1: FIXED_ALL_TEAM
+    team_defn = SkillDefinition(
+        skill_id="test_team_skill",
+        name="全体测试",
+        activation_rate=1.0,
+        target_mode=SkillTargetMode.FIXED_ALL_TEAM,
+        effect_specs=(
+            ApplyStateSkillEffectSpec(
+                state_id=OfficialStateId.CRITICAL.value,
+                runtime_params=CriticalStateParams(chance=0.1, bonus=1.0),
+                expires_round=2,
+            ),
+        ),
+        skill_type=SkillType.PASSIVE,
+    )
+    team_runtime = SkillRuntime(definition=team_defn, owner_id="a1")
+    team_res = systems.skill_resolver.resolve(context, team_runtime)
+    team_targets = {e.owner_id for e in team_res.effects}
+    assert team_targets == {"a1", "a2", "a3"}  # All 3 team members
+
+    # Case 2: FIXED_ALL_ALLIES
+    allies_defn = SkillDefinition(
+        skill_id="test_allies_skill",
+        name="友军测试",
+        activation_rate=1.0,
+        target_mode=SkillTargetMode.FIXED_ALL_ALLIES,
+        effect_specs=(
+            ApplyStateSkillEffectSpec(
+                state_id=OfficialStateId.CRITICAL.value,
+                runtime_params=CriticalStateParams(chance=0.1, bonus=1.0),
+                expires_round=2,
+            ),
+        ),
+        skill_type=SkillType.PASSIVE,
+    )
+    allies_runtime = SkillRuntime(definition=allies_defn, owner_id="a1")
+    allies_res = systems.skill_resolver.resolve(context, allies_runtime)
+    allies_targets = {e.owner_id for e in allies_res.effects}
+    assert allies_targets == {"a2", "a3"}  # Excludes self a1
+
+
+# ===========================================================================
+# Target D: Generic ApplyStateSkillEffectSpec Capability Verification
+# ===========================================================================
+def test_generic_apply_state_skill_effect_spec_in_non_troop_skill() -> None:
+    """Target D: Verify ApplyStateSkillEffectSpec runtime_params and expiration
+    functions generically in non-troop skills (e.g. PASSIVE skill applying EVASION).
+    """
+    from sgs_v2.battle_core.stage11_state_params import EvasionStateParams
+    from sgs_v2.battle_core.effect_result import EffectExecutionStatus
+
+    context, systems = make_test_context()
+
+    generic_defn = SkillDefinition(
+        skill_id="test_generic_evasion_buff",
+        name="通用规避增益",
+        activation_rate=1.0,
+        target_mode=SkillTargetMode.SELF,
+        effect_specs=(
+            ApplyStateSkillEffectSpec(
+                state_id=OfficialStateId.EVASION.value,
+                runtime_params=EvasionStateParams(probability=0.35),
+                expires_round=3,
+                expires_phase=BattlePhase.ROUND_END.value,
+            ),
+        ),
+        skill_type=SkillType.PASSIVE,
+    )
+    rt = SkillRuntime(definition=generic_defn, owner_id="a1")
+    res = systems.skill_resolver.resolve(context, rt)
+    assert len(res.effects) == 1
+
+    exec_res = systems.effect_executor.execute(context, res.effects[0])
+    assert exec_res.status == EffectExecutionStatus.RESOLVED
+    assert exec_res.state_instance is not None
+
+    inst = exec_res.state_instance
+    assert inst.expires_round == 3
+    assert inst.expires_phase == BattlePhase.ROUND_END.value
+    assert isinstance(inst.runtime_params, EvasionStateParams)
+    assert inst.runtime_params.probability == 0.35
+
+
