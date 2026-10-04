@@ -1,6 +1,6 @@
 # Stage13-B3 Treatment Formula Runtime Integration
 
-> Status: IMPLEMENTED ON FEATURE BRANCH / CI PENDING
+> Status: IMPLEMENTED ON MAIN / MERGED-MAIN CI PASS / RUNTIME CORE AUDITED
 >
 > Contract authority: `sgs-state-mechanics-research/STAGE13_B3_RECOVERY_FORMULA_MECHANISM_CONTRACT.md`
 
@@ -110,8 +110,17 @@ This integration does not reinterpret these as ordinary treatment:
 5. persistent application-time snapshot despite later live source changes;
 6. fail-closed behavior for incomplete formula snapshots.
 
-## 6. Freeze boundary
+## 6. Verification and freeze boundary
 
-This runtime integration freezes the ordinary treatment formula core only.
+Merged-main verification:
 
-It does not claim that every special recovery family in the game has been collapsed into this formula.
+- main commit: `a27785a830e6d3f89b0c17d93bdaa31f84c48207`;
+- GitHub Actions run: `37200488246`;
+- workflow conclusion: `success`;
+- test step: PASS;
+- demo smoke test: PASS;
+- independent audit snapshot: PASS.
+
+Therefore the Stage13-B3 ordinary-treatment runtime core is frozen to the canonical contract.
+
+This freeze applies only to the ordinary treatment formula family. It does not claim that every special recovery family in the game has been collapsed into this formula.
