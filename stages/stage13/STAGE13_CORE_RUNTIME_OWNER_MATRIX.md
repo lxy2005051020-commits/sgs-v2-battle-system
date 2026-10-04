@@ -17,6 +17,7 @@ One gameplay truth gets one canonical owner. Adapters may translate, policies ma
 | Unit identity / base runtime facts | UnitRuntime | BattleContext | CANONICAL | no Skill-local unit truth |
 | Team membership / commander / lineup | UnitRuntime + BattleContext | LineupPosition | CANONICAL | no selector-local relation reconstruction |
 | Troop mutation | TroopSystem | DamageResolutionSystem / RecoverySystem | CANONICAL | no direct troop writes in new effects |
+| Wounded / recoverable capacity | UnitRuntime.wounded_troops + TroopSystem mutation rules | DamageResolutionSystem / RecoverySystem / BattleEngine round boundary | CANONICAL FOR STAGE13-B1 INTEGRATED SLICE | generation, consumption, decay and defeat cleanup remain centralized |
 | Alive / defeated truth | UnitRuntime.is_alive | DefeatCleanupPort / VictorySystem | CANONICAL | defeat consumers query this truth; cleanup does not redefine it |
 | Holder defeat cleanup | DefeatCleanupPort | StateLifecycleSystem / effectiveness transition | CANONICAL | source-death behavior remains separate |
 | Primary action ordering | ActionOrderSystem | AttributeSystem / Stage11StateRuntime | CANONICAL | FIRST_STRIKE/SURPRISE rules remain frozen |
@@ -51,7 +52,7 @@ One gameplay truth gets one canonical owner. Adapters may translate, policies ma
 | Damage target settlement | DamageResolutionSystem | TroopSystem | CANONICAL | assigned vs actual loss stays typed |
 | Damage partition plan | DamagePartitionCoordinator | Stage9 state runtime | CANONICAL | 690086 debt preserved |
 | Damage hit/prevention | HitResolutionSystem / DamagePreventionSystem | rule provider | CANONICAL | no new family-specific bypass owner |
-| Damage modifier resolution | DamageModifierSystem | typed contributions | CANONICAL | stage-specific contributions plug in |
+| Damage modifier resolution | DamageModifierSystem | typed contributions | CANONICAL / STAGE13-B2 EXTENDED | ordinary same-side increase/reduction pools are algebraic; cross-side composition remains multiplicative |
 | Critical family state resolution | Stage11StateRuntime | DamageSystem | CANONICAL FOR FROZEN STATES | Stage13 must not generalize state IDs into DamageSystem |
 | Damage aftermath fact | DamageAftermathSystem / DamageAftermathPort | DamageInstanceCoordinator | CANONICAL | opportunity consumers observe committed fact |
 | Recovery settlement | RecoverySystem | TroopSystem | CANONICAL | second CEIL/healing block/capacity order preserved |

@@ -134,6 +134,8 @@ class FrozenSourceFormulaFacts:
     source_level_at_application: int
     source_morale_at_application: int
     source_troop_type_at_application: TroopType | None = None
+    source_advancement_stars_at_application: int = 0
+    source_military_books_active_at_application: bool = False
 
     def __post_init__(self) -> None:
         if isinstance(self.source_troops_at_application, bool) or not isinstance(
@@ -165,6 +167,15 @@ class FrozenSourceFormulaFacts:
             raise TypeError(
                 f"source_troop_type_at_application must be a TroopType or None, got {type(self.source_troop_type_at_application)}"
             )
+        if (
+            isinstance(self.source_advancement_stars_at_application, bool)
+            or not isinstance(self.source_advancement_stars_at_application, int)
+        ):
+            raise TypeError("source_advancement_stars_at_application must be an int")
+        if not 0 <= self.source_advancement_stars_at_application <= 5:
+            raise ValueError("source_advancement_stars_at_application must be within [0, 5]")
+        if not isinstance(self.source_military_books_active_at_application, bool):
+            raise TypeError("source_military_books_active_at_application must be a bool")
 
 
 @dataclass(frozen=True, slots=True)

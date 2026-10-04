@@ -255,8 +255,11 @@ def test_troop_system_clamps_damage_and_recovery() -> None:
     troops = TroopSystem()
     assert troops.apply_damage(unit, 99).actual_change == 10
     assert unit.troops == 0
-    assert troops.restore(unit, 150).actual_change == 100
-    assert unit.troops == 100
+    # Stage13-B1 canonical runtime default: defeat clears wounded capacity,
+    # so a defeated unit cannot be revived through ordinary recovery.
+    assert troops.restore(unit, 150).actual_change == 0
+    assert unit.troops == 0
+    assert unit.wounded_troops == 0
 
 
 def test_stage1_temporary_rules_source_has_been_removed() -> None:

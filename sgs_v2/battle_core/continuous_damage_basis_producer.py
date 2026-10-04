@@ -161,6 +161,8 @@ class ContinuousDamageBasisProducer:
             source_level_at_application=source.level,
             source_morale_at_application=source.morale,
             source_troop_type_at_application=source.troop_type,
+            source_advancement_stars_at_application=source.advancement_stars,
+            source_military_books_active_at_application=source.military_books_active,
         )
 
         # 4. Source-side ordinary modifier plan
@@ -180,9 +182,9 @@ class ContinuousDamageBasisProducer:
             contrib
             for contrib in rules.modifier_contributions
             if contrib.applies_to(damage_type, DamageSourceType.CONTINUOUS)
-            and (
-                contrib.phase in (DamageModifierPhase.CRITICAL, DamageModifierPhase.OUTGOING)
-                or (contrib.source.owner_id is not None and contrib.source.owner_id == request.source_id)
+            and contrib.phase in (
+                DamageModifierPhase.CRITICAL,
+                DamageModifierPhase.OUTGOING,
             )
         ]
         source_mods.sort(key=lambda c: (c.phase_order, c.order_key))

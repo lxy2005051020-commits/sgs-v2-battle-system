@@ -69,6 +69,7 @@ class DamageModifierSystem:
             contribution.validate_runtime_contract()
             if contribution.operation not in {
                 DamageModifierOperation.MULTIPLY_FACTOR,
+                DamageModifierOperation.SUBTRACT_FLAT,
                 DamageModifierOperation.REDUCTION_PIERCE,
             }:
                 raise ValueError(
@@ -110,6 +111,20 @@ class DamageModifierSystem:
         applied: list[AppliedDamageModifier] = []
         for contribution in ordered:
             if not resolve_probability(context, contribution.probability):
+                continue
+            if contribution.operation is DamageModifierOperation.SUBTRACT_FLAT:
+                input_damage = current
+                current = max(0.0, current - contribution.operand)
+                applied.append(
+                    AppliedDamageModifier(
+                        contribution=contribution,
+                        input_damage=input_damage,
+                        output_damage=current,
+                        original_operand=contribution.operand,
+                        effective_operand=contribution.operand,
+                        pierce_contributor=None,
+                    )
+                )
                 continue
             if contribution.operation is not DamageModifierOperation.MULTIPLY_FACTOR:
                 raise ValueError(
@@ -158,11 +173,12 @@ class DamageModifierSystem:
         phases: frozenset[DamageModifierPhase],
         pierce_rate: float | None = None,
     ) -> DamageModifierResult:
-        """Resolve a selected modifier phase set for Stage11 pipeline ownership.
+        """Resolve selected phases using the Stage13-B2 aggregation contract.
 
-        With 690221 active, eligible incoming reductions are pooled as reduction
-        rates, capped at 90%, then proportionally transformed. The old resolve()
-        remains unchanged for Stage8 callers and regression compatibility.
+        Ordinary outgoing and incoming skill modifiers are algebraic same-side
+        pools. The two sides remain separate multiplicative layers. Incoming
+        reduction pierce transforms only the reduction part of the incoming pool.
+        CRITICAL and SINGLE_HIT remain typed non-pool phases.
         """
         current = validate_nonnegative_finite(scaled_damage, "scaled_damage")
         applicable: list[DamageModifierContribution] = []
@@ -181,69 +197,134 @@ class DamageModifierSystem:
         if pierce_rate is not None and not 0.0 <= pierce_rate <= 1.0:
             raise ValueError("pierce_rate must be in [0,1]")
 
-        applied: list[AppliedDamageModifier] = []
-        reduction_done = False
+        admitted: list[DamageModifierContribution] = []
         for contribution in applicable:
-            if (
-                pierce_rate is not None
-                and contribution.kind is DamageModifierKind.INCOMING_REDUCTION
-            ):
-                if reduction_done:
-                    continue
-                reduction_done = True
-                admitted: list[DamageModifierContribution] = []
-                for item in applicable:
-                    if item.kind is not DamageModifierKind.INCOMING_REDUCTION:
-                        continue
-                    if resolve_probability(context, item.probability):
-                        if not 0.0 <= item.operand <= 1.0:
-                            raise ValueError(
-                                "INCOMING_REDUCTION MULTIPLY_FACTOR must be in [0,1]"
-                            )
-                        admitted.append(item)
-                if not admitted:
-                    continue
-                total_reduction = min(
-                    sum(1.0 - item.operand for item in admitted),
-                    0.90,
+            if contribution.operation not in {
+                DamageModifierOperation.MULTIPLY_FACTOR,
+                DamageModifierOperation.SUBTRACT_FLAT,
+            }:
+                raise ValueError(
+                    f"unsupported damage modifier operation: {contribution.operation}"
                 )
-                effective_reduction = total_reduction * (1.0 - pierce_rate)
-                effective_factor = 1.0 - effective_reduction
+            if resolve_probability(context, contribution.probability):
+                admitted.append(contribution)
+
+        applied: list[AppliedDamageModifier] = []
+
+        def apply_linear_phase(
+            phase: DamageModifierPhase,
+            increase_kind: DamageModifierKind,
+            reduction_kind: DamageModifierKind,
+            *,
+            reduction_scale: float = 1.0,
+        ) -> None:
+            nonlocal current
+            phase_items = [item for item in admitted if item.phase is phase]
+            if not phase_items:
+                return
+
+            phase_base = current
+            raw_net = 0.0
+            for item in phase_items:
+                if item.kind is increase_kind:
+                    if item.operand < 1.0:
+                        raise ValueError(
+                            f"{increase_kind.value} MULTIPLY_FACTOR must be >= 1"
+                        )
+                    raw_net += item.operand - 1.0
+                elif item.kind is reduction_kind:
+                    if not 0.0 <= item.operand <= 1.0:
+                        raise ValueError(
+                            f"{reduction_kind.value} MULTIPLY_FACTOR must be in [0,1]"
+                        )
+                    raw_net -= (1.0 - item.operand) * reduction_scale
+                else:
+                    # Non-pool contribution in this phase keeps legacy typed
+                    # multiplicative behavior rather than being silently folded.
+                    input_damage = current
+                    current = validate_nonnegative_finite(
+                        current * item.operand,
+                        "modifier output",
+                    )
+                    applied.append(
+                        AppliedDamageModifier(
+                            contribution=item,
+                            input_damage=input_damage,
+                            output_damage=current,
+                            original_operand=item.operand,
+                            effective_operand=item.operand,
+                            pierce_contributor=None,
+                        )
+                    )
+                    phase_base = current
+                    raw_net = 0.0
+                    continue
+
                 input_damage = current
+                factor = max(0.10, 1.0 + raw_net)
                 current = validate_nonnegative_finite(
-                    current * effective_factor,
+                    phase_base * factor,
                     "modifier output",
                 )
                 applied.append(
                     AppliedDamageModifier(
-                        contribution=admitted[0],
+                        contribution=item,
                         input_damage=input_damage,
                         output_damage=current,
-                        original_operand=1.0 - total_reduction,
-                        effective_operand=effective_factor,
+                        original_operand=item.operand,
+                        effective_operand=(
+                            0.0 if input_damage == 0.0 else current / input_damage
+                        ),
                         pierce_contributor=None,
                     )
                 )
-                continue
 
-            if not resolve_probability(context, contribution.probability):
-                continue
-            if contribution.operation is not DamageModifierOperation.MULTIPLY_FACTOR:
-                raise ValueError(
-                    f"unsupported damage modifier operation: {contribution.operation}"
-                )
+        # Legacy/synthetic critical contributions remain their own typed phase.
+        for item in [x for x in admitted if x.phase is DamageModifierPhase.CRITICAL]:
             input_damage = current
             current = validate_nonnegative_finite(
-                current * contribution.operand,
+                current * item.operand,
                 "modifier output",
             )
             applied.append(
                 AppliedDamageModifier(
-                    contribution=contribution,
+                    contribution=item,
                     input_damage=input_damage,
                     output_damage=current,
-                    original_operand=contribution.operand,
-                    effective_operand=contribution.operand,
+                    original_operand=item.operand,
+                    effective_operand=item.operand,
+                    pierce_contributor=None,
+                )
+            )
+
+        apply_linear_phase(
+            DamageModifierPhase.OUTGOING,
+            DamageModifierKind.OUTGOING_INCREASE,
+            DamageModifierKind.OUTGOING_REDUCTION,
+        )
+        apply_linear_phase(
+            DamageModifierPhase.INCOMING,
+            DamageModifierKind.INCOMING_INCREASE,
+            DamageModifierKind.INCOMING_REDUCTION,
+            reduction_scale=1.0 if pierce_rate is None else 1.0 - pierce_rate,
+        )
+
+        for item in [x for x in admitted if x.phase is DamageModifierPhase.SINGLE_HIT]:
+            input_damage = current
+            if item.operation is DamageModifierOperation.SUBTRACT_FLAT:
+                current = max(0.0, current - item.operand)
+            else:
+                current = validate_nonnegative_finite(
+                    current * item.operand,
+                    "modifier output",
+                )
+            applied.append(
+                AppliedDamageModifier(
+                    contribution=item,
+                    input_damage=input_damage,
+                    output_damage=current,
+                    original_operand=item.operand,
+                    effective_operand=item.operand,
                     pierce_contributor=None,
                 )
             )

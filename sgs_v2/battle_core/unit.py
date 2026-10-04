@@ -37,6 +37,10 @@ class UnitRuntime:
     morale: int = 100
     troop_type: TroopType | None = None
     intelligence: float | None = field(default=None, kw_only=True)
+    wounded_troops: int | None = field(default=None, kw_only=True)
+    advancement_stars: int = field(default=0, kw_only=True)
+    military_books_active: bool = field(default=False, kw_only=True)
+    _wounded_pool_authoritative: bool = field(default=False, init=False, repr=False)
 
     def __post_init__(self) -> None:
         if not self.unit_id:
@@ -53,6 +57,23 @@ class UnitRuntime:
             raise ValueError("morale must be within [0, 100]")
         if self.intelligence is not None and self.intelligence < 0:
             raise ValueError("intelligence must be >= 0")
+        wounded_supplied = self.wounded_troops is not None
+        if self.wounded_troops is None:
+            # Compatibility for externally constructed mid-battle snapshots:
+            # absent explicit pool data, initialize from missing troops. This remains
+            # migration-only until a canonical TroopSystem mutation claims authority.
+            self.wounded_troops = self.max_troops - self.troops
+        self._wounded_pool_authoritative = wounded_supplied
+        if isinstance(self.wounded_troops, bool) or not isinstance(self.wounded_troops, int):
+            raise TypeError("wounded_troops must be an int or None")
+        if not 0 <= self.wounded_troops <= self.max_troops - self.troops:
+            raise ValueError("wounded_troops must be within [0, missing_troops]")
+        if isinstance(self.advancement_stars, bool) or not isinstance(self.advancement_stars, int):
+            raise TypeError("advancement_stars must be an int")
+        if not 0 <= self.advancement_stars <= 5:
+            raise ValueError("advancement_stars must be within [0, 5]")
+        if not isinstance(self.military_books_active, bool):
+            raise TypeError("military_books_active must be a bool")
 
         if self.lineup_position is None and self.is_commander:
             self.lineup_position = LineupPosition.COMMANDER
@@ -82,5 +103,8 @@ class UnitRuntime:
             "level": self.level,
             "morale": self.morale,
             "troop_type": self.troop_type.value if self.troop_type is not None else None,
+            "wounded_troops": self.wounded_troops,
+            "advancement_stars": self.advancement_stars,
+            "military_books_active": self.military_books_active,
             "is_alive": self.is_alive,
         }

@@ -1,6 +1,6 @@
 # Stage13 · Core Gameplay Mechanism Completion
 
-> Current status: ACTIVE / ENTRY GATE PASS / FOUNDATIONAL RESEARCH REPLAN ACTIVE
+> Current status: ACTIVE / B1+B2+B2.5 RUNTIME IMPLEMENTED / B3 RESEARCH STILL OPEN
 >
 > Activated: 2026-09-28 by STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
 >
@@ -21,14 +21,15 @@ Stage13-A  Core Gameplay Mechanism Inventory Audit
 Stage13-B  Foundational Empirical Mechanics Research
            B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN
            B2 Damage Increase / Reduction Mechanics — FROZEN
-           B2.5 Full Damage Advancement / Hidden Mechanism Closure — ACTIVE / CURRENT
-           B3 Recovery / Treatment Formula Mechanics — NEXT AFTER B2.5
+           B2.5 Full Damage Advancement / Hidden Mechanism Closure — CLOSED
+           B3 Recovery / Treatment Formula Mechanics — RESEARCH NOT YET FROZEN
 
 Stage13-C  Residual State Mechanism Closure
 
 Stage13-D  Consolidated Gap Classification + Runtime Governance
 Stage13-E  Core Runtime Architecture Design
 Stage13-F  Core Mechanism Implementation
+           Foundational slice B1/B2/B2.5 — IMPLEMENTED / AUDIT PENDING
 Stage13-G  Independent Engine Completion / Deterministic Replay Audit
 ~~~
 
@@ -41,6 +42,7 @@ Stage13-G  Independent Engine Completion / Deterministic Replay Audit
 - [Core Mechanism Test Matrix](STAGE13_CORE_MECHANISM_TEST_MATRIX.md)
 - [Research Gap Ledger](STAGE13_RESEARCH_GAP_LEDGER.md)
 - [Runtime Governance Gap Ledger](STAGE13_RUNTIME_GOVERNANCE_LEDGER.md)
+- [Foundational Runtime Integration](STAGE13_FOUNDATIONAL_RUNTIME_INTEGRATION.md)
 
 ## 3. Entry verdict
 
@@ -73,13 +75,11 @@ Before architecture/implementation, Stage13 now requires three research programs
 
 ### B1 — Wounded troops / recoverable capacity
 
-Current Runtime clamps recovery by missing troops. That is not empirical proof that missing troops and recoverable wounded troops are universally identical in the original game.
-
-Research must discriminate independent wounded-pool, missing-troop-equivalence, family-specific, and unobservable/default models.
+B1 research is frozen. Runtime now carries an explicit wounded pool with 90% event-local generation, wounded-capacity recovery clamp, round-transition decay and defeat cleanup. Missing troops are no longer the canonical runtime recovery capacity.
 
 ### B2 — Damage increase / damage reduction
 
-The Runtime already has typed modifier phases, but Stage13 must independently establish observable stacking, phase ordering, caps/floors and rounding instead of treating current code as the source of truth.
+B2 and B2.5 research are closed for the implemented slice. Runtime now uses same-side algebraic modifier pools, cross-side multiplication, the -90% same-side floor, and the B2.5 independent advancement multiplier directive.
 
 ### B3 — Recovery / treatment formula
 
@@ -126,13 +126,22 @@ Core Gameplay Engine = FROZEN
 Skill Runtime Readiness = READY
 ~~~
 
-## 8. NEXT
+## 8. Current runtime checkpoint
 
-~~~text
+```text
+Stage13-B1 Runtime Integration   = IMPLEMENTED
+Stage13-B2 Runtime Integration   = IMPLEMENTED
+Stage13-B2.5 Runtime Integration = IMPLEMENTED
+Branch CI 37198181258            = 1683 passed / demo PASS
+Independent PR/Main Audit        = PENDING
+```
+
+B3 treatment-formula research remains open and is not hardcoded by this runtime integration.
+
+## 9. NEXT
+
+```text
 NEXT =
-STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_RESEARCH
-~~~
-
-Current authority: [STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_REPLAN.md](STAGE13_FULL_DAMAGE_ADVANCEMENT_HIDDEN_MECHANISM_REPLAN.md).
-
-B1 and B2 research are frozen. B2.5 now reconciles the existing Stage2 base-damage V1 with the frozen Stage13-B2 modifier contract, resolves advancement arithmetic placement, and searches residual `>1` damage errors for hidden mechanisms. B3 treatment-formula research follows B2.5.
+STAGE13_FOUNDATIONAL_RUNTIME_INDEPENDENT_AUDIT
+then continue unresolved Stage13 research, beginning with B3
+```
