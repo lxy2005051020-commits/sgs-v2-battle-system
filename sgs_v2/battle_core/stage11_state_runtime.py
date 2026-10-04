@@ -381,6 +381,8 @@ class Stage11StateRuntime:
         if family in {
             Stage11DamageFamily.NORMAL_ATTACK,
             Stage11DamageFamily.ASSAULT_SKILL,
+            Stage11DamageFamily.ACTIVE_SKILL,
+            Stage11DamageFamily.PERIODIC_DAMAGE,
             Stage11DamageFamily.COMMAND_XIEFANWEI,
             Stage11DamageFamily.REACTION_YIZHIBAOYUAN,
         }:
@@ -409,8 +411,12 @@ class Stage11StateRuntime:
             params = instance.runtime_params
             if not isinstance(params, AlertStateParams):
                 raise TypeError("690099 ALERT requires AlertStateParams")
-            # PROJECT_RUNTIME_DEFAULT: strict greater-than; equality is unobserved.
-            if candidate_damage <= params.threshold:
+            # Stage13 authority: ALERT triggers at MaxCarryTroops * 6%, inclusive.
+            # AlertStateParams.threshold is retained only as a legacy serialized field;
+            # production eligibility no longer reads it.
+            target = context.get_unit(target_id)
+            threshold = target.max_troops * 0.06
+            if candidate_damage < threshold:
                 continue
             factor = 1.0 - (params.reduction_rate.numerator / params.reduction_rate.denominator)
             output = candidate_damage * factor
