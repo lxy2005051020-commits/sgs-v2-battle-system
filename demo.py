@@ -5,8 +5,13 @@ from sgs_v2.battle_core import (
     EventBus,
     EventType,
     LineupPosition,
+    OfficialStateId,
     RandomSystem,
+    TroopAdmissionStatus,
+    TroopType,
     UnitRuntime,
+    admit_and_install_troop_skill,
+    create_xiliang_cavalry_runtime,
 )
 
 
@@ -44,7 +49,10 @@ def format_event(event, context: BattleContext) -> str:
     if event.event_type == EventType.DAMAGE_DEALT:
         damage = payload.get("damage", "?")
         remain = payload.get("target_remaining_troops", "?")
-        return f"第 {round_no} 回合，{actor} 对 {target} 造成 {damage} 点兵力伤害，{target} 剩余兵力 {remain}。"
+        return (
+            f"第 {round_no} 回合，{actor} 对 {target} 造成 {damage} 点兵力伤害，"
+            f"{target} 剩余兵力 {remain}。"
+        )
 
     if event.event_type == EventType.UNIT_DEFEATED:
         return f"第 {round_no} 回合，{target} 兵力归零，无法继续战斗。"
@@ -89,6 +97,36 @@ def format_event(event, context: BattleContext) -> str:
     return f"第 {round_no} 回合，发生事件：{event.event_type.value}。"
 
 
+def describe_xiliang_pilot(context: BattleContext) -> None:
+    """显示当前 Pilot 分支中西凉铁骑已经安装到战斗上下文的结果。"""
+
+    print("=== Stage14 Pilot 01：西凉铁骑 ===")
+    print("接入模式：手动 PRE_BATTLE 安装（01C 完成后改为 BattleEngine 自动调度）")
+
+    for unit_id in ("a1", "a2"):
+        unit = context.units[unit_id]
+        critical_states = context.states.find(
+            owner_id=unit_id,
+            state_id=OfficialStateId.CRITICAL.value,
+        )
+        crit = 0.0
+        for state in critical_states:
+            crit += float(getattr(state.runtime_params, "chance", 0.0))
+
+        special = (
+            unit.special_troop_id.value
+            if unit.special_troop_id is not None
+            else "NONE"
+        )
+        troop = unit.troop_type.value if unit.troop_type is not None else "NONE"
+        print(
+            f"{unit.name}: 基础兵种={troop}，特殊兵种={special}，"
+            f"西凉铁骑会心加成={crit:.0%}"
+        )
+
+    print()
+
+
 def main() -> None:
     event_bus = EventBus()
 
@@ -102,6 +140,7 @@ def main() -> None:
             attack=240,
             defense=140,
             speed=120,
+            troop_type=TroopType.CAVALRY,
             lineup_position=LineupPosition.COMMANDER,
         ),
         "a2": UnitRuntime(
@@ -113,6 +152,7 @@ def main() -> None:
             attack=210,
             defense=130,
             speed=105,
+            troop_type=TroopType.CAVALRY,
             lineup_position=LineupPosition.DEPUTY_1,
         ),
         "b1": UnitRuntime(
@@ -124,6 +164,7 @@ def main() -> None:
             attack=230,
             defense=145,
             speed=115,
+            troop_type=TroopType.CAVALRY,
             lineup_position=LineupPosition.COMMANDER,
         ),
         "b2": UnitRuntime(
@@ -135,21 +176,39 @@ def main() -> None:
             attack=205,
             defense=125,
             speed=110,
+            troop_type=TroopType.CAVALRY,
             lineup_position=LineupPosition.DEPUTY_1,
         ),
     }
 
     context = BattleContext(
-        battle_id="stage2-demo",
+        battle_id="stage14-xiliang-demo",
         units=units,
         event_bus=event_bus,
         random=RandomSystem(seed=20260904),
         max_rounds=8,
     )
 
+    systems = BattleSystems()
+
+    # Stage14 Pilot 01 当前仍通过显式 PRE_BATTLE 安装入口接入。
+    # Pilot 01C 的目标是把这一步交给 BattleEngine 自动调度。
+    xiliang_runtime = create_xiliang_cavalry_runtime("a1")
+    admission = admit_and_install_troop_skill(
+        context,
+        systems,
+        xiliang_runtime,
+    )
+    if admission.status is not TroopAdmissionStatus.SUCCESS:
+        raise RuntimeError(
+            f"西凉铁骑准入失败: {admission.status.value}: {admission.reason}"
+        )
+
+    describe_xiliang_pilot(context)
+
     engine = BattleEngine(
         context=context,
-        systems=BattleSystems(),
+        systems=systems,
     )
     result = engine.run()
 
