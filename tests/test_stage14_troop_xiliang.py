@@ -431,24 +431,35 @@ def test_t7_provider_death_teammate_retention() -> None:
 # ---------------------------------------------------------------------------
 # T8: PRE_BATTLE Forward Visibility (Inherited Foundation Regression)
 # ---------------------------------------------------------------------------
-def test_t8_pre_battle_forward_visibility_inherited_foundation() -> None:
-    """T8: Inherited Foundation Rule - Preceding PRE_BATTLE mutations remain visible.
-    Note: Base Xiliang Cavalry (25%) does not scale with speed; direct speed-reading
-    remains bounded unknown until Ma Teng scaling formula is verified.
-    This test verifies execution pipeline visibility consistency only.
-    """
-    context, systems = make_test_context()
+def test_t8_mateng_scaling_reads_current_attribute_system_speed() -> None:
+    """T8: Ma Teng scaling is a discriminatory consumer of PRE_BATTLE forward visibility."""
+    from sgs_v2.battle_core.attribute_system import AttributeSystem
 
-    # Simulate preceding speed buff in PRE_BATTLE (e.g. from talent or passive)
-    context.units["a1"].speed += 50.0
+    class SpeedBuffProvider:
+        def modify_attribute(self, *, context, unit, attribute, base_value):
+            if unit.unit_id == "a1" and attribute == "speed":
+                return base_value + 64.0
+            return base_value
 
-    # Ensure context retains mutated speed value prior to admission
-    assert context.units["a1"].speed == 170.0
+    context, _ = make_test_context()
+    context.units["a1"].name = "马腾"
+    context.units["a1"].speed = 57.0
+    systems = BattleSystems(
+        attribute_system=AttributeSystem(modifier_provider=SpeedBuffProvider())
+    )
+
+    # Canonical AttributeSystem exposes 121 combat speed in PRE_BATTLE.
+    assert systems.attribute_system.get_speed(context, context.units["a1"]) == pytest.approx(121.0)
 
     runtime = create_xiliang_cavalry_runtime("a1")
     admit_res = admit_and_install_troop_skill(context, systems, runtime)
     assert admit_res.status == TroopAdmissionStatus.SUCCESS
 
+    # LV10: speed 57 => 25%; +64 current combat speed => +2 percentage points => 27%.
+    outcome = systems.stage11_state_runtime.resolve_critical(
+        context, source_id="a1", damage_type=DamageType.WEAPON
+    )
+    assert outcome.chance == pytest.approx(0.27, abs=1e-12)
 
 
 # ---------------------------------------------------------------------------
