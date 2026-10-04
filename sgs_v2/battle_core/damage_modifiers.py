@@ -57,11 +57,13 @@ class DamageModifierKind(str, Enum):
     INCOMING_INCREASE = "INCOMING_INCREASE"
     INCOMING_REDUCTION = "INCOMING_REDUCTION"
     SINGLE_HIT_ADJUSTMENT = "SINGLE_HIT_ADJUSTMENT"
+    FLAT_REDUCTION = "FLAT_REDUCTION"
     REDUCTION_PIERCE = "REDUCTION_PIERCE"
 
 
 class DamageModifierOperation(str, Enum):
     MULTIPLY_FACTOR = "MULTIPLY_FACTOR"
+    SUBTRACT_FLAT = "SUBTRACT_FLAT"
     REDUCTION_PIERCE = "REDUCTION_PIERCE"
 
 
@@ -135,8 +137,15 @@ class DamageModifierContribution:
                 raise ValueError("REDUCTION_PIERCE operation requires REDUCTION_PIERCE kind")
             if not 0.0 <= operand <= 1.0:
                 raise ValueError("reduction pierce rate must be in [0, 1]")
+        elif self.operation is DamageModifierOperation.SUBTRACT_FLAT:
+            if self.kind is not DamageModifierKind.FLAT_REDUCTION:
+                raise ValueError("SUBTRACT_FLAT operation requires FLAT_REDUCTION kind")
+            if self.phase is not DamageModifierPhase.SINGLE_HIT:
+                raise ValueError("FLAT_REDUCTION must use SINGLE_HIT phase")
         elif self.kind is DamageModifierKind.REDUCTION_PIERCE:
             raise ValueError("REDUCTION_PIERCE kind requires REDUCTION_PIERCE operation")
+        elif self.kind is DamageModifierKind.FLAT_REDUCTION:
+            raise ValueError("FLAT_REDUCTION kind requires SUBTRACT_FLAT operation")
 
     def applies_to(self, damage_type: DamageType, source_type: DamageSourceType) -> bool:
         return (
