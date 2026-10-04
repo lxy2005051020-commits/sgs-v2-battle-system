@@ -1,200 +1,107 @@
 # Stage13 · Core Gameplay Mechanism Completion
 
-> Current status: ACTIVE / FOUNDATIONAL + RESIDUAL + D1 PENDINGWORK SLICES FROZEN / CORE ENGINE EXIT WORK REMAINS
->
-> Activated: 2026-09-28 by STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
->
-> Current route amendment: [STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md](STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md)
->
-> Original route authority: [STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN.md](STAGE13_CORE_GAMEPLAY_MECHANISM_REPLAN.md)
+> Status: ACTIVE / FOUNDATIONAL + RESIDUAL + D1 SLICES FROZEN / EXIT AUDIT REMAINS
 
-Stage13 completes the reusable game-engine substrate before large-scale skill-system integration.
+Stage13 completes the reusable game-engine substrate before large-scale concrete-skill integration.
 
-Stage13-A completed the original inventory. A later route review found that Runtime support had been treated too generously as evidence of empirical completion for three foundational domains: wounded/recoverable capacity, damage increase/reduction mathematics, and treatment-value formulas. The inventory remains historical authority, but its research-priority conclusion is superseded by the current amendment.
+## Completed slices
 
-## 1. Current Stage model
+```text
+B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN
+B1 Runtime                         = IMPLEMENTED
+B2 Damage Increase / Reduction Mechanics — FROZEN
+B2 Runtime                         = IMPLEMENTED
+B2.5 Advancement / Damage Closure  = CLOSED / IMPLEMENTED
+B3 Ordinary Treatment Core         = FROZEN / IMPLEMENTED
 
-~~~text
-Stage13-A  Core Gameplay Mechanism Inventory Audit
-           COMPLETE / ENTRY GATE PASS
+690221 ACTIVE_SKILL + DOT           = CLOSED / INTEGRATED
+690099 MaxCarry × 6%, equality      = CLOSED / INTEGRATED
+690086 DSTS9-B02                    = CLOSED / FROZEN_P0
 
-Stage13-B  Foundational Empirical Mechanics Research
-           B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN
-           B2 Damage Increase / Reduction Mechanics — FROZEN
-           B2.5 Full Damage Advancement / Hidden Mechanism Closure — CLOSED
-           B3 Recovery / Treatment Formula Mechanics — ORDINARY FORMULA CORE FROZEN / SPECIAL FAMILIES OPEN
+D1 PendingWork Foundation           = FROZEN / IMPLEMENTED
+```
 
-Stage13-C  Residual State Mechanism Closure
-           690221 ACTIVE_SKILL + DOT/DELAYED — CLOSED / RUNTIME INTEGRATED
-           690099 MaxCarry × 6% inclusive threshold — CLOSED / RUNTIME INTEGRATED
-           690086 DSTS9-B02 — CLOSED / FROZEN_P0
+Stage13 entry gate:
 
-Stage13-D  Consolidated Gap Classification + Runtime Governance
-Stage13-E  Core Runtime Architecture Design
-Stage13-F  Core Mechanism Implementation
-           Foundational slice B1/B2/B2.5 — IMPLEMENTED / RUNTIME FREEZE AUDIT PASS
-           B3 ordinary-treatment core — IMPLEMENTED / MERGED-MAIN CI PASS / RUNTIME CORE FROZEN
-           residual mechanism slice — IMPLEMENTED / 1691 TESTS PASS / RUNTIME SLICE FROZEN
-           special recovery isolation — EXPLICIT SPECIAL_RECOVERY_AMOUNT LANE
-Stage13-G  Independent Engine Completion / Deterministic Replay Audit
-~~~
-
-## 2. Current authorities
-
-- [Stage13 Foundational Research Priority Replan](STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md)
-- [Core Gameplay Mechanism Inventory](STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY.md)
-- [Core Gameplay Gap Ledger](STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md)
-- [Core Runtime Owner Matrix](STAGE13_CORE_RUNTIME_OWNER_MATRIX.md)
-- [Core Mechanism Test Matrix](STAGE13_CORE_MECHANISM_TEST_MATRIX.md)
-- [Research Gap Ledger](STAGE13_RESEARCH_GAP_LEDGER.md)
-- [Runtime Governance Gap Ledger](STAGE13_RUNTIME_GOVERNANCE_LEDGER.md)
-- [Foundational Runtime Integration](STAGE13_FOUNDATIONAL_RUNTIME_INTEGRATION.md)
-- [Foundational Runtime Freeze Audit](STAGE13_FOUNDATIONAL_RUNTIME_FREEZE_AUDIT.md)
-
-## 3. Entry verdict
-
-~~~text
-CORE_GAMEPLAY_MECHANISM_INVENTORY       = COMPLETE
+```text
 STAGE13_ENTRY_GATE                = PASS
-Stage13 Readiness                       = READY
 Stage13 Active                    = YES
+```
 
-Stage12 Runtime                         = FROZEN
-Stage12 Complete                        = YES
-Stage1-12 Reopen Required               = NO
+Concrete skill runtimes remain deferred until the Stage13 exit gate.
 
-Research FROZEN                         = 40 / 40
-Runtime FROZEN TO CONTRACT              = 40 / 40
-Strict Complete                         = 40 / 40
-690086 DSTS9-B02                        = CLOSED
-~~~
+Official-state baseline:
 
-Inventory activation does not mean the Core Gameplay Engine is frozen:
+```text
+Research FROZEN            = 40 / 40
+Runtime FROZEN TO CONTRACT = 40 / 40
+Strict Complete            = 40 / 40
+```
 
-~~~text
+## Current authorities
+
+- [Core gameplay gap ledger](STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md)
+- [Core runtime owner matrix](STAGE13_CORE_RUNTIME_OWNER_MATRIX.md)
+- [Core mechanism test matrix](STAGE13_CORE_MECHANISM_TEST_MATRIX.md)
+- [Research gap ledger](STAGE13_RESEARCH_GAP_LEDGER.md)
+- [Runtime governance ledger](STAGE13_RUNTIME_GOVERNANCE_LEDGER.md)
+- [Foundational runtime integration](STAGE13_FOUNDATIONAL_RUNTIME_INTEGRATION.md)
+- [Foundational runtime freeze audit](STAGE13_FOUNDATIONAL_RUNTIME_FREEZE_AUDIT.md)
+- [B3 treatment runtime integration](STAGE13_B3_TREATMENT_RUNTIME_INTEGRATION.md)
+- [Residual mechanism runtime integration](STAGE13_RESIDUAL_MECHANISM_RUNTIME_INTEGRATION.md)
+- [D1 design](STAGE13_D1_PENDING_WORK_RUNTIME_DESIGN.md)
+- [D1 implementation](STAGE13_D1_PENDING_WORK_IMPLEMENTATION.md)
+- [D1 freeze audit](STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md)
+
+## D1 evidence
+
+```text
+main HEAD = f0339729a94685f1d1ae226e1975ad4298b7f81f
+CI        = 37208949453 / SUCCESS
+pytest    = 1739 passed
+demo      = PASS
+audit     = PASS
+```
+
+ONE_SHOT / UNTIL_EXECUTED / UNTIL_ROUND are implemented. REPEAT_N_TIMES remains a reserved unsupported seam.
+
+## Current remaining work
+
+Do not mechanically create D2/D3/D4 subsystems merely because an older gap row used the word MISSING.
+
+Current Stage13 exit work is:
+
+```text
+1. reconcile remaining core capability boundaries against existing owners
+2. close only true core blockers
+3. define/complete RNG decision observability needed for replay
+4. run whole-battle deterministic replay / exit audit
+5. if PASS:
+   Core Gameplay Engine = FROZEN
+   Skill Runtime Readiness = READY
+```
+
+Special recovery families remain separate from ordinary treatment and retain family-specific formula ownership.
+
+```text
+Core Gameplay Engine    = NOT YET FROZEN
+Skill Runtime Readiness = NOT YET READY
+```
+
+Historical Stage13 replans, intermediate model-comparison reports and superseded question ledgers are available from Git history rather than the current authority tree.
+
+
+## Machine-checked exit declarations
+
+```text
 CORE_GAMEPLAY_ENGINE              = NOT YET FROZEN
 Skill Runtime Readiness           = NOT YET READY
-~~~
-
-## 4. Foundational empirical research gate
-
-Before architecture/implementation, Stage13 now requires three research programs.
-
-### B1 — Wounded troops / recoverable capacity
-
-B1 research is frozen. Runtime now carries an explicit wounded pool with 90% event-local generation, wounded-capacity recovery clamp, round-transition decay and defeat cleanup. Missing troops are no longer the canonical runtime recovery capacity.
-
-### B2 — Damage increase / damage reduction
-
-B2 and B2.5 research are closed for the implemented slice. Runtime now uses same-side algebraic modifier pools, cross-side multiplication, the -90% same-side floor, and the B2.5 independent advancement multiplier directive.
-
-### B3 — Recovery / treatment formula
-
-The ordinary treatment-rate core is now contract-frozen and integrated:
-
-```text
-H = CEIL(
-    Rate
-    × (F(N) + Attr)
-    × SourceOrdinaryPool
-    × TargetOrdinaryPool
-    × RedPool
-)
 ```
 
-The selected attribute coefficient is 1. Same-side ordinary modifiers add algebraically, source/target sides multiply, red-degree is an independent pool, and persistent treatment replays application-time formula state. The final HealingBlock and wounded/missing-troop capacity tail remains live in RecoverySystem/TroopSystem.
+Stage14+ concrete skill integration remains behind the exit gate.
 
-Special recovery families remain independently owned and are not silently collapsed into this formula. Runtime now exposes an explicit `SPECIAL_RECOVERY_AMOUNT` lane so dedicated family owners can share only the canonical RecoverySystem settlement tail.
+Exit target:
 
-## 5. Residual state research comes after B1-B3
-
-Stage13-C performs a systematic residual-debt audit across all 40 state contracts and extracts only unresolved clauses:
-
-~~~text
-OPEN
-UNOBSERVED
-BOUNDED_UNKNOWN
-UNSUPPORTED_UNKNOWN
-PROJECT_RUNTIME_DEFAULT
-RESEARCH_DEBT
-FORMULA_RESEARCH_OUT_OF_SCOPE
-~~~
-
-The previously blocking residual clauses are now closed: 690221 applies to ACTIVE_SKILL and DOT/DELAYED damage; 690086 DSTS9-B02 drains the current DistributionTransaction before battle finalization; 690099 uses MaxCarryTroops × 6% with equality triggering. Remaining Stage13-C work is limited to truly unresolved micro-debt and governance-only items.
-
-## 6. Runtime architecture boundary
-
-The project still follows:
-
-~~~text
-REUSE -> EXTEND -> COMPOSE
-~~~
-
-A CoreGameplayGodObject is forbidden.
-
-Runtime code is not evidence for original-game mechanics. Explicit project defaults retain their provenance and must never be upgraded to empirical truth merely because they are already implemented.
-
-## 7. Skill-system boundary
-
-~~~text
-Stage14+ = Skill System / exact subtype numbering deferred until Stage13 exit audit
-~~~
-
-The previous Assault-first route remains superseded. Concrete skill runtimes remain deferred until the Stage13 exit gate declares:
-
-~~~text
-Core Gameplay Engine = FROZEN
+```text
 Skill Runtime Readiness = READY
-~~~
-
-## 8. Current runtime checkpoint
-
-```text
-Stage13-B1 Runtime Integration   = IMPLEMENTED
-Stage13-B2 Runtime Integration   = IMPLEMENTED
-Stage13-B2.5 Runtime Integration = IMPLEMENTED
-Stage13-B3 Treatment Core        = IMPLEMENTED / RUNTIME CORE FROZEN
-Branch CI 37198181258            = 1683 passed / demo PASS
-Independent PR/Main Audit        = PASS
-Merged-main CI 37198353900        = 1683 passed / demo PASS
-B3 merged-main commit            = a27785a830e6d3f89b0c17d93bdaa31f84c48207
-B3 merged-main CI 37200488246     = PASS / demo PASS / audit snapshot PASS
-Residual runtime commit            = 43c5b4e335895b0fb2c21fe49875480f49158206
-Residual runtime CI 37206514602    = 1691 passed / demo PASS / audit snapshot PASS
 ```
-
-B3 ordinary-treatment formula core and the newly closed residual mechanism slice are integrated and audited. Special recovery-family formula internals remain separately owned rather than being treated as ordinary treatment.
-
-## 9. NEXT
-
-```text
-NEXT =
-complete the remaining Stage13 core-engine architecture/governance and deterministic replay audit
-special recovery families remain separate from ordinary treatment and are implemented under dedicated family contracts
-```
-
-## 10. Stage13-D1 PendingWork foundation — 2026-10-04
-
-Current authorized runtime sequence within the Stage13 core-engine route:
-
-```text
-D1 PendingWork / delayed work foundation = FROZEN / IMPLEMENTED / MAIN CI PASS
-D2 UsageBudget / Frequency              = REMAINS
-D3 Multi-effect Composition             = REMAINS
-D4 Attribute Snapshot/JIT + Provenance  = REMAINS
-D5 RNG Trace / Replay Topology          = REMAINS
-G  Whole-Battle Replay / Exit Audit     = REMAINS
-```
-
-D1 adds a unique battle-scoped owner for future work and preserves existing delayed
-mechanisms. ONE_SHOT, UNTIL_EXECUTED and UNTIL_ROUND are implemented; REPEAT_N_TIMES
-is explicitly RESERVED and rejected. No concrete tactics or full preparation are added.
-Only D1 can freeze from this slice; Stage13 remains ACTIVE and the engine/readiness exit
-claims remain NOT YET FROZEN / NOT YET READY.
-
-- [D1 design and pre-implementation inventory](STAGE13_D1_PENDING_WORK_RUNTIME_DESIGN.md)
-- [D1 implementation and supported boundaries](STAGE13_D1_PENDING_WORK_IMPLEMENTATION.md)
-- [D1 freeze/adversarial audit and CI evidence](STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md)
-
-Local regression: 1739 passed; demo PASS; independent audit PASS (21 unchanged owner
-hashes + 11 independent adversarial cases). Final GitHub evidence is maintained in the D1 audit.
