@@ -71,12 +71,15 @@ def test_stage13_entry_gate_is_active_but_engine_not_frozen() -> None:
     assert "Skill Runtime Readiness           = NOT YET READY" in index
 
 
-def test_stage13_preserves_distribution_research_debt() -> None:
+def test_stage13_preserves_historical_distribution_debt_but_closes_current_rule() -> None:
     inventory = _read("STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY.md")
     research = _read("STAGE13_RESEARCH_GAP_LEDGER.md")
+    # Stage13-A inventory remains historical provenance.
     assert "690086 DISTRIBUTION / DSTS9-B02         OPEN / UNOBSERVED" in inventory
+    # Current authority supersedes that historical research debt.
+    assert "RQ13-003" in research
     assert "DSTS9-B02" in research
-    assert "DO_NOT_AUTO_REOPEN" in research
+    assert "CLOSED: commander death does not abort" in research
 
 
 def test_stage13_research_and_runtime_governance_are_separate() -> None:
@@ -88,7 +91,8 @@ def test_stage13_research_and_runtime_governance_are_separate() -> None:
     assert "RQ13-B3" in research
     assert "RQ13-001" in research
     assert "RQ13-002" in research
-    assert "RESEARCH_REQUIRED" in research
+    assert "BLOCKING MECHANISM RESEARCH CLOSED" in research
+    assert "RUNTIME_GOVERNANCE_REQUIRED" in research
 
     assert "RG13-001" in governance
     assert "RG13-010" in governance
