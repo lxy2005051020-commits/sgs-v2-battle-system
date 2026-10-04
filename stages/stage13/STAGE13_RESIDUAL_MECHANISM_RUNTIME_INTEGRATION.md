@@ -1,6 +1,6 @@
 # Stage13 Residual Mechanism Runtime Integration
 
-> Status: IMPLEMENTED ON MAIN / CI AUDIT PENDING
+> Status: IMPLEMENTED ON MAIN / MERGED-MAIN CI PASS / RUNTIME SLICE FROZEN
 >
 > Date: 2026-10-04
 
@@ -66,7 +66,7 @@ Ordinary FB1 treatment remains:
 CEIL(Rate × (F(N)+Attr) × SourcePool × TargetPool × RedPool)
 ```
 
-Special recovery families do not enter `TreatmentFormulaSystem`. Existing dedicated owners may provide a pre-resolved `treatment_amount` or their own recovery basis and share only the separately-authorized RecoverySystem settlement tail.
+Special recovery families do not enter `TreatmentFormulaSystem`. `RecoveryModelKind.SPECIAL_RECOVERY_AMOUNT` is the explicit typed lane for a dedicated special-family owner to hand a pre-resolved amount into the shared RecoverySystem settlement tail. Family-specific basis math remains separately owned.
 
 ## 3. Regression coverage
 
@@ -84,4 +84,25 @@ Added/extended tests cover:
 
 This integration does not invent formulas for special recovery families. Their basis math remains owned by their dedicated contracts.
 
-CI status will be updated after merged-main validation.
+Merged-main validation:
+
+```text
+Commit              = 43c5b4e335895b0fb2c21fe49875480f49158206
+GitHub Actions Run  = 37206514602
+pytest              = 1691 passed
+demo smoke          = PASS
+audit snapshot      = PASS / uploaded
+workflow conclusion = SUCCESS
+```
+
+Freeze verdict:
+
+```text
+690221 ACTIVE_SKILL applicability runtime = FROZEN TO CONTRACT
+690221 DOT/PERIODIC applicability runtime = FROZEN TO CONTRACT
+690099 6% inclusive threshold runtime     = FROZEN TO CONTRACT
+690086 DSTS9-B02 runtime authority        = FROZEN_P0
+Special recovery family isolation        = FROZEN AS ARCHITECTURAL BOUNDARY
+```
+
+This does not freeze the internal basis formula of every special recovery family; those remain dedicated family/skill contracts.
