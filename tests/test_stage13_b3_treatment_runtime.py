@@ -145,7 +145,7 @@ def test_formula_lane_requires_complete_application_time_snapshot() -> None:
     systems = BattleSystems(weapon_troop_function_table=_identity_troop_table())
     target = _unit(
         "target",
-        "A",
+        "B",
         troops=100,
         wounded_troops=900,
     )
