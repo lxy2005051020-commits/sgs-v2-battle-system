@@ -39,12 +39,16 @@ def _validate_probability(val: float, name: str = "probability") -> float:
 class RecoveryModelKind(str, Enum):
     """
     Authoritative recovery calculation model kind (STAGE10.md §17, §29).
-    - TREATMENT_AMOUNT: Recovery amount based on caster attributes & treatment rate (e.g. 青囊, 陷阵营).
-    - TRIGGER_DAMAGE_RATIO: Recovery amount based on triggering damage loss ratio (e.g. 草船借箭).
+    - TREATMENT_AMOUNT: Ordinary treatment formula family, Rate(F(N)+Attr).
+    - TRIGGER_DAMAGE_RATIO: Special recovery based on triggering damage loss ratio (e.g. 草船借箭).
+    - RESOLVED_SPECIAL_AMOUNT: Special recovery family whose nominal amount is
+      already resolved by its own authoritative owner and must bypass the ordinary
+      treatment formula.
     """
 
     TREATMENT_AMOUNT = "TREATMENT_AMOUNT"
     TRIGGER_DAMAGE_RATIO = "TRIGGER_DAMAGE_RATIO"
+    RESOLVED_SPECIAL_AMOUNT = "RESOLVED_SPECIAL_AMOUNT"
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,7 +59,10 @@ class RecoveryPotencyContext:
     Stage13-B3 ordinary-treatment lane snapshots every formula input needed by:
         CEIL(Rate * (F(N) + Attr) * SourcePool * TargetPool * RedPool)
 
-    treatment_amount remains an explicit already-resolved compatibility/special-family lane.
+    treatment_amount is the payload for RESOLVED_SPECIAL_AMOUNT. Legacy
+    TREATMENT_AMOUNT callers that already supply treatment_amount remain supported
+    for backward compatibility, but new special-family implementations must select
+    RESOLVED_SPECIAL_AMOUNT explicitly.
     """
 
     base_rate: float = 0.0
