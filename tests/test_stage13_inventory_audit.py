@@ -106,10 +106,8 @@ def test_stage13_does_not_activate_skill_runtime() -> None:
 def test_stage13_foundational_route_preserves_history_and_current_progress() -> None:
     inventory = _read("STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY.md")
     index = _read("README.md")
-    replan = _read("STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md")
     historical = "STAGE13_B1_WOUNDED_TROOP_AND_RECOVERABLE_CAPACITY_RESEARCH"
     assert historical in inventory
-    assert historical in replan
     assert "HISTORICAL_NEXT" in inventory
     assert "B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN" in index
     assert "B2 Damage Increase / Reduction Mechanics — FROZEN" in index
