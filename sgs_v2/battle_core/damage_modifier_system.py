@@ -69,6 +69,7 @@ class DamageModifierSystem:
             contribution.validate_runtime_contract()
             if contribution.operation not in {
                 DamageModifierOperation.MULTIPLY_FACTOR,
+                DamageModifierOperation.SUBTRACT_FLAT,
                 DamageModifierOperation.REDUCTION_PIERCE,
             }:
                 raise ValueError(
@@ -110,6 +111,20 @@ class DamageModifierSystem:
         applied: list[AppliedDamageModifier] = []
         for contribution in ordered:
             if not resolve_probability(context, contribution.probability):
+                continue
+            if contribution.operation is DamageModifierOperation.SUBTRACT_FLAT:
+                input_damage = current
+                current = max(0.0, current - contribution.operand)
+                applied.append(
+                    AppliedDamageModifier(
+                        contribution=contribution,
+                        input_damage=input_damage,
+                        output_damage=current,
+                        original_operand=contribution.operand,
+                        effective_operand=contribution.operand,
+                        pierce_contributor=None,
+                    )
+                )
                 continue
             if contribution.operation is not DamageModifierOperation.MULTIPLY_FACTOR:
                 raise ValueError(
@@ -184,7 +199,10 @@ class DamageModifierSystem:
 
         admitted: list[DamageModifierContribution] = []
         for contribution in applicable:
-            if contribution.operation is not DamageModifierOperation.MULTIPLY_FACTOR:
+            if contribution.operation not in {
+                DamageModifierOperation.MULTIPLY_FACTOR,
+                DamageModifierOperation.SUBTRACT_FLAT,
+            }:
                 raise ValueError(
                     f"unsupported damage modifier operation: {contribution.operation}"
                 )
@@ -293,10 +311,13 @@ class DamageModifierSystem:
 
         for item in [x for x in admitted if x.phase is DamageModifierPhase.SINGLE_HIT]:
             input_damage = current
-            current = validate_nonnegative_finite(
-                current * item.operand,
-                "modifier output",
-            )
+            if item.operation is DamageModifierOperation.SUBTRACT_FLAT:
+                current = max(0.0, current - item.operand)
+            else:
+                current = validate_nonnegative_finite(
+                    current * item.operand,
+                    "modifier output",
+                )
             applied.append(
                 AppliedDamageModifier(
                     contribution=item,
