@@ -1,34 +1,19 @@
-# Stage11 — State Runtime Integration
+# Stage 11 · State Runtime Integration — FROZEN
 
-Status: **DESIGN FROZEN / IMPLEMENTATION COMPLETE / RUNTIME FROZEN**
+[返回阶段索引](../README.md)
 
-Canonical Project Scope: **17 states**
+## 状态
 
-## Current snapshot
+```text
+Scope                     = 17 states
+Research                  = FROZEN
+Implementation            = COMPLETE
+Runtime                   = FROZEN TO CONTRACT
+Post-Freeze Acceptance    = PASS
+Stage11 Reopen Required   = NO
+```
 
-- Runtime-tested Battle SHA: `ce42bc62cfb26f8ca0b448e74b26533604bb0505`
-- Research authority SHA: `80c4a9dd435b7ec1ed1baed1a957310159c1232a`
-- pre-freeze Research governance mirror SHA: `0f2d8fab6899a9c179936dd4b1c8077f0c7d2b2d`
-- CI run: `36166160197` — success
-- pytest: **913 passed / 0 failed / 0 skipped / 0 xfailed**
-- demo smoke: **PASS**
-- Share × LifeSteal authority conflict: **RESOLVED**
-- B11-FRZ-001: **CLOSED**
-- Final Runtime Freeze: **FROZEN**
-- Post-Freeze Acceptance: **PASS / CONFIRMED**
-- Post-Freeze Acceptance SHA: `5a0a4164e7624c28eae2c7aa28f66061ef3c9313`
-- Acceptance CI: `36170063365` — **913 passed / demo PASS**
-- Research post-acceptance mirror: `9ad990da544ad87047e74a664cc1984f890bb274`
-- Stage11 Reopen Required: **NO**
-- Stage12 Activation Gate: **CLEARED**
-- Stage12 Readiness: **READY**
-- Stage12 Active: **NO**
-
-## Scope
-
-`690086, 690090, 690091, 690102, 690104, 690105, 690111, 690082, 690083, 690092, 690093, 690099, 690070, 690069, 690221, 690094, 690095`.
-
-## Governance navigation
+## 当前权威
 
 - [Design Freeze Record](STAGE11_DESIGN_FREEZE_RECORD.md)
 - [Design Amendment 001](STAGE11_DESIGN_AMENDMENT_001.md)
@@ -36,41 +21,18 @@ Canonical Project Scope: **17 states**
 - [Implementation Ledger](STAGE11_IMPLEMENTATION_LEDGER.md)
 - [Runtime Adversarial Audit](STAGE11_RUNTIME_ADVERSARIAL_AUDIT.md)
 - [Runtime Freeze Record](STAGE11_RUNTIME_FREEZE_RECORD.md)
-- [Post-Freeze Final Acceptance Audit](STAGE11_POST_FREEZE_ACCEPTANCE_AUDIT.md)
-- [Historical Share × LifeSteal Reopen](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md)
+- [Post-Freeze Acceptance Audit](STAGE11_POST_FREEZE_ACCEPTANCE_AUDIT.md)
 
-## Authority reconciliation
+历史 Share × LifeSteal authority reopen 记录继续保留用于 provenance，但当前规则以冻结合同为准。
 
-```text
-Share RecoveryBasis =
-PrimaryAssignedDamage + SharedAssignedDamage
-```
+## 后续权威修正
 
-Actual troop loss is not the Share recovery basis. Target death and overkill may reduce committed loss without reducing RecoveryBasis. Cleave child Share follows the same assignment-owned rule. Distribution remains separate research debt / project runtime default.
-
-## B11-FRZ-001 closure
+Stage11 当时保留的 Distribution、Alert、See-Through 等研究债，已由 Stage13 后续权威关闭：
 
 ```text
-BaseRecovery     = CEIL(RecoveryBasis × EffectiveLifeStealRatio)
-ModifiedRecovery = CEIL(BaseRecovery × EffectiveRecoveryModifier)
-→ HealingBlock
-→ Recovery Capacity
+690086 DSTS9-B02        = CLOSED
+690099 Alert threshold  = MaxCarryTroops × 6%, equality triggers
+690221 Active/DOT       = applicable
 ```
 
-`Stage11AttackerRecoverySystem` owns the first CEIL. `RecoverySystem` owns typed modifier eligibility, the second CEIL and HealingBlock settlement. Capacity remains the final troop-system clamp.
-
-The required 101 / 10% / 110% test resolves to **13**; a forbidden single-stage implementation would resolve to **12**.
-
-## Remaining debt
-
-Research debt and bounded unknowns remain explicit, including Distribution / DSTS9-B02, Distribution × LifeSteal project default, ALERT boundaries, Critical timing, DISARM proxy/reflection admission and See-Through unsupported families. Runtime Freeze does not erase them.
-
-## Next stage
-
-```text
-Stage12 Activation Gate: CLEARED
-Stage12 Readiness: READY
-Stage12 Active: NO
-```
-
-Stage12 gameplay implementation has not been started.
+因此不得再使用 Stage11 历史 debt 文案推翻当前 40/40 状态。
