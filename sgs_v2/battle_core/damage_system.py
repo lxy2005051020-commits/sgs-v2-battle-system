@@ -8,7 +8,11 @@ from .context import BattleContext
 from .damage_formula_context import DamageDefensePolicy, DamageFormulaContext
 from .damage_formula_policy_system import DamageFormulaPolicyResult, DamageFormulaPolicySystem
 from .damage_modifier_system import DamageModifierSystem
-from .damage_modifiers import DamageModifierPhase, DamageModifierResult
+from .damage_modifiers import (
+    DamageModifierKind,
+    DamageModifierPhase,
+    DamageModifierResult,
+)
 from .damage_pipeline_trace import (
     DamagePipelineTrace,
     FrozenApplicationTrace,
@@ -350,18 +354,23 @@ class DamageSystem:
                 base_damage * request.coefficient,
                 "scaled_damage",
             )
-            current = scaled_damage
-            for mod in frozen_basis.locked_modifier_plan:
-                if mod.admitted:
-                    current = validate_nonnegative_finite(
-                        current * mod.operand, "modifier output"
-                    )
+            current = self._apply_frozen_source_modifier_plan(
+                scaled_damage,
+                frozen_basis.locked_modifier_plan,
+            )
 
             if critical.triggered:
                 current = validate_nonnegative_finite(
                     current + scaled_damage * critical.bonus,
                     "critical output",
                 )
+            current = validate_nonnegative_finite(
+                current
+                * self._frozen_advancement_out_multiplier(
+                    frozen_basis.source_formula_facts
+                ),
+                "source advancement output",
+            )
 
             zeroed_by = None
             alert_consumed = None
@@ -395,6 +404,10 @@ class DamageSystem:
                     pierce_rate=pierce_rate,
                 )
                 current = incoming.output_damage
+                current = validate_nonnegative_finite(
+                    current * self._advancement_in_multiplier(target),
+                    "target advancement output",
+                )
                 if self._stage11 is not None:
                     alert = self._stage11.adjust_alert(
                         context,
@@ -482,7 +495,13 @@ class DamageSystem:
             modified_damage = validate_nonnegative_finite(
                 modifier_result.output_damage, "modified_damage"
             )
-            final_damage = max(1, int(modified_damage))
+            modified_damage = validate_nonnegative_finite(
+                modified_damage
+                * self._advancement_out_multiplier(source)
+                * self._advancement_in_multiplier(target),
+                "advancement modified damage",
+            )
+            final_damage = 0 if modified_damage <= 0.0 else max(1, int(modified_damage))
             zeroed_by = None
             alert_consumed = None
         else:
@@ -501,6 +520,10 @@ class DamageSystem:
                     current + scaled_damage * critical.bonus,
                     "critical output",
                 )
+            current = validate_nonnegative_finite(
+                current * self._advancement_out_multiplier(source),
+                "source advancement output",
+            )
 
             zeroed_by = None
             alert_consumed = None
@@ -524,6 +547,10 @@ class DamageSystem:
                     pierce_rate=pierce_rate,
                 )
                 current = incoming.output_damage
+                current = validate_nonnegative_finite(
+                    current * self._advancement_in_multiplier(target),
+                    "target advancement output",
+                )
                 incoming_applied = incoming.applied_modifiers
                 alert = self._stage11.adjust_alert(
                     context,
@@ -572,6 +599,75 @@ class DamageSystem:
             zeroed_by_state_id=zeroed_by,
             alert_consumed_instance_id=alert_consumed,
         )
+
+    @staticmethod
+    def _advancement_out_multiplier(source: UnitRuntime) -> float:
+        if not source.military_books_active:
+            return 1.0
+        return 1.0 + 0.02 * source.advancement_stars
+
+    @staticmethod
+    def _advancement_in_multiplier(target: UnitRuntime) -> float:
+        if not target.military_books_active:
+            return 1.0
+        return 1.0 - 0.02 * target.advancement_stars
+
+    @staticmethod
+    def _frozen_advancement_out_multiplier(
+        facts: FrozenSourceFormulaFacts,
+    ) -> float:
+        if not facts.source_military_books_active_at_application:
+            return 1.0
+        return 1.0 + 0.02 * facts.source_advancement_stars_at_application
+
+    @staticmethod
+    def _apply_frozen_source_modifier_plan(
+        scaled_damage: float,
+        plan,
+    ) -> float:
+        """Replay a DOT source snapshot with Stage13-B2 same-side pooling."""
+        current = validate_nonnegative_finite(scaled_damage, "scaled_damage")
+        critical_items = [
+            item
+            for item in plan
+            if item.admitted and item.phase is DamageModifierPhase.CRITICAL
+        ]
+        for item in critical_items:
+            current = validate_nonnegative_finite(
+                current * item.operand,
+                "frozen critical modifier output",
+            )
+
+        outgoing_items = [
+            item
+            for item in plan
+            if item.admitted and item.phase is DamageModifierPhase.OUTGOING
+        ]
+        if outgoing_items:
+            net = 0.0
+            for item in outgoing_items:
+                if item.kind is DamageModifierKind.OUTGOING_INCREASE:
+                    if item.operand < 1.0:
+                        raise ValueError(
+                            "frozen OUTGOING_INCREASE operand must be >= 1"
+                        )
+                    net += item.operand - 1.0
+                elif item.kind is DamageModifierKind.OUTGOING_REDUCTION:
+                    if not 0.0 <= item.operand <= 1.0:
+                        raise ValueError(
+                            "frozen OUTGOING_REDUCTION operand must be in [0,1]"
+                        )
+                    net -= 1.0 - item.operand
+                else:
+                    current = validate_nonnegative_finite(
+                        current * item.operand,
+                        "frozen outgoing modifier output",
+                    )
+            current = validate_nonnegative_finite(
+                current * max(0.10, 1.0 + net),
+                "frozen outgoing pooled output",
+            )
+        return current
 
     def _resolve_stage11_critical(
         self,
