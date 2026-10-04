@@ -1,29 +1,40 @@
-# Stage 10 · Persistent State Runtime Integration — FROZEN
+# Stage10 · Persistent State Runtime Integration
 
-[返回阶段索引](../README.md)
+> Status: FROZEN / COMPLETE
 
-## 状态
+Stage10 已冻结八个持续状态：
 
 ```text
-Research       = COMPLETE
-Design         = FROZEN
-Implementation = COMPLETE
-Runtime        = FROZEN
+690072 BURN
+690073 FLOOD
+690074 POISON
+690075 ROUT
+690076 SANDSTORM
+690077 REBELLION
+690078 FIRST_AID
+690079 RECUPERATION
 ```
 
-Stage10 接入并冻结 8 个持续状态：灼烧、水攻、中毒、溃逃、沙暴、叛逃、急救、休整。
+## Frozen capabilities
 
-## 当前权威
+- state generation identity
+- refresh / replacement
+- holder action-start settlement
+- continuous-damage application-time snapshot
+- FirstAid after-damage recovery opportunity
+- Recuperation action-start recovery opportunity
+- defeat / battle-end cleanup
+- source provenance
+- Stage7/8/9 compatibility
 
-- [正式设计](STAGE10.md)
-- [设计冻结](STAGE10_DESIGN_FREEZE.md)
-- [最终设计冻结审计](STAGE10_FINAL_DESIGN_FREEZE_GATE_AUDIT.md)
-- [实施构建说明](STAGE10_BUILD_PROMPT.md)
-- [最终实施一致性审计](STAGE10_FINAL_IMPLEMENTATION_CONFORMANCE_AUDIT.md)
-- [实施冻结记录](STAGE10_IMPLEMENTATION_FREEZE.md)
-- [主分支合入审计](STAGE10_POST_FREEZE_MERGE_AUDIT.md)
-- [Runtime Mapping](STAGE10_RUNTIME_MAPPING.md)
+## Current authority
 
-兼容记录继续保留在 Stage7/8/9 对应目录。
+- [Frozen design](STAGE10.md)
+- [Design freeze](STAGE10_DESIGN_FREEZE.md)
+- [Final design gate audit](STAGE10_FINAL_DESIGN_FREEZE_GATE_AUDIT.md)
+- [Runtime mapping](STAGE10_RUNTIME_MAPPING.md)
+- [Implementation conformance audit](STAGE10_FINAL_IMPLEMENTATION_CONFORMANCE_AUDIT.md)
+- [Implementation freeze](STAGE10_IMPLEMENTATION_FREEZE.md)
+- [Post-freeze merge audit](STAGE10_POST_FREEZE_MERGE_AUDIT.md)
 
-多轮 design re-audit、open-question、research-scope/matrix 等过程稿已从当前树清理；冻结行为以以上权威文档和 Runtime tests 为准。
+Historical build prompts, re-audits, research-question lists and pre-freeze process reports have been removed from the current tree. Git history remains the provenance source.
