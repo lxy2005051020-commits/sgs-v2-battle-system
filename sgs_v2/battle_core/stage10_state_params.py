@@ -39,12 +39,14 @@ def _validate_probability(val: float, name: str = "probability") -> float:
 class RecoveryModelKind(str, Enum):
     """
     Authoritative recovery calculation model kind (STAGE10.md §17, §29).
-    - TREATMENT_AMOUNT: Recovery amount based on caster attributes & treatment rate (e.g. 青囊, 陷阵营).
-    - TRIGGER_DAMAGE_RATIO: Recovery amount based on triggering damage loss ratio (e.g. 草船借箭).
+    - TREATMENT_AMOUNT: Ordinary FB1 treatment based on Rate(F(N)+Attr).
+    - TRIGGER_DAMAGE_RATIO: Special recovery based on triggering damage loss ratio.
+    - SPECIAL_RECOVERY_AMOUNT: Amount pre-resolved by a dedicated special-family owner.
     """
 
     TREATMENT_AMOUNT = "TREATMENT_AMOUNT"
     TRIGGER_DAMAGE_RATIO = "TRIGGER_DAMAGE_RATIO"
+    SPECIAL_RECOVERY_AMOUNT = "SPECIAL_RECOVERY_AMOUNT"
 
 
 @dataclass(frozen=True, slots=True)
