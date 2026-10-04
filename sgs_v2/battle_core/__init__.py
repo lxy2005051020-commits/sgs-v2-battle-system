@@ -814,6 +814,7 @@ from .pending_work import (
 from .operation_identity import PendingWorkId, SkillOperationId, EffectOperationId, RecoveryOperationId
 
 from .troop_admission import (
+    TroopAdmissionRejectedError,
     TroopAdmissionResult,
     TroopAdmissionStatus,
     XILIANG_CAVALRY_CRIT_BONUS,
@@ -824,8 +825,8 @@ from .troop_admission import (
     admit_and_install_troop_skill,
     create_xiliang_cavalry_definition,
     create_xiliang_cavalry_runtime,
+    process_pre_battle_troop_skills,
 )
-from .troop_system import TroopAdmissionRejectedError
 
 __all__ += [
     "PendingWork", "PendingWorkRegistry", "PendingWorkSystem", "PendingWorkStatus",

@@ -58,6 +58,7 @@ from sgs_v2.battle_core import (
     XILIANG_CAVALRY_SKILL_NAME,
     admit_and_install_troop_skill,
     create_xiliang_cavalry_runtime,
+    process_pre_battle_troop_skills,
     register_official_state_definitions,
     StateNode,
 )
@@ -946,7 +947,7 @@ def test_auto01_detail_auto_pre_battle_lifecycle_and_provider_dependency() -> No
     # Initialize Engine and advance to PRE_BATTLE
     engine = BattleEngine(context=context, systems=systems)
     engine._enter_phase(BattlePhase.PRE_BATTLE)
-    systems.troop_system.process_pre_battle_troop_skills(context, systems)
+    process_pre_battle_troop_skills(context, systems)
 
     # 1. Verify identities auto-established
     for uid in ("a1", "a2", "a3"):

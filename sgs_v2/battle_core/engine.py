@@ -15,6 +15,7 @@ from .execution_right_system import (
 from .rule_hooks import RoundStartHook, UnitActionStartHook
 from .dependency_evaluation import StateNode
 from .pending_work import PendingWorkTimingPoint
+from .troop_admission import process_pre_battle_troop_skills
 
 
 @dataclass(slots=True)
@@ -31,7 +32,7 @@ class BattleEngine:
             return self.context.result
 
         self._enter_phase(BattlePhase.PRE_BATTLE)
-        self.systems.troop_system.process_pre_battle_troop_skills(self.context, self.systems)
+        process_pre_battle_troop_skills(self.context, self.systems)
         self.context.event_bus.publish(
             event_type=EventType.BATTLE_STARTED,
             phase=self.context.current_phase,

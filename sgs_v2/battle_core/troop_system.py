@@ -3,21 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from .unit import UnitRuntime
-from .skill_definition import SkillType
-
-
-class TroopAdmissionRejectedError(RuntimeError):
-    """Raised when troop skill admission is rejected during PRE_BATTLE."""
-
-    def __init__(self, status, skill_id: str, owner_id: str, reason: str | None = None) -> None:
-        super().__init__(
-            f"Troop skill admission rejected: status={status}, skill_id={skill_id}, owner_id={owner_id}, reason={reason}"
-        )
-        self.status = status
-        self.skill_id = skill_id
-        self.owner_id = owner_id
-        self.reason = reason
-
 
 
 @dataclass(frozen=True, slots=True)
@@ -113,26 +98,3 @@ class TroopSystem:
             if not isinstance(target, UnitRuntime):
                 raise TypeError("targets must contain UnitRuntime values")
             self.decay_wounded(target)
-
-    def process_pre_battle_troop_skills(self, context, systems) -> None:
-        """Scan registered SkillRuntimes for TROOP skills and auto-admit them during PRE_BATTLE."""
-        from .troop_admission import TroopAdmissionStatus, admit_and_install_troop_skill
-
-        # Collect all unique TROOP skills registered across units
-        troop_runtimes = [
-            rt for rt in context.skill_runtimes.values()
-            if rt.definition.skill_type == SkillType.TROOP
-        ]
-        for rt in troop_runtimes:
-            result = admit_and_install_troop_skill(context, systems, rt)
-            if result.status == TroopAdmissionStatus.REJECTED_ALREADY_INSTALLED:
-                continue
-            if result.status != TroopAdmissionStatus.SUCCESS:
-                raise TroopAdmissionRejectedError(
-                    status=result.status,
-                    skill_id=result.skill_id,
-                    owner_id=result.owner_id,
-                    reason=result.reason,
-                )
-
-
