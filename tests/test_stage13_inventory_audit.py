@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -12,9 +14,7 @@ REQUIRED_DOCS = (
     "STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md",
     "STAGE13_CORE_RUNTIME_OWNER_MATRIX.md",
     "STAGE13_CORE_MECHANISM_TEST_MATRIX.md",
-    "STAGE13_RESEARCH_GAP_LEDGER.md",
     "STAGE13_RUNTIME_GOVERNANCE_LEDGER.md",
-    "STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md",
 )
 
 CLASSIFICATIONS = {
@@ -71,29 +71,28 @@ def test_stage13_entry_gate_is_active_but_engine_not_frozen() -> None:
     assert "Skill Runtime Readiness           = NOT YET READY" in index
 
 
-def test_stage13_preserves_distribution_history_but_closes_current_boundary() -> None:
+def _research_reference(name: str) -> dict:
+    references = json.loads((ROOT / "docs/runtime/RESEARCH_AUTHORITY_REFERENCES.json").read_text(encoding="utf-8"))
+    reference = references["stages/stage13/" + name]
+    assert reference["repository"] == "lxy2005051020-commits/sgs-state-mechanics-research"
+    assert re.fullmatch(r"[a-f0-9]{40}", reference["commit"])
+    assert reference["path"] == name
+    assert reference["status"] == "CURRENT"
+    assert not (STAGE13 / name).exists()
+    return reference
+
+
+def test_stage13_preserves_distribution_history_and_pins_current_research() -> None:
     inventory = _read("STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY.md")
-    research = _read("STAGE13_RESEARCH_GAP_LEDGER.md")
-    # Stage13-A inventory remains a historical snapshot, but current authority supersedes it.
     assert "690086 DISTRIBUTION / DSTS9-B02         OPEN / UNOBSERVED" in inventory
     assert "2026-10-04 closure amendment" in inventory
-    assert "DSTS9-B02" in research
-    assert "finish current DistributionTransaction, then finalize battle" in research
-    assert "| P2 | CLOSED | FROZEN |" in research
+    _research_reference("STAGE13_RESEARCH_GAP_LEDGER.md")
 
 
 def test_stage13_research_and_runtime_governance_are_separate() -> None:
-    research = _read("STAGE13_RESEARCH_GAP_LEDGER.md")
+    _research_reference("STAGE13_RESEARCH_GAP_LEDGER.md")
+    _research_reference("STAGE13_FOUNDATIONAL_RESEARCH_PRIORITY_REPLAN.md")
     governance = _read("STAGE13_RUNTIME_GOVERNANCE_LEDGER.md")
-
-    assert "RQ13-B1" in research
-    assert "RQ13-B2" in research
-    assert "RQ13-B3" in research
-    assert "RQ13-001" in research
-    assert "RQ13-002" in research
-    assert "2026-10-04 authority amendment: applicable" in research
-    assert "| P1 | CLOSED | FROZEN |" in research
-
     assert "RG13-001" in governance
     assert "RG13-010" in governance
     assert "No Stage13-A row above is a Default" in governance

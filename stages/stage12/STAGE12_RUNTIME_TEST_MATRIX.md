@@ -94,7 +94,7 @@ A `BOUNDED_UNKNOWN` must never become a normal-looking test assertion unless it 
 ## SF-0 test-design input — 2026-09-27
 
 Fresh baseline at `0c2983461e4f68a43bcb2851498c975e820592dc`: 913 passed / demo exit 0.
-[Design Question Ledger section 4](STAGE12_SHARED_FOUNDATION_DESIGN_QUESTION_LEDGER.md) gives proposed
+[Design Question Ledger section 4](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/blob/f0339729a94685f1d1ae226e1975ad4298b7f81f/stages/stage12/STAGE12_SHARED_FOUNDATION_DESIGN_QUESTION_LEDGER.md) gives proposed
 foundation test files, named discriminator cases and the full required cross-state pair set.
 These are PLANNED, not implemented or passing Stage12 tests. Legacy P0-CFS-P93-01 conflicts with
 Insight v0.4 and must retain its provenance until explicit supersession; do not weaken it for CI.

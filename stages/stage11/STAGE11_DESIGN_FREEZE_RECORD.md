@@ -3,7 +3,7 @@
 Status: **DESIGN FROZEN**  
 Freeze basis: `STAGE11_RUNTIME_INTEGRATION_DESIGN.md` + `STAGE11_DESIGN_AUDIT.md`
 
-> **2026-09-25 combined-authority reopen:** The design's Share attacker-recovery basis is not validated across lethal Share and Cleave secondary Share. [Authority audit](STAGE11_SHARE_LIFESTEAL_AUTHORITY_REOPEN.md) selected RESOLUTION-D; this design freeze cannot unblock Stage11 Runtime.
+> **2026-09-25 combined-authority reopen:** The design's Share attacker-recovery basis is not validated across lethal Share and Cleave secondary Share. [Authority audit](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/STAGE11_SHARE_LIFESTEAL_AUTHORITY_RESOLUTION.md) selected RESOLUTION-D; this design freeze cannot unblock Stage11 Runtime.
 
 Inputs:
 

@@ -11,7 +11,7 @@ Stage9 冻结跨机制编排、Target/Redirect/Reaction、Damage partition、Bat
 - [Final audit](STAGE9_FINAL_AUDIT.md)
 - [Freeze record](STAGE9_FREEZE_RECORD.md)
 - [Stage9 → Stage10 compatibility](STAGE9_STAGE10_COMPATIBILITY_ADDENDUM.md)
-- [690098 Guard contract](STATE_690098_GUARD_MECHANISM_CONTRACT.md)
+- [690098 Guard contract](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/states/functional/guard/MECHANISM_CONTRACT.md)
 
 ## Frozen scope
 
@@ -46,3 +46,10 @@ DSTS9-B02           = CLOSED / FROZEN_P0
 ```
 
 Stage9 不再保留逐 phase implementation/repair 报告；这些过程可从 Git history 追溯。当前 Runtime 只以生产代码、测试和上述最终冻结权威为准。
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

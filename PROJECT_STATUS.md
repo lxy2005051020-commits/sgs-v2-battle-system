@@ -1,3 +1,5 @@
+> Gameplay Research status is MIRROR ONLY. Research truth and evidence: [pinned Research authority](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/RESEARCH_AUTHORITY_INDEX.md). This document owns Runtime/project progress.
+
 # 当前项目状态
 
 > Reconciled: 2026-10-04

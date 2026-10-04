@@ -43,7 +43,7 @@ Strict Complete            = 40 / 40
 - [Core gameplay gap ledger](STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md)
 - [Core runtime owner matrix](STAGE13_CORE_RUNTIME_OWNER_MATRIX.md)
 - [Core mechanism test matrix](STAGE13_CORE_MECHANISM_TEST_MATRIX.md)
-- [Research gap ledger](STAGE13_RESEARCH_GAP_LEDGER.md)
+- [Research gap ledger](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/STAGE13_RESEARCH_GAP_LEDGER.md)
 - [Runtime governance ledger](STAGE13_RUNTIME_GOVERNANCE_LEDGER.md)
 - [Foundational runtime integration](STAGE13_FOUNDATIONAL_RUNTIME_INTEGRATION.md)
 - [Foundational runtime freeze audit](STAGE13_FOUNDATIONAL_RUNTIME_FREEZE_AUDIT.md)
@@ -105,3 +105,10 @@ Exit target:
 ```text
 Skill Runtime Readiness = READY
 ```
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

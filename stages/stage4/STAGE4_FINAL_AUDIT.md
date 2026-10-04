@@ -168,7 +168,7 @@ PASS
 RandomSystem.shuffle()
 ```
 
-该组合语义与 `PROJECT_STATE_INTERACTIONS_V1.md` 一致，并且保持为项目补充确认规则，不伪装成官方 Hint 原文。
+该组合语义与 [PROJECT_STATE_INTERACTIONS_V1.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/catalogs/official_state_catalog_v1/PROJECT_STATE_INTERACTIONS_V1.md) 一致，并且保持为项目补充确认规则，不伪装成官方 Hint 原文。
 
 审计结论：
 
@@ -691,3 +691,10 @@ Effect + EffectExecutor + State Runtime Parameter Contract
 ```
 
 Stage 5 必须重新读取当时最新 `main`，先建立正式 `stages/stage5/STAGE5.md`，不得根据本次审计时的旧 SHA 猜测仓库状态。
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

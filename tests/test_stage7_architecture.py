@@ -153,33 +153,18 @@ def test_damage_system_stage7_boundary_does_not_gain_recovery_or_trigger_executi
     assert "apply_damage" not in calls
 
 
-def test_evidence_matrix_gate_keeps_official_periodic_states_deferred() -> None:
-    matrix = (
-        ROOT_DIR
-        / "stages"
-        / "stage7"
-        / "STAGE7_EVIDENCE_MATRIX.md"
-    ).read_text(encoding="utf-8")
-    deferred = (
-        "burn",
-        "flood",
-        "poison",
-        "rout",
-        "sandstorm",
-        "recuperation",
-        "rebellion",
-        "first_aid",
-        "weapon_lifesteal",
-        "strategy_lifesteal",
-    )
+def test_official_periodic_definitions_do_not_install_stage7_trigger_tags() -> None:
+    from sgs_v2.battle_core import StateRegistry, register_official_state_definitions
+    from sgs_v2.battle_core.trigger_system import ROUND_START_TRIGGER_TAG, UNIT_ACTION_START_TRIGGER_TAG
+
+    registry = StateRegistry()
+    register_official_state_definitions(registry)
+    deferred = ("burn", "flood", "poison", "rout", "sandstorm", "recuperation", "rebellion", "first_aid", "weapon_lifesteal", "strategy_lifesteal")
     for state_id in deferred:
-        row = next(line for line in matrix.splitlines() if line.startswith(f"| `{state_id}` |"))
-        assert "`DEFER`" in row
-    healing_row = next(
-        line for line in matrix.splitlines()
-        if line.startswith("| `healing_ban` |")
-    )
-    assert "`PASS_STAGE7`" in healing_row
+        tags = registry.get_definition(state_id).tags
+        assert ROUND_START_TRIGGER_TAG not in tags
+        assert UNIT_ACTION_START_TRIGGER_TAG not in tags
+    assert registry.get_definition("healing_ban").state_id == "healing_ban"
 
 
 def test_official_catalog_does_not_sneak_in_periodic_trigger_runtime_mapping() -> None:

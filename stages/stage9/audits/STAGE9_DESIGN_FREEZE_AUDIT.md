@@ -65,7 +65,7 @@ Complete documents read and verified in this audit:
 - `stages/stage9/audits/STAGE9_DESIGN_REPAIR_ROUND2.md` (at `394d32e`)
 - `stages/stage9/README.md` (at `3bc2e2d`)
 - `stages/README.md` (at `3bc2e2d`)
-- `README.md` (at `3bc2e2d`)
+- [README.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v1/README.md) (at `3bc2e2d`)
 - `stages/stage9/hardening/STAGE9_RUNTIME_INVARIANTS.md`
 - `stages/stage9/hardening/STAGE9_REGRESSION_CONTRACTS.md`
 - `stages/stage9/docsync/STAGE9_AUTHORITY_MAP.md`
@@ -95,7 +95,7 @@ Commit diff: `524438ef97f8170fd81d026f82f7ecf6ae828a90` → `3bc2e2d0b2dffed4b71
 
 | Target Path | Diff Stat | Permitted Scope | Audit Assessment |
 |---|---|---|---|
-| `README.md` | 1 insertion, 1 deletion | Root status pointer update | **PERMITTED (PASS)** |
+| [README.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v1/README.md) | 1 insertion, 1 deletion | Root status pointer update | **PERMITTED (PASS)** |
 | `stages/README.md` | 3 insertions, 3 deletions | Stage index status/navigation update | **PERMITTED (PASS)** |
 | `stages/stage9/README.md` | 25 insertions, 17 deletions | Stage9 index status/freeze links | **PERMITTED (PASS)** |
 | `stages/stage9/STAGE9.md` | 36 insertions, 15 deletions | Header metadata & admission tables only | **PERMITTED (PASS)** |
@@ -341,7 +341,7 @@ The default applies exclusively to the Distribution local continuation policy fo
 
 | Document Path | Document Status Header | Stage9 Status Display | Next Step Navigation | Consistent? |
 |---|---|---|---|---|
-| `README.md` | Normal | `STAGE9.md = DESIGN FROZEN — PENDING FREEZE AUDIT` | Directs to `stages/stage9/README.md` | **YES (PASS)** |
+| [README.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v1/README.md) | Normal | `STAGE9.md = DESIGN FROZEN — PENDING FREEZE AUDIT` | Directs to `stages/stage9/README.md` | **YES (PASS)** |
 | `stages/README.md` | Normal | `Stage 9 — DESIGN FROZEN / PENDING FREEZE AUDIT` | `Stage9 Design Freeze Audit` | **YES (PASS)** |
 | `stages/stage9/README.md` | `Design Frozen — Pending Freeze Audit` | `STAGE9.md = DESIGN FROZEN — FREEZE AUDIT REQUIRED` | `Stage9 Design Freeze Audit` | **YES (PASS)** |
 | `stages/stage9/STAGE9.md` | `DESIGN FROZEN — FREEZE AUDIT REQUIRED` | `Stage9 Design Frozen = YES`<br>`Implementation specification = FROZEN` | `Stage9 Design Freeze Audit` | **YES (PASS)** |
@@ -418,3 +418,10 @@ PRODUCTION IMPLEMENTATION = NOT YET AUTHORIZED
 NEXT STEP:
 Stage9 Build Prompt Authoring
 ```
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

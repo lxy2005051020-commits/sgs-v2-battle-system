@@ -423,7 +423,7 @@ RandomSystem.shuffle()
 
 因此同一武将同时拥有先攻与遇袭时，两者相互抵消，按普通行动层处理，再依据有效速度排序；只有与其他普通层单位同时满足同速度时，才进入 `RandomSystem.shuffle()` 裁决。
 
-此规则属于项目补充确认，不改写 `OFFICIAL_STATE_CATALOG_V1.md` 中保存的官方接口原文。
+此规则属于项目补充确认，不改写 [OFFICIAL_STATE_CATALOG_V1.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/catalogs/official_state_catalog_v1/OFFICIAL_STATE_CATALOG_V1.md) 中保存的官方接口原文。
 
 测试必须覆盖该行为。
 
@@ -922,3 +922,10 @@ BattleState 不只是“能存、能过期”，
 ```
 
 完成后再进入 Stage 5：Effect。
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

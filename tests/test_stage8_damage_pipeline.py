@@ -765,23 +765,8 @@ def test_stage8_architecture_resolvers_do_not_reference_official_ids_or_side_eff
         )
 
 
-def test_evidence_matrix_verdicts_and_defer_binding_guard() -> None:
-    matrix = (
-        Path(__file__).parents[1]
-        / "stages"
-        / "stage8"
-        / "STAGE8_EVIDENCE_MATRIX.md"
-    ).read_text(encoding="utf-8")
-    verdicts = []
-    for line in matrix.splitlines():
-        if not line.startswith("| `") or line.startswith("| `state_id`"):
-            continue
-        cells = [cell.strip().strip("`") for cell in line.strip().strip("|").split("|")]
-        if len(cells) >= 2:
-            verdicts.append((cells[0], cells[-1]))
-
-    assert verdicts
-    assert {verdict for _, verdict in verdicts} <= {"PASS_STAGE8", "DEFER"}
-    deferred = {state_id for state_id, verdict in verdicts if verdict == "DEFER"}
-    assert DEFER_STAGE8_STATES <= deferred
-    assert default_stage8_official_binding_state_ids().isdisjoint(deferred)
+def test_stage8_default_binding_preserves_deferred_state_boundary() -> None:
+    binding_ids = default_stage8_official_binding_state_ids()
+    # Stage11 now owns official Weakness; the provisional Stage8 binding set is empty.
+    assert binding_ids == frozenset()
+    assert binding_ids.isdisjoint(DEFER_STAGE8_STATES)

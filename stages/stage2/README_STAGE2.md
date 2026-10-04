@@ -79,7 +79,7 @@ TroopSystem.apply_damage()
 - 所有随机行为必须通过 `BattleContext.random / RandomSystem`。
 - `DamageResult.final_damage` 是理论伤害。例如目标只剩 100 兵而理论伤害为 800，`final_damage` 仍为 800；实际损失 100 由 `TroopSystem` 负责。
 
-兵刃公式的逆向候选说明见 `NORMAL_ATTACK_FORMULA_V1.md`；谋略实现边界见 `STRATEGY_DAMAGE_FORMULA_V1.md`。这些文档描述的是仓库当前采用的候选模型，不是官方公开公式，也不是服务器源码。
+兵刃公式的逆向候选说明见 [NORMAL_ATTACK_FORMULA_V1.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/formulas/NORMAL_ATTACK_FORMULA_V1.md)；谋略实现边界见 [STRATEGY_DAMAGE_FORMULA_V1.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/formulas/STRATEGY_DAMAGE_FORMULA_V1.md)。这些文档描述的是仓库当前采用的候选模型，不是官方公开公式，也不是服务器源码。
 
 ## 阵容规则
 
@@ -128,3 +128,10 @@ Effect / SkillRuntime
 ```
 
 这些能力在后续阶段建立，不应反向污染 Stage 2 的基础接口。
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status

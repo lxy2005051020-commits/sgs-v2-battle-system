@@ -251,7 +251,7 @@ Created:
 
 Governance sync targets:
 - `PROJECT_STATUS.md`
-- `README.md`
+- [README.md](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/stage9_core_arbitration/core_arbitration_v1/README.md)
 - `CANONICAL_STATE_PLANNING_MATRIX.md`
 - `stages/stage12/README.md`
 - `stages/stage12/STAGE12_690108_PROVOCATION_RUNTIME_INTEGRATION.md`
@@ -291,3 +291,10 @@ Stage13 / Stage14 / Stage15 = NO
 ```
 
 Do not treat this NEXT marker as implementation already completed.
+
+
+Research Authority:
+Repository: lxy2005051020-commits/sgs-state-mechanics-research
+Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
+Path: RESEARCH_AUTHORITY_INDEX.md
+Status: CURRENT INDEX; individual contracts retain scoped status
