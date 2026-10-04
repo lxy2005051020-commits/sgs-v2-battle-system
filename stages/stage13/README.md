@@ -7,7 +7,8 @@ Stage13 completes the reusable game-engine substrate before large-scale concrete
 ## Completed slices
 
 ```text
-B1 Wounded / Recoverable Capacity  = FROZEN / IMPLEMENTED
+B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN
+B1 Runtime                         = IMPLEMENTED
 B2 Damage Modifier Mathematics     = FROZEN / IMPLEMENTED
 B2.5 Advancement / Damage Closure  = CLOSED / IMPLEMENTED
 B3 Ordinary Treatment Core         = FROZEN / IMPLEMENTED
@@ -18,6 +19,14 @@ B3 Ordinary Treatment Core         = FROZEN / IMPLEMENTED
 
 D1 PendingWork Foundation           = FROZEN / IMPLEMENTED
 ```
+
+Stage13 entry gate:
+
+```text
+STAGE13_ENTRY_GATE                = PASS
+```
+
+Concrete skill runtimes remain deferred until the Stage13 exit gate.
 
 Official-state baseline:
 
