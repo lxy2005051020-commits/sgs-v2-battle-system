@@ -182,9 +182,9 @@ class ContinuousDamageBasisProducer:
             contrib
             for contrib in rules.modifier_contributions
             if contrib.applies_to(damage_type, DamageSourceType.CONTINUOUS)
-            and (
-                contrib.phase in (DamageModifierPhase.CRITICAL, DamageModifierPhase.OUTGOING)
-                or (contrib.source.owner_id is not None and contrib.source.owner_id == request.source_id)
+            and contrib.phase in (
+                DamageModifierPhase.CRITICAL,
+                DamageModifierPhase.OUTGOING,
             )
         ]
         source_mods.sort(key=lambda c: (c.phase_order, c.order_key))
