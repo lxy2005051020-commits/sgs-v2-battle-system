@@ -29,6 +29,7 @@ class TroopSystem:
         actual_damage = min(target.troops, requested_damage)
         target.troops -= actual_damage
         wounded_generated = (actual_damage * 90) // 100
+        target._wounded_pool_authoritative = True
         if target.troops == 0:
             # Stage13-B1 Tier-C canonical runtime default: defeated units do not
             # retain recoverable capacity.
@@ -58,6 +59,13 @@ class TroopSystem:
         wounded_before = target.wounded_troops
         assert wounded_before is not None
         missing = target.max_troops - target.troops
+        if not target._wounded_pool_authoritative:
+            # Legacy migration seam: historical tests/snapshots sometimes mutate
+            # UnitRuntime.troops directly. Adopt the missing-troop value exactly
+            # once, then make the Stage13 wounded pool authoritative.
+            wounded_before = max(wounded_before, missing)
+            target.wounded_troops = wounded_before
+            target._wounded_pool_authoritative = True
         actual_recovery = min(missing, wounded_before, requested_recovery)
         target.troops += actual_recovery
         target.wounded_troops = max(0, wounded_before - actual_recovery)
@@ -74,6 +82,11 @@ class TroopSystem:
         """Apply the Stage13-B1 round-transition wounded-pool decay."""
         wounded_before = target.wounded_troops
         assert wounded_before is not None
+        if not target._wounded_pool_authoritative:
+            missing = target.max_troops - target.troops
+            wounded_before = max(wounded_before, missing)
+            target.wounded_troops = wounded_before
+            target._wounded_pool_authoritative = True
         if not target.is_alive:
             target.wounded_troops = 0
             return 0
