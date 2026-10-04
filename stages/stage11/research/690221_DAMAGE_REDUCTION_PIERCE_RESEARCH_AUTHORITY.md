@@ -43,7 +43,7 @@ Stage11 Runtime Integration Design must consume the external contract:
 - transform resolution is per eligible resolved damage branch/target, while execution-log cardinality is explicitly **not guaranteed 1:1** with DamageEvents;
 - observed applicable lanes: Normal Attack, observed Assault family, 【解烦卫】, 【以直报怨】;
 - observed no-invocation members: 【踩踏】, 【冲阵】, 【荆棘】, 【气凌三军】;
-- ACTIVE_SKILL and DOT/DELAYED remain `UNSUPPORTED_UNKNOWN`, not “confirmed no-pierce”.
+- ACTIVE_SKILL and DOT/DELAYED are `SUPPORTED_APPLICABLE` by the Stage13 2026-10-04 mechanism authority amendment; they use the same frozen cap-before-pierce proportional transform.
 
 ## 4. Runtime Integration Constraints
 
@@ -52,7 +52,7 @@ Stage11 design / implementation must not:
 - calculate or hardcode SP马超 `P(Speed)` inside generic state 690221;
 - invent a 95% P cap;
 - assume P is snapshot or JIT without Provider authority;
-- silently map UNKNOWN families to “no pierce”;
+- silently map any still-UNKNOWN family to “no pierce”;
 - generalize 【气凌三军】 to all counterattacks;
 - assume every SEE_THROUGH log maps 1:1 to one DamageEvent;
 - move Alert into the pierced operand;
