@@ -9,7 +9,8 @@ Stage13 completes the reusable game-engine substrate before large-scale concrete
 ```text
 B1 Wounded-Troop / Recoverable-Capacity Mechanics — FROZEN
 B1 Runtime                         = IMPLEMENTED
-B2 Damage Modifier Mathematics     = FROZEN / IMPLEMENTED
+B2 Damage Increase / Reduction Mechanics — FROZEN
+B2 Runtime                         = IMPLEMENTED
 B2.5 Advancement / Damage Closure  = CLOSED / IMPLEMENTED
 B3 Ordinary Treatment Core         = FROZEN / IMPLEMENTED
 
@@ -24,6 +25,7 @@ Stage13 entry gate:
 
 ```text
 STAGE13_ENTRY_GATE                = PASS
+Stage13 Active                    = YES
 ```
 
 Concrete skill runtimes remain deferred until the Stage13 exit gate.
@@ -87,3 +89,19 @@ Skill Runtime Readiness = NOT YET READY
 ```
 
 Historical Stage13 replans, intermediate model-comparison reports and superseded question ledgers are available from Git history rather than the current authority tree.
+
+
+## Machine-checked exit declarations
+
+```text
+CORE_GAMEPLAY_ENGINE              = NOT YET FROZEN
+Skill Runtime Readiness           = NOT YET READY
+```
+
+Stage14+ concrete skill integration remains behind the exit gate.
+
+Exit target:
+
+```text
+Skill Runtime Readiness = READY
+```
