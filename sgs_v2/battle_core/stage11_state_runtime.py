@@ -381,6 +381,8 @@ class Stage11StateRuntime:
         if family in {
             Stage11DamageFamily.NORMAL_ATTACK,
             Stage11DamageFamily.ASSAULT_SKILL,
+            Stage11DamageFamily.ACTIVE_SKILL,
+            Stage11DamageFamily.PERIODIC_DAMAGE,
             Stage11DamageFamily.COMMAND_XIEFANWEI,
             Stage11DamageFamily.REACTION_YIZHIBAOYUAN,
         }:
@@ -393,6 +395,19 @@ class Stage11StateRuntime:
         }:
             return SeeThroughEligibility.SUPPORTED_NO_INVOCATION
         return SeeThroughEligibility.UNSUPPORTED_UNKNOWN
+
+    @staticmethod
+    def alert_threshold(max_carry_troops: int) -> float:
+        """Canonical 690099 threshold: 6% of maximum carrying troops.
+
+        The comparison is inclusive at the call site: candidate_damage >= threshold
+        triggers ALERT. This helper deliberately avoids integerizing the 6% boundary.
+        """
+        if isinstance(max_carry_troops, bool) or not isinstance(max_carry_troops, int):
+            raise TypeError("max_carry_troops must be an int")
+        if max_carry_troops <= 0:
+            raise ValueError("max_carry_troops must be > 0")
+        return max_carry_troops * 6 / 100
 
     def adjust_alert(
         self,
@@ -409,8 +424,11 @@ class Stage11StateRuntime:
             params = instance.runtime_params
             if not isinstance(params, AlertStateParams):
                 raise TypeError("690099 ALERT requires AlertStateParams")
-            # PROJECT_RUNTIME_DEFAULT: strict greater-than; equality is unobserved.
-            if candidate_damage <= params.threshold:
+            # Stage13 authority: ALERT threshold is 6% of the holder's maximum
+            # carrying troops and equality is inclusive. AlertStateParams.threshold
+            # is retained only as a legacy serialized field and is not authoritative.
+            threshold = self.alert_threshold(context.get_unit(target_id).max_troops)
+            if candidate_damage < threshold:
                 continue
             factor = 1.0 - (params.reduction_rate.numerator / params.reduction_rate.denominator)
             output = candidate_damage * factor
