@@ -28,7 +28,6 @@ class TroopAdmissionStatus(str, Enum):
     REJECTED_BASELINE_DISABLED = "REJECTED_BASELINE_DISABLED"
     REJECTED_INVALID_TROOP = "REJECTED_INVALID_TROOP"
     REJECTED_TEAM_INVARIANT_VIOLATION = "REJECTED_TEAM_INVARIANT_VIOLATION"
-    REJECTED_COMMANDER_SCALING_UNRESOLVED = "REJECTED_COMMANDER_SCALING_UNRESOLVED"
     REJECTED_NOT_FOUND = "REJECTED_NOT_FOUND"
 
 
@@ -93,8 +92,6 @@ class TroopSkillConfig:
     target_special_troop_id: SpecialTroopId
     definition_factory: Callable[[], SkillDefinition]
     definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition] | None = None
-    # 保留通用准入校验扩展点；西凉铁骑的马腾速度公式已冻结，不再通过此处 Fail Closed。
-    commander_clause_validator: Callable[[BattleContext, UnitRuntime], str | None] | None = None
 
 
 def calculate_xiliang_crit_chance(base_rate: float, combat_speed: float) -> float:
@@ -213,8 +210,8 @@ def admit_and_install_troop_skill(
     2. Canonical Registry Lookup: 仅按 canonical skill_id 查表，拒绝 Name Spoofing。
     3. Duplicate Guard: 若当前队伍已经确立该特殊兵种身份或已安装，防止重复安装累加。
     4. 基础兵种准入与队伍一致性校验 (Team Troop Invariant Preflight): 校验持有者及同队所有武将基础兵种必须一致且匹配。
-    5. 统领条款检查 (Fail Closed): 若包含未解析的公式条款，执行严格的 Fail Closed 拒绝。
-    6. 原子准入 (Atomic Mutation): 所有预检通过后，方可原子写入身份并解析执行 Effect。
+    5. Dynamic Definition Resolution: 在 mutation 前解析依赖 PRE_BATTLE 当前属性的技能参数（如马腾速度缩放）。
+    6. 原子准入 (Atomic Mutation): 所有预检与动态参数解析通过后，方可原子写入身份并执行 Effect。
     7. 规则依赖图注入 (Rule Dependency Edge): 绑定 StateNode -> ProviderNode 依赖，实现威慑抑制与 DEATH-E。
     """
     # 1. Phase Guard
