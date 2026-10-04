@@ -7,11 +7,10 @@ from sgs_v2.battle_core import (
     LineupPosition,
     OfficialStateId,
     RandomSystem,
-    TroopAdmissionStatus,
     TroopType,
     UnitRuntime,
-    admit_and_install_troop_skill,
     create_xiliang_cavalry_runtime,
+    register_official_state_definitions,
 )
 
 
@@ -188,23 +187,14 @@ def main() -> None:
         random=RandomSystem(seed=20260904),
         max_rounds=8,
     )
+    register_official_state_definitions(context.states)
 
     systems = BattleSystems()
 
-    # Stage14 Pilot 01 当前仍通过显式 PRE_BATTLE 安装入口接入。
-    # Pilot 01C 的目标是把这一步交给 BattleEngine 自动调度。
+    # Stage14 Pilot 01C: 将西凉铁骑注册至 BattleContext.skill_runtimes，
+    # 由 BattleEngine.run() 在 PRE_BATTLE 阶段自动执行准入、身份赋予与战法挂载。
     xiliang_runtime = create_xiliang_cavalry_runtime("a1")
-    admission = admit_and_install_troop_skill(
-        context,
-        systems,
-        xiliang_runtime,
-    )
-    if admission.status is not TroopAdmissionStatus.SUCCESS:
-        raise RuntimeError(
-            f"西凉铁骑准入失败: {admission.status.value}: {admission.reason}"
-        )
-
-    describe_xiliang_pilot(context)
+    context.skill_runtimes.register(xiliang_runtime)
 
     engine = BattleEngine(
         context=context,
