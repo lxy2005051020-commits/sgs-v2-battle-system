@@ -179,6 +179,8 @@ class LifeStealStateParams(StateRuntimeParams):
 class AlertStateParams(StateRuntimeParams):
     remaining_uses: int = 1
     reduction_rate: ExactRatio = ExactRatio(0, 1)
+    # Legacy serialization compatibility only. Runtime ALERT eligibility is
+    # authoritative MaxCarryTroops * 6% and does not read this field.
     threshold: int = 600
     remaining_action_starts: int | None = None
     is_suppressed: bool = False
