@@ -1,6 +1,6 @@
 # Stage13 · Core Gameplay Mechanism Completion
 
-> Current status: ACTIVE / B1+B2+B2.5 RUNTIME FROZEN / B3 ORDINARY-TREATMENT CORE INTEGRATED, SPECIAL FAMILY BOUNDARIES OPEN
+> Current status: ACTIVE / FOUNDATIONAL RUNTIME FROZEN / STAGE13-C RESIDUAL AUTHORITY RUNTIME INTEGRATION IN PROGRESS
 >
 > Activated: 2026-09-28 by STAGE13_CORE_GAMEPLAY_MECHANISM_INVENTORY_AUDIT
 >
@@ -24,7 +24,7 @@ Stage13-B  Foundational Empirical Mechanics Research
            B2.5 Full Damage Advancement / Hidden Mechanism Closure — CLOSED
            B3 Recovery / Treatment Formula Mechanics — ORDINARY FORMULA CORE FROZEN / SPECIAL FAMILIES OPEN
 
-Stage13-C  Residual State Mechanism Closure
+Stage13-C  Residual State Mechanism Closure — RESEARCH CLOSED / RUNTIME INTEGRATION IN PROGRESS
 
 Stage13-D  Consolidated Gap Classification + Runtime Governance
 Stage13-E  Core Runtime Architecture Design
@@ -156,12 +156,12 @@ B3 merged-main commit            = a27785a830e6d3f89b0c17d93bdaa31f84c48207
 B3 merged-main CI 37200488246     = PASS / demo PASS / audit snapshot PASS
 ```
 
-B3 ordinary-treatment formula core is now integrated. Special recovery-family boundaries and other residual Stage13 debt remain open.
+B3 ordinary-treatment formula core is integrated. Special recovery families are now explicitly separated from FB1 via a dedicated RESOLVED_SPECIAL_AMOUNT runtime lane; concrete family-specific formulas remain owned by their own contracts.
 
 ## 9. NEXT
 
 ```text
 NEXT =
-complete the remaining Stage13 core-engine architecture/governance and deterministic replay audit
-special recovery families remain separate from ordinary treatment and are implemented under dedicated family contracts
+finish Stage13-C residual-runtime CI/freeze audit
+then complete the remaining Stage13 core-engine architecture/governance and deterministic replay audit
 ```
