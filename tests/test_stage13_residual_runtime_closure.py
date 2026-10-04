@@ -268,6 +268,7 @@ def test_special_resolved_recovery_bypasses_ordinary_treatment_formula() -> None
                 wounded_troops=500,
                 lineup_position=LineupPosition.DEPUTY_1,
             ),
+            "enemy": _unit("enemy", "B"),
         }
     )
     opportunity = RecoveryOpportunity(
