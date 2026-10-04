@@ -58,10 +58,10 @@ Stage12 Runtime                         = FROZEN
 Stage12 Complete                        = YES
 Stage1-12 Reopen Required               = NO
 
-Research FROZEN                         = 39 / 40
+Research FROZEN                         = 40 / 40
 Runtime FROZEN TO CONTRACT              = 40 / 40
-Strict Complete                         = 39 / 40
-690086 DSTS9-B02                        = OPEN / UNOBSERVED
+Strict Complete                         = 40 / 40
+690086 DSTS9-B02                        = CLOSED
 ~~~
 
 Inventory activation does not mean the Core Gameplay Engine is frozen:
@@ -115,7 +115,7 @@ RESEARCH_DEBT
 FORMULA_RESEARCH_OUT_OF_SCOPE
 ~~~
 
-Known entries include 690221 ACTIVE_SKILL, 690221 DOT/DELAYED, 690086 DSTS9-B02 and bounded 690099 issues. Existing frozen state contracts remain frozen outside the exact clause being reopened.
+The previously blocking residual clauses are now closed: 690221 applies to ACTIVE_SKILL and DOT/DELAYED damage; 690086 DSTS9-B02 drains the current DistributionTransaction before battle finalization; 690099 uses MaxCarryTroops × 6% with equality triggering. Remaining Stage13-C work is limited to truly unresolved micro-debt and governance-only items.
 
 ## 6. Runtime architecture boundary
 
@@ -162,6 +162,6 @@ B3 ordinary-treatment formula core is now integrated. Special recovery-family bo
 
 ```text
 NEXT =
-continue residual Stage13 core-engine completion; B3 ordinary-treatment runtime CI/freeze audit is complete
-special recovery families and residual state debt remain bounded/open
+complete the remaining Stage13 core-engine architecture/governance and deterministic replay audit
+special recovery families remain separate from ordinary treatment and are implemented under dedicated family contracts
 ```
