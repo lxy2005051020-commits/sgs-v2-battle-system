@@ -271,3 +271,41 @@ def test_advancement_is_independent_outgoing_and_incoming_multiplier() -> None:
     advanced = advanced_systems.damage_system.calculate(advanced_context, _request())
 
     assert advanced.final_damage == int(base.scaled_damage * 1.10 * 0.90)
+
+
+def test_flat_reduction_settles_after_multipliers_and_can_zero_damage() -> None:
+    context = _context()
+    rules = DamageRuleCollection(
+        modifier_contributions=(
+            _modifier(
+                phase=DamageModifierPhase.OUTGOING,
+                kind=DamageModifierKind.OUTGOING_INCREASE,
+                operand=1.20,
+                owner_id="a",
+                key="oi",
+            ),
+            DamageModifierContribution(
+                phase=DamageModifierPhase.SINGLE_HIT,
+                kind=DamageModifierKind.FLAT_REDUCTION,
+                operation=DamageModifierOperation.SUBTRACT_FLAT,
+                operand=1300.0,
+                source=_source("b", "flat"),
+                order_key="flat",
+            ),
+        )
+    )
+
+    result = DamageModifierSystem().resolve_phases(
+        context,
+        _request(),
+        rules,
+        1000.0,
+        phases=frozenset(
+            {
+                DamageModifierPhase.OUTGOING,
+                DamageModifierPhase.SINGLE_HIT,
+            }
+        ),
+    )
+
+    assert result.output_damage == 0.0
