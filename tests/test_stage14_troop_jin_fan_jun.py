@@ -1,4 +1,4 @@
-"""Candidate wiring tests. Injected .64 is synthetic, never gameplay evidence."""
+"""Jinfan bounded-runtime tests. Placeholder formulas remain explicit research boundaries."""
 from dataclasses import replace
 
 import pytest
@@ -24,13 +24,6 @@ from tests.test_stage14_troop_batch03 import attack, followup_events
 
 
 def fixture(monkeypatch, *, install=True):
-    # This test-only registry replacement bypasses the closed Research gate.
-    spec = SKILL.effect_specs[0]
-    params = replace(spec.runtime_params,
-        damage=replace(spec.runtime_params.damage, continuous_damage_coefficient=.64))
-    candidate = replace(SKILL, effect_specs=(replace(spec, runtime_params=params),))
-    monkeypatch.setitem(TROOP_SKILL_REGISTRY, "20152", replace(CONFIG,
-        definition_factory=lambda: candidate, definition_resolver=None))
     c, s, _ = setup(create_jin_fan_jun_runtime, TroopType.BOW)
     rt = create_jin_fan_jun_runtime("a3")
     if install:
@@ -41,15 +34,29 @@ def fixture(monkeypatch, *, install=True):
     return c, s, rt
 
 
-@pytest.mark.parametrize("commander", ["a1", "甘宁"])
-def test_unconfirmed_formula_blocks_admission_atomically(commander):
-    c, s, rt = setup(create_jin_fan_jun_runtime, TroopType.BOW)
-    c.units["a1"].name = commander
-    with pytest.raises(NotImplementedError, match="尚未确认"):
-        admit_and_install_troop_skill(c, s, rt)
-    assert not c.states.find() and not c.skill_runtimes.values()
-    assert all(u.special_troop_id is None for u in c.units.values())
-    assert not c.random.probabilities
+def test_placeholder_formula_allows_production_admission():
+    c, s, _ = setup(create_jin_fan_jun_runtime, TroopType.BOW)
+    rt = create_jin_fan_jun_runtime("a3")
+    assert admit_and_install_troop_skill(c, s, rt).status is TroopAdmissionStatus.SUCCESS
+    assert all(c.units[uid].special_troop_id.value == "JIN_FAN_JUN" for uid in ("a1", "a2", "a3"))
+    followups = c.states.find(state_id=NORMAL_ATTACK_FOLLOWUP_STATE_ID)
+    assert len(followups) == 3
+    assert all(st.runtime_params.probability == .45 for st in followups)
+    assert all(st.runtime_params.damage.continuous_damage_coefficient == .64 for st in followups)
+
+
+def test_gan_ning_crit_targets_only_two_non_commanders():
+    c, s, _ = setup(create_jin_fan_jun_runtime, TroopType.BOW)
+    c.units["a1"].name = "甘宁"
+    rt = create_jin_fan_jun_runtime("a3")
+    assert admit_and_install_troop_skill(c, s, rt).status is TroopAdmissionStatus.SUCCESS
+    crits = c.states.find(state_id=OfficialStateId.CRITICAL.value)
+    assert {st.owner_id for st in crits} == {"a2", "a3"}
+    assert all(st.runtime_params.chance == .06 for st in crits)
+    assert not c.states.find(owner_id="a1", state_id=OfficialStateId.CRITICAL.value)
+    followups = c.states.find(state_id=NORMAL_ATTACK_FOLLOWUP_STATE_ID)
+    assert len(followups) == 3
+    assert all(st.runtime_params.probability == .45 for st in followups)
 
 
 def test_registry_and_public_runtime_identity():
@@ -193,7 +200,7 @@ def test_generic_branch_rejects_random_retargeting():
         NormalAttackFollowupParams(.45, SKILL.effect_specs[0].runtime_params.damage, FollowupTargetMode.RANDOM_ENEMY)
 
 
-def test_recovery_amount_uses_only_followup_actual_loss_and_ceil(monkeypatch):
+def test_recovery_amount_uses_followup_damage_amount_and_ceil(monkeypatch):
     c, s, rt = fixture(monkeypatch)
     attack(c, s)
     c.units["a2"].troops = 8000
@@ -214,8 +221,8 @@ def test_recovery_amount_uses_only_followup_actual_loss_and_ceil(monkeypatch):
     monkeypatch.setattr(s.recovery_system, "resolve", recovering)
     attack(c, s)
     assert len(executions) == len(requests) == 1
-    loss = executions[0].resolution.actual_target_troop_loss
-    assert requests[0].amount == (loss * 3 + 9) // 10
+    damage_amount = executions[0].resolution.assigned_target_damage
+    assert requests[0].amount == (damage_amount * 3 + 9) // 10
     assert requests[0].source_state_instance_id == c.states.find(
         owner_id="a2", state_id=NORMAL_ATTACK_FOLLOWUP_STATE_ID)[0].instance_id
 
@@ -229,8 +236,14 @@ def test_target_state_from_another_source_enables_branch(monkeypatch):
     assert len(c.states.find(state_id=OfficialStateId.ROUT.value)) == 1
 
 
-def test_missing_coefficient_cannot_execute_dot_even_with_test_gate_bypass(monkeypatch):
-    monkeypatch.setitem(TROOP_SKILL_REGISTRY, "20152", replace(CONFIG, definition_resolver=None))
+def test_missing_coefficient_cannot_execute_dot_when_generic_guard_is_exercised(monkeypatch):
+    spec = SKILL.effect_specs[0]
+    params = replace(spec.runtime_params,
+        damage=replace(spec.runtime_params.damage, continuous_damage_coefficient=None))
+    candidate = replace(SKILL, effect_specs=(replace(spec, runtime_params=params),))
+    monkeypatch.setitem(TROOP_SKILL_REGISTRY, "20152", replace(
+        CONFIG, definition_factory=lambda: candidate, definition_resolver=None,
+        supplemental_definition_resolver=None))
     c, s, rt = setup(create_jin_fan_jun_runtime, TroopType.BOW)
     admit_and_install_troop_skill(c, s, rt)
     c.current_round = 1
