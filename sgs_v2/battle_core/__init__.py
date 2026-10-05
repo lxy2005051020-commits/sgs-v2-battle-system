@@ -881,3 +881,8 @@ __all__ += [
 ]
 
 
+
+from .troop_skills.bai_er_bing import create_bai_er_bing_definition, create_bai_er_bing_runtime
+from .troop_skills.da_ji_shi import create_da_ji_shi_definition, create_da_ji_shi_runtime
+__all__ += ["create_bai_er_bing_definition", "create_bai_er_bing_runtime",
+            "create_da_ji_shi_definition", "create_da_ji_shi_runtime"]

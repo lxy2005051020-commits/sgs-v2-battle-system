@@ -8,6 +8,7 @@ from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
 from .state_modifiers import StateModifierSupport, modifier_conflict_rule
 from .scheduled_skill import ScheduledSkillSupport
+from .normal_attack_followup import NormalAttackFollowupPort, ProbabilisticComboRuntime
 from .state_effectiveness_trigger import StateEffectivenessTriggerAdapter
 from .troop_admission import resolve_opening_troop_definition
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
@@ -449,9 +450,11 @@ class BattleSystems:
         )
         self.cleave_system = CleaveSystem(self.stage9_state_runtime, self.future_admission_gate, self.cleave_derived_damage_resolver)
         self.counter_system = CounterSystem(self.stage9_state_runtime, self.future_admission_gate, self.damage_instance_coordinator)
-        self.assault_dispatch_port = AssaultDispatchPort(
-            gate=self.future_admission_gate,
-        )
+        self.assault_dispatch_port = NormalAttackFollowupPort(
+            self.future_admission_gate,
+            lambda context, runtime, **kwargs: self.skill_resolver.resolve(context, runtime, **kwargs),
+            lambda context, effect: self.effect_executor.execute(context, effect),
+            self.state_effectiveness_policy)
         self.target_resolution_system = TargetResolutionSystem(
             self.target_system,
             self.stage9_state_runtime,
@@ -473,7 +476,8 @@ class BattleSystems:
         )
         self.action_system = ActionSystem(
             normal_attack_system=self.normal_attack_system,
-            stage9_state_runtime=self.stage9_state_runtime,
+            stage9_state_runtime=ProbabilisticComboRuntime(self.state_lifecycle_system,
+                state_effectiveness_policy=self.state_effectiveness_policy),
             state_lifecycle_system=self.state_lifecycle_system,
             stage11_state_runtime=self.stage11_state_runtime,
             current_actor_permission_policy=self.current_actor_permission_policy,

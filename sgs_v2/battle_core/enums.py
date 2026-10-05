@@ -53,6 +53,8 @@ class SpecialTroopId(str, Enum):
     BAI_MA_YI_CONG = "BAI_MA_YI_CONG"  # 白马义从 (Base: BOW)
     HU_BAO_QI = "HU_BAO_QI"  # 虎豹骑 (Base: CAVALRY)
     WU_DANG_FEI_JUN = "WU_DANG_FEI_JUN"  # 无当飞军 (Base: BOW)
+    BAI_ER_BING = "BAI_ER_BING"
+    DA_JI_SHI = "DA_JI_SHI"
     XIAN_ZHEN_YING = "XIAN_ZHEN_YING"  # 陷阵营 (Base: SHIELD)
 
 

@@ -1,0 +1,117 @@
+{
+  "audit": "Stage13-D1 independent runtime audit",
+  "provenance": "ENGINEERING_POLICY; independent harness and frozen-source comparison, not a second human reviewer",
+  "baseline_runtime_sha": "b3b20e42f17262bf866448505b6895525dd19248",
+  "baseline_research_sha": "f7b646876c976c8cdfb8ebb5c5a9ce11b909906a",
+  "frozen_owner_checks": {
+    "sgs_v2/battle_core/damage_system.py": {
+      "expected": "11cb774dd99e14792cb1682f5d713044c47841e4be0bae5a5e1069a83f340fd1",
+      "actual": "11cb774dd99e14792cb1682f5d713044c47841e4be0bae5a5e1069a83f340fd1",
+      "pass": true
+    },
+    "sgs_v2/battle_core/damage_instance_coordinator.py": {
+      "expected": "dc9804a6caeef2a3f8b10c317f32b968ba4f1c61c8d301db9f43e6328a8924ee",
+      "actual": "dc9804a6caeef2a3f8b10c317f32b968ba4f1c61c8d301db9f43e6328a8924ee",
+      "pass": true
+    },
+    "sgs_v2/battle_core/damage_resolution_system.py": {
+      "expected": "4a30b258124dc2872490928bda7ea4f21dc8ac481add9e14dcc04f9a9a43e76a",
+      "actual": "4a30b258124dc2872490928bda7ea4f21dc8ac481add9e14dcc04f9a9a43e76a",
+      "pass": true
+    },
+    "sgs_v2/battle_core/damage_partition_system.py": {
+      "expected": "d8251d604e1a6a07b0682999b00bdfd3fc7625bb64e93f0fb9a00879d0a20f05",
+      "actual": "d8251d604e1a6a07b0682999b00bdfd3fc7625bb64e93f0fb9a00879d0a20f05",
+      "pass": true
+    },
+    "sgs_v2/battle_core/damage_modifier_system.py": {
+      "expected": "4ec2fa035db9d6a389019cb5cf7d612cd214d789737ed02da063b39ce54fc772",
+      "actual": "4ec2fa035db9d6a389019cb5cf7d612cd214d789737ed02da063b39ce54fc772",
+      "pass": true
+    },
+    "sgs_v2/battle_core/recovery_system.py": {
+      "expected": "790bf89fe91c9292e82e91dbc9c29c8a289ae1a10a9b4ee00a341d397a4d0e15",
+      "actual": "790bf89fe91c9292e82e91dbc9c29c8a289ae1a10a9b4ee00a341d397a4d0e15",
+      "pass": true
+    },
+    "sgs_v2/battle_core/recovery_opportunity_system.py": {
+      "expected": "03da290d7396c109bafdd76c7184a9caf500789fc7da5b5c9a41cd7734cb3ca2",
+      "actual": "03da290d7396c109bafdd76c7184a9caf500789fc7da5b5c9a41cd7734cb3ca2",
+      "pass": true
+    },
+    "sgs_v2/battle_core/treatment_formula.py": {
+      "expected": "96a2e181ed4c62550bdf432d697992f02db6ca4b8efd52fded002b0062f6c763",
+      "actual": "96a2e181ed4c62550bdf432d697992f02db6ca4b8efd52fded002b0062f6c763",
+      "pass": true
+    },
+    "sgs_v2/battle_core/state_lifecycle_system.py": {
+      "expected": "95e35cfca8ed9c2dbb5f552d703b830ee22f7cdd2ddeb7d477a95a9e10e14a78",
+      "actual": "95e35cfca8ed9c2dbb5f552d703b830ee22f7cdd2ddeb7d477a95a9e10e14a78",
+      "pass": true
+    },
+    "sgs_v2/battle_core/state_effectiveness.py": {
+      "expected": "b78fc6dc9f1692a8ed2ca46dbfafe96a27b54b2005bb1c000f2f73028f438b8a",
+      "actual": "b78fc6dc9f1692a8ed2ca46dbfafe96a27b54b2005bb1c000f2f73028f438b8a",
+      "pass": true
+    },
+    "sgs_v2/battle_core/provider_validity.py": {
+      "expected": "f632b8b2070a64d0bbdb8bbc2c97bb840a393c7573f141553af1fc74bf04fdb0",
+      "actual": "f632b8b2070a64d0bbdb8bbc2c97bb840a393c7573f141553af1fc74bf04fdb0",
+      "pass": true
+    },
+    "sgs_v2/battle_core/execution_right_runtime.py": {
+      "expected": "62a604bd78fd40e8e3a4f58dc123a279b02db90c3a38849daba701f87216a67b",
+      "actual": "62a604bd78fd40e8e3a4f58dc123a279b02db90c3a38849daba701f87216a67b",
+      "pass": true
+    },
+    "sgs_v2/battle_core/battle_finalization_coordinator.py": {
+      "expected": "084556527789ac3bede1b8b7f68fa98a6a51a3e3f4a9d5dcc6d1c5561cde5679",
+      "actual": "084556527789ac3bede1b8b7f68fa98a6a51a3e3f4a9d5dcc6d1c5561cde5679",
+      "pass": true
+    },
+    "sgs_v2/battle_core/random_system.py": {
+      "expected": "8049962c5ce17f1f4209361a1237940de363586707a22655264eb084bc74ed18",
+      "actual": "8049962c5ce17f1f4209361a1237940de363586707a22655264eb084bc74ed18",
+      "pass": true
+    },
+    "sgs_v2/battle_core/troop_system.py": {
+      "expected": "25f82fa832179e2552f4655fc6e71434a600852d865933a15999d7f11d28bb5d",
+      "actual": "25f82fa832179e2552f4655fc6e71434a600852d865933a15999d7f11d28bb5d",
+      "pass": true
+    },
+    "sgs_v2/battle_core/target_system.py": {
+      "expected": "0bcd5b81a5b4d41c309410ac52aae188053297a99a623f7ed1edd679fd82baa4",
+      "actual": "0bcd5b81a5b4d41c309410ac52aae188053297a99a623f7ed1edd679fd82baa4",
+      "pass": true
+    },
+    "sgs_v2/battle_core/trigger_system.py": {
+      "expected": "b0e86f2093bde7b36e4a1584356526fc50fafdde895770e20c0d9febb649df00",
+      "actual": "b0e86f2093bde7b36e4a1584356526fc50fafdde895770e20c0d9febb649df00",
+      "pass": true
+    },
+    "sgs_v2/battle_core/rule_hook_system.py": {
+      "expected": "f61a007ab128a8c922101f322ced2ade53a509a472e657fa1073d121a4fa7bc6",
+      "actual": "f61a007ab128a8c922101f322ced2ade53a509a472e657fa1073d121a4fa7bc6",
+      "pass": true
+    },
+    "sgs_v2/battle_core/preparation_state.py": {
+      "expected": "3409c9ff36a743e3645b35e50f0d94325a3f8246cdbfd17f01c4d24b4999e5ea",
+      "actual": "3409c9ff36a743e3645b35e50f0d94325a3f8246cdbfd17f01c4d24b4999e5ea",
+      "pass": true
+    },
+    "sgs_v2/battle_core/sabotage_integration.py": {
+      "expected": "8b78f257640cbab0a20a3700f0fdea2206566cf1a4f2e3252e145849a25c6461",
+      "actual": "8b78f257640cbab0a20a3700f0fdea2206566cf1a4f2e3252e145849a25c6461",
+      "pass": true
+    },
+    "sgs_v2/battle_core/effect_executor.py": {
+      "expected": "75d558313fdb2eddc942f07bd4e79426651e7dca500452e133dd280639188f7e",
+      "actual": "75d558313fdb2eddc942f07bd4e79426651e7dca500452e133dd280639188f7e",
+      "pass": true
+    }
+  },
+  "adversarial_exit_code": 0,
+  "adversarial_output": "...........                                                              [100%]\n11 passed in 0.25s\n",
+  "verdict": "PASS"
+}
+
