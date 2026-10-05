@@ -7,6 +7,7 @@ from .context import BattleContext
 from .enums import SpecialTroopId, TroopType
 from .skill_definition import SkillDefinition
 from .unit import UnitRuntime
+from .scheduled_team_recovery import ScheduledTeamRecoverySpec
 
 
 @dataclass(frozen=True, slots=True)
@@ -22,3 +23,4 @@ class TroopSkillConfig:
     definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition] | None = None
     supplemental_definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition | None] | None = None
     opening_definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition] | None = None
+    scheduled_recovery_resolver: Callable[[BattleContext, object, UnitRuntime], ScheduledTeamRecoverySpec] | None = None

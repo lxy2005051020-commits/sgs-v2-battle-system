@@ -103,6 +103,11 @@ Frozen owner drift = NONE DETECTED
 
 ## Mainline policy
 
+青州兵（20153）新增接入采用用户授权的暂定模型，详见
+[青州兵接入说明](QING_ZHOU_BING_INTEGRATION.md)。
+`D/10`加在基础治疗量层，属性项为武力；曹操统领额外加成为空白占位。
+该模型不计入上方八个已冻结兵种的实证冻结结果。
+
 新的具体战法或机制家族进入 main 仍必须满足：
 
 ~~~text

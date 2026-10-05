@@ -9,6 +9,10 @@ from .attribute_system import AttributeSystem
 from .state_modifiers import StateModifierSupport, modifier_conflict_rule, IncomingDamageReductionProvider
 from .state_application_reaction import ReactingStateApplicationCoordinator, ReactingStateLifecycleSystem
 from .scheduled_skill import ScheduledSkillSupport
+from .scheduled_team_recovery import ScheduledTeamRecoverySupport
+from .additive_treatment_formula import AdditiveTreatmentFormulaSystem
+from .priority_target_system import PriorityTargetSystem
+from .provider_gated_counter import ProviderGatedCounterRuntime
 from .normal_attack_followup import NormalAttackFollowupPort, ProbabilisticComboRuntime
 from .state_effectiveness_trigger import StateEffectivenessTriggerAdapter
 from .troop_admission import resolve_opening_troop_definition
@@ -174,6 +178,7 @@ class BattleSystems:
     preparation_state_owner: PreparationStateOwner = field(init=False)
     state_modifier_support: StateModifierSupport = field(init=False)
     scheduled_skill_support: ScheduledSkillSupport = field(init=False)
+    scheduled_team_recovery_support: ScheduledTeamRecoverySupport = field(init=False)
 
     def __post_init__(self) -> None:
         self.dependency_evaluation_support = DependencyEvaluationSupport()
@@ -370,7 +375,7 @@ class BattleSystems:
             self.troop_system,
             defeat_cleanup_port=self.defeat_cleanup_port,
         )
-        self.stage9_state_runtime = Stage9StateRuntime(
+        self.stage9_state_runtime = ProviderGatedCounterRuntime(
             state_lifecycle_system=self.state_lifecycle_system,
             counter_operationality=self.counter_operationality,
             state_effectiveness_policy=self.state_effectiveness_policy,
@@ -513,6 +518,10 @@ class BattleSystems:
             self.trigger_system,
             self.effect_executor,
         )
+        self.scheduled_team_recovery_support = ScheduledTeamRecoverySupport(
+            self.pending_work_system,
+            AdditiveTreatmentFormulaSystem(troop_function_table=self.weapon_troop_function_table),
+            self.recovery_system, PriorityTargetSystem(self.target_system))
         self.rule_hook_system.recovery_opportunity_system = self.recovery_opportunity_system
         self.rule_hook_system.recovery_opportunity_handler = (
             self.recovery_opportunity_system.evaluate_and_resolve
