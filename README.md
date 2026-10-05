@@ -44,6 +44,9 @@ Skill Runtime Readiness        = NOT YET READY
 
 演示：`demo.py`
 
+青州兵（20153）：[接入说明](stages/stage14/QING_ZHOU_BING_INTEGRATION.md)，
+演示 `python scripts/demo_qingzhou.py`。治疗采用用户授权的暂定D/10模型，曹操额外统率加成为空白占位。
+
 研究过程材料不再复制到 Runtime 仓库。冻结机制的原始证据、问题账本和研究轮次材料由 Research 仓库保存；本仓库只保留 Runtime 所需的合同映射、最终冻结审计、当前治理文件和可执行审计工具。
 
 ## 维护原则

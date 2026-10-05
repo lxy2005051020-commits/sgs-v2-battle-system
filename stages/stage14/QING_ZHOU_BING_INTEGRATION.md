@@ -3,8 +3,9 @@
 日期：2026-10-05。状态：**IMPLEMENTED / USER_PROVISIONAL_MODEL / CAO_CAO_PLACEHOLDER**。
 
 Runtime起点 `d88e7cd70ff3fd651228435d1e2a5dd623f5e946`。
-Research起点 `6e71eb2`，本轮合同
-[MC-STAGE14-QINGZHOU-PROVISIONAL-01](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/stage14-qingzhou-provisional-20261005/Stage14_Troop_Skill_Research/01_Skills/%E9%9D%92%E5%B7%9E%E5%85%B5/QING_ZHOU_BING_PROVISIONAL_CONTRACT.md)。
+Research起点 `6e71eb2`，本轮合同经[Research PR #13](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/pull/13)
+进入main：`d8cc80ba1d297a701bb7025b47013bfcfdfd1748`。
+[MC-STAGE14-QINGZHOU-PROVISIONAL-01](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/d8cc80ba1d297a701bb7025b47013bfcfdfd1748/Stage14_Troop_Skill_Research/01_Skills/%E9%9D%92%E5%B7%9E%E5%85%B5/QING_ZHOU_BING_PROVISIONAL_CONTRACT.md)。
 
 ## 行为与暂定公式
 
@@ -63,3 +64,8 @@ python scripts/audit_stage13_d1.py --output stages/stage14/qingzhou_evidence/sta
 少于两名存活队员时，按既有Stage12目标不足边界在任何身份/状态变更前明确拒绝。
 
 本地最终验证及GitHub同步状态记录在 `qingzhou_evidence/verification.json`。
+
+本地验证：青州兵针对性 **45 passed**；全量 **1996 passed**；两个demo PASS；
+Stage13-D1冻结owner审计PASS；青州兵自动化独立事件链/分数oracle审计PASS。
+Runtime同步经[Battle PR #52](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/52)。
+GitHub实时合并与CI状态以该PR和精确commit的Actions为准。
