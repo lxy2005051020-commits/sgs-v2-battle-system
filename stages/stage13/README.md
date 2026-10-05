@@ -1,8 +1,26 @@
 # Stage13 · Core Gameplay Mechanism Completion
 
-> Status: COMPLETE / CORE GAMEPLAY ENGINE FROZEN / SKILL RUNTIME READY
+> Status: **COMPLETE / CORE GAMEPLAY ENGINE FROZEN / SKILL RUNTIME READY**
 
-Stage13 completes the reusable game-engine substrate before large-scale concrete-skill integration.
+Stage13 completed the reusable game-engine substrate required before concrete-skill integration.
+
+## Final exit result
+
+```text
+STAGE13_ENTRY_GATE                = PASS
+STAGE13_FINAL_EXIT_AUDIT          = PASS
+CORE_GAMEPLAY_ENGINE              = FROZEN
+Skill Runtime Readiness           = READY
+STAGE13                           = COMPLETE / FROZEN
+STAGE14 MAINLINE GATE             = OPEN
+```
+
+The final exit audit is authoritative:
+
+- [Stage13 Final Exit Audit](STAGE13_FINAL_EXIT_AUDIT.md)
+- [Final Gap Reconciliation](STAGE13_FINAL_GAP_RECONCILIATION.md)
+- [Final Governance Reconciliation](STAGE13_FINAL_GOVERNANCE_RECONCILIATION.md)
+- [Whole-Battle Replay Audit](STAGE13_WHOLE_BATTLE_REPLAY_AUDIT.md)
 
 ## Completed slices
 
@@ -21,15 +39,6 @@ B3 Ordinary Treatment Core         = FROZEN / IMPLEMENTED
 D1 PendingWork Foundation           = FROZEN / IMPLEMENTED
 ```
 
-Stage13 entry gate:
-
-```text
-STAGE13_ENTRY_GATE                = PASS
-Stage13 Active                    = YES
-```
-
-Concrete skill runtimes remain deferred until the Stage13 exit gate.
-
 Official-state baseline:
 
 ```text
@@ -38,12 +47,30 @@ Runtime FROZEN TO CONTRACT = 40 / 40
 Strict Complete            = 40 / 40
 ```
 
+## Exit audit evidence
+
+```text
+Merged-main SHA       = b6e14da446ab0d47430f8990f2afe6479c76d65e
+Merged-main CI        = 37272295169 / SUCCESS
+Final full regression = 1744 passed
+Demo                  = PASS
+D1 frozen-owner audit = PASS
+Whole-battle replay   = PASS
+True exit blockers    = 0
+```
+
+Whole-battle deterministic replay established:
+
+- same input + same seed: 25/25 canonical projections identical;
+- changed seeds: deterministic divergence attributable to authorized RNG decisions;
+- zero-RNG fast paths: PASS;
+- `RandomSystem` remains the sole PRNG owner.
+
 ## Current authorities
 
 - [Core gameplay gap ledger](STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md)
 - [Core runtime owner matrix](STAGE13_CORE_RUNTIME_OWNER_MATRIX.md)
 - [Core mechanism test matrix](STAGE13_CORE_MECHANISM_TEST_MATRIX.md)
-- [Research gap ledger](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/95e7fe78430d623c0240e9615f5f054515a90ce9/STAGE13_RESEARCH_GAP_LEDGER.md)
 - [Runtime governance ledger](STAGE13_RUNTIME_GOVERNANCE_LEDGER.md)
 - [Foundational runtime integration](STAGE13_FOUNDATIONAL_RUNTIME_INTEGRATION.md)
 - [Foundational runtime freeze audit](STAGE13_FOUNDATIONAL_RUNTIME_FREEZE_AUDIT.md)
@@ -53,43 +80,37 @@ Strict Complete            = 40 / 40
 - [D1 implementation](STAGE13_D1_PENDING_WORK_IMPLEMENTATION.md)
 - [D1 freeze audit](STAGE13_D1_PENDING_WORK_FREEZE_AUDIT.md)
 
-## D1 evidence
+## Preserved explicit boundaries
+
+Stage13 freeze does **not** mean every future concrete-skill capability was preimplemented.
+
+Examples deliberately left to future concrete contracts include:
+
+- `REPEAT_N_TIMES` scheduled work;
+- generic usage/cooldown/charge budgets;
+- broad category cleanse before an authoritative taxonomy exists;
+- future selector/ranking semantics not yet required by a frozen skill contract;
+- complex multi-effect rollback/atomic-group semantics not yet required by a consumer.
+
+These are explicit future extension boundaries, not Stage13 exit blockers.
+
+## Stage14 handoff
+
+The Stage13 exit gate has passed.
+
+Stage14+ concrete skill integration may now enter `main` when the selected skill or mechanism family independently satisfies:
 
 ```text
-main HEAD = f0339729a94685f1d1ae226e1975ad4298b7f81f
-CI        = 37208949453 / SUCCESS
-pytest    = 1739 passed
-demo      = PASS
-audit     = PASS
+Research Contract / Game Truth     = CLOSED / FROZEN
+Runtime Requirement Mapping         = REVIEWED
+Implementation                      = COMPLETE
+Skill-specific regression           = PASS
+Full regression / demo              = PASS
+Independent Runtime Audit           = PASS
+PR CI                               = PASS
 ```
 
-ONE_SHOT / UNTIL_EXECUTED / UNTIL_ROUND are implemented. REPEAT_N_TIMES remains a reserved unsupported seam.
-
-## Current remaining work
-
-Do not mechanically create D2/D3/D4 subsystems merely because an older gap row used the word MISSING.
-
-Current Stage13 exit work is:
-
-```text
-1. reconcile remaining core capability boundaries against existing owners
-2. close only true core blockers
-3. define/complete RNG decision observability needed for replay
-4. run whole-battle deterministic replay / exit audit
-5. if PASS:
-   Core Gameplay Engine = FROZEN
-   Skill Runtime Readiness = READY
-```
-
-Special recovery families remain separate from ordinary treatment and retain family-specific formula ownership.
-
-```text
-Core Gameplay Engine    = NOT YET FROZEN
-Skill Runtime Readiness = NOT YET READY
-```
-
-Historical Stage13 replans, intermediate model-comparison reports and superseded question ledgers are available from Git history rather than the current authority tree.
-
+Stage13 must not be reopened merely because a future skill needs a new extension seam. Reopen only when new evidence proves a frozen core contract or canonical owner is wrong.
 
 ## Machine-checked exit declarations
 
@@ -97,19 +118,10 @@ Historical Stage13 replans, intermediate model-comparison reports and superseded
 CORE_GAMEPLAY_ENGINE              = FROZEN
 Skill Runtime Readiness           = READY
 STAGE13                           = COMPLETE / FROZEN
+STAGE14 MAINLINE GATE             = OPEN
 ```
-
-Stage14+ concrete skill integration remains behind the exit gate.
-
-Exit target:
-
-```text
-Skill Runtime Readiness = READY
-```
-
 
 Research Authority:
-Repository: lxy2005051020-commits/sgs-state-mechanics-research
-Commit: 95e7fe78430d623c0240e9615f5f054515a90ce9
-Path: RESEARCH_AUTHORITY_INDEX.md
-Status: CURRENT INDEX; individual contracts retain scoped status
+Repository: `lxy2005051020-commits/sgs-state-mechanics-research`  
+Path: `RESEARCH_AUTHORITY_INDEX.md`  
+Status: CURRENT INDEX; individual contracts retain scoped status.

@@ -17,7 +17,7 @@
 | 11 | 官方状态补全（一） | RUNTIME FROZEN / POST-FREEZE ACCEPTED |
 | 12 | 官方状态补全（二） | FROZEN / COMPLETE |
 | 13 | Core Gameplay Mechanism Completion | COMPLETE / FROZEN |
-| 14 | Concrete Skill Integration | PILOT PREPARATION ACTIVE / MAINLINE UNLOCKED |
+| 14 | Concrete Skill Integration | ACTIVE / MAINLINE UNLOCKED |
 
 ## 当前统一状态
 
@@ -27,6 +27,9 @@ Research FROZEN            = 40 / 40
 Runtime FROZEN TO CONTRACT = 40 / 40
 Strict Complete            = 40 / 40
 
+Core Gameplay Engine       = FROZEN
+Skill Runtime Readiness    = READY
+Stage14 Mainline Gate      = OPEN
 Stage14 Troop Foundation   = FROZEN in Research
 ```
 
@@ -39,4 +42,4 @@ Stage14 Troop Foundation   = FROZEN in Research
 - [Stage13](stage13/README.md)
 - [Stage14](stage14/README.md)
 
-Stage14 允许单战法 Pilot 在隔离分支准备/实现；合并进入 main 仍受 Stage13 exit gate 与单战法 Research Contract 双重约束。
+Stage13 exit gate 已通过。Stage14 具体战法可在对应 Research Contract / Family Contract、Runtime Audit、回归与 PR CI 全部通过后进入 `main`；不再受未完成的 Stage13 gate 阻塞。

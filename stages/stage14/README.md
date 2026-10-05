@@ -1,8 +1,19 @@
 # Stage14 · Concrete Skill Integration
 
-> Status: **PILOT PREPARATION ACTIVE / MAINLINE MERGE GATED**
+> Status: **ACTIVE / MAINLINE GATE OPEN**
 
-Stage14 begins concrete skill integration after the reusable game-mechanism foundation work.
+Stage14 begins concrete skill integration on top of the frozen Stage13 core gameplay engine.
+
+## Entry gate
+
+```text
+STAGE13_FINAL_EXIT_AUDIT = PASS
+CORE_GAMEPLAY_ENGINE     = FROZEN
+SKILL_RUNTIME_READINESS  = READY
+STAGE14 MAINLINE GATE    = OPEN
+```
+
+Stage14 no longer waits on the Stage13 exit gate.
 
 ## Research foundation
 
@@ -21,50 +32,71 @@ provider                 = holder-bound skill instance
 temporary invalidation   != provider death
 ```
 
-## Pilot policy
+## Mainline policy
 
-One skill at a time.
-
-A pilot may be researched and implemented on an isolated branch before Stage13 exit, but **must not merge into main** unless:
+A concrete skill or mechanism-family batch may enter `main` only when its own gates pass:
 
 ```text
-Stage13 exit gate                         = PASS
-selected skill mechanism contract         = CLOSED/FROZEN
-runtime seam mapping                      = REVIEWED
-skill-specific regression tests           = PASS
-full regression / demo / independent audit = PASS
+selected skill/family Research Contract         = CLOSED/FROZEN
+runtime seam mapping                             = REVIEWED
+implementation                                   = COMPLETE
+skill-specific regression                        = PASS
+full regression / demo                           = PASS
+independent runtime audit                        = PASS
+PR CI                                            = PASS
 ```
 
-Bulk TROOP integration is forbidden until the relevant family contracts are closed.
+Future functionality must extend existing canonical owners where possible. A concrete skill must not invent gameplay truth from Battle code.
 
-## First pilot candidate
+## First pilot: 西凉铁骑
 
-### 西凉铁骑
+西凉铁骑 is the first Stage14 vertical pilot.
 
-Recommended because it is a small vertical slice through:
+Current Research status:
+
+```text
+BASE_XILIANG_MECHANISM_CONTRACT = FROZEN
+MATENG_COMMANDER_SCALING        = FROZEN
+```
+
+Current Runtime work is maintained in Battle PR #42 pending its final mainline audit and merge.
+
+The pilot exercises:
 
 ```text
 SkillType.TROOP
 -> PRE_BATTLE special troop conversion
--> team-wide temporary crit modifier/state
+-> base-family restraint inheritance
+-> team-wide temporary crit state
+-> current PRE_BATTLE AttributeSystem speed read
+-> Ma Teng commander scaling
 -> provider identity / invalidation lifecycle
 -> duration expiry
+-> BattleEngine automatic PRE_BATTLE wiring
 ```
 
-It intentionally avoids the unresolved storage/battery families represented by 象兵、飞熊军、丹阳兵.
+It intentionally avoids unresolved storage/battery families represented by 象兵、飞熊军、丹阳兵.
 
-### Do not hard-code from historical guides
+## Batch policy after the pilot
 
-Before implementation, Research must freeze the current-version 西凉铁骑 contract, including:
+Bulk TROOP integration is allowed only by mechanism family after the relevant shared contract is frozen.
 
-- exact current client text and version boundary;
-- full-level crit rate;
-- first-three-round duration semantics;
-- 马腾统领 speed scaling, if present in the target version;
-- stacking with other crit sources;
-- snapshot vs JIT for any speed-dependent scaling;
-- provider invalidation/death behavior as inherited from the shared foundation;
-- whether the special troop identity and the crit rule are represented as separate Runtime concerns.
+Examples:
+
+```text
+simple/static troop skills
+-> reusable Stage14 batch lane
+
+trigger-driven troop skills
+-> Trigger Family contract first
+-> then batch integration
+
+storage / delayed-settlement troop skills
+-> Storage Family contract first
+-> then integration
+```
+
+A skill that requires a new Core primitive leaves the batch lane and receives focused research/runtime review.
 
 ## Runtime rule
 
