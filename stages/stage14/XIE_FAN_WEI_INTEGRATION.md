@@ -1,6 +1,6 @@
 # 解烦卫 20248 本地接入
 
-日期：2026-10-06。Runtime baseline `20e63d6`；Research main 检查至 `fe70f34`。
+日期：2026-10-06。状态：`REMOTE_AUDIT_BLOCKED / RUNTIME_REGRESSION_PASS / RESEARCH_SCOPE_GAPS`。Runtime baseline `20e63d6`；Research main 检查至 `fe70f34`。
 分支 `stage14-xie-fan-wei`。按项目所有者要求同步至 GitHub，供审阅；不代表 Research 冻结或已合并主线。
 
 ## 描述与授权
@@ -86,7 +86,7 @@ base × coefficient + additive_damage，然后完整复用后续暴击、增减�
 - 治疗属性使用实际普攻者触发时的最终武力／智力较高值，包括当前属性状态修正；
   治疗兵力仍使用 PRE_BATTLE 快照。属性读取时间已由项目所有者确认，未新增治疗修正战前采集机制。
 - 父普攻编号 / 根行动编号关联仍为空。第 3 项本轮只解释，没有修改冻结 coordinator 或以日志猜测关联。
-- 尚缺原始战报逐事件核对、解烦卫独立审计与远端主线接入。
+- 独立 Runtime 审计已完成，见 `XIE_FAN_WEI_RUNTIME_AUDIT.md`；当前因 Research contract 缺失、Research Catalog 概率表述冲突、韩当统领范围未裁决而阻塞 mainline。
 - 此分支同步至 GitHub 供审阅；不修改 Research 合同、不声明正式冻结，主线接入仍未完成。
 
 ## 验证
