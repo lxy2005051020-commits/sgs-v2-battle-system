@@ -1,7 +1,7 @@
 # 解烦卫 20248 接入
 
-日期：2026-10-06。状态：`REMOTE_AUDIT_PASS / RESEARCH_GATE_PASS / PR_READY`。Runtime baseline `20e63d6`；Research authority 已更新至 `f4aea546537447067d29275e87da5bdcc8f65de8`。
-分支 `stage14-xie-fan-wei`。按项目所有者要求同步至 GitHub，供审阅；不代表 Research 冻结或已合并主线。
+日期：2026-10-06。状态：`MERGED_MAIN / RESEARCH_GATE_PASS / AUDIT_PASS / CI_PASS`。Runtime baseline `20e63d6`；Research authority 已更新至 `f4aea546537447067d29275e87da5bdcc8f65de8`。
+原实现分支 `stage14-xie-fan-wei`。Research PR #16 与 Battle PR #57 均已合并进入各自 `main`。
 
 ## 描述与授权
 
@@ -37,8 +37,8 @@ TROOP / PRE_BATTLE / activation=1 / 无准备回合
         success -> 随机敌军单体
           普通 coefficient=.36；韩当为队伍主将时 coefficient=.72
           executor.force > executor.intelligence -> WEAPON(coefficient)
-          executor.intelligence > executor.force -> STRATEGY(.36)
-          executor.force == executor.intelligence -> WEAPON(.36)
+          executor.intelligence > executor.force -> STRATEGY(coefficient)
+          executor.force == executor.intelligence -> WEAPON(coefficient)
           additive_damage = executor.final_speed * .40
           stage11_family = COMMAND_XIEFANWEI（兵种伤害 / 支持看破）
         failure -> 随机我军单体（包括自身与满兵成员）
@@ -114,3 +114,32 @@ Stage13-D1 与青州兵独立审计均 PASS；Registry 干净进程检查 PASS�
 
 独立 Runtime 审计见 `XIE_FAN_WEI_RUNTIME_AUDIT.md`；Additive Damage 架构合同见 `XIE_FAN_ADDITIVE_DAMAGE_SEAM.md`。
 韩当 COMMANDER 72% 分支已实现并有副将反例测试。当前父普攻 / root action lineage 继续 OPEN，不阻塞本轮 mainline。
+
+
+## Mainline release
+
+```text
+Research PR #16
+= MERGED
+Research merge
+= f4aea546537447067d29275e87da5bdcc8f65de8
+
+Battle PR #57
+= MERGED
+Battle merge
+= 0769ca9b393b9390cc59e573344270cfaf406a5c
+
+Final PR CI
+= 37356009025 / SUCCESS
+Full pytest
+= 2114 passed
+Stage13-D1
+= 11 passed
+
+Merged-main CI
+= 37356182948 / SUCCESS
+Full pytest
+= 2114 passed
+Stage13-D1
+= 11 passed
+```
