@@ -28,6 +28,7 @@ class SkillTargetMode(str, Enum):
     CHOOSE_N_RANDOM_ALLIES = "CHOOSE_N_RANDOM_ALLIES"
     CHOOSE_N_DETERMINISTIC_ALLIES = "CHOOSE_N_DETERMINISTIC_ALLIES"
     FIXED_ALL_ALLIES = "FIXED_ALL_ALLIES"
+    FIXED_ALL_TEAM = "FIXED_ALL_TEAM"
     SELF = "SELF"
 
 
@@ -68,15 +69,32 @@ class DamageSkillEffectSpec:
         object.__setattr__(self, "coefficient", float(self.coefficient))
 
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .state_runtime_params import StateRuntimeParams
+
+
 @dataclass(frozen=True, slots=True)
 class ApplyStateSkillEffectSpec:
     """把一次技能解析表达为施加状态 Effect 的静态规格。"""
 
     state_id: str
+    runtime_params: StateRuntimeParams | None = None
+    expires_round: int | None = None
+    expires_phase: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.state_id, str) or not self.state_id.strip():
             raise ValueError("state_id cannot be empty")
+        if self.expires_round is not None:
+            if isinstance(self.expires_round, bool) or not isinstance(self.expires_round, int):
+                raise TypeError("expires_round must be an int or None")
+            if self.expires_round < 1:
+                raise ValueError("expires_round must be >= 1")
+        if self.expires_phase is not None:
+            if not isinstance(self.expires_phase, str) or not self.expires_phase.strip():
+                raise ValueError("expires_phase cannot be empty when provided")
 
 
 SkillEffectSpec = DamageSkillEffectSpec | ApplyStateSkillEffectSpec

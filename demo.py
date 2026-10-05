@@ -5,9 +5,14 @@ from sgs_v2.battle_core import (
     EventBus,
     EventType,
     LineupPosition,
+    OfficialStateId,
     RandomSystem,
+    TroopType,
     UnitRuntime,
+    create_xiliang_cavalry_runtime,
+    register_official_state_definitions,
 )
+from sgs_v2.battle_core.troop_admission import calculate_xiliang_crit_chance
 
 
 def format_event(event, context: BattleContext) -> str:
@@ -44,7 +49,10 @@ def format_event(event, context: BattleContext) -> str:
     if event.event_type == EventType.DAMAGE_DEALT:
         damage = payload.get("damage", "?")
         remain = payload.get("target_remaining_troops", "?")
-        return f"第 {round_no} 回合，{actor} 对 {target} 造成 {damage} 点兵力伤害，{target} 剩余兵力 {remain}。"
+        return (
+            f"第 {round_no} 回合，{actor} 对 {target} 造成 {damage} 点兵力伤害，"
+            f"{target} 剩余兵力 {remain}。"
+        )
 
     if event.event_type == EventType.UNIT_DEFEATED:
         return f"第 {round_no} 回合，{target} 兵力归零，无法继续战斗。"
@@ -95,13 +103,14 @@ def main() -> None:
     units = {
         "a1": UnitRuntime(
             unit_id="a1",
-            name="A队主将",
+            name="马腾",
             team_id="A",
             max_troops=1000,
             troops=1000,
             attack=240,
             defense=140,
             speed=120,
+            troop_type=TroopType.CAVALRY,
             lineup_position=LineupPosition.COMMANDER,
         ),
         "a2": UnitRuntime(
@@ -113,6 +122,7 @@ def main() -> None:
             attack=210,
             defense=130,
             speed=105,
+            troop_type=TroopType.CAVALRY,
             lineup_position=LineupPosition.DEPUTY_1,
         ),
         "b1": UnitRuntime(
@@ -124,6 +134,7 @@ def main() -> None:
             attack=230,
             defense=145,
             speed=115,
+            troop_type=TroopType.CAVALRY,
             lineup_position=LineupPosition.COMMANDER,
         ),
         "b2": UnitRuntime(
@@ -135,21 +146,39 @@ def main() -> None:
             attack=205,
             defense=125,
             speed=110,
+            troop_type=TroopType.CAVALRY,
             lineup_position=LineupPosition.DEPUTY_1,
         ),
     }
 
     context = BattleContext(
-        battle_id="stage2-demo",
+        battle_id="stage14-xiliang-demo",
         units=units,
         event_bus=event_bus,
         random=RandomSystem(seed=20260904),
         max_rounds=8,
     )
+    register_official_state_definitions(context.states)
+
+    systems = BattleSystems()
+
+    # 当前 demo 使用马腾统领，直接展示冻结后的速度缩放公式。
+    combat_speed = systems.attribute_system.get_speed(context, context.units["a1"])
+    xiliang_crit = calculate_xiliang_crit_chance(0.25, combat_speed)
+    print("=== Stage14 Pilot 01：西凉铁骑（马腾统领）===")
+    print(f"PRE_BATTLE 实战速度：{combat_speed:.3f}")
+    print(f"西凉铁骑满级会心率：{xiliang_crit:.6%}")
+    print("接入模式：BattleEngine PRE_BATTLE 自动调度")
+    print()
+
+    # Stage14 Pilot 01C: 将西凉铁骑注册至 BattleContext.skill_runtimes，
+    # 由 BattleEngine.run() 在 PRE_BATTLE 阶段自动执行准入、身份赋予与战法挂载。
+    xiliang_runtime = create_xiliang_cavalry_runtime("a1")
+    context.skill_runtimes.register(xiliang_runtime)
 
     engine = BattleEngine(
         context=context,
-        systems=BattleSystems(),
+        systems=systems,
     )
     result = engine.run()
 

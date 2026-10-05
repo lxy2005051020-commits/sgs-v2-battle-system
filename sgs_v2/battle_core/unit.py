@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .enums import LineupPosition, TroopType
+from .enums import LineupPosition, SpecialTroopId, TroopType
 
 
 @dataclass(slots=True)
@@ -17,6 +17,7 @@ class UnitRuntime:
     - is_commander 仅保留为兼容字段，真实主将身份统一由 lineup_position 决定。
     - level / morale / troop_type 供基础伤害公式读取；默认值保持旧构造调用兼容。
     - intelligence 使用 keyword-only 字段，避免改变旧的 UnitRuntime 位置参数含义。
+    - special_troop_id: 进阶特殊兵种身份标识 (Stage14).
     """
 
     unit_id: str
@@ -36,6 +37,7 @@ class UnitRuntime:
     level: int = 50
     morale: int = 100
     troop_type: TroopType | None = None
+    special_troop_id: SpecialTroopId | None = field(default=None, kw_only=True)
     intelligence: float | None = field(default=None, kw_only=True)
     wounded_troops: int | None = field(default=None, kw_only=True)
     advancement_stars: int = field(default=0, kw_only=True)
@@ -103,6 +105,9 @@ class UnitRuntime:
             "level": self.level,
             "morale": self.morale,
             "troop_type": self.troop_type.value if self.troop_type is not None else None,
+            "special_troop_id": (
+                self.special_troop_id.value if self.special_troop_id is not None else None
+            ),
             "wounded_troops": self.wounded_troops,
             "advancement_stars": self.advancement_stars,
             "military_books_active": self.military_books_active,

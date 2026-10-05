@@ -43,6 +43,15 @@ class TroopType(str, Enum):
     SIEGE = "SIEGE"
 
 
+class SpecialTroopId(str, Enum):
+    """进阶特殊兵种身份标识 (Stage14-0 Foundation & Pilot).
+
+    特殊兵种身份与基础四大兵种家族解耦，保持 base_troop_type 不变以继承基础克制拓扑。
+    """
+
+    XILIANG_CAVALRY = "XILIANG_CAVALRY"  # 西凉铁骑 (Base: CAVALRY)
+
+
 class DamageType(str, Enum):
     """伤害性质，同时决定 DamageSystem 使用哪一种基础伤害公式。"""
 
