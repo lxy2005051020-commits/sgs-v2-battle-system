@@ -1,7 +1,8 @@
 # Stage14 第二批：无当飞军 + 陷阵营
 
-状态：`FULL_LEVEL_BASELINE_IMPLEMENTED / LOCAL_VALIDATION_PASS`。
-主线合并门禁尚未完成，不宣称独立机制合同已冻结。
+状态：`BASELINE_FROZEN / MERGED_MAIN / CI_PASS`。
+
+> Post-merge note：PR #47 已合并至 `main`，merge SHA `b5dbd2db52a70834b7b9eeb9bce1b3816f837e06`，merged-main CI `37314103287 / SUCCESS`。Research bounded baseline 已由 `MC-STAGE14-TROOP-BATCH01-04-BASELINE-01` 冻结；下文原始门禁描述保留为分支开发时的历史记录。
 
 ## 范围与来源
 
