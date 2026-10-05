@@ -13,7 +13,12 @@ from .effects import EffectSourceRef
 from .dependency_evaluation import ProviderNode
 from .enums import DamageType
 from .execution_right_system import AssaultDispatchPort
-from .numeric_validation import validate_probability
+from .numeric_validation import validate_probability, validate_nonnegative_finite
+from .attribute_choice import higher_force_intelligence
+from .priority_target_system import FastestTargetSystem
+from .stage10_state_params import RecoveryPotencyContext
+from .skill_definition import RecoverySkillEffectSpec
+from .stage11_state_runtime import Stage11DamageFamily
 from .official_state_catalog import OfficialStateId
 from .operation_identity import SourceType
 from .provider_identity import SkillProviderRef
@@ -47,6 +52,39 @@ class NormalAttackFollowupParams(StateRuntimeParams):
 
 
 @dataclass(frozen=True, slots=True)
+class BranchedNormalAttackFollowupParams(NormalAttackFollowupParams):
+    recovery_potency: RecoveryPotencyContext | None = None
+    fastest_only: bool = False
+    higher_attribute_damage: bool = False
+    speed_damage_ratio: float = 0.0
+    tie_damage_type: DamageType | None = None
+    fixed_performer_id: str | None = None
+    recovery_from_performer: bool = False
+    live_recovery_attribute: bool = False
+    damage_family: Stage11DamageFamily | None = None
+
+    def __post_init__(self):
+        NormalAttackFollowupParams.__post_init__(self)
+        if self.recovery_potency is not None and not isinstance(self.recovery_potency, RecoveryPotencyContext):
+            raise TypeError("recovery_potency must be RecoveryPotencyContext or None")
+        if type(self.fastest_only) is not bool or type(self.higher_attribute_damage) is not bool:
+            raise TypeError("followup conditions must be bool")
+        if self.tie_damage_type is not None and not isinstance(self.tie_damage_type, DamageType):
+            raise TypeError("tie_damage_type must be DamageType or None")
+        if self.fixed_performer_id is not None and (not isinstance(self.fixed_performer_id, str)
+                or not self.fixed_performer_id.strip()):
+            raise ValueError("fixed_performer_id must be a nonempty string or None")
+        if type(self.recovery_from_performer) is not bool:
+            raise TypeError("recovery_from_performer must be bool")
+        if type(self.live_recovery_attribute) is not bool:
+            raise TypeError("live_recovery_attribute must be bool")
+        if self.damage_family is not None and not isinstance(self.damage_family, Stage11DamageFamily):
+            raise TypeError("damage_family must be Stage11DamageFamily or None")
+        object.__setattr__(self, "speed_damage_ratio", validate_nonnegative_finite(
+            self.speed_damage_ratio, "speed_damage_ratio"))
+
+
+@dataclass(frozen=True, slots=True)
 class ProbabilisticComboParams(ComboStateParams):
     probability: float = 1.0
 
@@ -70,11 +108,15 @@ def register_followup_state_definition(registry) -> None:
 
 
 class NormalAttackFollowupPort(AssaultDispatchPort):
-    def __init__(self, gate, resolver, executor, state_policy):
+    def __init__(self, gate, resolver, executor, state_policy, *, targets=None, attributes=None,
+                 treatment_formula=None):
         super().__init__(gate)
         self._resolver = resolver
         self._executor = executor
         self._state_policy = state_policy
+        self._targets = targets
+        self._attributes = attributes
+        self._treatment_formula = treatment_formula
 
     def dispatch(self, context, permit, parent_scope_identity, *, actor, actual_target_id):
         # Frozen owner validates and consumes the authentic permit before gameplay.
@@ -89,6 +131,9 @@ class NormalAttackFollowupPort(AssaultDispatchPort):
                 raise ValueError("followup requires canonical provider provenance")
             provider = context.skill_runtimes.get(state.source_id, state.source_skill_slot)
             if provider is None or provider.definition.skill_id != state.source_skill_id:
+                continue
+            if isinstance(params, BranchedNormalAttackFollowupParams):
+                self._dispatch_branch(context, state, params, provider, actor, actual_target_id)
                 continue
             definition = SkillDefinition(state.source_skill_id, provider.definition.name,
                 params.probability, SkillTargetMode.SINGLE_RANDOM_ENEMY, (params.damage,),
@@ -105,6 +150,65 @@ class NormalAttackFollowupPort(AssaultDispatchPort):
                     source_ref=EffectSourceRef(SourceType.ACTIVE_SKILL,
                         source_unit_id=actor.unit_id, source_skill_id=state.source_skill_id))
                 self._executor(context, effect)
+
+
+    def _dispatch_branch(self, context, state, params, provider, actor, actual_target_id):
+        ref = SkillProviderRef(provider.owner_id, provider.skill_slot, state.source_skill_id)
+        if not self._state_policy.dependency_support.evaluate(context, ProviderNode(ref)).valid:
+            return
+        if not context.units[provider.owner_id].is_alive:
+            return
+        if params.fixed_performer_id is not None and actor.unit_id != params.fixed_performer_id:
+            return
+        if params.fastest_only:
+            fastest = FastestTargetSystem(self._targets).fastest_allies(context, actor, self._attributes)
+            if actor not in fastest:
+                return
+            if len(fastest) != 1:
+                raise NotImplementedError("equal maximum-speed followup performer rule is unconfirmed")
+        # One mutually exclusive branch draw, before fresh target selection.
+        damage_branch = context.random.chance(params.probability)
+        if damage_branch:
+            damage = params.damage
+            if params.higher_attribute_damage:
+                choice = higher_force_intelligence(
+                    self._attributes.get_attack(context, actor),
+                    self._attributes.get_intelligence(context, actor), tie_type=params.tie_damage_type)
+                damage = replace(damage, damage_type=choice.damage_type)
+            mode, specs, count = SkillTargetMode.SINGLE_RANDOM_ENEMY, (damage,), None
+            inherited = ((actual_target_id,) if params.target_mode is FollowupTargetMode.INHERIT_ACTUAL_TARGET
+                         else None)
+        else:
+            potency = params.recovery_potency
+            if potency is None:
+                raise ValueError("recovery branch requires application-time potency snapshot")
+            recovery_source = actor if params.recovery_from_performer else context.units[provider.owner_id]
+            attribute = (max(self._attributes.get_attack(context, recovery_source),
+                             self._attributes.get_intelligence(context, recovery_source))
+                         if params.live_recovery_attribute else potency.frozen_treatment_attribute())
+            amount = self._treatment_formula.calculate(rate=potency.base_rate,
+                source_troops=potency.source_troops_at_application,
+                source_attribute=attribute,
+                modifiers=potency.treatment_modifier_snapshot).nominal_recovery
+            mode, specs, count = SkillTargetMode.CHOOSE_N_RANDOM_TEAM, (RecoverySkillEffectSpec(amount),), 1
+            inherited = None
+        definition = SkillDefinition(state.source_skill_id, provider.definition.name, 1.0,
+            mode, specs, skill_type=SkillType.TROOP, target_count=count)
+        runtime = SkillRuntime(definition, provider.owner_id, provider.skill_slot, provider.enabled)
+        result = self._resolver(context, runtime, inherited_target_ids=inherited)
+        for effect in result.effects:
+            if damage_branch:
+                effect = replace(effect, source_id=actor.unit_id,
+                    stage11_family=params.damage_family,
+                    additive_damage=self._attributes.get_speed(context, actor) * params.speed_damage_ratio,
+                    source_state_id=state.state_id, source_state_instance_id=state.instance_id,
+                    source_ref=EffectSourceRef(SourceType.ACTIVE_SKILL,
+                        source_unit_id=actor.unit_id, source_skill_id=state.source_skill_id))
+            else:
+                effect = replace(effect, source_id=actor.unit_id if params.recovery_from_performer else effect.source_id,
+                    source_state_id=state.state_id,
+                    source_state_instance_id=state.instance_id)
+            self._executor(context, effect)
 
 
 class ProbabilisticComboRuntime(Stage9StateRuntime):

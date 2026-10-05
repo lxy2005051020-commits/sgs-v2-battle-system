@@ -89,6 +89,7 @@ from .stage11_attacker_recovery import Stage11AttackerRecoverySystem
 from .state_lifecycle_system import StateLifecycleSystem
 from .target_resolution_system import TargetResolutionSystem
 from .target_system import TargetSystem
+from .additive_damage import AdditiveDamageSystem
 from .trigger_system import TriggerSystem
 from .troop_system import TroopSystem
 from .treatment_formula import TreatmentFormulaSystem
@@ -362,7 +363,7 @@ class BattleSystems:
 
         self.damage_rule_provider = IncomingDamageReductionProvider(
             self.state_effectiveness_policy, self.damage_rule_provider)
-        self.damage_system = DamageSystem(
+        self.damage_system = AdditiveDamageSystem(
             self.attribute_system,
             weapon_troop_function_table=self.weapon_troop_function_table,
             weapon_random_percent_range=self.weapon_random_percent_range,
@@ -470,7 +471,8 @@ class BattleSystems:
             self.future_admission_gate,
             lambda context, runtime, **kwargs: self.skill_resolver.resolve(context, runtime, **kwargs),
             lambda context, effect: self.effect_executor.execute(context, effect),
-            self.state_effectiveness_policy)
+            self.state_effectiveness_policy, targets=self.target_system,
+            attributes=self.attribute_system, treatment_formula=self.treatment_formula_system)
         self.target_resolution_system = ReactingTargetResolutionSystem(
             self.target_system,
             self.stage9_state_runtime,

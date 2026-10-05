@@ -104,7 +104,17 @@ class ApplyStateSkillEffectSpec:
                 raise ValueError("expires_phase cannot be empty when provided")
 
 
-SkillEffectSpec = DamageSkillEffectSpec | ApplyStateSkillEffectSpec
+@dataclass(frozen=True, slots=True)
+class RecoverySkillEffectSpec:
+    """A nominal recovery amount; the recovery owner applies prevention/capacity."""
+    amount: int
+
+    def __post_init__(self) -> None:
+        if type(self.amount) is not int or self.amount < 0:
+            raise ValueError("recovery amount must be a nonnegative integer")
+
+
+SkillEffectSpec = DamageSkillEffectSpec | ApplyStateSkillEffectSpec | RecoverySkillEffectSpec
 
 
 @dataclass(frozen=True, slots=True)
@@ -178,7 +188,7 @@ class SkillDefinition:
         if any(
             not isinstance(
                 spec,
-                (DamageSkillEffectSpec, ApplyStateSkillEffectSpec),
+                (DamageSkillEffectSpec, ApplyStateSkillEffectSpec, RecoverySkillEffectSpec),
             )
             for spec in specs
         ):
