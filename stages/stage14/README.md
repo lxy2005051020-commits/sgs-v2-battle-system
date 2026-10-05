@@ -59,7 +59,7 @@ BASE_XILIANG_MECHANISM_CONTRACT = FROZEN
 MATENG_COMMANDER_SCALING        = FROZEN
 ```
 
-Current Runtime work is maintained in Battle PR #42 pending its final mainline audit and merge.
+`西凉铁骑` Runtime 已通过 Battle PR #42 正式合并进入 `main`。
 
 The pilot exercises:
 
@@ -76,6 +76,17 @@ SkillType.TROOP
 ```
 
 It intentionally avoids unresolved storage/battery families represented by 象兵、飞熊军、丹阳兵.
+
+### Mainline result
+
+```text
+Battle PR #42        = MERGED
+Merge SHA            = 3fcf19cafdbe457c704e2fda83aadaddcb7f476a
+Merged-main CI       = 37273312132 / SUCCESS
+Runtime Integration  = COMPLETE
+```
+
+西凉铁骑是 Stage14 第一只正式进入 `main` 的兵种战法。
 
 ## Batch policy after the pilot
 
