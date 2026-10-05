@@ -30,6 +30,9 @@ TROOP SKILLS IN MAIN     = 8
 
 最终批次审计见 [Batch01-04 Mainline Audit](BATCH01_04_MAINLINE_AUDIT.md)。
 
+锦帆军（20152）候选接入见 [接入说明](JIN_FAN_JUN_CANDIDATE_INTEGRATION.md)。
+两项缩放公式尚未确认，正式准入关闭；不计入上述已合入八个兵种。
+
 ## Research authority
 
 Canonical Research contracts:

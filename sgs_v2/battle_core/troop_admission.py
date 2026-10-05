@@ -27,6 +27,7 @@ from .troop_skills.xian_zhen_ying import CONFIG as XIAN_ZHEN_YING_CONFIG
 from .troop_skills.bai_er_bing import CONFIG as BAI_ER_BING_CONFIG
 from .troop_skills.da_ji_shi import CONFIG as DA_JI_SHI_CONFIG
 from .troop_skills.teng_jia_bing import CONFIG as TENG_JIA_BING_CONFIG
+from .troop_skills.jin_fan_jun import CONFIG as JIN_FAN_JUN_CONFIG
 from .state_application_reaction import register_application_reaction_definitions
 from .normal_attack_followup import register_followup_state_definition
 
@@ -182,6 +183,7 @@ TROOP_SKILL_REGISTRY: dict[str, TroopSkillConfig] = {
     BAI_ER_BING_CONFIG.skill_id: BAI_ER_BING_CONFIG,
     DA_JI_SHI_CONFIG.skill_id: DA_JI_SHI_CONFIG,
     TENG_JIA_BING_CONFIG.skill_id: TENG_JIA_BING_CONFIG,
+    JIN_FAN_JUN_CONFIG.skill_id: JIN_FAN_JUN_CONFIG,
 }
 
 

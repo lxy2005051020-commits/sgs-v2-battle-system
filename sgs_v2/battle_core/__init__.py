@@ -884,6 +884,7 @@ __all__ += [
 
 from .troop_skills.bai_er_bing import create_bai_er_bing_definition, create_bai_er_bing_runtime
 from .troop_skills.da_ji_shi import create_da_ji_shi_definition, create_da_ji_shi_runtime
+from .troop_skills.jin_fan_jun import create_jin_fan_jun_definition, create_jin_fan_jun_runtime
 from .troop_skills.teng_jia_bing import create_teng_jia_bing_definition, create_teng_jia_bing_runtime, calculate_teng_jia_reduction
 __all__ += ["create_teng_jia_bing_definition", "create_teng_jia_bing_runtime", "calculate_teng_jia_reduction"]
 __all__ += ["create_bai_er_bing_definition", "create_bai_er_bing_runtime",

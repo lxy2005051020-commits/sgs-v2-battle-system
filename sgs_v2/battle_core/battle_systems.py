@@ -460,7 +460,10 @@ class BattleSystems:
             self.future_admission_gate,
             lambda context, runtime, **kwargs: self.skill_resolver.resolve(context, runtime, **kwargs),
             lambda context, effect: self.effect_executor.execute(context, effect),
-            self.state_effectiveness_policy)
+            self.state_effectiveness_policy,
+            basis_producer=self.continuous_damage_basis_producer,
+            recovery_system=self.recovery_system,
+            lifecycle_system=self.state_lifecycle_system)
         self.target_resolution_system = TargetResolutionSystem(
             self.target_system,
             self.stage9_state_runtime,
