@@ -342,7 +342,7 @@ class SkillResolver:
                 TargetPurpose.FRIENDLY_SUPPORT,
                 None,
             )
-        if mode is SkillTargetMode.CHOOSE_N_RANDOM_ALLIES:
+        if mode in (SkillTargetMode.CHOOSE_N_RANDOM_ALLIES, SkillTargetMode.CHOOSE_N_RANDOM_TEAM):
             return (
                 TargetRelation.ALLY,
                 TargetCardinality.CHOOSE_N,
@@ -442,7 +442,9 @@ class SkillResolver:
             if definition.target_mode is SkillTargetMode.TEAM_COMMANDER:
                 return [u for u in context.units.values() if u.team_id == owner.team_id
                         and u.lineup_position is LineupPosition.COMMANDER and u.is_alive]
-            include_self = definition.target_mode is SkillTargetMode.FIXED_ALL_TEAM
+            include_self = definition.target_mode in (
+                SkillTargetMode.FIXED_ALL_TEAM, SkillTargetMode.CHOOSE_N_RANDOM_TEAM,
+            )
             return self._target_system.allies(
                 context,
                 owner,

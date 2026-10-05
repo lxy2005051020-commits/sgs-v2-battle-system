@@ -31,6 +31,9 @@ jobs:
       - name: Run Stage13-D1 independent runtime audit
         run: python scripts/audit_stage13_d1.py --output AUDIT_STAGE13_D1.json
 
+      - name: Run Qingzhou independent runtime audit
+        run: python scripts/audit_qingzhou.py --output AUDIT_QINGZHOU.json
+
       - name: Prepare independent audit snapshot
         run: printf '%s\n' "$GITHUB_SHA" > AUDIT_SOURCE_SHA.txt
 
@@ -48,5 +51,6 @@ jobs:
             stages
             scripts
             AUDIT_STAGE13_D1.json
+            AUDIT_QINGZHOU.json
           if-no-files-found: error
           retention-days: 1

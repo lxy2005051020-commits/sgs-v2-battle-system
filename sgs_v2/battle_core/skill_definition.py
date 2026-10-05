@@ -26,6 +26,7 @@ class SkillTargetMode(str, Enum):
     SINGLE_RANDOM_ALLY = "SINGLE_RANDOM_ALLY"
     SINGLE_DETERMINISTIC_ALLY = "SINGLE_DETERMINISTIC_ALLY"
     CHOOSE_N_RANDOM_ALLIES = "CHOOSE_N_RANDOM_ALLIES"
+    CHOOSE_N_RANDOM_TEAM = "CHOOSE_N_RANDOM_TEAM"
     CHOOSE_N_DETERMINISTIC_ALLIES = "CHOOSE_N_DETERMINISTIC_ALLIES"
     FIXED_ALL_ALLIES = "FIXED_ALL_ALLIES"
     FIXED_ALL_TEAM = "FIXED_ALL_TEAM"
@@ -148,6 +149,7 @@ class SkillDefinition:
             SkillTargetMode.CHOOSE_N_RANDOM_ENEMIES,
             SkillTargetMode.CHOOSE_N_DETERMINISTIC_ENEMIES,
             SkillTargetMode.CHOOSE_N_RANDOM_ALLIES,
+            SkillTargetMode.CHOOSE_N_RANDOM_TEAM,
             SkillTargetMode.CHOOSE_N_DETERMINISTIC_ALLIES,
         }
         if self.target_mode in choose_n_modes:

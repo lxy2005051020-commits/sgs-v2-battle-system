@@ -1,6 +1,6 @@
 # Stage14 · Concrete Skill Integration
 
-> Status: **ACTIVE / MAINLINE GATE OPEN / 8 TROOP SKILLS IN MAIN**
+> Status: **ACTIVE / MAINLINE GATE OPEN / 8 BOUNDED-FROZEN + 1 USER-PROVISIONAL INTEGRATION**
 
 Stage14 在 Stage13 冻结的 Core Gameplay Engine 上进行具体战法接入。
 
@@ -13,6 +13,7 @@ SKILL_RUNTIME_READINESS  = READY
 STAGE14 MAINLINE GATE    = OPEN
 
 TROOP SKILLS IN MAIN     = 8
+USER-PROVISIONAL ADDITION = 20153 QING_ZHOU_BING (see PR #52)
 ~~~
 
 当前已进入 main：
@@ -27,6 +28,7 @@ TROOP SKILLS IN MAIN     = 8
 | 20099 | 白毦兵 | MERGED / CI PASS |
 | 20125 | 大戟士 | MERGED / CI PASS |
 | 20095 | 藤甲兵 | MERGED / CI PASS |
+| 20153 | 青州兵 | USER_PROVISIONAL_MODEL / CAO_CAO_PLACEHOLDER; [PR #52](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/52) |
 
 最终批次审计见 [Batch01-04 Mainline Audit](BATCH01_04_MAINLINE_AUDIT.md)。
 
@@ -103,6 +105,11 @@ Frozen owner drift = NONE DETECTED
 
 ## Mainline policy
 
+青州兵（20153）新增接入采用用户授权的暂定模型，详见
+[青州兵接入说明](QING_ZHOU_BING_INTEGRATION.md)。
+`D/10`加在基础治疗量层，属性项为武力；曹操统领额外加成为空白占位。
+该模型不计入上方八个已冻结兵种的实证冻结结果。
+
 新的具体战法或机制家族进入 main 仍必须满足：
 
 ~~~text
@@ -118,3 +125,6 @@ GAME TRUTH / RESEARCH CONTRACT
 ~~~
 
 Battle code is not gameplay evidence.
+
+用户明确授权的暂定模型可在Research独立合同中保留开放边界后接入；同样必须通过Runtime回归、独立审计和CI。
+该接入不自动升级为客户端实证冻结，也不改写既有bounded freeze。青州兵属于本轮用户授权的暂定模型通道。

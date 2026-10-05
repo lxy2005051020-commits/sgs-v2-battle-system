@@ -27,6 +27,8 @@ from .troop_skills.xian_zhen_ying import CONFIG as XIAN_ZHEN_YING_CONFIG
 from .troop_skills.bai_er_bing import CONFIG as BAI_ER_BING_CONFIG
 from .troop_skills.da_ji_shi import CONFIG as DA_JI_SHI_CONFIG
 from .troop_skills.teng_jia_bing import CONFIG as TENG_JIA_BING_CONFIG
+from .troop_skills.qing_zhou_bing import CONFIG as QING_ZHOU_BING_CONFIG
+from .scheduled_team_recovery import ScheduledTeamRecoverySpec
 from .state_application_reaction import register_application_reaction_definitions
 from .normal_attack_followup import register_followup_state_definition
 
@@ -182,6 +184,7 @@ TROOP_SKILL_REGISTRY: dict[str, TroopSkillConfig] = {
     BAI_ER_BING_CONFIG.skill_id: BAI_ER_BING_CONFIG,
     DA_JI_SHI_CONFIG.skill_id: DA_JI_SHI_CONFIG,
     TENG_JIA_BING_CONFIG.skill_id: TENG_JIA_BING_CONFIG,
+    QING_ZHOU_BING_CONFIG.skill_id: QING_ZHOU_BING_CONFIG,
 }
 
 
@@ -339,6 +342,10 @@ def admit_and_install_troop_skill(
 
     supplemental = (cfg.supplemental_definition_resolver(context, systems, owner)
                     if cfg.supplemental_definition_resolver is not None else None)
+    scheduled_recovery = (cfg.scheduled_recovery_resolver(context, systems, owner)
+                          if cfg.scheduled_recovery_resolver is not None else None)
+    if scheduled_recovery is not None and not isinstance(scheduled_recovery, ScheduledTeamRecoverySpec):
+        raise TypeError("scheduled_recovery_resolver must return ScheduledTeamRecoverySpec")
     # --- ATOMIC PREFLIGHT COMPLETE; PERFORM MUTATION ---
 
     register_modifier_state_definitions(context.states)
@@ -389,6 +396,8 @@ def admit_and_install_troop_skill(
 
     if cfg.opening_definition_resolver is not None:
         systems.scheduled_skill_support.schedule(context, runtime)
+    if scheduled_recovery is not None:
+        systems.scheduled_team_recovery_support.schedule(context, runtime, scheduled_recovery)
 
     return TroopAdmissionResult(
         status=TroopAdmissionStatus.SUCCESS,
