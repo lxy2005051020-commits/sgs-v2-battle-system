@@ -25,7 +25,7 @@ Stage10    = FROZEN
 Stage11    = RUNTIME FROZEN / POST-FREEZE ACCEPTED
 Stage12    = FROZEN / COMPLETE
 Stage13    = COMPLETE / FROZEN
-Stage14    = ACTIVE / XILIANG CAVALRY MERGED TO MAIN
+Stage14    = ACTIVE / 8 TROOP SKILLS MERGED TO MAIN
 ```
 
 Stage13 当前已完成：
@@ -45,6 +45,7 @@ Research 已冻结：
 
 ```text
 MC-STAGE14-TROOP-FOUNDATION-01 = FROZEN
+MC-STAGE14-TROOP-BATCH01-04-BASELINE-01 = FROZEN_BASELINE / EXTENSIONS_OPEN
 
 - 特殊兵种在 PRE_BATTLE / 准备阶段完成进阶
 - 特殊兵种继承基础兵种克制家族
@@ -58,7 +59,7 @@ Canonical Research contract:
 
 ## Stage14 当前状态
 
-首个兵种战法 **西凉铁骑** 已完成 Research、Runtime、自动 PRE_BATTLE 接入、独立审计并合并进入 `main`。
+当前已有 **8 个兵种战法** 完成 Research gate、Runtime 审计与 merged-main CI 并进入 `main`：西凉铁骑、白马义从、虎豹骑、无当飞军、陷阵营、白毦兵、大戟士、藤甲兵。
 
 后续单战法或机制家族进入 main 仍需同时满足：
 
@@ -69,14 +70,21 @@ Canonical Research contract:
 4. No unresolved core primitive is guessed into Runtime
 ```
 
-首个已正式接入战法：**西凉铁骑（20097）**。
+当前正式接入：
 
 ```text
-Research Contract            = FROZEN
-Ma Teng Speed Scaling        = FROZEN
-Runtime Integration          = MERGED TO MAIN
-BattleEngine PRE_BATTLE      = AUTO-WIRED
-Merged-main CI               = PASS
+20097 西凉铁骑
+20075 白马义从
+20098 虎豹骑
+20100 无当飞军
+20096 陷阵营
+20099 白毦兵
+20125 大戟士
+20095 藤甲兵
+
+Troop Skills In Main         = 8
+Latest Merged-main CI        = PASS
+Batch01-04 Runtime Audit     = PASS
 ```
 
 ## 当前边界
@@ -84,14 +92,15 @@ Merged-main CI               = PASS
 ```text
 Core Gameplay Engine      = FROZEN
 Skill Runtime Readiness   = READY
-Stage14 First Troop Skill   = XILIANG CAVALRY / IN MAIN
-Stage14 Mainline Gate     = OPEN
-Bulk Troop Integration    = NOT AUTHORIZED
+Stage14 Troop Skills In Main = 8
+Stage14 Mainline Gate        = OPEN
+Batch Integration             = ACTIVE / FAMILY-GATED
 ```
 
 详细权威：
 
 - [Stage13 README](stages/stage13/README.md)
 - [Stage14 README](stages/stage14/README.md)
+- [Stage14 Batch01-04 Mainline Audit](stages/stage14/BATCH01_04_MAINLINE_AUDIT.md)
 - [Stage13 Gap Ledger](stages/stage13/STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md)
 - [Stage13 Owner Matrix](stages/stage13/STAGE13_CORE_RUNTIME_OWNER_MATRIX.md)
