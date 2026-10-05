@@ -29,5 +29,11 @@
   },
   "registry": 0,
   "runtime_base": "a46e51309c5117352a1a7f9b49d4377bfd7668d8",
-  "status": "LOCAL_VERIFIED_NOT_PUBLISHED"
+  "status": "REMOTE_AUDIT_PASS_PR_READY",
+  "remote_branch": "stage14-xian-deng-si-shi",
+  "remote_original_head": "038b717725bf45fdc2a2f4e14ef97f6fda8786c3",
+  "research_contract": "MC-STAGE14-XIANDENG-USER-FIT-01",
+  "research_merge_sha": "fe70f349c5952c78dc4c0b8d80aa1d9cf768c54b",
+  "runtime_audit": "PASS",
+  "remote_ci": "PENDING_PR"
 }
