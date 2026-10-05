@@ -1,5 +1,5 @@
 """解烦卫 full-level declaration; higher-attribute semantics authorized by user."""
-from ..enums import DamageType, SpecialTroopId, TroopType
+from ..enums import DamageType, LineupPosition, SpecialTroopId, TroopType
 from ..normal_attack_followup import (BranchedNormalAttackFollowupParams,
     FollowupTargetMode, NORMAL_ATTACK_FOLLOWUP_STATE_ID)
 from ..skill_definition import (ApplyStateSkillEffectSpec, DamageSkillEffectSpec,
@@ -12,11 +12,11 @@ from ..priority_target_system import FastestTargetSystem
 from ..stage11_state_runtime import Stage11DamageFamily
 
 
-def _definition(potency=None, performer_id=None):
+def _definition(potency=None, performer_id=None, damage_coefficient=.36):
     return SkillDefinition("20248", "解烦卫", 1.0, SkillTargetMode.FIXED_ALL_TEAM, (
         ApplyStateSkillEffectSpec(ATTRIBUTE_BONUS_STATE_ID, AttributeBonusParams("speed", 36)),
         ApplyStateSkillEffectSpec(NORMAL_ATTACK_FOLLOWUP_STATE_ID,
-            BranchedNormalAttackFollowupParams(.30, DamageSkillEffectSpec(DamageType.WEAPON, .36),
+            BranchedNormalAttackFollowupParams(.30, DamageSkillEffectSpec(DamageType.WEAPON, damage_coefficient),
                 FollowupTargetMode.RANDOM_ENEMY, recovery_potency=potency,
                 fixed_performer_id=performer_id, higher_attribute_damage=True, speed_damage_ratio=.40,
                 tie_damage_type=DamageType.WEAPON, recovery_from_performer=True,
@@ -33,9 +33,14 @@ def resolve_definition(context, systems, owner):
     # Fix the performer before combat. A uniform +36 cannot change this ordering.
     fastest = FastestTargetSystem(systems.target_system).fastest_allies(context, owner, systems.attribute_system)
     performer = min(fastest, key=lambda unit: (unit.lineup_position, unit.unit_id))
+    commander = next((unit for unit in systems.target_system.allies(context, owner)
+                      if unit.lineup_position is LineupPosition.COMMANDER), None)
+    if commander is None:
+        raise ValueError("解烦卫 requires a canonical team commander")
+    damage_coefficient = .72 if commander.name == "韩当" else .36
     # Only troops remain frozen; healing reads the performer's live final attributes.
     return _definition(RecoveryPotencyContext(base_rate=.72,
-        source_troops_at_application=performer.troops), performer.unit_id)
+        source_troops_at_application=performer.troops), performer.unit_id, damage_coefficient)
 
 
 SKILL = create_xie_fan_wei_definition()
