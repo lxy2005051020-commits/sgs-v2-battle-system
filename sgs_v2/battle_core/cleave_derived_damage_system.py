@@ -262,6 +262,7 @@ class CleaveDerivedDamageResolver:
         )
         if aftermath_port is not None:
             aftermath_fact = create_damage_aftermath_fact(
+                source_unit_id=request.source_id,
                 damage_instance_id=request.damage_instance_id,
                 target_id=target.unit_id,
                 source_type=request.source_type,

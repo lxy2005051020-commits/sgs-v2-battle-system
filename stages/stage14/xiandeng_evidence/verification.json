@@ -1,0 +1,33 @@
+{
+  "focused": {
+    "exit_code": 0,
+    "summary": "59 passed in 0.71s"
+  },
+  "full": {
+    "exit_code": 0,
+    "summary": "2077 passed in 16.21s"
+  },
+  "demo": {
+    "seed": 42,
+    "result": {
+      "winner_team_id": "a",
+      "reason": "MAX_ROUNDS",
+      "rounds_completed": 5,
+      "final_troops": {
+        "a1": 9452,
+        "a2": 8310,
+        "a3": 7829,
+        "b1": 6587,
+        "b2": 8018,
+        "b3": 7897
+      }
+    },
+    "ended": true,
+    "remaining_states": 0,
+    "event_count": 313,
+    "model": "XIANDENG_USER_OPENING_COMMAND_FIT_V1"
+  },
+  "registry": 0,
+  "runtime_base": "a46e51309c5117352a1a7f9b49d4377bfd7668d8",
+  "status": "LOCAL_VERIFIED_NOT_PUBLISHED"
+}

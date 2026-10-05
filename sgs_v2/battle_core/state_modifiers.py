@@ -65,6 +65,35 @@ class ActivationRateBonusParams(StateRuntimeParams):
         object.__setattr__(self, "amount", validate_finite_number(self.amount, "amount"))
 
 
+def _validate_stack(params):
+    if any(not isinstance(v, str) or not v.strip() for v in (params.stack_key, params.stack_group)):
+        raise ValueError("bounded modifiers require stack key and group")
+    if type(params.max_stacks) is not int or params.max_stacks < 1:
+        raise ValueError("max_stacks must be a positive integer")
+
+
+@dataclass(frozen=True, slots=True)
+class BoundedAttributeBonusParams(AttributeBonusParams):
+    stack_key: str
+    stack_group: str
+    max_stacks: int
+
+    def __post_init__(self):
+        AttributeBonusParams.__post_init__(self)
+        _validate_stack(self)
+
+
+@dataclass(frozen=True, slots=True)
+class BoundedActivationRateBonusParams(ActivationRateBonusParams):
+    stack_key: str
+    stack_group: str
+    max_stacks: int
+
+    def __post_init__(self):
+        ActivationRateBonusParams.__post_init__(self)
+        _validate_stack(self)
+
+
 MODIFIER_STATE_DEFINITIONS = (
     StateDefinition(INCOMING_DAMAGE_REDUCTION_STATE_ID, "受到伤害降低", runtime_params_type=IncomingDamageReductionParams),
     StateDefinition(ATTRIBUTE_BONUS_STATE_ID, "属性修饰", runtime_params_type=AttributeBonusParams),
@@ -83,6 +112,17 @@ def modifier_conflict_rule(context: BattleContext, candidate: StateCandidate,
         return None
     params = candidate.runtime_params_candidate
     dimension = getattr(params, "attribute", getattr(params, "skill_type", getattr(params, "damage_type", None)))
+    if isinstance(params, (BoundedAttributeBonusParams, BoundedActivationRateBonusParams)):
+        matches = tuple(r for r in residents
+            if (r.source_id, r.source_skill_id, r.source_skill_slot) ==
+               (candidate.source_id, candidate.source_skill_id, candidate.source_skill_slot)
+            and getattr(r.runtime_params, "stack_group", None) == params.stack_group
+            and getattr(r.runtime_params, "attribute", getattr(r.runtime_params, "skill_type", None)) == dimension)
+        if any(r.runtime_params.stack_key == params.stack_key for r in matches):
+            return StateConflictDecision(ApplicationDisposition.REJECT_CONFLICT, "MODIFIER_DUPLICATE_STACK")
+        if len(matches) >= params.max_stacks:
+            return StateConflictDecision(ApplicationDisposition.REJECT_CONFLICT, "MODIFIER_STACK_CAP")
+        return StateConflictDecision(ApplicationDisposition.CREATE, "MODIFIER_STACK_CREATE")
     for resident in residents:
         resident_dimension = getattr(resident.runtime_params, "attribute",
                                      getattr(resident.runtime_params, "skill_type", getattr(resident.runtime_params, "damage_type", None)))

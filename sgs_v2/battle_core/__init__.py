@@ -886,6 +886,8 @@ from .troop_skills.bai_er_bing import create_bai_er_bing_definition, create_bai_
 from .troop_skills.da_ji_shi import create_da_ji_shi_definition, create_da_ji_shi_runtime
 from .troop_skills.qing_zhou_bing import create_qing_zhou_bing_definition, create_qing_zhou_bing_runtime
 from .troop_skills.hu_wei_jun import create_hu_wei_jun_definition, create_hu_wei_jun_runtime
+from .troop_skills.xian_deng_si_shi import create_xian_deng_si_shi_definition, create_xian_deng_si_shi_runtime
+__all__ += ["create_xian_deng_si_shi_definition", "create_xian_deng_si_shi_runtime"]
 __all__ += ["create_hu_wei_jun_definition", "create_hu_wei_jun_runtime"]
 __all__ += ["create_qing_zhou_bing_definition", "create_qing_zhou_bing_runtime"]
 from .troop_skills.teng_jia_bing import create_teng_jia_bing_definition, create_teng_jia_bing_runtime, calculate_teng_jia_reduction

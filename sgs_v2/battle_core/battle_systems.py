@@ -24,6 +24,8 @@ from .cleave_derived_damage_system import CleaveDerivedDamageResolver
 from .continuous_damage_basis_producer import ContinuousDamageBasisProducer
 from .counter_system import CounterSystem
 from .damage_aftermath_port import DamageAftermathPort, DamageAftermathSystem
+from .damage_received_reaction import DamageReceivedReactionPort
+from .selective_state_immunity import register_selective_immunity_support
 from .defeat_cleanup_port import DefeatCleanupPort
 from .hit_resolution_system import HitResolutionSystem
 from .damage_rule_provider import StateDamageRuleProvider
@@ -232,6 +234,7 @@ class BattleSystems:
             provider_evaluator=self.provider_validity_policy.evaluate_node,
         )
         self.state_admission_policy = StateAdmissionPolicy()
+        register_selective_immunity_support(self.state_admission_policy, self.state_effectiveness_policy)
         self.state_conflict_policy = StateConflictPolicy()
         self.state_conflict_policy.register_rule_adapter(modifier_conflict_rule)
         self.state_removal_policy = StateRemovalPolicy()
@@ -429,6 +432,7 @@ class BattleSystems:
         )
         if self.damage_aftermath_port is None:
             self.damage_aftermath_port = self.damage_aftermath_system
+        self.damage_aftermath_port = DamageReceivedReactionPort(self.damage_aftermath_port, self)
 
         self.damage_instance_coordinator = DamageInstanceCoordinator(
             self.damage_system,

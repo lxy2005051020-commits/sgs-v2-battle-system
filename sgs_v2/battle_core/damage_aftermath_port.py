@@ -42,8 +42,11 @@ class DamageAftermathFact:
     hit_topology: DamageHitTopology
     zero_loss_cause: DamageZeroLossCause | None = None
     source_state_generation: StateApplicationGenerationId | None = None
+    source_unit_id: str | None = None
 
     def __post_init__(self) -> None:
+        if self.source_unit_id is not None and (not isinstance(self.source_unit_id, str) or not self.source_unit_id.strip()):
+            raise ValueError("source_unit_id must be nonempty when supplied")
         if not isinstance(self.damage_instance_id, str) or not self.damage_instance_id.strip():
             raise ValueError("damage_instance_id cannot be empty or whitespace")
         if not isinstance(self.target_id, str) or not self.target_id.strip():
@@ -124,6 +127,7 @@ def create_damage_aftermath_fact(
     hit_topology: DamageHitTopology | None = None,
     zero_loss_cause: DamageZeroLossCause | None = None,
     source_state_generation: StateApplicationGenerationId | None = None,
+    source_unit_id: str | None = None,
 ) -> DamageAftermathFact:
     """
     Authoritative factory deriving a typed DamageAftermathFact from settled damage.
@@ -173,6 +177,7 @@ def create_damage_aftermath_fact(
         hit_topology=hit_topology,
         zero_loss_cause=zero_loss_cause,
         source_state_generation=source_state_generation,
+        source_unit_id=source_unit_id if source_unit_id is not None else getattr(damage_result, "source_id", None),
     )
 
 
