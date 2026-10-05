@@ -897,3 +897,5 @@ __all__ += ["create_bai_er_bing_definition", "create_bai_er_bing_runtime",
 
 from .troop_skills.xie_fan_wei import create_xie_fan_wei_definition, create_xie_fan_wei_runtime
 __all__ += ["create_xie_fan_wei_definition", "create_xie_fan_wei_runtime"]
+from .troop_skills.jin_fan_jun import create_jin_fan_jun_definition, create_jin_fan_jun_runtime
+__all__ += ["create_jin_fan_jun_definition", "create_jin_fan_jun_runtime"]
