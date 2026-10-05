@@ -1,6 +1,8 @@
 # Stage14 第一批：白马义从 + 虎豹骑
 
-状态：`BASELINE_IMPLEMENTED / LOCAL_VALIDATION_PASS`。未合并主线。
+状态：`BASELINE_FROZEN / MERGED_MAIN / CI_PASS`。
+
+> Post-merge note：PR #46 已合并至 `main`，merge SHA `47fc9b0857421a9492aa13c3ef522cd7dff3658b`，merged-main CI `37313973838 / SUCCESS`。Research bounded baseline 已由 `MC-STAGE14-TROOP-BATCH01-04-BASELINE-01` 冻结；下文关于“未合并/OPEN”的描述保留为实现当时的历史记录。
 
 ## 范围和证据
 

@@ -1,7 +1,10 @@
 # 藤甲兵：满级统率减伤与藤甲兵效果
 
-2026-10-05，本地独立分支 `stage14-teng-jia-bing`；父提交 `53b268e`。
-发布方式：独立分支及以stage14-troop-batch-03为基线的草稿PR。尚未完成藤甲兵独立审计、正式冻结或合并main；远程CI结果以GitHub Actions为准。
+2026-10-05，原独立分支 `stage14-teng-jia-bing`；父提交 `53b268e`。
+
+状态：`BASELINE_FROZEN / MERGED_MAIN / CI_PASS`。
+
+> Post-merge note：PR #49 已合并至 `main`，merge SHA `8d3f19eaae7e69b9f8f7e7422182d7870acb7be5`，merged-main CI `37314342610 / SUCCESS`，最终全量 `1951 passed`。藤甲兵 bounded baseline 已由 `MC-STAGE14-TROOP-BATCH01-04-BASELINE-01` 冻结；特殊净化/免疫分类等扩展问题继续 OPEN。
 
 ## 用户确认的规则
 
