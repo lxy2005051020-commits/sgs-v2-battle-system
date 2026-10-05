@@ -1,8 +1,8 @@
 # 先登死士接入
 
-日期：2026-10-06。状态：REMOTE_AUDIT_PASS / USER_FIT_MODEL / GAMEPLAY_DETAILS_OPEN / PR_READY。
+日期：2026-10-06。状态：MERGED_MAIN / USER_FIT_MODEL / GAMEPLAY_DETAILS_OPEN / CI_PASS。
 Runtime 基线：远程 main `a46e513`，独立工作区 `D:/模拟系统/stage14-xian-deng-si-shi`。
-远端分支已发布；Research authority 已通过 PR #15 合入 main（`fe70f349c5952c78dc4c0b8d80aa1d9cf768c54b`）。独立 Runtime 审计见 `XIAN_DENG_SI_SHI_RUNTIME_AUDIT.md`；Battle PR / 远端 CI 尚待完成。
+Research authority 已通过 PR #15 合入 main（`fe70f349c5952c78dc4c0b8d80aa1d9cf768c54b`）。Battle PR #55 已合并至 main（`cfaf3ffaac3646aff7e7e69713a0b0b3064ef24b`）；merged-main CI `37346440394 / SUCCESS`。独立 Runtime 审计见 `XIAN_DENG_SI_SHI_RUNTIME_AUDIT.md`。
 
 ## 依据与授权
 
