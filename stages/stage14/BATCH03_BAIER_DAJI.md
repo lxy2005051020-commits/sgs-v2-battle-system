@@ -1,9 +1,9 @@
 # Stage14 第三批：白毦兵 + 大戟士
 
-状态：`FULL_LEVEL_BASELINE_IMPLEMENTED / LOCAL_VALIDATION_PASS`。
+状态：`BASELINE_FROZEN / MERGED_MAIN / CI_PASS`。
 日期：2026-10-05。分支：`stage14-troop-batch-03`。
-依赖第二批 `6dc5e16`（PR #47），第二批又依赖第一批（PR #46）；未合并 main。
-Research 目录中的 20099 / 20125 独立机制合同仍为 OPEN，不以合成测试代替冻结证据。
+
+> Post-merge note：PR #48 已合并至 `main`，merge SHA `d9b890490596a6fe368fff103ae3bdf6a23670c5`，merged-main CI `37314228006 / SUCCESS`。20099 / 20125 的 bounded baseline 已由 `MC-STAGE14-TROOP-BATCH01-04-BASELINE-01` 冻结；细时序、lineage 等扩展问题继续 OPEN。下文旧的 stacked-PR 描述保留为历史记录。
 
 ## 来源与边界
 
