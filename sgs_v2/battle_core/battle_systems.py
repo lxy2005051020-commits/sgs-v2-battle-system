@@ -51,6 +51,7 @@ from .execution_right_system import (
     LegacyActionDispatchAdapter,
 )
 from .normal_attack_system import NormalAttackSystem
+from .pre_attack_reaction import ReactingTargetResolutionSystem, TeamPreAttackReactionSupport
 from .recovery_opportunity_system import RecoveryOpportunitySystem
 from .recovery_system import RecoveryModifierProvider, RecoverySystem
 from .provider_validity import ProviderValidityPolicy
@@ -466,9 +467,10 @@ class BattleSystems:
             lambda context, runtime, **kwargs: self.skill_resolver.resolve(context, runtime, **kwargs),
             lambda context, effect: self.effect_executor.execute(context, effect),
             self.state_effectiveness_policy)
-        self.target_resolution_system = TargetResolutionSystem(
+        self.target_resolution_system = ReactingTargetResolutionSystem(
             self.target_system,
             self.stage9_state_runtime,
+            TeamPreAttackReactionSupport(self),
         )
         self.normal_attack_system = NormalAttackSystem(
             target_system=self.target_system,

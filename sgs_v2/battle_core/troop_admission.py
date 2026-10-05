@@ -28,6 +28,8 @@ from .troop_skills.bai_er_bing import CONFIG as BAI_ER_BING_CONFIG
 from .troop_skills.da_ji_shi import CONFIG as DA_JI_SHI_CONFIG
 from .troop_skills.teng_jia_bing import CONFIG as TENG_JIA_BING_CONFIG
 from .troop_skills.qing_zhou_bing import CONFIG as QING_ZHOU_BING_CONFIG
+from .troop_skills.hu_wei_jun import CONFIG as HU_WEI_JUN_CONFIG
+from .pre_attack_reaction import register_pre_attack_reaction_definition
 from .scheduled_team_recovery import ScheduledTeamRecoverySpec
 from .state_application_reaction import register_application_reaction_definitions
 from .normal_attack_followup import register_followup_state_definition
@@ -185,6 +187,7 @@ TROOP_SKILL_REGISTRY: dict[str, TroopSkillConfig] = {
     DA_JI_SHI_CONFIG.skill_id: DA_JI_SHI_CONFIG,
     TENG_JIA_BING_CONFIG.skill_id: TENG_JIA_BING_CONFIG,
     QING_ZHOU_BING_CONFIG.skill_id: QING_ZHOU_BING_CONFIG,
+    HU_WEI_JUN_CONFIG.skill_id: HU_WEI_JUN_CONFIG,
 }
 
 
@@ -351,6 +354,7 @@ def admit_and_install_troop_skill(
     register_modifier_state_definitions(context.states)
     register_application_reaction_definitions(context.states)
     register_followup_state_definition(context.states)
+    register_pre_attack_reaction_definition(context.states)
 
     # 6. 特殊兵种身份绑定：全队同盟友军转换为特殊兵种
     converted_ids = []
