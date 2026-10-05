@@ -63,12 +63,11 @@ def test_stage13_inventory_has_exactly_48_classified_mechanisms() -> None:
     )
 
 
-def test_stage13_entry_gate_is_active_but_engine_not_frozen() -> None:
+def test_stage13_exit_gate_frozen_and_skill_runtime_ready() -> None:
     index = _read("README.md")
     assert "STAGE13_ENTRY_GATE                = PASS" in index
-    assert "Stage13 Active                    = YES" in index
-    assert "CORE_GAMEPLAY_ENGINE              = NOT YET FROZEN" in index
-    assert "Skill Runtime Readiness           = NOT YET READY" in index
+    assert "CORE_GAMEPLAY_ENGINE              = FROZEN" in index
+    assert "Skill Runtime Readiness           = READY" in index
 
 
 def _research_reference(name: str) -> dict:
@@ -98,12 +97,10 @@ def test_stage13_research_and_runtime_governance_are_separate() -> None:
     assert "No Stage13-A row above is a Default" in governance
 
 
-def test_stage13_does_not_activate_skill_runtime() -> None:
+def test_stage13_exit_authorizes_skill_runtime() -> None:
     index = _read("README.md")
-    assert "concrete skill runtimes remain deferred" in index.lower()
     assert "Stage14+" in index
-    assert "Skill Runtime Readiness = READY" in index
-    assert "Skill Runtime Readiness           = NOT YET READY" in index
+    assert "Skill Runtime Readiness           = READY" in index
 
 
 def test_stage13_foundational_route_preserves_history_and_current_progress() -> None:

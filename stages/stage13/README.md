@@ -1,6 +1,6 @@
 # Stage13 · Core Gameplay Mechanism Completion
 
-> Status: ACTIVE / FOUNDATIONAL + RESIDUAL + D1 SLICES FROZEN / EXIT AUDIT REMAINS
+> Status: COMPLETE / CORE GAMEPLAY ENGINE FROZEN / SKILL RUNTIME READY
 
 Stage13 completes the reusable game-engine substrate before large-scale concrete-skill integration.
 
@@ -94,8 +94,9 @@ Historical Stage13 replans, intermediate model-comparison reports and superseded
 ## Machine-checked exit declarations
 
 ```text
-CORE_GAMEPLAY_ENGINE              = NOT YET FROZEN
-Skill Runtime Readiness           = NOT YET READY
+CORE_GAMEPLAY_ENGINE              = FROZEN
+Skill Runtime Readiness           = READY
+STAGE13                           = COMPLETE / FROZEN
 ```
 
 Stage14+ concrete skill integration remains behind the exit gate.
