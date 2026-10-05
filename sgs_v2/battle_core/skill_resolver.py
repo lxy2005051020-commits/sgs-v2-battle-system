@@ -6,13 +6,14 @@ from enum import Enum
 from typing import Callable
 
 from .context import BattleContext
-from .effects import ApplyStateEffect, DamageEffect, Effect, EffectSourceRef
+from .effects import ApplyStateEffect, DamageEffect, Effect, EffectSourceRef, RecoverEffect
 from .enums import DamageSourceType, LineupPosition
 from .operation_identity import SourceType
 from .provider_identity import SkillProviderRef
 from .skill_definition import (
     ApplyStateSkillEffectSpec,
     DamageSkillEffectSpec,
+    RecoverySkillEffectSpec,
     SkillEffectSpec,
     SkillTargetMode,
 )
@@ -555,6 +556,11 @@ class SkillResolver:
             source_skill_id=definition.skill_id,
             source_skill_slot=runtime.skill_slot,
         )
+        if isinstance(spec, RecoverySkillEffectSpec):
+            from .recovery_system import RecoveryModifierPolicy
+            return RecoverEffect(source_id=runtime.owner_id, target_id=target.unit_id,
+                amount=spec.amount, source_skill_id=definition.skill_id,
+                modifier_policy=RecoveryModifierPolicy.APPLY)
         if isinstance(spec, DamageSkillEffectSpec):
             return DamageEffect(
                 source_id=runtime.owner_id,

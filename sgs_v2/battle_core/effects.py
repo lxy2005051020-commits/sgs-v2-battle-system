@@ -4,10 +4,11 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from .damage_system import DamageRequest
+from .additive_damage import AdditiveDamageRequest
 from .enums import DamageCalculationBasis, DamageSourceType, DamageType
 from .numeric_validation import validate_nonnegative_finite
 from .operation_identity import SourceType
-from .recovery_system import RecoveryRequest
+from .recovery_system import RecoveryRequest, RecoveryModifierPolicy
 from .skill_runtime import SkillSlot
 from .stage10_state_params import FrozenContinuousDamageBasis
 from .stage11_state_runtime import Stage11DamageFamily
@@ -91,6 +92,7 @@ class DamageEffect:
     frozen_basis: FrozenContinuousDamageBasis | None = None
     source_generation_id: StateApplicationGenerationId | None = None
     stage11_family: Stage11DamageFamily | None = None
+    additive_damage: float = 0.0
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -103,6 +105,8 @@ class DamageEffect:
             raise TypeError("source_type must be a DamageSourceType")
         coefficient = validate_nonnegative_finite(self.coefficient, "coefficient")
         object.__setattr__(self, "coefficient", coefficient)
+        object.__setattr__(self, "additive_damage", validate_nonnegative_finite(
+            self.additive_damage, "additive_damage"))
         _validate_optional_id(self.source_state_id, "source_state_id")
         _validate_optional_id(
             self.source_state_instance_id,
@@ -143,12 +147,13 @@ class DamageEffect:
         _validate_execution_descriptor(self.execution_descriptor)
 
     def to_request(self) -> DamageRequest:
-        return DamageRequest(
+        return AdditiveDamageRequest(
             source_id=self.source_id,
             target_id=self.target_id,
             damage_type=self.damage_type,
             source_type=self.source_type,
             coefficient=self.coefficient,
+            additive_damage=self.additive_damage,
             source_skill_id=self.source_skill_id,
             source_state_id=self.source_state_id,
             source_state_instance_id=self.source_state_instance_id,
@@ -220,6 +225,7 @@ class RecoverEffect:
     source_id: str | None
     target_id: str
     amount: int
+    modifier_policy: RecoveryModifierPolicy = field(default=RecoveryModifierPolicy.NONE, kw_only=True)
     source_skill_id: str | None = None
     source_state_id: str | None = None
     source_state_instance_id: str | None = None
@@ -247,6 +253,8 @@ class RecoverEffect:
             raise TypeError("amount must be an int")
         if self.amount < 0:
             raise ValueError("amount must be >= 0")
+        if not isinstance(self.modifier_policy, RecoveryModifierPolicy):
+            raise TypeError("modifier_policy must be RecoveryModifierPolicy")
         _validate_execution_descriptor(self.execution_descriptor)
 
     def to_request(self) -> RecoveryRequest:
@@ -254,6 +262,7 @@ class RecoverEffect:
             source_id=self.source_id,
             target_id=self.target_id,
             amount=self.amount,
+            modifier_policy=self.modifier_policy,
             source_skill_id=self.source_skill_id,
             source_state_id=self.source_state_id,
             source_state_instance_id=self.source_state_instance_id,
