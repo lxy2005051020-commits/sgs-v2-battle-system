@@ -7,11 +7,12 @@ Stage13 completed the reusable game-engine substrate required before concrete-sk
 ## Final exit result
 
 ```text
-STAGE13_FINAL_EXIT_AUDIT = PASS
-CORE_GAMEPLAY_ENGINE     = FROZEN
-SKILL_RUNTIME_READINESS  = READY
-STAGE13                  = COMPLETE / FROZEN
-STAGE14 MAINLINE GATE    = OPEN
+STAGE13_ENTRY_GATE                = PASS
+STAGE13_FINAL_EXIT_AUDIT          = PASS
+CORE_GAMEPLAY_ENGINE              = FROZEN
+Skill Runtime Readiness           = READY
+STAGE13                           = COMPLETE / FROZEN
+STAGE14 MAINLINE GATE             = OPEN
 ```
 
 The final exit audit is authoritative:
@@ -97,7 +98,7 @@ These are explicit future extension boundaries, not Stage13 exit blockers.
 
 The Stage13 exit gate has passed.
 
-Concrete skill integration may now enter `main` when the selected Stage14 skill or mechanism family independently satisfies:
+Stage14+ concrete skill integration may now enter `main` when the selected skill or mechanism family independently satisfies:
 
 ```text
 Research Contract / Game Truth     = CLOSED / FROZEN
@@ -114,10 +115,10 @@ Stage13 must not be reopened merely because a future skill needs a new extension
 ## Machine-checked exit declarations
 
 ```text
-CORE_GAMEPLAY_ENGINE    = FROZEN
-Skill Runtime Readiness = READY
-STAGE13                 = COMPLETE / FROZEN
-STAGE14 MAINLINE GATE   = OPEN
+CORE_GAMEPLAY_ENGINE              = FROZEN
+Skill Runtime Readiness           = READY
+STAGE13                           = COMPLETE / FROZEN
+STAGE14 MAINLINE GATE             = OPEN
 ```
 
 Research Authority:
