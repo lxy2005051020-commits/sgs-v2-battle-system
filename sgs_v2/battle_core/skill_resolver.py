@@ -7,7 +7,7 @@ from typing import Callable
 
 from .context import BattleContext
 from .effects import ApplyStateEffect, DamageEffect, Effect, EffectSourceRef
-from .enums import DamageSourceType
+from .enums import DamageSourceType, LineupPosition
 from .operation_identity import SourceType
 from .provider_identity import SkillProviderRef
 from .skill_definition import (
@@ -116,6 +116,8 @@ class SkillResolver:
         self,
         context: BattleContext,
         runtime: SkillRuntime,
+        *,
+        inherited_target_ids: tuple[str, ...] | None = None,
     ) -> SkillResolutionResult:
         definition = runtime.definition
 
@@ -132,6 +134,17 @@ class SkillResolver:
             owner,
             definition,
         )
+        if inherited_target_ids is not None:
+            # Bound inherited targets do not create a fresh target query or reroll.
+            if definition.target_mode is not SkillTargetMode.SINGLE_RANDOM_ENEMY:
+                raise ValueError("inherited target requires single enemy definition")
+            if len(inherited_target_ids) != 1:
+                raise ValueError("inherited target must contain exactly one id")
+            # The existing normal-hit owner already resolved redirects/confusion.
+            # A bound target can therefore be friendly; do not re-run fresh ENEMY
+            # eligibility or replace a dead inherited target with a new enemy.
+            candidates = [context.get_unit(uid) for uid in inherited_target_ids]
+            candidates = [u for u in candidates if u is not None and u.is_alive]
         if not candidates:
             return self._empty_result(
                 runtime,
@@ -157,10 +170,11 @@ class SkillResolver:
                 SkillResolutionStatus.ACTIVATION_FAILED,
             )
 
-        selection = self._resolve_targets_after_activation(
-            context,
-            runtime,
-            candidates,
+        selection = (
+            TargetSelectionResult(context.id_allocator.allocate_target_operation_id(),
+                tuple(u.unit_id for u in candidates), TargetSelectionProvenance.INHERITED)
+            if inherited_target_ids is not None else self._resolve_targets_after_activation(
+                context, runtime, candidates)
         )
         if selection is None or not selection.target_ids:
             return self._empty_result(
@@ -352,7 +366,7 @@ class SkillResolver:
                 TargetPurpose.FRIENDLY_SUPPORT,
                 None,
             )
-        if mode is SkillTargetMode.FIXED_ALL_TEAM:
+        if mode in (SkillTargetMode.FIXED_ALL_TEAM, SkillTargetMode.TEAM_COMMANDER):
             return (
                 TargetRelation.ALLY,
                 TargetCardinality.FIXED_ALL,
@@ -425,6 +439,9 @@ class SkillResolver:
                 alive_only=True,
             )
         if relation is TargetRelation.ALLY:
+            if definition.target_mode is SkillTargetMode.TEAM_COMMANDER:
+                return [u for u in context.units.values() if u.team_id == owner.team_id
+                        and u.lineup_position is LineupPosition.COMMANDER and u.is_alive]
             include_self = definition.target_mode is SkillTargetMode.FIXED_ALL_TEAM
             return self._target_system.allies(
                 context,

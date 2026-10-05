@@ -11,5 +11,5 @@ requires-python = ">=3.11"
 include = ["sgs_v2*"]
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = [".", "tests"]
 testpaths = ["tests"]

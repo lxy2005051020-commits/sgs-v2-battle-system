@@ -139,3 +139,11 @@ GAME TRUTH
 -> INDEPENDENT AUDIT
 -> MAINLINE MERGE
 ```
+
+## 第三批本地实现：白毦兵 + 大戟士
+
+满级基础分支、陈到/张郃统领分支及概率连击已在 `stage14-troop-batch-03` 接入。
+依赖第二批 PR #47；本批为草稿审阅，不宣称两个独立机制合同已冻结或进入 main。
+专测 161 passed，全量 1905 passed，Stage13-D1 frozen owner 哈希检查通过。
+来源、组件树、验证范围与待裁决项见 [BATCH03_BAIER_DAJI.md](BATCH03_BAIER_DAJI.md)
+和 [batch03/VALIDATION.md](batch03/VALIDATION.md)。

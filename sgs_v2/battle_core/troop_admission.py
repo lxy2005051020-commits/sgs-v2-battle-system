@@ -24,6 +24,9 @@ from .troop_skills.bai_ma_yi_cong import CONFIG as BAI_MA_YI_CONG_CONFIG
 from .troop_skills.hu_bao_qi import CONFIG as HU_BAO_QI_CONFIG
 from .troop_skills.wu_dang_fei_jun import CONFIG as WU_DANG_FEI_JUN_CONFIG
 from .troop_skills.xian_zhen_ying import CONFIG as XIAN_ZHEN_YING_CONFIG
+from .troop_skills.bai_er_bing import CONFIG as BAI_ER_BING_CONFIG
+from .troop_skills.da_ji_shi import CONFIG as DA_JI_SHI_CONFIG
+from .normal_attack_followup import register_followup_state_definition
 
 
 class TroopAdmissionStatus(str, Enum):
@@ -174,6 +177,8 @@ TROOP_SKILL_REGISTRY: dict[str, TroopSkillConfig] = {
     HU_BAO_QI_CONFIG.skill_id: HU_BAO_QI_CONFIG,
     WU_DANG_FEI_JUN_CONFIG.skill_id: WU_DANG_FEI_JUN_CONFIG,
     XIAN_ZHEN_YING_CONFIG.skill_id: XIAN_ZHEN_YING_CONFIG,
+    BAI_ER_BING_CONFIG.skill_id: BAI_ER_BING_CONFIG,
+    DA_JI_SHI_CONFIG.skill_id: DA_JI_SHI_CONFIG,
 }
 
 
@@ -310,7 +315,7 @@ def admit_and_install_troop_skill(
             )
 
     # 5. Skill-specific PRE_BATTLE definition resolution happens before mutation.
-    if cfg.opening_definition_resolver is not None and runtime.skill_slot is None:
+    if (cfg.opening_definition_resolver is not None or cfg.requires_provider_slot) and runtime.skill_slot is None:
         return TroopAdmissionResult(
             status=TroopAdmissionStatus.REJECTED_PROVIDER_SLOT_CONFLICT,
             skill_id=runtime.definition.skill_id, owner_id=runtime.owner_id,
@@ -329,9 +334,12 @@ def admit_and_install_troop_skill(
         enabled=runtime.enabled,
     )
 
+    supplemental = (cfg.supplemental_definition_resolver(context, systems, owner)
+                    if cfg.supplemental_definition_resolver is not None else None)
     # --- ATOMIC PREFLIGHT COMPLETE; PERFORM MUTATION ---
 
     register_modifier_state_definitions(context.states)
+    register_followup_state_definition(context.states)
 
     # 6. 特殊兵种身份绑定：全队同盟友军转换为特殊兵种
     converted_ids = []
@@ -357,7 +365,11 @@ def admit_and_install_troop_skill(
 
     # 8. PRE_BATTLE 解析技能并执行 Effect
     res = systems.skill_resolver.resolve(context, effective_runtime)
-    for effect in res.effects:
+    effects = list(res.effects)
+    if supplemental is not None:
+        extra_runtime = SkillRuntime(supplemental, runtime.owner_id, runtime.skill_slot, runtime.enabled)
+        effects.extend(systems.skill_resolver.resolve(context, extra_runtime).effects)
+    for effect in effects:
         exec_res = systems.effect_executor.execute(context, effect)
         # 9. 自动挂接 Provider 依赖边，以实现威慑抑制传播
         if (
