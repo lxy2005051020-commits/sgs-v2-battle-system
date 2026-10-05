@@ -26,6 +26,8 @@ from .troop_skills.wu_dang_fei_jun import CONFIG as WU_DANG_FEI_JUN_CONFIG
 from .troop_skills.xian_zhen_ying import CONFIG as XIAN_ZHEN_YING_CONFIG
 from .troop_skills.bai_er_bing import CONFIG as BAI_ER_BING_CONFIG
 from .troop_skills.da_ji_shi import CONFIG as DA_JI_SHI_CONFIG
+from .troop_skills.teng_jia_bing import CONFIG as TENG_JIA_BING_CONFIG
+from .state_application_reaction import register_application_reaction_definitions
 from .normal_attack_followup import register_followup_state_definition
 
 
@@ -179,6 +181,7 @@ TROOP_SKILL_REGISTRY: dict[str, TroopSkillConfig] = {
     XIAN_ZHEN_YING_CONFIG.skill_id: XIAN_ZHEN_YING_CONFIG,
     BAI_ER_BING_CONFIG.skill_id: BAI_ER_BING_CONFIG,
     DA_JI_SHI_CONFIG.skill_id: DA_JI_SHI_CONFIG,
+    TENG_JIA_BING_CONFIG.skill_id: TENG_JIA_BING_CONFIG,
 }
 
 
@@ -339,6 +342,7 @@ def admit_and_install_troop_skill(
     # --- ATOMIC PREFLIGHT COMPLETE; PERFORM MUTATION ---
 
     register_modifier_state_definitions(context.states)
+    register_application_reaction_definitions(context.states)
     register_followup_state_definition(context.states)
 
     # 6. 特殊兵种身份绑定：全队同盟友军转换为特殊兵种

@@ -6,7 +6,8 @@ from dataclasses import dataclass, field
 from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
-from .state_modifiers import StateModifierSupport, modifier_conflict_rule
+from .state_modifiers import StateModifierSupport, modifier_conflict_rule, IncomingDamageReductionProvider
+from .state_application_reaction import ReactingStateApplicationCoordinator, ReactingStateLifecycleSystem
 from .scheduled_skill import ScheduledSkillSupport
 from .normal_attack_followup import NormalAttackFollowupPort, ProbabilisticComboRuntime
 from .state_effectiveness_trigger import StateEffectivenessTriggerAdapter
@@ -105,7 +106,7 @@ class BattleSystems:
     strategy_random_percent_range: tuple[int, int] = (86, 94)
     strategy_low_damage_floor_range: tuple[int, int] = (5, 15)
 
-    state_lifecycle_system: StateLifecycleSystem = field(default_factory=StateLifecycleSystem)
+    state_lifecycle_system: StateLifecycleSystem = field(default_factory=ReactingStateLifecycleSystem)
     # Effect owners supply evidence-backed policies. Official Stage8 DEFER states
     # are not silently activated by the Stage9 orchestration layer.
     cleave_hit_rules: object | None = None
@@ -237,7 +238,7 @@ class BattleSystems:
         self.effectiveness_transition_coordinator.register_state_public_fact_port(
             self.state_effectiveness_event_adapter
         )
-        self.state_application_coordinator = StateApplicationCoordinator(
+        self.state_application_coordinator = ReactingStateApplicationCoordinator(
             admission_policy=self.state_admission_policy,
             conflict_policy=self.state_conflict_policy,
             lifecycle=self.state_lifecycle_system,
@@ -245,6 +246,9 @@ class BattleSystems:
             transition_coordinator=self.effectiveness_transition_coordinator,
             state_effectiveness_policy=self.state_effectiveness_policy,
         )
+        if isinstance(self.state_lifecycle_system, ReactingStateLifecycleSystem):
+            self.state_lifecycle_system.reaction_port = self.state_application_coordinator.react
+            self.state_lifecycle_system.association_transition_coordinator = self.effectiveness_transition_coordinator
         self.state_removal_coordinator = StateRemovalCoordinator(
             policy=self.state_removal_policy,
             lifecycle=self.state_lifecycle_system,
@@ -347,6 +351,8 @@ class BattleSystems:
                 transition_coordinator=self.effectiveness_transition_coordinator,
             )
 
+        self.damage_rule_provider = IncomingDamageReductionProvider(
+            self.state_effectiveness_policy, self.damage_rule_provider)
         self.damage_system = DamageSystem(
             self.attribute_system,
             weapon_troop_function_table=self.weapon_troop_function_table,
