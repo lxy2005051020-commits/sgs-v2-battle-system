@@ -13,7 +13,7 @@ Runtime FROZEN TO CONTRACT      = 40 / 40
 Strict Complete                 = 40 / 40
 
 Stage14 Troop Foundation        = FROZEN in Research
-Stage14 Pilot Preparation       = ACTIVE
+Stage14 Concrete Skill Integration = ACTIVE
 ```
 
 ## 阶段状态
@@ -25,7 +25,7 @@ Stage10    = FROZEN
 Stage11    = RUNTIME FROZEN / POST-FREEZE ACCEPTED
 Stage12    = FROZEN / COMPLETE
 Stage13    = COMPLETE / FROZEN
-Stage14    = PILOT PREPARATION ACTIVE / MAINLINE RUNTIME MERGE UNLOCKED
+Stage14    = ACTIVE / XILIANG CAVALRY MERGED TO MAIN
 ```
 
 Stage13 当前已完成：
@@ -56,11 +56,11 @@ MC-STAGE14-TROOP-FOUNDATION-01 = FROZEN
 Canonical Research contract:
 [Stage14 troop foundation](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Troop_Skill_Research/00_Governance/TROOP_SKILL_IDENTITY_AND_PROVIDER_LIFECYCLE_CONTRACT.md)
 
-## Stage14 Pilot policy
+## Stage14 当前状态
 
-允许开始**单战法 Pilot 准备与隔离分支实现**，但禁止批量兵种战法接入。
+首个兵种战法 **西凉铁骑** 已完成 Research、Runtime、自动 PRE_BATTLE 接入、独立审计并合并进入 `main`。
 
-Mainline merge 仍需同时满足：
+后续单战法或机制家族进入 main 仍需同时满足：
 
 ```text
 1. Stage13 exit gate = PASS
@@ -69,23 +69,22 @@ Mainline merge 仍需同时满足：
 4. No unresolved core primitive is guessed into Runtime
 ```
 
-首个推荐 Pilot：**西凉铁骑**。
+首个已正式接入战法：**西凉铁骑（20097）**。
 
-原因：
-
-- 能覆盖 PRE_BATTLE 特殊兵种转换；
-- 主要复用既有会心机制；
-- 不需要象兵/飞熊军/丹阳兵那类 storage/battery 原语；
-- 适合作为 TROOP Skill Runtime 的最小纵切验证。
-
-其精确版本文本、倍率、马腾统领加成与快照/JIT 边界必须先由 Research 合同冻结，不能依据旧攻略直接写死。
+```text
+Research Contract            = FROZEN
+Ma Teng Speed Scaling        = FROZEN
+Runtime Integration          = MERGED TO MAIN
+BattleEngine PRE_BATTLE      = AUTO-WIRED
+Merged-main CI               = PASS
+```
 
 ## 当前边界
 
 ```text
 Core Gameplay Engine      = FROZEN
 Skill Runtime Readiness   = READY
-Stage14 Pilot Branch Work = ALLOWED
+Stage14 First Troop Skill   = XILIANG CAVALRY / IN MAIN
 Stage14 Mainline Gate     = OPEN
 Bulk Troop Integration    = NOT AUTHORIZED
 ```
