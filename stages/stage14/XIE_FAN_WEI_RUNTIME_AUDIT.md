@@ -1,9 +1,10 @@
 # 解烦卫 Runtime Independent Audit
 
 > Date: 2026-10-06  
-> Audit target: `stage14-xie-fan-wei` @ `caad915d07a9138ee2a94171595d3cb8f44248be`  
-> PR: #57 (DRAFT)  
-> Verdict: **PASS / FINAL REMOTE CI REQUIRED**
+> Audit target: `stage14-xie-fan-wei` -> `main`  
+> Research authority: `MC-STAGE14-XIEFAN-01` @ `f4aea546537447067d29275e87da5bdcc8f65de8`  
+> PR: #57 / MERGED  
+> Verdict: **PASS / MAINLINE RELEASED**
 
 ## 1. Remote state
 
@@ -20,11 +21,7 @@ Research PR #16 已合并，`MC-STAGE14-XIEFAN-01` 已发布到 Research main；
 
 ## 2. Research authority conflict
 
-当前 Research Catalog 的解烦卫行仍为 OPEN，并写有 `30%→60%` 概率表述。
-当前 Battle 实现与接入说明使用固定 30% 伤害分支，未抽中时进入治疗分支。
-
-独立外部资料复核支持固定 30% 伤害概率、否则治疗，因此 Runtime 的 `.30` 与当前资料更一致；
-但 Gameplay Truth authority 仍是 Research Repository，因此在 Research Catalog/专项合同纠正前，不能靠 Runtime 或外部网页直接覆盖当前 Research main。
+Research Catalog 的旧 `30%→60%` 已由 Research PR #16 修正为固定 `30%`；`MC-STAGE14-XIEFAN-01` 已成为当前 Gameplay Truth authority。Battle Runtime 的 `.30` 与该合同一致。
 
 结论：
 
@@ -147,7 +144,7 @@ XIEFAN_HAN_DANG_SCOPE              = CLOSED
 XIEFAN_LINEAGE                     = OPEN_NONBLOCKING
 
 XIEFAN_RUNTIME_AUDIT               = PASS
-MAINLINE_READINESS                 = READY_IF_FINAL_REMOTE_CI_PASS
+MAINLINE_READINESS                 = PASS
 ```
 
 ## 12. Closure evidence
@@ -158,3 +155,35 @@ MAINLINE_READINESS                 = READY_IF_FINAL_REMOTE_CI_PASS
 - Additive seam contract published in `XIE_FAN_ADDITIVE_DAMAGE_SEAM.md`.
 - Final repaired runtime head passed remote CI `37355725515`: `2114 passed`, Stage13-D1 `11 passed`.
 - Parent/root lineage remains explicitly OPEN and non-blocking.
+
+
+## 13. Mainline release
+
+```text
+Research PR #16
+= MERGED
+Research merge
+= f4aea546537447067d29275e87da5bdcc8f65de8
+
+Battle PR #57
+= MERGED
+Battle merge
+= 0769ca9b393b9390cc59e573344270cfaf406a5c
+
+Final PR-head CI
+= 37356009025 / SUCCESS
+Full pytest
+= 2114 passed
+Stage13-D1
+= 11 passed
+
+Merged-main CI
+= 37356182948 / SUCCESS
+Full pytest
+= 2114 passed
+Stage13-D1
+= 11 passed
+
+XIEFAN_MAINLINE_RELEASE
+= PASS
+```

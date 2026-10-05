@@ -1,6 +1,6 @@
 # Stage14 · Concrete Skill Integration
 
-> Status: **ACTIVE / MAINLINE GATE OPEN / 8 BOUNDED-FROZEN + 2 USER-PROVISIONAL + 1 USER-FIT INTEGRATION**
+> Status: **ACTIVE / MAINLINE GATE OPEN / 9 BOUNDED-FROZEN + 2 USER-PROVISIONAL + 1 USER-FIT INTEGRATION**
 
 Stage14 在 Stage13 冻结的 Core Gameplay Engine 上进行具体战法接入。
 
@@ -12,9 +12,10 @@ CORE_GAMEPLAY_ENGINE     = FROZEN
 SKILL_RUNTIME_READINESS  = READY
 STAGE14 MAINLINE GATE    = OPEN
 
-TROOP SKILLS IN MAIN     = 11
+TROOP SKILLS IN MAIN     = 12
 USER-PROVISIONAL ADDITIONS = 20153 QING_ZHOU_BING / 20154 HU_WEI_JUN
 USER-FIT ADDITION          = 20246 XIAN_DENG_SI_SHI
+NEW BOUNDED ADDITION       = 20248 XIE_FAN_WEI
 ~~~
 
 当前已进入 main：
@@ -32,6 +33,7 @@ USER-FIT ADDITION          = 20246 XIAN_DENG_SI_SHI
 | 20153 | 青州兵 | USER_PROVISIONAL_MODEL / CAO_CAO_PLACEHOLDER; [PR #52](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/52) |
 | 20154 (推断) | 虎卫军 | USER_PROVISIONAL_MODEL / HEALING_ROLLBACK_FROZEN; [PR #53](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/53) |
 | 20246 (推断) | 先登死士 | USER_FIT_MODEL / OPENING_COMMAND_SNAPSHOT_FROZEN / GAMEPLAY_DETAILS_OPEN; [PR #55](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/55) |
+| 20248 (推断) | 解烦卫 | BOUNDED_FROZEN / HAN_DANG_72 / FINE_LINEAGE_OPEN; [PR #57](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/57) |
 
 最终批次审计见 [Batch01-04 Mainline Audit](BATCH01_04_MAINLINE_AUDIT.md)。
 
@@ -44,6 +46,7 @@ Canonical Research contracts:
 - [Troop question ledger](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Troop_Skill_Research/00_Governance/TROOP_SKILL_QUESTION_LEDGER.md)
 - [MC-STAGE14-HUWEI-PROVISIONAL-01](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Troop_Skill_Research/01_Skills/%E8%99%8E%E5%8D%AB%E5%86%9B/HU_WEI_JUN_PROVISIONAL_CONTRACT.md)
 - [MC-STAGE14-XIANDENG-USER-FIT-01](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Troop_Skill_Research/01_Skills/%E5%85%88%E7%99%BB%E6%AD%BB%E5%A3%AB/XIAN_DENG_SI_SHI_USER_FIT_CONTRACT.md)
+- [MC-STAGE14-XIEFAN-01](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Troop_Skill_Research/01_Skills/%E8%A7%A3%E7%83%A6%E5%8D%AB/XIE_FAN_WEI_MECHANISM_CONTRACT.md)
 
 Shared frozen rules:
 

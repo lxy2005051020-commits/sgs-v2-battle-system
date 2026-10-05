@@ -25,7 +25,7 @@ Stage10    = FROZEN
 Stage11    = RUNTIME FROZEN / POST-FREEZE ACCEPTED
 Stage12    = FROZEN / COMPLETE
 Stage13    = COMPLETE / FROZEN
-Stage14    = ACTIVE / 8 BOUNDED-FROZEN + 2 USER-PROVISIONAL + 1 USER-FIT INTEGRATION
+Stage14    = ACTIVE / 9 BOUNDED-FROZEN + 2 USER-PROVISIONAL + 1 USER-FIT INTEGRATION
 ```
 
 Stage13 当前已完成：
@@ -48,6 +48,7 @@ MC-STAGE14-TROOP-FOUNDATION-01 = FROZEN
 MC-STAGE14-TROOP-BATCH01-04-BASELINE-01 = FROZEN_BASELINE / EXTENSIONS_OPEN
 MC-STAGE14-HUWEI-PROVISIONAL-01 = USER_PROVISIONAL_MODEL / RUNTIME_BASELINE_ENABLED
 MC-STAGE14-XIANDENG-USER-FIT-01 = USER_FIT_MODEL / RUNTIME_BASELINE_ENABLED / GAMEPLAY_DETAILS_OPEN
+MC-STAGE14-XIEFAN-01 = BOUNDED_FROZEN / FINE_LINEAGE_OPEN
 
 - 特殊兵种在 PRE_BATTLE / 准备阶段完成进阶
 - 特殊兵种继承基础兵种克制家族
@@ -72,6 +73,8 @@ Research合同经PR #13进入main；暂定模型接入与上方八个bounded fre
 
 本次新增 **先登死士20246（推断ID）**，采用用户拟合公式并冻结“携带者开局统率快照”读取策略；零伤害触发、独立层到期和 fine aftermath order 继续 OPEN。Research PR #15 与 Battle PR #55 均已合并，merged-main CI 为 SUCCESS。
 
+本次新增 **解烦卫20248（推断ID）**，Research 合同 `MC-STAGE14-XIEFAN-01` 已 bounded freeze：固定 30% 伤害分支、韩当主将伤害率 72%、实时武智与速度附加、治疗双 CEIL 均已接入。Research PR #16 与 Battle PR #57 已合并，merged-main CI `37356182948 / SUCCESS`；fine followup order 与 parent/root lineage 继续 OPEN。
+
 后续单战法或机制家族进入 main 仍需同时满足：
 
 ```text
@@ -95,8 +98,9 @@ Research合同经PR #13进入main；暂定模型接入与上方八个bounded fre
 20153 青州兵 (USER_PROVISIONAL_MODEL / CAO_CAO_PLACEHOLDER)
 20154 虎卫军 (USER_PROVISIONAL_MODEL / HEALING_ROLLBACK_FROZEN)
 20246 先登死士 (USER_FIT_MODEL / OPENING_COMMAND_SNAPSHOT_FROZEN)
+20248 解烦卫 (BOUNDED_FROZEN / FINE_LINEAGE_OPEN)
 
-Troop Skills Registered      = 11 (8 bounded-frozen + 2 user-provisional + 1 user-fit)
+Troop Skills Registered      = 12 (9 bounded-frozen + 2 user-provisional + 1 user-fit)
 Latest Merged-main CI        = PASS
 Batch01-04 Runtime Audit     = PASS
 ```
@@ -106,7 +110,7 @@ Batch01-04 Runtime Audit     = PASS
 ```text
 Core Gameplay Engine      = FROZEN
 Skill Runtime Readiness   = READY
-Stage14 Troop Skills Registered = 11 (8 bounded-frozen + 2 user-provisional + 1 user-fit)
+Stage14 Troop Skills Registered = 12 (9 bounded-frozen + 2 user-provisional + 1 user-fit)
 Stage14 Mainline Gate        = OPEN
 Batch Integration             = ACTIVE / FAMILY-GATED
 ```
@@ -118,5 +122,6 @@ Batch Integration             = ACTIVE / FAMILY-GATED
 - [Stage14 Batch01-04 Mainline Audit](stages/stage14/BATCH01_04_MAINLINE_AUDIT.md)
 - [Stage14 Hu Wei Runtime Audit](stages/stage14/HU_WEI_JUN_RUNTIME_AUDIT.md)
 - [Stage14 Xian Deng Runtime Audit](stages/stage14/XIAN_DENG_SI_SHI_RUNTIME_AUDIT.md)
+- [Stage14 Xie Fan Runtime Audit](stages/stage14/XIE_FAN_WEI_RUNTIME_AUDIT.md)
 - [Stage13 Gap Ledger](stages/stage13/STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md)
 - [Stage13 Owner Matrix](stages/stage13/STAGE13_CORE_RUNTIME_OWNER_MATRIX.md)
