@@ -1,12 +1,12 @@
 # 先登死士接入
 
-日期：2026-10-06。状态：LOCAL_VERIFIED / USER_FIT_MODEL / GAMEPLAY_DETAILS_OPEN。
+日期：2026-10-06。状态：REMOTE_AUDIT_PASS / USER_FIT_MODEL / GAMEPLAY_DETAILS_OPEN / PR_READY。
 Runtime 基线：远程 main `a46e513`，独立工作区 `D:/模拟系统/stage14-xian-deng-si-shi`。
-未发布、未合并；未经过独立代理审计或远端 CI，不升级已有 Research freeze。
+远端分支已发布；Research authority 已通过 PR #15 合入 main（`fe70f349c5952c78dc4c0b8d80aa1d9cf768c54b`）。独立 Runtime 审计见 `XIAN_DENG_SI_SHI_RUNTIME_AUDIT.md`；Battle PR / 远端 CI 尚待完成。
 
 ## 依据与授权
 
-Research 当前远程 main：`1befa30990a7a12899bb4cc2fddf65395da2c634`。
+Research authority：`MC-STAGE14-XIANDENG-USER-FIT-01`，Research merge `fe70f349c5952c78dc4c0b8d80aa1d9cf768c54b`。
 描述来源：`Stage14_Troop_Skill_Research/00_Governance/TROOP_SKILL_CATALOG.md` 先登死士行。
 目录中的 `20246` 是推断编号，本次沿用，不宣称已核实客户端 canonical ID。
 该行提供弓兵、全队遇袭免疫、受伤后按兵力比例分支、满级 21 统率或主动发动率 -3 个百分点、
