@@ -1,6 +1,6 @@
 {
   "date": "2026-10-05",
-  "status": "IMPLEMENTED_REMOTE_AUDIT_PASS_USER_PROVISIONAL_MODEL",
+  "status": "MERGED_MAIN_USER_PROVISIONAL_MODEL",
   "base_commit": "bde8cff59c7f5718139020c307e558a5b94f8ea8",
   "formula": "0.72+min(max(0,entry_troops-current_troops)//250,40)/100",
   "maximum_rate": "1.12",
@@ -10,7 +10,7 @@
   "engine_demo": "PASS: 6 rounds, 320 events",
   "stage13_d1_audit": "PASS",
   "diff_check": "PASS",
-  "remote_publication": "BRANCH_SYNCED",
+  "remote_publication": "MERGED_MAIN",
   "source_sha256": {
     "sgs_v2/battle_core/pre_attack_reaction.py": "9a98bd8d9c4d28a8163e9c097618c6620d83158884591dc5ccfde31067d55e89",
     "sgs_v2/battle_core/troop_skills/hu_wei_jun.py": "ba4f7bf6724aea8337ff6eccfdbe9160109678a7493184ce42c6d56a97b5a7d2",
@@ -25,5 +25,11 @@
   "remote_ci_conclusion": "SUCCESS",
   "research_contract": "MC-STAGE14-HUWEI-PROVISIONAL-01",
   "research_merge_sha": "1befa30990a7a12899bb4cc2fddf65395da2c634",
-  "healing_rollback": "OWNER_CONFIRMED_FROZEN"
+  "healing_rollback": "OWNER_CONFIRMED_FROZEN",
+  "battle_pr": 53,
+  "merge_sha": "5240293b9a7d38e1edf4b4421a71a027a5b9c525",
+  "merged_main_ci_run": 37338397084,
+  "merged_main_ci_conclusion": "SUCCESS",
+  "merged_main_full_suite": "2018 passed in 15.36s",
+  "merged_main_stage13_d1": "11 passed in 0.33s"
 }

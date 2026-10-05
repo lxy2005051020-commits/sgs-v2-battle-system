@@ -1,6 +1,6 @@
 # 虎卫军接入
 
-日期：2026-10-05。状态：IMPLEMENTED / USER_PROVISIONAL_MODEL / AUDIT_PASS / PR_READY。
+日期：2026-10-05。状态：MERGED_MAIN / USER_PROVISIONAL_MODEL / AUDIT_PASS / CI_PASS。
 基线：当前远程 main `bde8cff`（青州兵已合入）。工作区：`stage14-hu-wei-jun`。
 
 ## 行为和参数
@@ -55,4 +55,6 @@ BattleSystems 通过 TargetResolutionSystem 子类适配器组合普攻前同步
 定向测试涵盖公式 249/250/9750/10000 边界、上限、独立兵力、治疗回落、触发顺序、
 武力五层、每回合一次、禁用/威慑/阵亡、攻击者死亡、统领属性及非法兵种准入。
 真实 Engine 示例与冻结 owner 审计见 `huwei_evidence/`。
-本地与远端验证结果见 `huwei_evidence/verification.json`；独立审计见 `HU_WEI_JUN_RUNTIME_AUDIT.md`。当前允许进入 Battle PR 审核，尚未合入 main。
+本地与远端验证结果见 `huwei_evidence/verification.json`；独立审计见 `HU_WEI_JUN_RUNTIME_AUDIT.md`。
+
+发布结果：Battle PR #53 已合并至 `main`，merge SHA `5240293b9a7d38e1edf4b4421a71a027a5b9c525`；merged-main CI `37338397084 / SUCCESS`，全量 `2018 passed`，Stage13-D1 `11 passed`。

@@ -1,6 +1,6 @@
 # Stage14 · Concrete Skill Integration
 
-> Status: **ACTIVE / MAINLINE GATE OPEN / 8 BOUNDED-FROZEN + 1 USER-PROVISIONAL INTEGRATION**
+> Status: **ACTIVE / MAINLINE GATE OPEN / 8 BOUNDED-FROZEN + 2 USER-PROVISIONAL INTEGRATIONS**
 
 Stage14 在 Stage13 冻结的 Core Gameplay Engine 上进行具体战法接入。
 
@@ -12,8 +12,8 @@ CORE_GAMEPLAY_ENGINE     = FROZEN
 SKILL_RUNTIME_READINESS  = READY
 STAGE14 MAINLINE GATE    = OPEN
 
-TROOP SKILLS IN MAIN     = 8
-USER-PROVISIONAL ADDITION = 20153 QING_ZHOU_BING (see PR #52)
+TROOP SKILLS IN MAIN     = 10
+USER-PROVISIONAL ADDITIONS = 20153 QING_ZHOU_BING / 20154 HU_WEI_JUN
 ~~~
 
 当前已进入 main：
@@ -29,6 +29,7 @@ USER-PROVISIONAL ADDITION = 20153 QING_ZHOU_BING (see PR #52)
 | 20125 | 大戟士 | MERGED / CI PASS |
 | 20095 | 藤甲兵 | MERGED / CI PASS |
 | 20153 | 青州兵 | USER_PROVISIONAL_MODEL / CAO_CAO_PLACEHOLDER; [PR #52](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/52) |
+| 20154 (推断) | 虎卫军 | USER_PROVISIONAL_MODEL / HEALING_ROLLBACK_FROZEN; [PR #53](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/53) |
 
 最终批次审计见 [Batch01-04 Mainline Audit](BATCH01_04_MAINLINE_AUDIT.md)。
 
@@ -39,6 +40,7 @@ Canonical Research contracts:
 - [MC-STAGE14-TROOP-FOUNDATION-01](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Troop_Skill_Research/00_Governance/TROOP_SKILL_IDENTITY_AND_PROVIDER_LIFECYCLE_CONTRACT.md)
 - [MC-STAGE14-TROOP-BATCH01-04-BASELINE-01](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Troop_Skill_Research/00_Governance/STAGE14_BATCH01_04_BASELINE_FREEZE.md)
 - [Troop question ledger](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Troop_Skill_Research/00_Governance/TROOP_SKILL_QUESTION_LEDGER.md)
+- [MC-STAGE14-HUWEI-PROVISIONAL-01](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Troop_Skill_Research/01_Skills/%E8%99%8E%E5%8D%AB%E5%86%9B/HU_WEI_JUN_PROVISIONAL_CONTRACT.md)
 
 Shared frozen rules:
 
@@ -127,4 +129,4 @@ GAME TRUTH / RESEARCH CONTRACT
 Battle code is not gameplay evidence.
 
 用户明确授权的暂定模型可在Research独立合同中保留开放边界后接入；同样必须通过Runtime回归、独立审计和CI。
-该接入不自动升级为客户端实证冻结，也不改写既有bounded freeze。青州兵属于本轮用户授权的暂定模型通道。
+该接入不自动升级为客户端实证冻结，也不改写既有bounded freeze。青州兵与虎卫军均属于用户授权的暂定模型通道；虎卫军“治疗后增伤回落”已经单独由项目所有者确认并冻结。

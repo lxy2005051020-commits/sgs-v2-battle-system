@@ -25,7 +25,7 @@ Stage10    = FROZEN
 Stage11    = RUNTIME FROZEN / POST-FREEZE ACCEPTED
 Stage12    = FROZEN / COMPLETE
 Stage13    = COMPLETE / FROZEN
-Stage14    = ACTIVE / 8 BOUNDED-FROZEN BASELINES + 1 USER-PROVISIONAL INTEGRATION
+Stage14    = ACTIVE / 8 BOUNDED-FROZEN BASELINES + 2 USER-PROVISIONAL INTEGRATIONS
 ```
 
 Stage13 当前已完成：
@@ -46,6 +46,7 @@ Research 已冻结：
 ```text
 MC-STAGE14-TROOP-FOUNDATION-01 = FROZEN
 MC-STAGE14-TROOP-BATCH01-04-BASELINE-01 = FROZEN_BASELINE / EXTENSIONS_OPEN
+MC-STAGE14-HUWEI-PROVISIONAL-01 = USER_PROVISIONAL_MODEL / RUNTIME_BASELINE_ENABLED
 
 - 特殊兵种在 PRE_BATTLE / 准备阶段完成进阶
 - 特殊兵种继承基础兵种克制家族
@@ -65,6 +66,8 @@ Canonical Research contract:
 与[PR #52](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/52)。
 其D/10、统计口径和分配策略不声明实证冻结，曹操额外统率加成为空白占位。
 Research合同经PR #13进入main；暂定模型接入与上方八个bounded freeze分开记录。
+
+本次新增 **虎卫军20154（推断ID）**，采用用户授权的暂定损兵增伤模型；治疗后增伤回落已由项目所有者确认并进入 Research 合同。Research PR #14 与 Battle PR #53 均已合并，merged-main CI 为 SUCCESS。
 
 后续单战法或机制家族进入 main 仍需同时满足：
 
@@ -87,8 +90,9 @@ Research合同经PR #13进入main；暂定模型接入与上方八个bounded fre
 20125 大戟士
 20095 藤甲兵
 20153 青州兵 (USER_PROVISIONAL_MODEL / CAO_CAO_PLACEHOLDER)
+20154 虎卫军 (USER_PROVISIONAL_MODEL / HEALING_ROLLBACK_FROZEN)
 
-Troop Skills Registered      = 9 (8 bounded-frozen + 1 user-provisional)
+Troop Skills Registered      = 10 (8 bounded-frozen + 2 user-provisional)
 Latest Merged-main CI        = PASS
 Batch01-04 Runtime Audit     = PASS
 ```
@@ -98,7 +102,7 @@ Batch01-04 Runtime Audit     = PASS
 ```text
 Core Gameplay Engine      = FROZEN
 Skill Runtime Readiness   = READY
-Stage14 Troop Skills Registered = 9 (8 bounded-frozen + 1 user-provisional)
+Stage14 Troop Skills Registered = 10 (8 bounded-frozen + 2 user-provisional)
 Stage14 Mainline Gate        = OPEN
 Batch Integration             = ACTIVE / FAMILY-GATED
 ```
@@ -108,5 +112,6 @@ Batch Integration             = ACTIVE / FAMILY-GATED
 - [Stage13 README](stages/stage13/README.md)
 - [Stage14 README](stages/stage14/README.md)
 - [Stage14 Batch01-04 Mainline Audit](stages/stage14/BATCH01_04_MAINLINE_AUDIT.md)
+- [Stage14 Hu Wei Runtime Audit](stages/stage14/HU_WEI_JUN_RUNTIME_AUDIT.md)
 - [Stage13 Gap Ledger](stages/stage13/STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md)
 - [Stage13 Owner Matrix](stages/stage13/STAGE13_CORE_RUNTIME_OWNER_MATRIX.md)

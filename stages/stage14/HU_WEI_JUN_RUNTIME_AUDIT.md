@@ -170,3 +170,31 @@ HUWEI_OPEN_BOUNDARIES      = PRESERVED
 HUWEI_RUNTIME_AUDIT        = PASS
 MAINLINE_READINESS         = READY_WITH_USER_PROVISIONAL_MODEL
 ```
+
+
+## 7. Mainline release
+
+```text
+Research PR #14
+= MERGED
+Research merge
+= 1befa30990a7a12899bb4cc2fddf65395da2c634
+
+Battle PR #53
+= MERGED
+Battle merge
+= 5240293b9a7d38e1edf4b4421a71a027a5b9c525
+
+Merged-main CI
+= 37338397084 / SUCCESS
+Full pytest
+= 2018 passed
+Stage13-D1
+= 11 passed
+```
+
+最终发布裁决：
+
+```text
+HUWEI_MAINLINE_RELEASE = PASS
+```
