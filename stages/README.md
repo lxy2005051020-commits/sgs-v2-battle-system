@@ -31,6 +31,7 @@ Core Gameplay Engine       = FROZEN
 Skill Runtime Readiness    = READY
 Stage14 Mainline Gate      = OPEN
 Stage14 Troop Foundation   = FROZEN in Research
+First Troop Skill in main  = 西凉铁骑 (20097)
 ```
 
 ## 当前导航
