@@ -1,10 +1,10 @@
 # 锦帆军接入（20152）
 
-日期：2026-10-06。状态：**CURRENT_MAIN_REBASED / BOUNDED_IMPLEMENTED / FORMULA_PLACEHOLDERS / AUDIT_PASS**。
+日期：2026-10-06。状态：**MERGED_MAIN / BOUNDED_FROZEN / FORMULA_PLACEHOLDERS / AUDIT_PASS / CI_PASS**。
 
 旧 Runtime 基线：`d88e7cd`；当前已重建到 `main@2e38f3a`。
 Research authority：`MC-STAGE14-JIN-FAN-JUN-01`。
-旧 PR #51 已关闭为 superseded；current-main 候选为 PR #59 / `stage14-jin-fan-jun-rebase-20261006`。
+旧 PR #51 已关闭为 superseded；PR #59 因 GitHub head 元数据滞后被关闭替换；最终 current-main 发布 PR 为 #60，已合并至 `main`。
 
 ## Research 合同
 
@@ -148,7 +148,7 @@ BASE BEHAVIOR             = BOUNDED FROZEN
 FORMULA PLACEHOLDERS      = AUTHORIZED
 PRODUCTION ADMISSION      = ENABLED
 RUNTIME IMPLEMENTATION    = COMPLETE CANDIDATE
-MAINLINE MERGE            = READY AFTER FINAL PR-HEAD CI
+MAINLINE MERGE            = COMPLETE / PR #60
 ```
 
 真实公式未来应以 Research amendment 替换 placeholder，不重开已经冻结的恢复基数、取整和甘宁会心目标范围。
@@ -162,9 +162,9 @@ MAINLINE MERGE            = READY AFTER FINAL PR-HEAD CI
 old PR #51
 = CLOSED / SUPERSEDED
 
-new PR #59
+final PR #60
 = CURRENT-MAIN PORT
-= MERGEABLE
+= MERGED
 = 2141 PASSED
 = STAGE13-D1 11 PASSED
 ```
@@ -175,3 +175,33 @@ new PR #59
 - 锦帆军 target-state branch 与其并列存在；
 - 当前 main 的 2114 项测试全部继续通过；
 - 新增锦帆军 27 项测试后总计 2141 项通过。
+
+
+## Mainline release
+
+```text
+Old PR #51
+= CLOSED / SUPERSEDED
+
+Intermediate PR #59
+= CLOSED / METADATA-SUPERSEDED
+
+Final PR #60
+= MERGED
+Merge SHA
+= 99346dd7f6cfa599781edc3b8ef3ca9801a8572d
+
+Final PR-head CI
+= 37358276876 / SUCCESS
+Full pytest
+= 2141 passed
+Stage13-D1
+= 11 passed
+
+Merged-main CI
+= 37358410369 / SUCCESS
+Full pytest
+= 2141 passed
+Stage13-D1
+= 11 passed
+```
