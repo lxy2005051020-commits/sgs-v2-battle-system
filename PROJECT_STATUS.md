@@ -25,7 +25,7 @@ Stage10    = FROZEN
 Stage11    = RUNTIME FROZEN / POST-FREEZE ACCEPTED
 Stage12    = FROZEN / COMPLETE
 Stage13    = COMPLETE / FROZEN
-Stage14    = ACTIVE / 8 BOUNDED-FROZEN BASELINES + 2 USER-PROVISIONAL INTEGRATIONS
+Stage14    = ACTIVE / 8 BOUNDED-FROZEN + 2 USER-PROVISIONAL + 1 USER-FIT INTEGRATION
 ```
 
 Stage13 当前已完成：
@@ -47,6 +47,7 @@ Research 已冻结：
 MC-STAGE14-TROOP-FOUNDATION-01 = FROZEN
 MC-STAGE14-TROOP-BATCH01-04-BASELINE-01 = FROZEN_BASELINE / EXTENSIONS_OPEN
 MC-STAGE14-HUWEI-PROVISIONAL-01 = USER_PROVISIONAL_MODEL / RUNTIME_BASELINE_ENABLED
+MC-STAGE14-XIANDENG-USER-FIT-01 = USER_FIT_MODEL / RUNTIME_BASELINE_ENABLED / GAMEPLAY_DETAILS_OPEN
 
 - 特殊兵种在 PRE_BATTLE / 准备阶段完成进阶
 - 特殊兵种继承基础兵种克制家族
@@ -68,6 +69,8 @@ Canonical Research contract:
 Research合同经PR #13进入main；暂定模型接入与上方八个bounded freeze分开记录。
 
 本次新增 **虎卫军20154（推断ID）**，采用用户授权的暂定损兵增伤模型；治疗后增伤回落已由项目所有者确认并进入 Research 合同。Research PR #14 与 Battle PR #53 均已合并，merged-main CI 为 SUCCESS。
+
+本次新增 **先登死士20246（推断ID）**，采用用户拟合公式并冻结“携带者开局统率快照”读取策略；零伤害触发、独立层到期和 fine aftermath order 继续 OPEN。Research PR #15 与 Battle PR #55 均已合并，merged-main CI 为 SUCCESS。
 
 后续单战法或机制家族进入 main 仍需同时满足：
 
@@ -91,8 +94,9 @@ Research合同经PR #13进入main；暂定模型接入与上方八个bounded fre
 20095 藤甲兵
 20153 青州兵 (USER_PROVISIONAL_MODEL / CAO_CAO_PLACEHOLDER)
 20154 虎卫军 (USER_PROVISIONAL_MODEL / HEALING_ROLLBACK_FROZEN)
+20246 先登死士 (USER_FIT_MODEL / OPENING_COMMAND_SNAPSHOT_FROZEN)
 
-Troop Skills Registered      = 10 (8 bounded-frozen + 2 user-provisional)
+Troop Skills Registered      = 11 (8 bounded-frozen + 2 user-provisional + 1 user-fit)
 Latest Merged-main CI        = PASS
 Batch01-04 Runtime Audit     = PASS
 ```
@@ -102,7 +106,7 @@ Batch01-04 Runtime Audit     = PASS
 ```text
 Core Gameplay Engine      = FROZEN
 Skill Runtime Readiness   = READY
-Stage14 Troop Skills Registered = 10 (8 bounded-frozen + 2 user-provisional)
+Stage14 Troop Skills Registered = 11 (8 bounded-frozen + 2 user-provisional + 1 user-fit)
 Stage14 Mainline Gate        = OPEN
 Batch Integration             = ACTIVE / FAMILY-GATED
 ```
@@ -113,5 +117,6 @@ Batch Integration             = ACTIVE / FAMILY-GATED
 - [Stage14 README](stages/stage14/README.md)
 - [Stage14 Batch01-04 Mainline Audit](stages/stage14/BATCH01_04_MAINLINE_AUDIT.md)
 - [Stage14 Hu Wei Runtime Audit](stages/stage14/HU_WEI_JUN_RUNTIME_AUDIT.md)
+- [Stage14 Xian Deng Runtime Audit](stages/stage14/XIAN_DENG_SI_SHI_RUNTIME_AUDIT.md)
 - [Stage13 Gap Ledger](stages/stage13/STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md)
 - [Stage13 Owner Matrix](stages/stage13/STAGE13_CORE_RUNTIME_OWNER_MATRIX.md)

@@ -4,7 +4,7 @@
 > Audit target before audit-doc commits: `038b717725bf45fdc2a2f4e14ef97f6fda8786c3`  
 > Research authority: `MC-STAGE14-XIANDENG-USER-FIT-01`  
 > Research merge: `fe70f349c5952c78dc4c0b8d80aa1d9cf768c54b`  
-> Verdict: **PASS / REMOTE PR CI REQUIRED**
+> Verdict: **PASS / MAINLINE RELEASED**
 
 ## 1. Research gate
 
@@ -153,5 +153,37 @@ XIANDENG_OWNER_INTEGRITY        = PASS
 XIANDENG_OPEN_BOUNDARIES        = PRESERVED
 
 XIANDENG_RUNTIME_AUDIT          = PASS
-MAINLINE_READINESS              = READY_IF_REMOTE_PR_CI_PASS
+MAINLINE_READINESS              = PASS
+```
+
+## 13. Mainline release
+
+```text
+Research PR #15
+= MERGED
+Research merge
+= fe70f349c5952c78dc4c0b8d80aa1d9cf768c54b
+
+Battle PR #55
+= MERGED
+Battle merge
+= cfaf3ffaac3646aff7e7e69713a0b0b3064ef24b
+
+PR CI
+= 37346322521 / SUCCESS
+Full pytest
+= 2077 passed
+Stage13-D1
+= 11 passed
+
+Merged-main CI
+= 37346440394 / SUCCESS
+Full pytest
+= 2077 passed
+Stage13-D1
+= 11 passed
+```
+
+```text
+XIANDENG_MAINLINE_RELEASE = PASS
 ```
