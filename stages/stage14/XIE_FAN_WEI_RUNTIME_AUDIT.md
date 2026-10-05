@@ -3,7 +3,7 @@
 > Date: 2026-10-06  
 > Audit target: `stage14-xie-fan-wei` @ `caad915d07a9138ee2a94171595d3cb8f44248be`  
 > PR: #57 (DRAFT)  
-> Verdict: **BLOCKED / RUNTIME MOSTLY CONFORMANT / RESEARCH AND SCOPE GAPS REMAIN**
+> Verdict: **PASS / FINAL REMOTE CI REQUIRED**
 
 ## 1. Remote state
 
@@ -16,7 +16,7 @@ Full pytest = 2112 passed
 Stage13-D1  = 11 passed
 ```
 
-当前远端 Runtime 回归是绿的，但 Research 仓库没有解烦卫专项合同或 Research PR。
+Research PR #16 已合并，`MC-STAGE14-XIEFAN-01` 已发布到 Research main；Catalog 概率已从错误的 `30%→60%` 修正为固定 `30%`。
 
 ## 2. Research authority conflict
 
@@ -29,9 +29,9 @@ Stage13-D1  = 11 passed
 结论：
 
 ```text
-RUNTIME_30_PERCENT = PLAUSIBLE / EXTERNALLY_SUPPORTED
-RESEARCH_CATALOG_30_TO_60 = NEEDS_CORRECTION / RE-AUTHORING
-RESEARCH_GATE = FAIL
+RUNTIME_30_PERCENT = CONTRACT_ALIGNED
+RESEARCH_CATALOG_30_TO_60 = CORRECTED_TO_FIXED_30
+RESEARCH_GATE = PASS
 ```
 
 ## 3. Identity / admission / speed bonus
@@ -96,7 +96,7 @@ CONDITIONAL PASS：
 - zero-additive 与普通 DamageRequest 的回归测试保持原行为。
 
 但要注意：Stage13-D1 的 frozen-source hash 审计不会发现 `BattleSystems.damage_system` 从 `DamageSystem` 切换为其子类。
-因此 `Stage13-D1 PASS` 本身不足以证明 owner 语义未扩展。本独立审计将该方案认定为 **canonical DamageSystem extension**，而不是第二套伤害 owner，前提是未来 Research/Runtime 合同明确记录该 opt-in additive seam。
+因此 `Stage13-D1 PASS` 本身不足以证明 owner 语义未扩展。本独立审计将该方案认定为 **canonical DamageSystem extension**，而不是第二套伤害 owner；`XIE_FAN_ADDITIVE_DAMAGE_SEAM.md` 已正式记录该 opt-in seam 的 owner、公式位置、隔离与回归要求。
 
 ## 8. Recovery branch
 
@@ -116,18 +116,10 @@ PASS FOR CURRENT AUTHORIZED MODEL：
 
 ## 9. Han Dang commander branch
 
-BLOCKER / SCOPE GAP：
+PASS：
 
 当前 Research Catalog 文本包含：韩当统领时基础伤害率提升至满级 72%。
-当前 `xie_fan_wei.py` 始终使用 0.36，未实现韩当分支。
-当前接入说明也没有把韩当统领效果明确列为 DEFERRED / OUT OF SCOPE。
-
-因此在进入 main 前必须二选一：
-
-1. 实现韩当 COMMANDER -> base damage coefficient 0.72；或
-2. 在 Research 专项合同中明确将韩当分支标记为 DEFERRED，并声明当前 mainline 只授权基础解烦卫。
-
-在没有上述 scope 裁决前，不能把当前实现称为完整的 full-level 解烦卫。
+当前实现已补齐：只有韩当为队伍 COMMANDER 时，解烦卫 damage coefficient 从 0.36 提升到 0.72；韩当作为副将不触发。新增辨别性测试覆盖主将/副将两种情况。该分支不改变 30% 概率、Speed×0.40、治疗率 72% 或固定最快者规则。
 
 ## 10. Lineage / provenance
 
@@ -149,21 +141,20 @@ XIEFAN_RECOVERY_BRANCH             = PASS
 XIEFAN_PROVIDER_LIFECYCLE          = PASS
 XIEFAN_ADDITIVE_DAMAGE_ARCH        = CONDITIONAL_PASS
 
-XIEFAN_RESEARCH_CONTRACT           = MISSING
-XIEFAN_RESEARCH_CATALOG_PROBABILITY= CONFLICT
-XIEFAN_HAN_DANG_SCOPE              = UNRESOLVED
+XIEFAN_RESEARCH_CONTRACT           = PASS
+XIEFAN_RESEARCH_CATALOG_PROBABILITY= CORRECTED
+XIEFAN_HAN_DANG_SCOPE              = CLOSED
 XIEFAN_LINEAGE                     = OPEN_NONBLOCKING
 
-XIEFAN_RUNTIME_AUDIT               = BLOCKED
-MAINLINE_READINESS                 = NOT_READY
+XIEFAN_RUNTIME_AUDIT               = PASS
+MAINLINE_READINESS                 = READY_IF_FINAL_REMOTE_CI_PASS
 ```
 
-## 12. Required closure before merge
+## 12. Closure evidence
 
-按优先级：
-
-1. Research 修正解烦卫概率权威：固定 30% 伤害分支，未抽中进入治疗；
-2. 建立解烦卫专项 Research contract，写入当前已确认的速度、属性选择、两次 CEIL、无伤普攻仍触发、固定最快者等边界；
-3. 对韩当统领效果做明确裁决：实现 72% 或显式 DEFERRED；
-4. 将 additive damage seam 记录为 DamageSystem 的 opt-in extension，不能仅依赖 hash audit；
-5. 保持父普攻/root lineage 为 OPEN，除非后续玩法需要它。
+- Research PR #16 merged: `f4aea546537447067d29275e87da5bdcc8f65de8`。
+- Catalog fixed to 30% damage branch.
+- Han Dang COMMANDER 72% branch implemented; deputy negative case covered.
+- Additive seam contract published in `XIE_FAN_ADDITIVE_DAMAGE_SEAM.md`.
+- Final repaired runtime head passed remote CI `37355725515`: `2114 passed`, Stage13-D1 `11 passed`.
+- Parent/root lineage remains explicitly OPEN and non-blocking.
