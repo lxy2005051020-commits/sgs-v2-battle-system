@@ -1,0 +1,39 @@
+{
+  "focused": {
+    "exit_code": 0,
+    "summary": "59 passed in 0.71s"
+  },
+  "full": {
+    "exit_code": 0,
+    "summary": "2077 passed in 16.21s"
+  },
+  "demo": {
+    "seed": 42,
+    "result": {
+      "winner_team_id": "a",
+      "reason": "MAX_ROUNDS",
+      "rounds_completed": 5,
+      "final_troops": {
+        "a1": 9452,
+        "a2": 8310,
+        "a3": 7829,
+        "b1": 6587,
+        "b2": 8018,
+        "b3": 7897
+      }
+    },
+    "ended": true,
+    "remaining_states": 0,
+    "event_count": 313,
+    "model": "XIANDENG_USER_OPENING_COMMAND_FIT_V1"
+  },
+  "registry": 0,
+  "runtime_base": "a46e51309c5117352a1a7f9b49d4377bfd7668d8",
+  "status": "REMOTE_AUDIT_PASS_PR_READY",
+  "remote_branch": "stage14-xian-deng-si-shi",
+  "remote_original_head": "038b717725bf45fdc2a2f4e14ef97f6fda8786c3",
+  "research_contract": "MC-STAGE14-XIANDENG-USER-FIT-01",
+  "research_merge_sha": "fe70f349c5952c78dc4c0b8d80aa1d9cf768c54b",
+  "runtime_audit": "PASS",
+  "remote_ci": "PENDING_PR"
+}

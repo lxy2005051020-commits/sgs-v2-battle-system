@@ -128,5 +128,10 @@ GAME TRUTH / RESEARCH CONTRACT
 
 Battle code is not gameplay evidence.
 
+先登死士（20246 推断编号）本地模型接入见
+[先登死士接入说明](XIAN_DENG_SI_SHI_INTEGRATION.md)。
+采用用户给定的比例偷取模型、分段概率和开局携带者统率快照；叠层/到期等细节仍 OPEN。
+该条目是独立分支本地状态，不表示已合入 main 或通过远端 CI。
+
 用户明确授权的暂定模型可在Research独立合同中保留开放边界后接入；同样必须通过Runtime回归、独立审计和CI。
 该接入不自动升级为客户端实证冻结，也不改写既有bounded freeze。青州兵与虎卫军均属于用户授权的暂定模型通道；虎卫军“治疗后增伤回落”已经单独由项目所有者确认并冻结。
