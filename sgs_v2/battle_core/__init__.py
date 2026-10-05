@@ -831,6 +831,26 @@ from .troop_admission import (
     process_pre_battle_troop_skills,
 )
 
+from .troop_skills.bai_ma_yi_cong import (
+    create_bai_ma_yi_cong_definition, create_bai_ma_yi_cong_runtime,
+)
+from .troop_skills.hu_bao_qi import (
+    create_hu_bao_qi_definition, create_hu_bao_qi_runtime,
+)
+from .state_modifiers import (
+    StateModifierSupport, AttributeBonusParams, ActivationRateBonusParams,
+    ATTRIBUTE_BONUS_STATE_ID, ACTIVATION_RATE_BONUS_STATE_ID,
+    register_modifier_state_definitions,
+)
+
+__all__ += [
+    "create_bai_ma_yi_cong_definition", "create_bai_ma_yi_cong_runtime",
+    "create_hu_bao_qi_definition", "create_hu_bao_qi_runtime",
+    "StateModifierSupport", "AttributeBonusParams", "ActivationRateBonusParams",
+    "ATTRIBUTE_BONUS_STATE_ID", "ACTIVATION_RATE_BONUS_STATE_ID",
+    "register_modifier_state_definitions",
+]
+
 __all__ += [
     "PendingWork", "PendingWorkRegistry", "PendingWorkSystem", "PendingWorkStatus",
     "PendingWorkScheduleSpec", "ScheduleKind", "PendingWorkTimingPoint",

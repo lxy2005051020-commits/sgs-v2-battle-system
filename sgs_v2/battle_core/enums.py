@@ -50,6 +50,8 @@ class SpecialTroopId(str, Enum):
     """
 
     XILIANG_CAVALRY = "XILIANG_CAVALRY"  # 西凉铁骑 (Base: CAVALRY)
+    BAI_MA_YI_CONG = "BAI_MA_YI_CONG"  # 白马义从 (Base: BOW)
+    HU_BAO_QI = "HU_BAO_QI"  # 虎豹骑 (Base: CAVALRY)
 
 
 class DamageType(str, Enum):

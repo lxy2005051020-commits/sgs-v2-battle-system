@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
+from .state_modifiers import StateModifierSupport, modifier_conflict_rule
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
 from .dependency_evaluation import DependencyEvaluationSupport
 from .chain_system import ChainSystem, DamageCallbackAdmissionPoint
@@ -166,6 +167,7 @@ class BattleSystems:
     state_application_coordinator: StateApplicationCoordinator = field(init=False)
     state_removal_coordinator: StateRemovalCoordinator = field(init=False)
     preparation_state_owner: PreparationStateOwner = field(init=False)
+    state_modifier_support: StateModifierSupport = field(init=False)
 
     def __post_init__(self) -> None:
         self.dependency_evaluation_support = DependencyEvaluationSupport()
@@ -176,6 +178,8 @@ class BattleSystems:
         self.state_effectiveness_policy.register_rule_adapter(
             stage11_legacy_effectiveness_adapter
         )
+        self.state_modifier_support = StateModifierSupport(self.state_effectiveness_policy)
+        self.attribute_system.register_modifier_provider(self.state_modifier_support)
         self.provider_validity_policy = ProviderValidityPolicy(
             self.dependency_evaluation_support,
             equipment_resolver=self.equipment_contribution_registry.resolve_provider,
@@ -217,6 +221,7 @@ class BattleSystems:
         )
         self.state_admission_policy = StateAdmissionPolicy()
         self.state_conflict_policy = StateConflictPolicy()
+        self.state_conflict_policy.register_rule_adapter(modifier_conflict_rule)
         self.state_removal_policy = StateRemovalPolicy()
         self.effectiveness_transition_coordinator = EffectivenessTransitionCoordinator(
             dependencies=self.dependency_evaluation_support,
@@ -481,6 +486,7 @@ class BattleSystems:
             self.target_system,
             admission_coordinator=self.skill_operation_admission_coordinator,
             target_policy=self.skill_target_policy,
+            activation_rate_provider=self.state_modifier_support.activation_rate,
         )
         self.rule_hook_system = RuleHookSystem(
             self.trigger_system,

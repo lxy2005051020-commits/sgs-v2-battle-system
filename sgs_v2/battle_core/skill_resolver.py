@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
+from typing import Callable
 
 from .context import BattleContext
 from .effects import ApplyStateEffect, DamageEffect, Effect, EffectSourceRef
@@ -35,6 +36,7 @@ from .target_operation import (
 )
 from .target_system import TargetSystem
 from .unit import UnitRuntime
+from .numeric_validation import validate_probability
 
 
 class SkillResolutionStatus(str, Enum):
@@ -87,6 +89,7 @@ class SkillResolver:
         *,
         admission_coordinator: SkillOperationAdmissionCoordinator | None = None,
         target_policy: SkillTargetPolicy | None = None,
+        activation_rate_provider: Callable[[BattleContext, SkillRuntime], float] | None = None,
     ) -> None:
         if not isinstance(target_system, TargetSystem):
             raise TypeError("target_system must be a TargetSystem")
@@ -102,6 +105,9 @@ class SkillResolver:
         self._target_system = target_system
         self._admission_coordinator = admission_coordinator
         self._target_policy = target_policy
+        if activation_rate_provider is not None and not callable(activation_rate_provider):
+            raise TypeError("activation_rate_provider must be callable or None")
+        self._activation_rate_provider = activation_rate_provider
 
     def resolve(
         self,
@@ -129,14 +135,19 @@ class SkillResolver:
                 SkillResolutionStatus.NO_VALID_TARGET,
             )
 
-        if definition.activation_rate == 0.0:
+        activation_rate = (
+            definition.activation_rate if self._activation_rate_provider is None
+            else self._activation_rate_provider(context, runtime)
+        )
+        activation_rate = validate_probability(activation_rate, "effective activation_rate")
+        if activation_rate == 0.0:
             return self._empty_result(
                 runtime,
                 SkillResolutionStatus.ACTIVATION_FAILED,
             )
         if (
-            definition.activation_rate < 1.0
-            and not context.random.chance(definition.activation_rate)
+            activation_rate < 1.0
+            and not context.random.chance(activation_rate)
         ):
             return self._empty_result(
                 runtime,
