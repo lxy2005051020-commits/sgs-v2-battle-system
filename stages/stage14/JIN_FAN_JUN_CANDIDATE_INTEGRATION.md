@@ -1,9 +1,10 @@
 # 锦帆军接入（20152）
 
-日期：2026-10-05。状态：**BOUNDED_IMPLEMENTED / FORMULA_PLACEHOLDERS / PR REVIEW**。
+日期：2026-10-06。状态：**CURRENT_MAIN_REBASED / BOUNDED_IMPLEMENTED / FORMULA_PLACEHOLDERS / AUDIT_PASS**。
 
-Runtime 基线：`d88e7cd`；Research authority 已更新至
-`MC-STAGE14-JIN-FAN-JUN-01`。独立分支：`stage14-jin-fan-jun`。
+旧 Runtime 基线：`d88e7cd`；当前已重建到 `main@2e38f3a`。
+Research authority：`MC-STAGE14-JIN-FAN-JUN-01`。
+旧 PR #51 已关闭为 superseded；current-main 候选为 PR #59 / `stage14-jin-fan-jun-rebase-20261006`。
 
 ## Research 合同
 
@@ -147,7 +148,30 @@ BASE BEHAVIOR             = BOUNDED FROZEN
 FORMULA PLACEHOLDERS      = AUTHORIZED
 PRODUCTION ADMISSION      = ENABLED
 RUNTIME IMPLEMENTATION    = COMPLETE CANDIDATE
-MAINLINE MERGE            = REQUIRES AUDIT + CI
+MAINLINE MERGE            = READY AFTER FINAL PR-HEAD CI
 ```
 
 真实公式未来应以 Research amendment 替换 placeholder，不重开已经冻结的恢复基数、取整和甘宁会心目标范围。
+
+
+## Current-main compatibility
+
+本轮不是把旧锦帆军分支直接 merge 到新主线，而是以最新 main 为底座重新移植。
+
+```text
+old PR #51
+= CLOSED / SUPERSEDED
+
+new PR #59
+= CURRENT-MAIN PORT
+= MERGEABLE
+= 2141 PASSED
+= STAGE13-D1 11 PASSED
+```
+
+关键兼容点：
+
+- 保留解烦卫现有 branched followup；
+- 锦帆军 target-state branch 与其并列存在；
+- 当前 main 的 2114 项测试全部继续通过；
+- 新增锦帆军 27 项测试后总计 2141 项通过。
