@@ -42,8 +42,8 @@ class FollowupTargetMode(str, Enum):
 class TargetStateBranchFollowup:
     """Inherited-target branch: existing state -> damage, otherwise install DOT.
 
-    Recovery uses actual primary target loss and CEIL, an explicit adapter policy.
-    These mechanics must be confirmed separately for each concrete tactic.
+    Recovery uses the settled followup damage amount and CEIL. Concrete tactics
+    must explicitly authorize this basis; it is not inferred from troop loss.
     """
 
     state_id: str
@@ -160,7 +160,7 @@ class NormalAttackFollowupPort(AssaultDispatchPort):
                     if self._recovery is None and branch.recovery_ratio.numerator:
                         raise RuntimeError("damage-derived recovery requires canonical recovery system")
                     ratio = branch.recovery_ratio
-                    basis = execution.resolution.actual_target_troop_loss
+                    basis = execution.resolution.assigned_target_damage
                     amount = (basis * ratio.numerator + ratio.denominator - 1) // ratio.denominator
                     if amount:
                         self._recovery.resolve(context, RecoveryRequest(
