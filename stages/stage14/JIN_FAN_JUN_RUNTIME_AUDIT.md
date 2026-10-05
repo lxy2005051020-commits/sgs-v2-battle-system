@@ -1,9 +1,10 @@
 # 锦帆军（20152）Runtime Independent Audit
 
-> Date: 2026-10-05  
-> Audit target: `stage14-jin-fan-jun` @ `055337f5d770e67ce51724dea06e40798150ec9d`  
+> Date: 2026-10-06  
+> Audit target: `stage14-jin-fan-jun-rebase-20261006` on `main@2e38f3a`  
+> Supersedes: old draft PR #51  
 > Research authority: `MC-STAGE14-JIN-FAN-JUN-01`  
-> Verdict: **PASS / BOUNDED MAINLINE-READY**
+> Verdict: **PASS / CURRENT-MAIN REBASE VERIFIED**
 
 ## 1. Research gate
 
@@ -111,16 +112,21 @@ PASS：
 
 ## 5. Regression evidence
 
-PR #51 head CI：
+旧 PR #51 的历史验证保留，但不再作为本次 current-main 发布门禁。
+
+当前 PR #59 已在 `main@2e38f3a` 上重建并验证：
 
 ```text
-GitHub Actions run = 37320506393
-pytest             = 1978 passed
+GitHub Actions run = 37357861097
+pytest             = 2141 passed
 Stage13-D1 audit   = 11 passed
 CI conclusion      = SUCCESS
+
+Current main before Jinfan = 2114 passed
+Jinfan focused delta        = 27 tests
 ```
 
-当前 PR：Draft / mergeable。
+这证明本次移植没有覆盖后续 Stage14 的青州兵、虎卫军、先登死士、解烦卫能力。
 
 ## 6. Explicit non-claims
 
@@ -151,4 +157,34 @@ JINFAN_RUNTIME_AUDIT          = PASS
 MAINLINE_READINESS            = READY_WITH_BOUNDED_PLACEHOLDERS
 ```
 
-本审计不执行 mainline merge。正式合并时仍应要求 PR CI 与 merged-main CI 均为 SUCCESS。
+本次 rebase 审计仍不以 PR CI 代替 merged-main CI。PR #59 合并后必须再次验证 `main` 全量测试与 Stage13-D1。
+
+
+## 8. Current-main rebase audit
+
+旧 PR #51 建立在 `main@d88e7cd`，在本轮处理时已经落后当前主线 23 个提交并产生结构冲突。
+
+本轮没有把旧分支直接合并进新 main，而是：
+
+```text
+current main@2e38f3a
++ port Jinfan contract-equivalent runtime
++ preserve newer normal-attack followup branches
+= PR #59
+```
+
+重点确认：
+
+- 解烦卫的 `BranchedNormalAttackFollowupParams` 保持不变；
+- 锦帆军新增 `TargetStateBranchFollowup`，作为并列的第三类 followup 语义；
+- 青州兵、虎卫军、先登死士、解烦卫注册均未被旧树覆盖；
+- DamageSystem / RecoverySystem / ContinuousDamageBasisProducer / StateLifecycleSystem 继续保持 canonical owner；
+- `TEAM_NON_COMMANDERS` 只新增目标 intent，不替代 TargetSystem；
+- Jinfan DOT、即时伤害和恢复不复制第二套公式 owner。
+
+旧 PR #51 已关闭为 superseded；PR #59 是唯一 current-main 发布候选。
+
+```text
+JINFAN_CURRENT_MAIN_REBASE = PASS
+PR59_REMOTE_REGRESSION     = PASS
+```
