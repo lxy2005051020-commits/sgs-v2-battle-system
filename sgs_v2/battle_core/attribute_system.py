@@ -41,6 +41,7 @@ class AttributeSystem:
         equipment_effectiveness_policy: EquipmentEffectivenessPolicy | None = None,
     ) -> None:
         self._modifier_provider = modifier_provider
+        self._additional_modifier_providers: list[AttributeModifierProvider] = []
         self._equipment_effectiveness_policy = equipment_effectiveness_policy
         self._equipment_contribution_providers: list[object] = []
 
@@ -67,6 +68,12 @@ class AttributeSystem:
     def get_attack(self, context: BattleContext, unit: UnitRuntime) -> float:
         return self._get(context, unit, "attack", unit.attack)
 
+    def register_modifier_provider(self, provider: AttributeModifierProvider) -> None:
+        if not callable(getattr(provider, "modify_attribute", None)):
+            raise TypeError("modifier provider must expose modify_attribute")
+        if provider is not self._modifier_provider and provider not in self._additional_modifier_providers:
+            self._additional_modifier_providers.append(provider)
+
     def get_defense(self, context: BattleContext, unit: UnitRuntime) -> float:
         return self._get(context, unit, "defense", unit.defense)
 
@@ -92,6 +99,10 @@ class AttributeSystem:
                 unit=unit,
                 attribute=attribute,
                 base_value=base_value,
+            )
+        for modifier in tuple(self._additional_modifier_providers):
+            value = modifier.modify_attribute(
+                context=context, unit=unit, attribute=attribute, base_value=value,
             )
         for provider in tuple(self._equipment_contribution_providers):
             for contribution in tuple(provider(context, unit, attribute)):

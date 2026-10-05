@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, Callable
 
 from .context import BattleContext
 from .dependency_evaluation import ProviderNode, StateNode
@@ -19,6 +18,10 @@ from .skill_definition import (
 from .skill_runtime import SkillRuntime, SkillSlot
 from .stage11_state_params import CriticalStateParams
 from .unit import UnitRuntime
+from .troop_skill_config import TroopSkillConfig
+from .state_modifiers import register_modifier_state_definitions
+from .troop_skills.bai_ma_yi_cong import CONFIG as BAI_MA_YI_CONG_CONFIG
+from .troop_skills.hu_bao_qi import CONFIG as HU_BAO_QI_CONFIG
 
 
 class TroopAdmissionStatus(str, Enum):
@@ -29,6 +32,8 @@ class TroopAdmissionStatus(str, Enum):
     REJECTED_INVALID_TROOP = "REJECTED_INVALID_TROOP"
     REJECTED_TEAM_INVARIANT_VIOLATION = "REJECTED_TEAM_INVARIANT_VIOLATION"
     REJECTED_NOT_FOUND = "REJECTED_NOT_FOUND"
+    REJECTED_CONFLICTING_SPECIAL_TROOP = "REJECTED_CONFLICTING_SPECIAL_TROOP"
+    REJECTED_PROVIDER_SLOT_CONFLICT = "REJECTED_PROVIDER_SLOT_CONFLICT"
 
 
 class TroopAdmissionRejectedError(RuntimeError):
@@ -80,18 +85,6 @@ XILIANG_CAVALRY_CRIT_BONUS = 1.0
 XILIANG_CAVALRY_DURATION_EXPIRES_ROUND = 4
 XILIANG_CAVALRY_SPEED_BASELINE = 57.0
 XILIANG_CAVALRY_SPEED_SCALE_DENOMINATOR = 800.0
-
-
-@dataclass(frozen=True, slots=True)
-class TroopSkillConfig:
-    """静态兵种战法配置声明，支持通用准入与挂载扩展。"""
-
-    skill_id: str
-    name: str
-    required_troop_type: TroopType
-    target_special_troop_id: SpecialTroopId
-    definition_factory: Callable[[], SkillDefinition]
-    definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition] | None = None
 
 
 def calculate_xiliang_crit_chance(base_rate: float, combat_speed: float) -> float:
@@ -175,6 +168,8 @@ XILIANG_CAVALRY_CONFIG = TroopSkillConfig(
 # Canonical Registry: key is strictly the canonical skill_id
 TROOP_SKILL_REGISTRY: dict[str, TroopSkillConfig] = {
     XILIANG_CAVALRY_SKILL_ID: XILIANG_CAVALRY_CONFIG,
+    BAI_MA_YI_CONG_CONFIG.skill_id: BAI_MA_YI_CONG_CONFIG,
+    HU_BAO_QI_CONFIG.skill_id: HU_BAO_QI_CONFIG,
 }
 
 
@@ -253,6 +248,12 @@ def admit_and_install_troop_skill(
 
     # 3. Duplicate Installation Prevention
     team_units = [u for u in context.units.values() if u.team_id == owner.team_id]
+    if any(u.special_troop_id not in (None, cfg.target_special_troop_id) for u in team_units):
+        return TroopAdmissionResult(
+            status=TroopAdmissionStatus.REJECTED_CONFLICTING_SPECIAL_TROOP,
+            skill_id=runtime.definition.skill_id, owner_id=runtime.owner_id,
+            reason="team already has a different special troop identity",
+        )
     if owner.special_troop_id == cfg.target_special_troop_id:
         return TroopAdmissionResult(
             status=TroopAdmissionStatus.REJECTED_ALREADY_INSTALLED,
@@ -287,12 +288,22 @@ def admit_and_install_troop_skill(
                 ),
             )
 
+    # A resident slot must identify this exact runtime, never an unrelated provider.
+    if runtime.skill_slot is not None:
+        resident = context.skill_runtimes.get(runtime.owner_id, runtime.skill_slot)
+        if resident is not None and resident is not runtime:
+            return TroopAdmissionResult(
+                status=TroopAdmissionStatus.REJECTED_PROVIDER_SLOT_CONFLICT,
+                skill_id=runtime.definition.skill_id, owner_id=runtime.owner_id,
+                reason="provider slot already belongs to another runtime",
+            )
+
     # 5. Skill-specific PRE_BATTLE definition resolution happens before mutation.
     # 西凉铁骑在马腾统领时通过 AttributeSystem 读取当前最终实战速度并套用冻结公式。
     effective_definition = (
         cfg.definition_resolver(context, systems, owner)
         if cfg.definition_resolver is not None
-        else runtime.definition
+        else cfg.definition_factory()
     )
     effective_runtime = SkillRuntime(
         definition=effective_definition,
@@ -302,6 +313,8 @@ def admit_and_install_troop_skill(
     )
 
     # --- ATOMIC PREFLIGHT COMPLETE; PERFORM MUTATION ---
+
+    register_modifier_state_definitions(context.states)
 
     # 6. 特殊兵种身份绑定：全队同盟友军转换为特殊兵种
     converted_ids = []

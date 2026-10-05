@@ -111,6 +111,14 @@ A skill that requires a new Core primitive leaves the batch lane and receives fo
 
 ## Runtime rule
 
+### Local batch 01 implementation
+
+白马义从 + 虎豹骑的满级基础分支已在 `stage14-troop-batch-01` 本地完成并通过验证。
+此条目仅描述该分支，不表示两个战法已进入 main。
+用户指定统领属性缩放延期，保持空白占位。白马统领四回合的作用范围仍待确认。
+实现、证据与门禁详见 [Batch01](BATCH01_BAIMA_HUBAO.md) 和
+[验证记录](batch01/VALIDATION.md)。
+
 Battle code is not evidence.
 
 The integration sequence is:
