@@ -56,6 +56,7 @@ class SpecialTroopId(str, Enum):
     BAI_ER_BING = "BAI_ER_BING"
     DA_JI_SHI = "DA_JI_SHI"
     QING_ZHOU_BING = "QING_ZHOU_BING"
+    HU_WEI_JUN = "HU_WEI_JUN"
     TENG_JIA_BING = "TENG_JIA_BING"
     XIAN_ZHEN_YING = "XIAN_ZHEN_YING"  # 陷阵营 (Base: SHIELD)
 

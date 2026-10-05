@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-05",
+  "status": "IMPLEMENTED_LOCAL_ONLY_USER_PROVISIONAL_MODEL",
+  "base_commit": "bde8cff59c7f5718139020c307e558a5b94f8ea8",
+  "formula": "0.72+min(max(0,entry_troops-current_troops)//250,40)/100",
+  "maximum_rate": "1.12",
+  "focused_tests": "22 passed",
+  "full_suite": "2018 passed in 38.07s",
+  "clean_process_registry": "PASS",
+  "engine_demo": "PASS: 6 rounds, 320 events",
+  "stage13_d1_audit": "PASS",
+  "diff_check": "PASS",
+  "remote_publication": "NOT_PERFORMED",
+  "source_sha256": {
+    "sgs_v2/battle_core/pre_attack_reaction.py": "9a98bd8d9c4d28a8163e9c097618c6620d83158884591dc5ccfde31067d55e89",
+    "sgs_v2/battle_core/troop_skills/hu_wei_jun.py": "ba4f7bf6724aea8337ff6eccfdbe9160109678a7493184ce42c6d56a97b5a7d2",
+    "sgs_v2/battle_core/troop_admission.py": "e2e3c63730c318def2799ef72f0bad40a8de8769160338df0974d82a259aa991",
+    "sgs_v2/battle_core/battle_systems.py": "45ba6b2282dac28cb2b8273f5d976a75af51b51fc3a815fa776f802565db47ea",
+    "tests/test_stage14_troop_hu_wei_jun.py": "4bc2225dc9a46534f548b57e22efd7df67dd04e3ade12c896c1d2bfd65aae774",
+    "scripts/demo_huwei.py": "e19d84432c85f22fd45de323c3c9fb6c2d4b0208e066c56c547845d7f3119eef"
+  }
+}
