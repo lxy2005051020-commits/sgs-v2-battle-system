@@ -1,6 +1,6 @@
-# 解烦卫 20248 本地接入
+# 解烦卫 20248 接入
 
-日期：2026-10-06。状态：`REMOTE_AUDIT_BLOCKED / RUNTIME_REGRESSION_PASS / RESEARCH_SCOPE_GAPS`。Runtime baseline `20e63d6`；Research main 检查至 `fe70f34`。
+日期：2026-10-06。状态：`REMOTE_AUDIT_PASS / RESEARCH_GATE_PASS / PR_READY`。Runtime baseline `20e63d6`；Research authority 已更新至 `f4aea546537447067d29275e87da5bdcc8f65de8`。
 分支 `stage14-xie-fan-wei`。按项目所有者要求同步至 GitHub，供审阅；不代表 Research 冻结或已合并主线。
 
 ## 描述与授权
@@ -9,6 +9,8 @@
 该来源为第三方战法目录，不标记为当前客户端原始证据。
 本地 Research 治疗目录 `skill_catalog/fb1_base_lookup_pure_skill_catalog_v1.csv`
 提供 ID 20248、治疗率 72%、武力/智力较高项；目录没有完整的触发合同。
+
+Research authority：`MC-STAGE14-XIEFAN-01`。Catalog 中旧的 `30%→60%` 已修正为固定 `30%` 伤害分支概率；未抽中则进入治疗。
 
 项目所有者本次明确：受武力和智力较高项影响的伤害，在武力更高时走兵刃、
 智力更高时走谋略；治疗同样选较高属性。本实现把它做成通用选择组件，
@@ -33,7 +35,8 @@ TROOP / PRE_BATTLE / activation=1 / 无准备回合
       FastestTargetSystem: 战前固定最快者；并列按主将 -> 副将1 -> 副将2
       普通攻击后，单次 chance(.30)
         success -> 随机敌军单体
-          executor.force > executor.intelligence -> WEAPON(.36)
+          普通 coefficient=.36；韩当为队伍主将时 coefficient=.72
+          executor.force > executor.intelligence -> WEAPON(coefficient)
           executor.intelligence > executor.force -> STRATEGY(.36)
           executor.force == executor.intelligence -> WEAPON(.36)
           additive_damage = executor.final_speed * .40
@@ -86,7 +89,7 @@ base × coefficient + additive_damage，然后完整复用后续暴击、增减�
 - 治疗属性使用实际普攻者触发时的最终武力／智力较高值，包括当前属性状态修正；
   治疗兵力仍使用 PRE_BATTLE 快照。属性读取时间已由项目所有者确认，未新增治疗修正战前采集机制。
 - 父普攻编号 / 根行动编号关联仍为空。第 3 项本轮只解释，没有修改冻结 coordinator 或以日志猜测关联。
-- 独立 Runtime 审计已完成，见 `XIE_FAN_WEI_RUNTIME_AUDIT.md`；当前因 Research contract 缺失、Research Catalog 概率表述冲突、韩当统领范围未裁决而阻塞 mainline。
+- 独立 Runtime 审计已完成并 PASS，见 `XIE_FAN_WEI_RUNTIME_AUDIT.md`；Research contract、Catalog 概率冲突、韩当统领范围与 additive seam 均已关闭。
 - 此分支同步至 GitHub 供审阅；不修改 Research 合同、不声明正式冻结，主线接入仍未完成。
 
 ## 验证
@@ -108,3 +111,6 @@ Stage13-D1 与青州兵独立审计均 PASS；Registry 干净进程检查 PASS�
 
 此前尝试直接增加冻结 owner 字段被审计正确检出；最终方案恢复 owner，
 以扩展组件提供能力，未放宽审计或更改预期哈希。
+
+独立 Runtime 审计见 `XIE_FAN_WEI_RUNTIME_AUDIT.md`；Additive Damage 架构合同见 `XIE_FAN_ADDITIVE_DAMAGE_SEAM.md`。
+韩当 COMMANDER 72% 分支已实现并有副将反例测试。当前父普攻 / root action lineage 继续 OPEN，不阻塞本轮 mainline。
