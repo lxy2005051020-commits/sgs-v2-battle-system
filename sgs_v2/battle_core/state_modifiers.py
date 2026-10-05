@@ -6,6 +6,7 @@ Mutation, expiry, provider suppression and finalization remain existing owners.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from .context import BattleContext
 from .numeric_validation import validate_finite_number
@@ -18,9 +19,28 @@ from .state_instance import StateInstance
 from .state_registry import StateRegistry
 from .state_runtime_params import StateRuntimeParams
 from .unit import UnitRuntime
+from .enums import DamageType
+from .damage_rule_provider import DamageRuleCollection, DamageRuleProvider, StateDamageRuleProvider
+from .damage_rule_models import RuleContributionSource
+from .damage_modifiers import DamageModifierContribution, DamageModifierKind, DamageModifierOperation, DamageModifierPhase
+
+if TYPE_CHECKING:
+    from .damage_system import DamageRequest
 
 ATTRIBUTE_BONUS_STATE_ID = "runtime_attribute_bonus"
 ACTIVATION_RATE_BONUS_STATE_ID = "runtime_activation_rate_bonus"
+INCOMING_DAMAGE_REDUCTION_STATE_ID = "runtime_incoming_damage_reduction"
+
+
+@dataclass(frozen=True, slots=True)
+class IncomingDamageReductionParams(StateRuntimeParams):
+    damage_type: DamageType
+    rate: float
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.damage_type, DamageType):
+            raise TypeError("damage_type must be DamageType")
+        object.__setattr__(self, "rate", validate_finite_number(self.rate, "rate", minimum=0, maximum=1))
 
 
 @dataclass(frozen=True, slots=True)
@@ -46,6 +66,7 @@ class ActivationRateBonusParams(StateRuntimeParams):
 
 
 MODIFIER_STATE_DEFINITIONS = (
+    StateDefinition(INCOMING_DAMAGE_REDUCTION_STATE_ID, "受到伤害降低", runtime_params_type=IncomingDamageReductionParams),
     StateDefinition(ATTRIBUTE_BONUS_STATE_ID, "属性修饰", runtime_params_type=AttributeBonusParams),
     StateDefinition(ACTIVATION_RATE_BONUS_STATE_ID, "发动率修饰", runtime_params_type=ActivationRateBonusParams),
 )
@@ -58,13 +79,13 @@ def modifier_conflict_rule(context: BattleContext, candidate: StateCandidate,
     This is an internal additive-contribution policy, not a general rule for
     stacking arbitrary official game states.
     """
-    if candidate.state_id not in (ATTRIBUTE_BONUS_STATE_ID, ACTIVATION_RATE_BONUS_STATE_ID):
+    if candidate.state_id not in (ATTRIBUTE_BONUS_STATE_ID, ACTIVATION_RATE_BONUS_STATE_ID, INCOMING_DAMAGE_REDUCTION_STATE_ID):
         return None
     params = candidate.runtime_params_candidate
-    dimension = getattr(params, "attribute", getattr(params, "skill_type", None))
+    dimension = getattr(params, "attribute", getattr(params, "skill_type", getattr(params, "damage_type", None)))
     for resident in residents:
         resident_dimension = getattr(resident.runtime_params, "attribute",
-                                     getattr(resident.runtime_params, "skill_type", None))
+                                     getattr(resident.runtime_params, "skill_type", getattr(resident.runtime_params, "damage_type", None)))
         if (resident.source_id, resident.source_skill_id, resident.source_skill_slot, resident_dimension) == (
             candidate.source_id, candidate.source_skill_id, candidate.source_skill_slot, dimension,
         ):
@@ -104,3 +125,37 @@ class StateModifierSupport:
             and item.runtime_params.skill_type is runtime.definition.skill_type
         )
         return min(1.0, max(0.0, runtime.definition.activation_rate + bonus))
+
+
+class IncomingDamageReductionProvider:
+    """Compose typed effective target modifiers with the caller's rule provider.
+
+    The canonical damage modifier system owns pooling, floors and pierce.
+    """
+    provider_key = "incoming_damage_reduction"
+
+    def __init__(self, policy: StateEffectivenessPolicy, base_provider: DamageRuleProvider | None = None) -> None:
+        self._policy = policy
+        self._base = base_provider if base_provider is not None else StateDamageRuleProvider(())
+
+    def collect(self, context: BattleContext, request: DamageRequest) -> DamageRuleCollection:
+        base = self._base.collect(context, request)
+        modifiers = list(base.modifier_contributions)
+        for item in self._policy.effective_instances(context, request.target_id, INCOMING_DAMAGE_REDUCTION_STATE_ID):
+            params = item.runtime_params
+            if not isinstance(params, IncomingDamageReductionParams):
+                raise TypeError("incoming reduction requires IncomingDamageReductionParams")
+            if params.damage_type is not request.damage_type:
+                continue
+            origin = f"{self.provider_key}:{item.instance_id}"
+            modifiers.append(DamageModifierContribution(
+                phase=DamageModifierPhase.INCOMING,
+                kind=DamageModifierKind.INCOMING_REDUCTION,
+                operation=DamageModifierOperation.MULTIPLY_FACTOR,
+                operand=1.0 - params.rate,
+                source=RuleContributionSource(item.owner_id, item.source_id, item.source_skill_id,
+                    item.state_id, item.instance_id, origin),
+                order_key=origin, damage_types=frozenset({params.damage_type}),
+            ))
+        return DamageRuleCollection(base.prevention_contributions, base.hit_contributions,
+                                    base.formula_policy_contributions, tuple(modifiers))

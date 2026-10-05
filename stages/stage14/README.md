@@ -1,5 +1,8 @@
 # Stage14 · Concrete Skill Integration
 
+藤甲兵满级统率减伤与独立“藤甲兵效果”已在本地独立分支实现并验证。
+持续时间与原灼烧同步，成功净化原灼烧会连带移除藤甲兵效果；未合并 main。见 [藤甲兵实现说明](TENG_JIA_BING_REDUCTION.md)。
+
 > Status: **ACTIVE / MAINLINE GATE OPEN**
 
 Stage14 begins concrete skill integration on top of the frozen Stage13 core gameplay engine.
