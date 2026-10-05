@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from dataclasses import replace
 from enum import Enum
 from typing import Callable
 
@@ -90,6 +91,7 @@ class SkillResolver:
         admission_coordinator: SkillOperationAdmissionCoordinator | None = None,
         target_policy: SkillTargetPolicy | None = None,
         activation_rate_provider: Callable[[BattleContext, SkillRuntime], float] | None = None,
+        continuous_damage_basis_producer=None,
     ) -> None:
         if not isinstance(target_system, TargetSystem):
             raise TypeError("target_system must be a TargetSystem")
@@ -108,6 +110,7 @@ class SkillResolver:
         if activation_rate_provider is not None and not callable(activation_rate_provider):
             raise TypeError("activation_rate_provider must be callable or None")
         self._activation_rate_provider = activation_rate_provider
+        self._continuous_damage_basis_producer = continuous_damage_basis_producer
 
     def resolve(
         self,
@@ -169,6 +172,7 @@ class SkillResolver:
         target_ids = selection.target_ids
         effects = tuple(
             self._build_effect(
+                context=context,
                 runtime=runtime,
                 target=target,
                 spec=spec,
@@ -517,9 +521,10 @@ class SkillResolver:
 
         return required + tail
 
-    @staticmethod
     def _build_effect(
+        self,
         *,
+        context: BattleContext,
         runtime: SkillRuntime,
         target: UnitRuntime,
         spec: SkillEffectSpec,
@@ -551,6 +556,27 @@ class SkillResolver:
             }
             if spec.runtime_params is not None:
                 kwargs["runtime_params"] = spec.runtime_params
+            if spec.continuous_damage_coefficient is not None:
+                from .continuous_damage_basis_producer import ContinuousDamageApplicationRequest
+                from .stage10_state_params import HistoricalDamageSourceRef, ContinuousDamageStateParams
+                if not isinstance(spec.runtime_params, ContinuousDamageStateParams):
+                    raise TypeError("continuous damage coefficient requires ContinuousDamageStateParams")
+                if self._continuous_damage_basis_producer is None:
+                    raise RuntimeError("continuous skill effect requires canonical basis producer")
+                # Capture through the existing owner. Lifecycle assigns the installed
+                # generation/instance at commit. Historical source here deliberately
+                # omits not-yet-created identities instead of retaining a stale ID.
+                basis = self._continuous_damage_basis_producer.capture(context, ContinuousDamageApplicationRequest(
+                    source_id=runtime.owner_id, target_id=target.unit_id, state_id=spec.state_id,
+                    application_generation_id=context.generation_allocator.allocate(prefix="capture"),
+                    coefficient=spec.continuous_damage_coefficient,
+                    source_skill_id=definition.skill_id, source_skill_slot=runtime.skill_slot,
+                ))
+                basis = replace(basis, historical_source=HistoricalDamageSourceRef(
+                    source_unit_id=runtime.owner_id, source_skill_id=definition.skill_id,
+                    source_skill_slot=runtime.skill_slot, source_state_id=spec.state_id,
+                ))
+                kwargs["runtime_params"] = replace(spec.runtime_params, frozen_damage_basis=basis)
             if spec.expires_round is not None:
                 kwargs["expires_round"] = spec.expires_round
             if spec.expires_phase is not None:

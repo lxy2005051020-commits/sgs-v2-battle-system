@@ -22,6 +22,8 @@ from .troop_skill_config import TroopSkillConfig
 from .state_modifiers import register_modifier_state_definitions
 from .troop_skills.bai_ma_yi_cong import CONFIG as BAI_MA_YI_CONG_CONFIG
 from .troop_skills.hu_bao_qi import CONFIG as HU_BAO_QI_CONFIG
+from .troop_skills.wu_dang_fei_jun import CONFIG as WU_DANG_FEI_JUN_CONFIG
+from .troop_skills.xian_zhen_ying import CONFIG as XIAN_ZHEN_YING_CONFIG
 
 
 class TroopAdmissionStatus(str, Enum):
@@ -170,7 +172,16 @@ TROOP_SKILL_REGISTRY: dict[str, TroopSkillConfig] = {
     XILIANG_CAVALRY_SKILL_ID: XILIANG_CAVALRY_CONFIG,
     BAI_MA_YI_CONG_CONFIG.skill_id: BAI_MA_YI_CONG_CONFIG,
     HU_BAO_QI_CONFIG.skill_id: HU_BAO_QI_CONFIG,
+    WU_DANG_FEI_JUN_CONFIG.skill_id: WU_DANG_FEI_JUN_CONFIG,
+    XIAN_ZHEN_YING_CONFIG.skill_id: XIAN_ZHEN_YING_CONFIG,
 }
+
+
+def resolve_opening_troop_definition(context, systems, skill_id: str, owner_id: str) -> SkillDefinition:
+    cfg = TROOP_SKILL_REGISTRY[skill_id]
+    if cfg.opening_definition_resolver is None:
+        raise ValueError("troop skill has no opening definition")
+    return cfg.opening_definition_resolver(context, systems, context.units[owner_id])
 
 
 def create_xiliang_cavalry_runtime(
@@ -299,6 +310,12 @@ def admit_and_install_troop_skill(
             )
 
     # 5. Skill-specific PRE_BATTLE definition resolution happens before mutation.
+    if cfg.opening_definition_resolver is not None and runtime.skill_slot is None:
+        return TroopAdmissionResult(
+            status=TroopAdmissionStatus.REJECTED_PROVIDER_SLOT_CONFLICT,
+            skill_id=runtime.definition.skill_id, owner_id=runtime.owner_id,
+            reason="opening skill requires canonical provider slot",
+        )
     # 西凉铁骑在马腾统领时通过 AttributeSystem 读取当前最终实战速度并套用冻结公式。
     effective_definition = (
         cfg.definition_resolver(context, systems, owner)
@@ -353,6 +370,9 @@ def admit_and_install_troop_skill(
                 StateNode(instance.instance_id),
                 ProviderNode(provider_ref),
             )
+
+    if cfg.opening_definition_resolver is not None:
+        systems.scheduled_skill_support.schedule(context, runtime)
 
     return TroopAdmissionResult(
         status=TroopAdmissionStatus.SUCCESS,

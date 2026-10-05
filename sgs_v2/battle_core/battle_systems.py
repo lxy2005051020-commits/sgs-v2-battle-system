@@ -7,6 +7,9 @@ from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
 from .state_modifiers import StateModifierSupport, modifier_conflict_rule
+from .scheduled_skill import ScheduledSkillSupport
+from .state_effectiveness_trigger import StateEffectivenessTriggerAdapter
+from .troop_admission import resolve_opening_troop_definition
 from .battle_finalization_coordinator import BattleFinalizationCoordinator
 from .dependency_evaluation import DependencyEvaluationSupport
 from .chain_system import ChainSystem, DamageCallbackAdmissionPoint
@@ -168,6 +171,7 @@ class BattleSystems:
     state_removal_coordinator: StateRemovalCoordinator = field(init=False)
     preparation_state_owner: PreparationStateOwner = field(init=False)
     state_modifier_support: StateModifierSupport = field(init=False)
+    scheduled_skill_support: ScheduledSkillSupport = field(init=False)
 
     def __post_init__(self) -> None:
         self.dependency_evaluation_support = DependencyEvaluationSupport()
@@ -400,9 +404,10 @@ class BattleSystems:
             stage11_state_runtime=self.stage11_state_runtime,
         )
         self.state_lifecycle_system._basis_producer = self.continuous_damage_basis_producer
-        self.trigger_system = TriggerSystem(
+        self.trigger_system = StateEffectivenessTriggerAdapter(
             self.state_lifecycle_system,
             self.equipment_effectiveness_policy,
+            self.state_effectiveness_policy,
         )
 
         self.damage_aftermath_system = DamageAftermathSystem(
@@ -487,6 +492,12 @@ class BattleSystems:
             admission_coordinator=self.skill_operation_admission_coordinator,
             target_policy=self.skill_target_policy,
             activation_rate_provider=self.state_modifier_support.activation_rate,
+            continuous_damage_basis_producer=self.continuous_damage_basis_producer,
+        )
+        self.scheduled_skill_support = ScheduledSkillSupport(
+            self.pending_work_system, self.skill_resolver, self.effect_executor,
+            self.dependency_evaluation_support,
+            lambda context, skill_id, owner_id: resolve_opening_troop_definition(context, self, skill_id, owner_id),
         )
         self.rule_hook_system = RuleHookSystem(
             self.trigger_system,

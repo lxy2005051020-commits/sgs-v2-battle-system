@@ -842,8 +842,14 @@ from .state_modifiers import (
     ATTRIBUTE_BONUS_STATE_ID, ACTIVATION_RATE_BONUS_STATE_ID,
     register_modifier_state_definitions,
 )
+from .troop_skills.wu_dang_fei_jun import (
+    create_wu_dang_fei_jun_definition, create_wu_dang_fei_jun_runtime, calculate_wu_dang_damage_rate,
+)
+from .troop_skills.xian_zhen_ying import create_xian_zhen_ying_definition, create_xian_zhen_ying_runtime
 
 __all__ += [
+    "create_wu_dang_fei_jun_definition", "create_wu_dang_fei_jun_runtime", "calculate_wu_dang_damage_rate",
+    "create_xian_zhen_ying_definition", "create_xian_zhen_ying_runtime",
     "create_bai_ma_yi_cong_definition", "create_bai_ma_yi_cong_runtime",
     "create_hu_bao_qi_definition", "create_hu_bao_qi_runtime",
     "StateModifierSupport", "AttributeBonusParams", "ActivationRateBonusParams",

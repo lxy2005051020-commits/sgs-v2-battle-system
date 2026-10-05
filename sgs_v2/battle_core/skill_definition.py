@@ -83,10 +83,15 @@ class ApplyStateSkillEffectSpec:
     runtime_params: StateRuntimeParams | None = None
     expires_round: int | None = None
     expires_phase: str | None = None
+    continuous_damage_coefficient: float | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.state_id, str) or not self.state_id.strip():
             raise ValueError("state_id cannot be empty")
+        if self.continuous_damage_coefficient is not None:
+            from .numeric_validation import validate_nonnegative_finite
+            object.__setattr__(self, "continuous_damage_coefficient", validate_nonnegative_finite(
+                self.continuous_damage_coefficient, "continuous_damage_coefficient"))
         if self.expires_round is not None:
             if isinstance(self.expires_round, bool) or not isinstance(self.expires_round, int):
                 raise TypeError("expires_round must be an int or None")
