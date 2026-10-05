@@ -4,7 +4,7 @@
 > Audit target: `stage14-jin-fan-jun-rebase-20261006` on `main@2e38f3a`  
 > Supersedes: old draft PR #51  
 > Research authority: `MC-STAGE14-JIN-FAN-JUN-01`  
-> Verdict: **PASS / CURRENT-MAIN REBASE VERIFIED**
+> Verdict: **PASS / MAINLINE RELEASED**
 
 ## 1. Research gate
 
@@ -114,7 +114,7 @@ PASS：
 
 旧 PR #51 的历史验证保留，但不再作为本次 current-main 发布门禁。
 
-当前 PR #59 已在 `main@2e38f3a` 上重建并验证：
+current-main 版本已在 `main@2e38f3a` 上重建并验证。初始兼容 PR #59 给出：
 
 ```text
 GitHub Actions run = 37357861097
@@ -157,7 +157,7 @@ JINFAN_RUNTIME_AUDIT          = PASS
 MAINLINE_READINESS            = READY_WITH_BOUNDED_PLACEHOLDERS
 ```
 
-本次 rebase 审计仍不以 PR CI 代替 merged-main CI。PR #59 合并后必须再次验证 `main` 全量测试与 Stage13-D1。
+最终发布 PR #60 与 merged-main CI 均已验证全量测试与 Stage13-D1。
 
 
 ## 8. Current-main rebase audit
@@ -182,9 +182,36 @@ current main@2e38f3a
 - `TEAM_NON_COMMANDERS` 只新增目标 intent，不替代 TargetSystem；
 - Jinfan DOT、即时伤害和恢复不复制第二套公式 owner。
 
-旧 PR #51 已关闭为 superseded；PR #59 是唯一 current-main 发布候选。
+旧 PR #51 已关闭为 superseded；PR #59 因 GitHub head 元数据滞后被替换；PR #60 是最终 current-main 发布 PR。
 
 ```text
 JINFAN_CURRENT_MAIN_REBASE = PASS
 PR59_REMOTE_REGRESSION     = PASS
+```
+
+
+## 9. Mainline release
+
+```text
+Final PR #60
+= MERGED
+Merge SHA
+= 99346dd7f6cfa599781edc3b8ef3ca9801a8572d
+
+PR-head CI
+= 37358276876 / SUCCESS
+Full pytest
+= 2141 passed
+Stage13-D1
+= 11 passed
+
+Merged-main CI
+= 37358410369 / SUCCESS
+Full pytest
+= 2141 passed
+Stage13-D1
+= 11 passed
+
+JINFAN_MAINLINE_RELEASE
+= PASS
 ```
