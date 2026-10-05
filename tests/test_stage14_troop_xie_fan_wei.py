@@ -291,3 +291,25 @@ def test_live_healing_attribute_includes_current_state_modifiers(attribute):
         source_troops=10000, source_attribute=700).nominal_recovery
     attack(c, s)
     assert c.units['a3'].troops == 5000 + expected
+
+
+def test_han_dang_commander_raises_xie_fan_damage_only():
+    c, s, rt = setup(create_xie_fan_wei_runtime, TroopType.SPEAR)
+    c.units['a1'].name = '韩当'
+    c.units['a2'].speed = 100
+    assert admit_and_install_troop_skill(c, s, rt).status is TroopAdmissionStatus.SUCCESS
+    state = c.states.find(owner_id='a2', state_id=NORMAL_ATTACK_FOLLOWUP_STATE_ID)[0]
+    params = state.runtime_params
+    assert params.probability == pytest.approx(.30)
+    assert params.damage.coefficient == pytest.approx(.72)
+    assert params.speed_damage_ratio == pytest.approx(.40)
+    assert params.recovery_potency.base_rate == pytest.approx(.72)
+
+
+def test_han_dang_deputy_does_not_receive_commander_bonus():
+    c, s, rt = setup(create_xie_fan_wei_runtime, TroopType.SPEAR)
+    c.units['a2'].name = '韩当'
+    c.units['a2'].speed = 100
+    assert admit_and_install_troop_skill(c, s, rt).status is TroopAdmissionStatus.SUCCESS
+    state = c.states.find(owner_id='a2', state_id=NORMAL_ATTACK_FOLLOWUP_STATE_ID)[0]
+    assert state.runtime_params.damage.coefficient == pytest.approx(.36)
