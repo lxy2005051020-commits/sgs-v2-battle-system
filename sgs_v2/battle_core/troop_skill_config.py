@@ -19,3 +19,4 @@ class TroopSkillConfig:
     target_special_troop_id: SpecialTroopId
     definition_factory: Callable[[], SkillDefinition]
     definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition] | None = None
+    opening_definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition] | None = None

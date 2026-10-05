@@ -111,6 +111,13 @@ A skill that requires a new Core primitive leaves the batch lane and receives fo
 
 ## Runtime rule
 
+### Batch 02 implementation
+
+无当飞军 + 陷阵营的满级分支已在 `stage14-troop-batch-02` 实现并通过本地验证，
+依赖第一批分支。无当使用用户指定伤害率公式，王平主将扩展为敌军全体；
+陷阵营高顺增强保持空白占位。此记录不表示已经进入 main。
+详见 [Batch02](BATCH02_WUDANG_XIANZHEN.md) 与 [验证记录](batch02/VALIDATION.md)。
+
 ### Local batch 01 implementation
 
 白马义从 + 虎豹骑的满级基础分支已在 `stage14-troop-batch-01` 本地完成并通过验证。
