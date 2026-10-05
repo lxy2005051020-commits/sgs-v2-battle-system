@@ -24,8 +24,8 @@ Stage 9    = FROZEN
 Stage10    = FROZEN
 Stage11    = RUNTIME FROZEN / POST-FREEZE ACCEPTED
 Stage12    = FROZEN / COMPLETE
-Stage13    = ACTIVE / EXIT AUDIT REMAINS
-Stage14    = PILOT PREPARATION ACTIVE / MAINLINE RUNTIME MERGE GATED
+Stage13    = COMPLETE / FROZEN
+Stage14    = PILOT PREPARATION ACTIVE / MAINLINE RUNTIME MERGE UNLOCKED
 ```
 
 Stage13 当前已完成：
@@ -83,9 +83,10 @@ Mainline merge 仍需同时满足：
 ## 当前边界
 
 ```text
-Core Gameplay Engine      = NOT YET FROZEN
-Skill Runtime Readiness   = NOT YET READY FOR MAINLINE MERGE
+Core Gameplay Engine      = FROZEN
+Skill Runtime Readiness   = READY
 Stage14 Pilot Branch Work = ALLOWED
+Stage14 Mainline Gate     = OPEN
 Bulk Troop Integration    = NOT AUTHORIZED
 ```
 

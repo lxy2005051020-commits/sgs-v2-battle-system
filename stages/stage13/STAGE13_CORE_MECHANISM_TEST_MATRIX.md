@@ -127,3 +127,18 @@ A green full suite is necessary but not sufficient. The Stage13 exit gate additi
 
 Focused: 48 PASS. Full: 1739 PASS. Demo: PASS. D1 does not satisfy Stage13-G whole-battle
 replay or engine-exit readiness. See D1 freeze audit for the latest-main CI gate.
+
+## Stage13 Final Exit Replay and Engine Freeze Closure — 2026-10-05
+
+| Exit discriminator | Executable evidence | Result |
+|---|---|---|
+| T13-021 full replay duplicate run (Case A) | tests/test_stage13_whole_battle_replay_audit.py::test_replay_case_a_same_seed_25_runs | PASS (25/25 runs identical projection hash) |
+| T13-022 replay divergence on seed change (Case B) | tests/test_stage13_whole_battle_replay_audit.py::test_replay_case_b_seed_change_divergence | PASS (8 distinct seeds divergent, 100% reproducible) |
+| T13-010 rejected/deterministic paths zero-draw (Case C) | tests/test_stage13_whole_battle_replay_audit.py::test_replay_case_c_zero_rng_fast_paths | PASS (Rate 0.0, disabled, det target consume 0 RNG) |
+| T13-023 no direct random outside RandomSystem | AST/grep audit: 0 direct random/numpy in sgs_v2 | PASS |
+| T13-024 no new shadow owner / god object | AST/grep audit: TroopSystem, StateLifecycleSystem, DamageInstanceCoordinator sole owners | PASS |
+| T13-025 Stage1-12 full regression | 1744 passed in pytest full suite | PASS |
+| T13-026 demo | python demo.py exit 0 | PASS |
+
+Exit Verdict: **PASS**. Core Gameplay Engine = **FROZEN**. Skill Runtime Readiness = **READY**.
+

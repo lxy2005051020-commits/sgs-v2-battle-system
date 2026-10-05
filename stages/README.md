@@ -16,8 +16,8 @@
 | 10 | Persistent State Runtime Integration | FROZEN |
 | 11 | 官方状态补全（一） | RUNTIME FROZEN / POST-FREEZE ACCEPTED |
 | 12 | 官方状态补全（二） | FROZEN / COMPLETE |
-| 13 | Core Gameplay Mechanism Completion | ACTIVE / EXIT AUDIT REMAINS |
-| 14 | Concrete Skill Integration | PILOT PREPARATION ACTIVE / MAINLINE GATED |
+| 13 | Core Gameplay Mechanism Completion | COMPLETE / FROZEN |
+| 14 | Concrete Skill Integration | PILOT PREPARATION ACTIVE / MAINLINE UNLOCKED |
 
 ## 当前统一状态
 
