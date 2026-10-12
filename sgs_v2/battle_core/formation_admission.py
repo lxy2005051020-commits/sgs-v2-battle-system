@@ -73,6 +73,8 @@ def register_formation_skill_config(config: FormationSkillConfig) -> None:
         raise TypeError(f"config must be a FormationSkillConfig, got {type(config)}")
     if not config.skill_id or not config.skill_id.strip():
         raise ValueError("skill_id cannot be empty")
+    if config.skill_id in FORMATION_SKILL_REGISTRY:
+        raise ValueError(f"formation skill id already registered: {config.skill_id}")
     FORMATION_SKILL_REGISTRY[config.skill_id] = config
 
 
@@ -84,7 +86,7 @@ def validate_team_formation_limits(context: BattleContext) -> None:
     """Pre-scan all teams in the context. Fail-closed if any team has > 1 enabled FORMATION runtime (RULE-03)."""
     team_formations: dict[str, list[SkillRuntime]] = {}
     for rt in context.skill_runtimes.values():
-        if rt.definition.skill_type == SkillType.FORMATION and rt.enabled:
+        if rt.definition.skill_type == SkillType.FORMATION:
             owner = context.get_unit(rt.owner_id)
             if owner is not None:
                 team_formations.setdefault(owner.team_id, []).append(rt)
@@ -100,23 +102,31 @@ def validate_team_formation_limits(context: BattleContext) -> None:
             )
 
 
-def admit_and_install_formation_skill(
+def validate_formation_admissions(context: BattleContext) -> None:
+    """Validate *all* loaded formation configurations before any PRE_BATTLE effects.
+
+    Global fail-closed preflight prevents passive skills (including random
+    producers) from running when either side has an invalid formation.
+    """
+    validate_team_formation_limits(context)
+    for runtime in context.skill_runtimes.values():
+        if runtime.definition.skill_type != SkillType.FORMATION:
+            continue
+        result = _check_formation_admission(context, runtime)
+        if result.status not in (
+            FormationAdmissionStatus.SUCCESS,
+            FormationAdmissionStatus.REJECTED_BASELINE_DISABLED,
+        ):
+            raise FormationAdmissionRejectedError(
+                result.status, result.skill_id, result.owner_id, result.reason
+            )
+
+
+def _check_formation_admission(
     context: BattleContext,
-    systems: object,
     runtime: SkillRuntime,
 ) -> FormationAdmissionResult:
-    """Universal formation admission preflight and installation seam (RULE-03, F0-I-A-02).
-
-    Atomic admission:
-    1. Phase Guard: only PRE_BATTLE permitted.
-    2. SkillType Guard: must be SkillType.FORMATION.
-    3. Baseline-disabled check.
-    4. Canonical Registry lookup.
-    5. Unit & Team Invariant check (applicable troop types, team formation exclusivity).
-    6. Slot & Provider check.
-    7. Resolve & execute effects via SkillResolver and EffectExecutor.
-    8. Register with defeat cleanup if provider tracking is active.
-    """
+    """Pure preflight: no effects, runtime mutation, state mutation or RNG."""
     # 1. Phase Guard
     if context.current_phase != BattlePhase.PRE_BATTLE.value:
         return FormationAdmissionResult(
@@ -145,7 +155,7 @@ def admit_and_install_formation_skill(
         )
 
     # 4. Owner existence
-    owner = context.get_unit(runtime.owner_id)
+    owner = context.units.get(runtime.owner_id)
     if owner is None:
         return FormationAdmissionResult(
             status=FormationAdmissionStatus.REJECTED_NOT_FOUND,
@@ -162,6 +172,14 @@ def admit_and_install_formation_skill(
             skill_id=runtime.definition.skill_id,
             owner_id=runtime.owner_id,
             reason=f"canonical formation skill '{runtime.definition.skill_id}' not found in registry",
+        )
+
+    if runtime.definition.name != cfg.name:
+        return FormationAdmissionResult(
+            status=FormationAdmissionStatus.REJECTED_NOT_FOUND,
+            skill_id=runtime.definition.skill_id,
+            owner_id=runtime.owner_id,
+            reason="runtime definition name does not match canonical formation registry",
         )
 
     # 6. Team Exclusivity (RULE-03)
@@ -196,7 +214,14 @@ def admit_and_install_formation_skill(
                     ),
                 )
 
-    # 8. Slot consistency
+    # 8. Slot consistency and mandatory provider provenance
+    if runtime.skill_slot is None:
+        return FormationAdmissionResult(
+            status=FormationAdmissionStatus.REJECTED_PROVIDER_SLOT_CONFLICT,
+            skill_id=runtime.definition.skill_id,
+            owner_id=runtime.owner_id,
+            reason="formation installation requires canonical provider SkillSlot",
+        )
     if runtime.skill_slot is not None:
         resident = context.skill_runtimes.get(runtime.owner_id, runtime.skill_slot)
         if resident is not None and resident is not runtime:
@@ -207,12 +232,64 @@ def admit_and_install_formation_skill(
                 reason="provider slot already belongs to another runtime",
             )
 
+    installed = context.metadata.get("_stage14_installed_formation_keys")
+    identity = (runtime.owner_id, runtime.skill_slot, runtime.definition.skill_id)
+    if installed is not None and identity in installed:
+        return FormationAdmissionResult(
+            status=FormationAdmissionStatus.REJECTED_ALREADY_INSTALLED,
+            skill_id=runtime.definition.skill_id,
+            owner_id=runtime.owner_id,
+            reason="formation already installed in this battle",
+        )
+
+    return FormationAdmissionResult(
+        status=FormationAdmissionStatus.SUCCESS,
+        skill_id=runtime.definition.skill_id,
+        owner_id=runtime.owner_id,
+    )
+
+
+def admit_and_install_formation_skill(
+    context: BattleContext,
+    systems: object,
+    runtime: SkillRuntime,
+) -> FormationAdmissionResult:
+    """Universal formation admission preflight and installation seam (RULE-03, F0-I-A-02).
+
+    Atomic admission:
+    1. Phase Guard: only PRE_BATTLE permitted.
+    2. SkillType Guard: must be SkillType.FORMATION.
+    3. Baseline-disabled check.
+    4. Canonical Registry lookup.
+    5. Unit & Team Invariant check (applicable troop types, team formation exclusivity).
+    6. Slot & Provider check.
+    7. Resolve & execute effects via SkillResolver and EffectExecutor.
+    8. Register with defeat cleanup if provider tracking is active.
+    """
+    # All admission checks remain side-effect free.
+    check = _check_formation_admission(context, runtime)
+    if check.status != FormationAdmissionStatus.SUCCESS:
+        return check
+    owner = context.get_unit(runtime.owner_id)
+    cfg = FORMATION_SKILL_REGISTRY[runtime.definition.skill_id]
+
     # 9. Dynamic resolution if defined
     effective_definition = (
         cfg.definition_resolver(context, systems, owner)
         if cfg.definition_resolver is not None
         else cfg.definition_factory()
     )
+    # Reject mismatched registry factories/resolvers before any mutation.
+    if (effective_definition.skill_id != cfg.skill_id
+            or effective_definition.skill_type != SkillType.FORMATION
+            or effective_definition.name != cfg.name):
+        return FormationAdmissionResult(
+            status=FormationAdmissionStatus.REJECTED_NOT_FOUND,
+            skill_id=runtime.definition.skill_id,
+            owner_id=runtime.owner_id,
+            reason="formation factory returned mismatched canonical identity",
+        )
+
     effective_runtime = SkillRuntime(
         definition=effective_definition,
         owner_id=runtime.owner_id,
@@ -231,6 +308,11 @@ def admit_and_install_formation_skill(
         res = systems.skill_resolver.resolve(context, effective_runtime)
         for effect in res.effects:
             systems.effect_executor.execute(context, effect)
+
+    # Idempotence guard is battle-scoped; SkillRuntimeRegistry remains the
+    # authoritative instance store, this records only completed installations.
+    installed = context.metadata.setdefault("_stage14_installed_formation_keys", set())
+    installed.add((runtime.owner_id, runtime.skill_slot, runtime.definition.skill_id))
 
     return FormationAdmissionResult(
         status=FormationAdmissionStatus.SUCCESS,
