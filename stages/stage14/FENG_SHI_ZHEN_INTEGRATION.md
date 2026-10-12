@@ -49,3 +49,10 @@
 ## 5. Freeze / Release Gate
 
 Battle PR #68 必须全量 pytest、Stage13-D1 独立冻结审计、青州兵独立审计、Demo、PR CI 通过；实际发布以 merged-main CI 再次通过为准。合并与通过之前只允许标记为 `IMPLEMENTED_CANDIDATE`，不能宣称 `MAINLINE_FROZEN`。
+
+## 6. 正式 Mainline Freeze 结果（2026-10-13）
+
+- Battle PR [#68](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/68) **MERGED**：`975b44e67f7d1bfbb6a46fd12be6895e3c8a7cb4`。
+- [F1 merged-main Actions #38280765590](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38280765590) **SUCCESS**：`2267/2267` tests PASS、Demo PASS、Stage13-D1 frozen owner PASS（11 adversarial）、Qingzhou independent audit PASS。
+- `F1_LV10_RUNTIME_MAINLINE=FROZEN_TO_USER_APPROVED_V1_CONTRACT`; `F1_GAMEPLAY_CLIENT_TRUTH=BOUNDED_CONFIRMED_WITH_OPEN_BOUNDARIES`。不要将本版本的用户规则或等级插值缺失伪装为全客户端实证。
+- 该记录仅说明锋矢阵满级标准数值与来源生命周期已经实现，其他阵法、Lv1~9 等均不包括在此冻结范围。
