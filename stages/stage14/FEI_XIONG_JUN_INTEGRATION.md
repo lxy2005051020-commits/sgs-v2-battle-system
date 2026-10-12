@@ -2,7 +2,7 @@
 
 更新：2026-10-12。分支：stage14/fei-xiong-jun。远端main基线：60ad790c83211c6e1597e63278eb85e79bc6a0b8。
 
-状态：**USER_SPECIFIED_FINAL_ADDITIVE_MODEL / LOCAL_RUNTIME_INTEGRATED / NOT_GAMEPLAY_FROZEN**。
+状态：**USER_SPECIFIED_FINAL_ADDITIVE_MODEL / RUNTIME_INTEGRATED / NOT_GAMEPLAY_FROZEN**。
 
 用户指定实际恢复口径、两个目标共享快照、伤害期间产生的治疗计入下一次，并纠正“治疗量/10是直接加在最终的伤害中”。本规则覆盖此前的缺失公式报错方案，也覆盖对话中曾提出但未实现的“提高伤害率”解释。
 
@@ -83,4 +83,4 @@ AccumulatedRecoveryRuleHookSystem(UnitActionStartHook)
 
 专项51项验证治疗、最终加法、快照、真实吸血、期间恢复、失败保留、免疫/虚弱、奇谋、门控、目标不足、跨战斗游标隔离等；加上原有31项架构检查，共82项通过。全套2192项通过，Stage13-D1冻结owner哈希检查与11项独立对抗检查PASS，标准demo与清洁进程注册检查PASS。详细输出见当前验证记录。
 
-当前为本地独立分支，未合入main，未完成远端CI。
+发布入口：[PR #62](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/62)。原发布提交2dbcbcd5的PR CI已通过；2026-10-12合并前代码审计、全套2192项回归、D1与青州独立审计和飞熊军回放均PASS。详见[合并审计](FEI_XIONG_JUN_MERGE_AUDIT.md)。最终合并状态与merged-main CI以GitHub实时记录为准；进入main不升级为玩法实证冻结。
