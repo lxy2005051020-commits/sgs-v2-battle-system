@@ -61,6 +61,7 @@ class FormationSkillConfig:
     definition_factory: Callable[[], SkillDefinition]
     requires_provider_slot: bool = False
     definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition] | None = None
+    installer: Callable[[BattleContext, object, SkillRuntime], None] | None = None
 
 
 # Canonical Formation Registry: keyed strictly by canonical skill_id
@@ -303,8 +304,11 @@ def admit_and_install_formation_skill(
         if existing is None:
             context.skill_runtimes.register(runtime)
 
-    # 11. Execute skill effects via Canonical systems
-    if hasattr(systems, "skill_resolver") and hasattr(systems, "effect_executor"):
+    # 11. Role-aware gameplay uses a declared canonical lifecycle installer.
+    # Synthetic/default formations preserve the existing SkillResolver route.
+    if cfg.installer is not None:
+        cfg.installer(context, systems, effective_runtime)
+    elif hasattr(systems, "skill_resolver") and hasattr(systems, "effect_executor"):
         res = systems.skill_resolver.resolve(context, effective_runtime)
         for effect in res.effects:
             systems.effect_executor.execute(context, effect)
@@ -319,3 +323,25 @@ def admit_and_install_formation_skill(
         skill_id=runtime.definition.skill_id,
         owner_id=runtime.owner_id,
     )
+
+
+# First production Formation skill (Stage14 F1). The registry is definition-only;
+# it does not install any effect unless a team actually equips Skill ID 20066.
+from .feng_shi_zhen import (
+    FENG_SHI_ZHEN_SKILL_ID,
+    FENG_SHI_ZHEN_NAME,
+    FENG_SHI_ZHEN_APPLICABLE_TROOPS,
+    create_feng_shi_zhen_definition,
+    install_feng_shi_zhen,
+)
+
+register_formation_skill_config(
+    FormationSkillConfig(
+        skill_id=FENG_SHI_ZHEN_SKILL_ID,
+        name=FENG_SHI_ZHEN_NAME,
+        applicable_troops=FENG_SHI_ZHEN_APPLICABLE_TROOPS,
+        definition_factory=create_feng_shi_zhen_definition,
+        requires_provider_slot=True,
+        installer=install_feng_shi_zhen,
+    )
+)

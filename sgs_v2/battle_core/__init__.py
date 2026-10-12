@@ -961,3 +961,15 @@ __all__ += [
     "unregister_pre_battle_command_processor",
     "unregister_pre_battle_passive_processor",
 ]
+
+# Stage14 F1 official Formation gameplay API
+from .feng_shi_zhen import (
+    FENG_SHI_ZHEN_SKILL_ID,
+    create_feng_shi_zhen_definition,
+    create_feng_shi_zhen_runtime,
+)
+__all__ += [
+    "FENG_SHI_ZHEN_SKILL_ID",
+    "create_feng_shi_zhen_definition",
+    "create_feng_shi_zhen_runtime",
+]

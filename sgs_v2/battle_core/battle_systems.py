@@ -7,6 +7,7 @@ from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
 from .state_modifiers import StateModifierSupport, modifier_conflict_rule, IncomingDamageReductionProvider
+from .feng_shi_zhen import FengShiZhenDamageRuleProvider
 from .received_recovery_modifier import ReceivedRecoveryModifierProvider
 from .action_start_recovery_damage import AccumulatedRecoveryRuleHookSystem, ActionStartRecoveryDamageSupport
 from .state_application_reaction import ReactingStateApplicationCoordinator, ReactingStateLifecycleSystem
@@ -368,6 +369,9 @@ class BattleSystems:
 
         self.damage_rule_provider = IncomingDamageReductionProvider(
             self.state_effectiveness_policy, self.damage_rule_provider)
+        self.damage_rule_provider = FengShiZhenDamageRuleProvider(
+            self.state_effectiveness_policy, self.damage_rule_provider
+        )
         self.damage_system = AdditiveDamageSystem(
             self.attribute_system,
             weapon_troop_function_table=self.weapon_troop_function_table,
