@@ -83,11 +83,11 @@ def unregister_formation_skill_config(skill_id: str) -> None:
 
 
 def validate_team_formation_limits(context: BattleContext) -> None:
-    """Pre-scan all teams in the context. Fail-closed if any team has > 1 enabled FORMATION runtime (RULE-03)."""
+    """Fail-closed on >1 carried FORMATION per team, including disabled runtimes (RULE-03)."""
     team_formations: dict[str, list[SkillRuntime]] = {}
     for rt in context.skill_runtimes.values():
         if rt.definition.skill_type == SkillType.FORMATION:
-            owner = context.get_unit(rt.owner_id)
+            owner = context.units.get(rt.owner_id)
             if owner is not None:
                 team_formations.setdefault(owner.team_id, []).append(rt)
 
