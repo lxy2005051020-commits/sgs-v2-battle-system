@@ -44,3 +44,13 @@ no generic subsystem merely to satisfy an old roadmap label
 ```
 
 Stage13 当前权威入口：[stages/stage13/README.md](stages/stage13/README.md)
+
+## Stage14 阵法转段裁决（2026-10-12）
+
+- 兵种战法主线已注册 15/16；**象兵 DEFERRED**，保留 [准备清单](stages/stage14/XIANG_BING_PREPARATION.md)，不作为阵法的前置阻塞。
+- 下一目标为 **阵法战法 FORMATION**，仍属于 Stage14+ 具体战法接入路线下的 F0 子阶段，暂不凭空宣布 Stage15 冻结。
+- 先完成 Research F0 证据与合同，Battle F0 完成准备阶段 type ordering / 队伍阵法准入设计与回归。
+- 第一只 pilot 候选：锋矢阵（当前不声明其数值、时长、限制条件已冻结）。
+- 后续指挥战法基于统一 PRE_BATTLE 编排接入，不为阵法造第二套 Engine。
+
+[FORMATION F0 Runtime Readiness](stages/stage14/FORMATION_F0_RUNTIME_READINESS.md)
