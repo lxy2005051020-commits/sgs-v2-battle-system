@@ -54,6 +54,18 @@ class PreBattleOrderSystem:
             u.unit_id: self._attributes.get_speed(context, u) for u in candidates
         }
 
+        # A cross-team same-speed tie cannot be resolved without a real attacker.
+        # Never silently substitute team-id lexical order for RULE-04.
+        if valid_attacker_id is None:
+            speed_teams: dict[float, set[str]] = {}
+            for u in candidates:
+                speed_teams.setdefault(speed_map[u.unit_id], set()).add(u.team_id)
+            if any(len(teams) > 1 for teams in speed_teams.values()):
+                raise ValueError(
+                    "valid attacker_team_id metadata required for cross-team "
+                    "equal-speed PRE_BATTLE ordering"
+                )
+
         def sort_key(unit: UnitRuntime):
             speed = speed_map[unit.unit_id]
             # Higher speed first (-speed)
