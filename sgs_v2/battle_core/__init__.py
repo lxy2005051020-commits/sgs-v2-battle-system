@@ -896,6 +896,9 @@ __all__ += ["create_bai_er_bing_definition", "create_bai_er_bing_runtime",
             "create_da_ji_shi_definition", "create_da_ji_shi_runtime"]
 
 from .troop_skills.xie_fan_wei import create_xie_fan_wei_definition, create_xie_fan_wei_runtime
+from .troop_skills.dan_yang_bing import create_dan_yang_bing_definition, create_dan_yang_bing_runtime
+__all__ += ["create_dan_yang_bing_definition", "create_dan_yang_bing_runtime"]
+
 from .troop_skills.fei_xiong_jun import (
     create_fei_xiong_jun_definition, create_fei_xiong_jun_runtime,
 )

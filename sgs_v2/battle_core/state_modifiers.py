@@ -25,6 +25,7 @@ from .damage_rule_models import RuleContributionSource
 from .damage_modifiers import DamageModifierContribution, DamageModifierKind, DamageModifierOperation, DamageModifierPhase
 from .received_recovery_modifier import RECEIVED_RECOVERY_BONUS_STATE_ID, ReceivedRecoveryBonusParams
 from .action_start_recovery_damage import ACTION_START_RECOVERY_DAMAGE_STATE_ID, ActionStartRecoveryDamageParams
+from .temporary_damage_pool import TEMPORARY_DAMAGE_POOL_STATE_ID, TemporaryDamagePoolParams
 
 if TYPE_CHECKING:
     from .damage_system import DamageRequest
@@ -97,6 +98,7 @@ class BoundedActivationRateBonusParams(ActivationRateBonusParams):
 
 
 MODIFIER_STATE_DEFINITIONS = (
+    StateDefinition(TEMPORARY_DAMAGE_POOL_STATE_ID, "临时伤害抵挡兵池", runtime_params_type=TemporaryDamagePoolParams),
     StateDefinition(ACTION_START_RECOVERY_DAMAGE_STATE_ID, "行动开始恢复衍生伤害", runtime_params_type=ActionStartRecoveryDamageParams),
     StateDefinition(RECEIVED_RECOVERY_BONUS_STATE_ID, "受到治疗提升", runtime_params_type=ReceivedRecoveryBonusParams),
     StateDefinition(INCOMING_DAMAGE_REDUCTION_STATE_ID, "受到伤害降低", runtime_params_type=IncomingDamageReductionParams),

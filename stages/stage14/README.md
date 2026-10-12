@@ -1,10 +1,14 @@
 # Stage14 · Concrete Skill Integration
 
+丹阳兵接入见[丹阳兵接入说明](DAN_YANG_BING_INTEGRATION.md)：
+生成比例按用户确认的1.0倍实现；全体统率+36，谋略抵挡36%／陶谦40%，每回合衰减10%。
+发布入口为[PR #63](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/63)，[合并前审计](DAN_YANG_BING_MERGE_AUDIT.md)通过；共享兵池、实际扣兵口径及细时序仍待战报验证。下方计数包含本PR合并后的丹阳兵。
+
 飞熊军接入见 [飞熊军用户指定模型](FEI_XIONG_JUN_INTEGRATION.md)：
 满级受治疗提升16%／董卓主将20%，累计实际恢复H，两个目标各在最终伤害追加H/10，伤害期间恢复计入下一次。
 状态为 USER_SPECIFIED_FINAL_ADDITIVE_MODEL / NOT_GAMEPLAY_FROZEN；完整战斗可运行。合并审计见 [飞熊军合并审计](FEI_XIONG_JUN_MERGE_AUDIT.md)，发布入口为 [PR #62](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/62)。下方计数包含该PR合并后的飞熊军。
 
-> Status: **ACTIVE / MAINLINE GATE OPEN / 10 BOUNDED-FROZEN + 3 USER-PROVISIONAL + 1 USER-FIT INTEGRATION**
+> Status: **ACTIVE / MAINLINE GATE OPEN / 10 BOUNDED-FROZEN + 4 USER-PROVISIONAL + 1 USER-FIT INTEGRATION**
 
 Stage14 在 Stage13 冻结的 Core Gameplay Engine 上进行具体战法接入。
 
@@ -16,8 +20,8 @@ CORE_GAMEPLAY_ENGINE     = FROZEN
 SKILL_RUNTIME_READINESS  = READY
 STAGE14 MAINLINE GATE    = OPEN
 
-TROOP SKILLS IN MAIN     = 14
-USER-PROVISIONAL ADDITIONS = 20153 QING_ZHOU_BING / 20154 HU_WEI_JUN / 20247 FEI_XIONG_JUN
+TROOP SKILLS IN MAIN     = 15
+USER-PROVISIONAL ADDITIONS = 20153 QING_ZHOU_BING / 20154 HU_WEI_JUN / 20247 FEI_XIONG_JUN / 20245 DAN_YANG_BING
 USER-FIT ADDITION          = 20246 XIAN_DENG_SI_SHI
 NEW BOUNDED ADDITIONS      = 20248 XIE_FAN_WEI / 20152 JIN_FAN_JUN
 ~~~
@@ -41,6 +45,7 @@ NEW BOUNDED ADDITIONS      = 20248 XIE_FAN_WEI / 20152 JIN_FAN_JUN
 | 20152 | 锦帆军 | BOUNDED_FROZEN / FORMULA_PLACEHOLDERS; [PR #60](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/60) |
 
 | 20247 (待客户端核对) | 飞熊军 | USER_SPECIFIED_FINAL_ADDITIVE_MODEL / NOT_GAMEPLAY_FROZEN; [PR #62](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/62) |
+| 20245 (待客户端核对) | 丹阳兵 | USER_CONFIRMED_GENERATION_RATIO / GAMEPLAY_DETAILS_OPEN; [PR #63](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/63) |
 
 最终批次审计见 [Batch01-04 Mainline Audit](BATCH01_04_MAINLINE_AUDIT.md)。
 
