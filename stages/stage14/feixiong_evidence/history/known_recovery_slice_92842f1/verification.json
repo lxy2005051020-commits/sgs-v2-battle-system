@@ -1,0 +1,29 @@
+{
+  "status": "KNOWN_RECOVERY_SLICE / FULL_BATTLE_BLOCKED",
+  "provenance": "ENGINEERING_VALIDATION_ONLY; no battle-report formula proof",
+  "known_effect_cases": [
+    {
+      "commander": "ordinary",
+      "base_recovery": 100,
+      "modified_recovery": 116,
+      "actual_recovery": 116,
+      "states": 3,
+      "mode": "ISOLATED_KNOWN_EFFECT_PREVIEW"
+    },
+    {
+      "commander": "董卓",
+      "base_recovery": 100,
+      "modified_recovery": 120,
+      "actual_recovery": 120,
+      "states": 3,
+      "mode": "ISOLATED_KNOWN_EFFECT_PREVIEW"
+    }
+  ],
+  "full_engine": {
+    "error_type": "FeiXiongJunFormulaMissingError",
+    "message": "飞熊军：累计治疗量→伤害率公式未提供；已实现满级受治疗增益16%/董卓统领20%，完整战斗接入暂停，不能用固定64%伤害或跳过伤害代替。",
+    "result_absent": true,
+    "troops_unchanged": true,
+    "special_identity_unchanged": true
+  }
+}

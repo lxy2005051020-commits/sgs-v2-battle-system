@@ -1,6 +1,10 @@
 # Stage14 · Concrete Skill Integration
 
-> Status: **ACTIVE / MAINLINE GATE OPEN / 10 BOUNDED-FROZEN + 2 USER-PROVISIONAL + 1 USER-FIT INTEGRATION**
+飞熊军接入见 [飞熊军用户指定模型](FEI_XIONG_JUN_INTEGRATION.md)：
+满级受治疗提升16%／董卓主将20%，累计实际恢复H，两个目标各在最终伤害追加H/10，伤害期间恢复计入下一次。
+状态为 USER_SPECIFIED_FINAL_ADDITIVE_MODEL / NOT_GAMEPLAY_FROZEN；完整战斗可运行。合并审计见 [飞熊军合并审计](FEI_XIONG_JUN_MERGE_AUDIT.md)，发布入口为 [PR #62](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/62)。下方计数包含该PR合并后的飞熊军。
+
+> Status: **ACTIVE / MAINLINE GATE OPEN / 10 BOUNDED-FROZEN + 3 USER-PROVISIONAL + 1 USER-FIT INTEGRATION**
 
 Stage14 在 Stage13 冻结的 Core Gameplay Engine 上进行具体战法接入。
 
@@ -12,8 +16,8 @@ CORE_GAMEPLAY_ENGINE     = FROZEN
 SKILL_RUNTIME_READINESS  = READY
 STAGE14 MAINLINE GATE    = OPEN
 
-TROOP SKILLS IN MAIN     = 13
-USER-PROVISIONAL ADDITIONS = 20153 QING_ZHOU_BING / 20154 HU_WEI_JUN
+TROOP SKILLS IN MAIN     = 14
+USER-PROVISIONAL ADDITIONS = 20153 QING_ZHOU_BING / 20154 HU_WEI_JUN / 20247 FEI_XIONG_JUN
 USER-FIT ADDITION          = 20246 XIAN_DENG_SI_SHI
 NEW BOUNDED ADDITIONS      = 20248 XIE_FAN_WEI / 20152 JIN_FAN_JUN
 ~~~
@@ -35,6 +39,8 @@ NEW BOUNDED ADDITIONS      = 20248 XIE_FAN_WEI / 20152 JIN_FAN_JUN
 | 20246 (推断) | 先登死士 | USER_FIT_MODEL / OPENING_COMMAND_SNAPSHOT_FROZEN / GAMEPLAY_DETAILS_OPEN; [PR #55](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/55) |
 | 20248 (推断) | 解烦卫 | BOUNDED_FROZEN / HAN_DANG_72 / FINE_LINEAGE_OPEN; [PR #57](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/57) |
 | 20152 | 锦帆军 | BOUNDED_FROZEN / FORMULA_PLACEHOLDERS; [PR #60](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/60) |
+
+| 20247 (待客户端核对) | 飞熊军 | USER_SPECIFIED_FINAL_ADDITIVE_MODEL / NOT_GAMEPLAY_FROZEN; [PR #62](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/62) |
 
 最终批次审计见 [Batch01-04 Mainline Audit](BATCH01_04_MAINLINE_AUDIT.md)。
 
