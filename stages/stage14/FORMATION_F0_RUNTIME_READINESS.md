@@ -1,5 +1,10 @@
 # Stage14-F0 阵法战法 Runtime 准备阶段审计与接入路线
 
+> **2026-10-13 现行状态与历史文档说明**：本文件原始 2026-10-12 章节为 *F0 设计前* 的历史 gap snapshot，下面 “MISSING / PLANNED / NOT_FROZEN” 结论**不再代表当前 main**。最新权威状态参见本文件末尾“F0 merged-main exit audit”；不得覆盖旧证据。
+>
+> Research F0 [PR #18](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/pull/18) 已合并；Battle F0-I-A [PR #66](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/66) 已合并并通过 merged-main CI。第一只具体阵法锋矢阵尚未实现。
+
+
 > 日期：2026-10-12
 > 状态：**READINESS GAP IDENTIFIED / DOCUMENTATION ONLY / NO FORMATION GAMEPLAY IMPLEMENTED**
 > 用户路线裁决：象兵 DEFERRED；兵种战法已进 main 15/16；下一批接入阵法战法。
@@ -103,3 +108,32 @@ FORMATION_F0_RUNTIME_DESIGN  = BLOCKED_ON_RESEARCH_AUTHORITY
 FORMATION_SPECIFIC_RUNTIME   = NOT_STARTED
 FORMATION_MAINLINE           = 0
 ```
+
+---
+
+## 9. F0 merged-main exit audit（2026-10-13，覆盖上文历史准备状态）
+
+| Gate | Final mainline evidence | Verdict |
+|---|---|---|
+| Research F0-R | Research PR #18 MERGED; main `abd654a907019a16a61adefee97663b25b073dd2` | PASS / BOUNDED_FROZEN |
+| Battle F0-I-A | Battle PR #66 MERGED; main `2238186848fee6c89a9e688174f2fe64d382c1a0` | PASS |
+| Foundation tests | 15 in `tests/test_stage14_formation_f0_foundation.py`, part of full CI | PASS |
+| Full Regression | [merged-main Actions #38278028436](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38278028436): 2239 tests passed | PASS |
+| Demo + frozen owner audit | Demo PASS; Stage13-D1 hash/harness PASS; Qingzhou independent audit PASS | PASS |
+| Formation Gameplay | No `20066` actual registry or other formation Gameplay, only synthetic test formations | NOT_STARTED (intentional) |
+| F1 research preconditions | F1 research contract and adapter/test readiness document on Research main | READY |
+
+### F0 Runtime capability frozen to accepted baseline
+
+- PRE_BATTLE 全局按 **PASSIVE → FORMATION → TROOP → COMMAND** 调度（用户 V1 实现规则，非客户端全局日志实证）。
+- 所有队伍阵法预检在 PASSIVE 前执行。每队最多一个阵法，非法配置零效果与零 RNG；双军各一个阵法可并存。
+- 准备阶段即时速度降序，同速跨队按实际 attacker_team_id 优先；身份不明的跨队同速不可悄悄退化为队伍字典序。
+- 既有 Canonical SkillRuntimeRegistry 管来源；携带者阵亡后按 source + skill + slot 清理其持续效果，保留其他技能效果和 SkillRuntime 条目。
+- **Stage13 frozen `state_lifecycle_system.py` 保持原样**。所有数值与状态仍通过 Stage13 canonical owners。
+- 兵种战法 `15/16`，象兵 DEFERRED；F1 前没有任何正式阵法 Gameplay。
+
+### F1 交付入口
+
+Research [锋矢阵合同](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/01_Skills/FENG_SHI_ZHEN_RESEARCH_CONTRACT.md) + [F1 接入前 Adapter/测试清单](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/00_Governance/F1_FENG_SHI_ZHEN_PREINTEGRATION_READINESS.md)。
+
+**F1_IMPLEMENTATION = READY_TO_START / NOT_STARTED**。必须单独功能分支 + Battle PR，严格验证 Lv10 主将 `OUTGOING +30%`/`INCOMING +20%`、副将 `OUTGOING -15%`/`INCOMING -25%`、两种伤害类型、同侧加算池、跨侧乘算层和阵亡后来源失效。不得将 F0 基础设施完成误记为 F1 已完成。

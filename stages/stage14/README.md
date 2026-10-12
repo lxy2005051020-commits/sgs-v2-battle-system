@@ -1,16 +1,19 @@
 # Stage14 · Concrete Skill Integration
 
-## Formation transition (2026-10-12)
+## Current Formation F0/F1 status (2026-10-13)
 
-用户决定**象兵 DEFERRED**，兵种战法暂为 **15/16**（不把象兵算作完成）；下一研究和接入目标为 **阵法战法 FORMATION**。
+**Stage14 F0 research and formation foundation have merged to both main branches.**
 
-- [象兵暂缓清单](XIANG_BING_PREPARATION.md)
-- [阵法 F0 Runtime 基础审计与接入门禁](FORMATION_F0_RUNTIME_READINESS.md)
-- Research F0 目前是计划/证据核对阶段，非冻结合同。
-- 当前 FORMATION 只有 SkillType 枚举，没有同等 PRE_BATTLE 自动准入；具体阵法尚未进 main。
-- 宏观顺序目标：PASSIVE -> FORMATION -> TROOP -> COMMAND；同类微时序需进一步确认。
-- 第一只阵法 pilot 建议 **锋矢阵**，具体数值与规则仍待专项合同。
+- Research F0-R: [PR #18](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/pull/18) MERGED; main snapshot `abd654a907019a16a61adefee97663b25b073dd2`.
+- Battle F0-I-A: [PR #66](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/66) MERGED; main snapshot `2238186848fee6c89a9e688174f2fe64d382c1a0`.
+- Battle merged-main [CI #38278028436](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38278028436): SUCCESS, `2239 passed`, demo PASS, Stage13-D1 frozen audit PASS, Qingzhou audit PASS.
+- `SkillType.FORMATION` now has a real `PRE_BATTLE` scheduler, canonical admission and team exclusivity guard, speed/attacker order and provenance-based provider-death cleanup. Current actual **formation Gameplay = 0**; no Feng Shi Zhen effects are installed.
+- Next stage **Stage14 F1: Feng Shi Zhen (20066)**. [Research contract](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/01_Skills/FENG_SHI_ZHEN_RESEARCH_CONTRACT.md) and [F1 preintegration plan](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/00_Governance/F1_FENG_SHI_ZHEN_PREINTEGRATION_READINESS.md).
+- `PASSIVE -> FORMATION -> TROOP -> COMMAND` is USER_APPROVED simulator V1 scheduling; client prebattle logs contain counterexamples to universal four-stage order.
+- 阵法携带者阵亡后所属持续效果立即失效；每队最多一个阵法；同速双方进攻方优先。均为用户批准的实现规则，不能标注为实证游戏事实。
+- 兵种战法维持 `15/16`，象兵 `DEFERRED`。[象兵暂缓清单](XIANG_BING_PREPARATION.md)
 
+**Historical note:** 以下旧版 Stage14 批次测试计数、候选状态与原路线描述属于原批次审计快照，不代表当前 F0/F1 状态。最新 F0 状态以上文 merged-main CI 为准。参见 [F0 historical readiness and exit](FORMATION_F0_RUNTIME_READINESS.md)。
 
 丹阳兵接入见[丹阳兵接入说明](DAN_YANG_BING_INTEGRATION.md)：
 生成比例按用户确认的1.0倍实现；全体统率+36，谋略抵挡36%／陶谦40%，每回合衰减10%。
