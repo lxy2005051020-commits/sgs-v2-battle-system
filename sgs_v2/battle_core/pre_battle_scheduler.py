@@ -9,6 +9,7 @@ from .formation_admission import (
     FormationAdmissionStatus,
     admit_and_install_formation_skill,
     validate_team_formation_limits,
+    validate_formation_admissions,
 )
 from .pre_battle_order import PreBattleOrderSystem
 from .skill_definition import SkillType
@@ -57,7 +58,13 @@ def process_pre_battle_passive_skills(context: BattleContext, systems: object) -
     Executes enabled PASSIVE skills in deterministic pre-battle speed order.
     """
     order_system = PreBattleOrderSystem(systems.attribute_system)
-    ordered_units = order_system.determine_order(context)
+    passive_owner_ids = {
+        rt.owner_id for rt in context.skill_runtimes.values()
+        if rt.definition.skill_type == SkillType.PASSIVE and rt.enabled
+    }
+    ordered_units = order_system.determine_order(
+        context, units=[u for u in context.units.values() if u.unit_id in passive_owner_ids]
+    )
 
     # Process by unit in order
     for unit in ordered_units:
@@ -125,7 +132,13 @@ def process_pre_battle_command_skills(context: BattleContext, systems: object) -
     Executes enabled COMMAND skills in deterministic pre-battle speed order.
     """
     order_system = PreBattleOrderSystem(systems.attribute_system)
-    ordered_units = order_system.determine_order(context)
+    command_owner_ids = {
+        rt.owner_id for rt in context.skill_runtimes.values()
+        if rt.definition.skill_type == SkillType.COMMAND and rt.enabled
+    }
+    ordered_units = order_system.determine_order(
+        context, units=[u for u in context.units.values() if u.unit_id in command_owner_ids]
+    )
 
     for unit in ordered_units:
         unit_commands = [
@@ -148,6 +161,9 @@ def run_pre_battle_preparation_phases(context: BattleContext, systems: object) -
     """Orchestrate the 4-phase preparation sequence (RULE-01):
     PASSIVE -> FORMATION -> TROOP -> COMMAND
     """
+    # Fail closed for the *entire* battle before PASSIVE or any RNG-consuming
+    # setup can execute. Formation admission itself rechecks just-in-time.
+    validate_formation_admissions(context)
     process_pre_battle_passive_skills(context, systems)
     process_pre_battle_formation_skills(context, systems)
     process_pre_battle_troop_skills(context, systems)
