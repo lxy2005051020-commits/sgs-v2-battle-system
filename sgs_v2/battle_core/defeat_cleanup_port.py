@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 
 class DefeatRemovalReason(str, Enum):
     OWNER_DEFEATED = "OWNER_DEFEATED"
+    PROVIDER_DEFEATED = "PROVIDER_DEFEATED"
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,22 +89,46 @@ class DefeatCleanupPort:
                 tuple(StateNode(item.instance_id) for item in resident_before),
             )
 
-        removed = lifecycle.clear_owner_on_defeat(context, defeated_unit_id)
+        removed = list(lifecycle.clear_owner_on_defeat(context, defeated_unit_id))
+
+        # RULE-02: Formation provider death cleanup.
+        # When a formation provider is defeated, still-active formation effects provided
+        # by this unit to self, allies, or enemies must immediately be cleared.
+        provider_removed: list[StateInstance] = []
+        if hasattr(context, "skill_runtimes"):
+            from .skill_definition import SkillType
+
+            formation_runtimes = [
+                rt for rt in context.skill_runtimes.values()
+                if rt.owner_id == defeated_unit_id
+                and rt.definition.skill_type == SkillType.FORMATION
+            ]
+            for rt in formation_runtimes:
+                cleaned = lifecycle.clear_provider_effects(
+                    context,
+                    defeated_unit_id,
+                    skill_id=rt.definition.skill_id,
+                    skill_slot=rt.skill_slot,
+                    reason=DefeatRemovalReason.PROVIDER_DEFEATED.value,
+                )
+                provider_removed.extend(cleaned)
+
+        all_removed = [*removed, *provider_removed]
 
         if (
             self._transition_coordinator is not None
             and transition_snapshot is not None
-            and removed
+            and all_removed
         ):
             self._transition_coordinator.complete_removed_nodes(
                 context,
                 transition_snapshot,
-                tuple(StateNode(item.instance_id) for item in removed),
+                tuple(StateNode(item.instance_id) for item in all_removed),
             )
 
         return DefeatCleanupResult(
             defeated_unit_id=defeated_unit_id,
-            removed_states=tuple(removed),
+            removed_states=tuple(all_removed),
             defeat_source_ref=defeat_source_ref,
             round_no=context.current_round,
             phase=context.current_phase,
