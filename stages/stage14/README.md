@@ -1,5 +1,9 @@
 # Stage14 · Concrete Skill Integration
 
+丹阳兵本地分支接入见[丹阳兵接入说明](DAN_YANG_BING_INTEGRATION.md)：
+生成比例按用户确认的1.0倍实现；全体统率+36，谋略抵挡36%／陶谦40%，每回合衰减10%。
+此分支注册表15项，丹阳兵尚未合并main；共享兵池、实际扣兵口径及细时序仍待战报验证。
+
 飞熊军接入见 [飞熊军用户指定模型](FEI_XIONG_JUN_INTEGRATION.md)：
 满级受治疗提升16%／董卓主将20%，累计实际恢复H，两个目标各在最终伤害追加H/10，伤害期间恢复计入下一次。
 状态为 USER_SPECIFIED_FINAL_ADDITIVE_MODEL / NOT_GAMEPLAY_FROZEN；完整战斗可运行。合并审计见 [飞熊军合并审计](FEI_XIONG_JUN_MERGE_AUDIT.md)，发布入口为 [PR #62](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/62)。下方计数包含该PR合并后的飞熊军。

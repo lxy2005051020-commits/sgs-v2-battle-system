@@ -94,6 +94,7 @@ from .target_system import TargetSystem
 from .additive_damage import AdditiveDamageSystem
 from .trigger_system import TriggerSystem
 from .troop_system import TroopSystem
+from .temporary_damage_pool import PoolDamageResolutionSystem, PoolRuleHookSystem, TemporaryDamagePoolSupport
 from .treatment_formula import TreatmentFormulaSystem
 from .victory_system import VictorySystem
 from .pending_work import PendingWorkSystem
@@ -379,9 +380,10 @@ class BattleSystems:
             modifier_system=DamageModifierSystem(self.equipment_effectiveness_policy),
             stage11_state_runtime=self.stage11_state_runtime,
         )
-        self.damage_resolution_system = DamageResolutionSystem(
+        self.damage_resolution_system = PoolDamageResolutionSystem(
             self.damage_system,
             self.troop_system,
+            pool_support=TemporaryDamagePoolSupport(self.state_effectiveness_policy),
             defeat_cleanup_port=self.defeat_cleanup_port,
         )
         self.stage9_state_runtime = ProviderGatedCounterRuntime(
@@ -532,10 +534,11 @@ class BattleSystems:
             self.dependency_evaluation_support,
             lambda context, skill_id, owner_id: resolve_opening_troop_definition(context, self, skill_id, owner_id),
         )
-        self.rule_hook_system = AccumulatedRecoveryRuleHookSystem(
+        self.rule_hook_system = PoolRuleHookSystem(
             self.trigger_system,
             self.effect_executor,
             ActionStartRecoveryDamageSupport(self),
+            pool_support=TemporaryDamagePoolSupport(self.state_effectiveness_policy),
         )
         self.scheduled_team_recovery_support = ScheduledTeamRecoverySupport(
             self.pending_work_system,

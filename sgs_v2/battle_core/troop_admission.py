@@ -33,6 +33,7 @@ from .troop_skills.xie_fan_wei import CONFIG as XIE_FAN_WEI_CONFIG
 from .troop_skills.xian_deng_si_shi import CONFIG as XIAN_DENG_SI_SHI_CONFIG
 from .troop_skills.jin_fan_jun import CONFIG as JIN_FAN_JUN_CONFIG
 from .troop_skills.fei_xiong_jun import CONFIG as FEI_XIONG_JUN_CONFIG
+from .troop_skills.dan_yang_bing import CONFIG as DAN_YANG_BING_CONFIG
 from .selective_state_immunity import register_selective_immunity_definition
 from .damage_received_reaction import register_damage_received_reaction_definition
 from .pre_attack_reaction import register_pre_attack_reaction_definition
@@ -198,6 +199,7 @@ TROOP_SKILL_REGISTRY: dict[str, TroopSkillConfig] = {
     XIE_FAN_WEI_CONFIG.skill_id: XIE_FAN_WEI_CONFIG,
     JIN_FAN_JUN_CONFIG.skill_id: JIN_FAN_JUN_CONFIG,
     FEI_XIONG_JUN_CONFIG.skill_id: FEI_XIONG_JUN_CONFIG,
+    DAN_YANG_BING_CONFIG.skill_id: DAN_YANG_BING_CONFIG,
 }
 
 
