@@ -1,4 +1,4 @@
-"""State-backed team damage pool; adapters leave frozen settlement owners intact.
+"""State-backed individual damage pools with equal team generation allocation.
 
 Amounts live in a battle-scoped ledger keyed by state application generation.
 No event callbacks or troop mutation: the pool intercepts the existing troop
@@ -90,7 +90,12 @@ class TemporaryDamagePoolSupport:
                                 and event.payload["damage_type"] == params.generated_damage_type.value):
                             total += event.payload["damage"]
                             sequences.append(event.sequence)
-                generated = int(total * Fraction(str(params.generation_ratio)))
+                # Each living teammate receives its own ceil(total / alive_count).
+                # Round the final quotient once, not total before division.
+                living_count = sum(u.is_alive and u.team_id == owner.team_id
+                    for u in context.units.values())
+                share = total * Fraction(str(params.generation_ratio)) / living_count
+                generated = -(-share.numerator // share.denominator)
                 _save(context, state, TemporaryDamagePoolBalance(remaining + generated, hook.round_no))
                 context.event_bus.publish(event_type=EventType.TEMPORARY_POOL_UPDATED,
                     phase=context.current_phase, round_no=context.current_round,
@@ -98,14 +103,15 @@ class TemporaryDamagePoolSupport:
                     payload={"source_skill_id": state.source_skill_id, "state_instance_id": state.instance_id,
                         "operation": "ROUND_UPDATE", "pool_before": old.amount,
                         "decayed": old.amount - remaining, "generated": generated,
-                        "pool_after": remaining + generated, "damage_event_sequences": sequences})
+                        "pool_after": remaining + generated, "damage_event_sequences": sequences,
+                        "team_damage_total": total, "living_teammate_count": living_count,
+                        "generation_rounding": "CEIL_EQUAL_SHARE"})
 
     def absorb(self, context: BattleContext, damage: DamageResult, assigned: int) -> int:
         target = context.get_unit(damage.target_id)
         if not target.is_alive or assigned == 0:
             return 0
-        states = [state for owner in context.units.values() if owner.team_id == target.team_id
-            for state in self.policy.effective_instances(context, owner.unit_id, TEMPORARY_DAMAGE_POOL_STATE_ID)]
+        states = self.policy.effective_instances(context, target.unit_id, TEMPORARY_DAMAGE_POOL_STATE_ID)
         absorbed = 0
         for state in states:
             params = state.runtime_params

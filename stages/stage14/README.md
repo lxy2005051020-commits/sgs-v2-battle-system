@@ -2,7 +2,7 @@
 
 丹阳兵接入见[丹阳兵接入说明](DAN_YANG_BING_INTEGRATION.md)：
 生成比例按用户确认的1.0倍实现；全体统率+36，谋略抵挡36%／陶谦40%，每回合衰减10%。
-发布入口为[PR #63](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/63)，[合并前审计](DAN_YANG_BING_MERGE_AUDIT.md)通过；共享兵池、实际扣兵口径及细时序仍待战报验证。下方计数包含本PR合并后的丹阳兵。
+初次发布入口为[PR #63](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/63)。用户后续指定[在场武将平均分配、进一法](DAN_YANG_BING_ALLOCATION_CORRECTION.md)，现在每人独立持有兵池；实际扣兵口径及细时序仍待战报验证。下方计数包含已合并的丹阳兵。
 
 飞熊军接入见 [飞熊军用户指定模型](FEI_XIONG_JUN_INTEGRATION.md)：
 满级受治疗提升16%／董卓主将20%，累计实际恢复H，两个目标各在最终伤害追加H/10，伤害期间恢复计入下一次。
@@ -45,7 +45,7 @@ NEW BOUNDED ADDITIONS      = 20248 XIE_FAN_WEI / 20152 JIN_FAN_JUN
 | 20152 | 锦帆军 | BOUNDED_FROZEN / FORMULA_PLACEHOLDERS; [PR #60](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/60) |
 
 | 20247 (待客户端核对) | 飞熊军 | USER_SPECIFIED_FINAL_ADDITIVE_MODEL / NOT_GAMEPLAY_FROZEN; [PR #62](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/62) |
-| 20245 (待客户端核对) | 丹阳兵 | USER_CONFIRMED_GENERATION_RATIO / GAMEPLAY_DETAILS_OPEN; [PR #63](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/63) |
+| 20245 (待客户端核对) | 丹阳兵 | USER_CONFIRMED_EQUAL_SPLIT_CEIL / GAMEPLAY_DETAILS_OPEN; [PR #63](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/63) |
 
 最终批次审计见 [Batch01-04 Mainline Audit](BATCH01_04_MAINLINE_AUDIT.md)。
 
