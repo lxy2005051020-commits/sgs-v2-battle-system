@@ -356,3 +356,15 @@ def test_feng_shi_zhen_real_battle_engine_prebattle_applies_once():
     assert all(phase == BattlePhase.PRE_BATTLE.value for phase, _, _ in applied)
     assert {target for _, _, target in applied} == {"a0", "a1", "a2"}
     assert all(actor == runtime.owner_id for _, actor, _ in applied)
+
+
+def test_feng_shi_zhen_public_loader_round_trip():
+    from sgs_v2.battle_core import (
+        FENG_SHI_ZHEN_SKILL_ID as PUBLIC_ID,
+        create_feng_shi_zhen_runtime,
+    )
+    assert PUBLIC_ID == "20066"
+    runtime = create_feng_shi_zhen_runtime("a1", slot=SkillSlot.LEARNED_2)
+    assert runtime.owner_id == "a1"
+    assert runtime.skill_slot is SkillSlot.LEARNED_2
+    assert runtime.definition.skill_id == PUBLIC_ID
