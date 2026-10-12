@@ -1,5 +1,17 @@
 # Stage14 · Concrete Skill Integration
 
+## Formation transition (2026-10-12)
+
+用户决定**象兵 DEFERRED**，兵种战法暂为 **15/16**（不把象兵算作完成）；下一研究和接入目标为 **阵法战法 FORMATION**。
+
+- [象兵暂缓清单](XIANG_BING_PREPARATION.md)
+- [阵法 F0 Runtime 基础审计与接入门禁](FORMATION_F0_RUNTIME_READINESS.md)
+- Research F0 目前是计划/证据核对阶段，非冻结合同。
+- 当前 FORMATION 只有 SkillType 枚举，没有同等 PRE_BATTLE 自动准入；具体阵法尚未进 main。
+- 宏观顺序目标：PASSIVE -> FORMATION -> TROOP -> COMMAND；同类微时序需进一步确认。
+- 第一只阵法 pilot 建议 **锋矢阵**，具体数值与规则仍待专项合同。
+
+
 丹阳兵接入见[丹阳兵接入说明](DAN_YANG_BING_INTEGRATION.md)：
 生成比例按用户确认的1.0倍实现；全体统率+36，谋略抵挡36%／陶谦40%，每回合衰减10%。
 初次发布入口为[PR #63](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/63)。用户后续指定[在场武将平均分配、进一法](DAN_YANG_BING_ALLOCATION_CORRECTION.md)，现在每人独立持有兵池；实际扣兵口径及细时序仍待战报验证。下方计数包含已合并的丹阳兵。
