@@ -384,18 +384,23 @@ def test_pre_battle_speed_order_attacker_priority_on_tie():
     assert [u.unit_id for u in order2] == ["a1", "a2"]
 
 
-def test_pre_battle_speed_order_missing_attacker_fallback():
-    """RULE-04: If attacker_team_id is missing or invalid, stable deterministic order without crashing."""
+def test_pre_battle_speed_order_missing_attacker_rejects_cross_team_tie():
+    """RULE-04: Never silently invent attacker-first identity on an equal-speed tie."""
     order_sys = PreBattleOrderSystem(BattleSystems().attribute_system)
     u1 = _make_unit("a1", "team_A", speed=120.0)
     u2 = _make_unit("b1", "team_B", speed=120.0)
     ctx, _ = _make_context([u1, u2], attacker_team_id=None)
 
-    order = order_sys.determine_order(ctx)
-    assert len(order) == 2
-    # Deterministic sorting
-    order_again = order_sys.determine_order(ctx)
-    assert [u.unit_id for u in order] == [u.unit_id for u in order_again]
+    with pytest.raises(ValueError, match="valid attacker_team_id"):
+        order_sys.determine_order(ctx)
+    ctx.metadata["attacker_team_id"] = "not_a_team"
+    with pytest.raises(ValueError, match="valid attacker_team_id"):
+        order_sys.determine_order(ctx)
+    ctx.metadata["attacker_team_id"] = "team_B"
+    assert [u.unit_id for u in order_sys.determine_order(ctx)] == ["b1", "a1"]
+    del ctx.metadata["attacker_team_id"]
+    u1.speed = 130
+    assert [u.unit_id for u in order_sys.determine_order(ctx)] == ["a1", "b1"]
 
 
 # =========================================================================
@@ -526,3 +531,140 @@ def test_no_formation_battle_executes_identically():
     res = engine.run()
     assert res is not None
     assert ctx.ended
+
+
+# =========================================================================
+# F0-I-A independent repair regression: global preflight and provenance
+# =========================================================================
+
+def test_invalid_two_formations_rejected_before_passive_and_rng():
+    """An invalid formation on either side blocks all PASSIVE effects and RNG."""
+    u1 = _make_unit("a1", "team_A")
+    u2 = _make_unit("a2", "team_A", lineup_position=LineupPosition.DEPUTY_1)
+    defender = _make_unit("b1", "team_B")
+    ctx, systems = _make_context([u1, u2, defender], attacker_team_id="team_B")
+    ctx.skill_runtimes.register(
+        SkillRuntime(_create_synthetic_formation_def_1(), "a1", SkillSlot.LEARNED_1)
+    )
+    ctx.skill_runtimes.register(
+        SkillRuntime(_create_synthetic_formation_def_2(), "a2", SkillSlot.LEARNED_1)
+    )
+    observed = []
+
+    def passive_side_effect(c, sys):
+        observed.append("PASSIVE_EXECUTED")
+        c.random.random()
+
+    register_pre_battle_passive_processor(passive_side_effect)
+    try:
+        with pytest.raises(FormationAdmissionRejectedError, match="exceeds formation limit"):
+            BattleEngine(ctx, systems).run()
+    finally:
+        unregister_pre_battle_passive_processor(passive_side_effect)
+
+    assert observed == []
+    assert ctx.states.find() == []
+    assert ctx.random.random() == RandomSystem(42).random()
+
+
+def test_invalid_formation_troop_rejected_before_passive_hook():
+    u = _make_unit("a1", "team_A", troop_type=TroopType.BOW)
+    e = _make_unit("b1", "team_B")
+    ctx, systems = _make_context([u, e], attacker_team_id="team_A")
+    ctx.skill_runtimes.register(
+        SkillRuntime(_create_synthetic_formation_def_shield(), "a1", SkillSlot.LEARNED_1)
+    )
+    called = []
+
+    def passive_hook(c, sys):
+        called.append(True)
+
+    register_pre_battle_passive_processor(passive_hook)
+    try:
+        with pytest.raises(FormationAdmissionRejectedError, match="Team troop incompatibility"):
+            BattleEngine(ctx, systems).run()
+    finally:
+        unregister_pre_battle_passive_processor(passive_hook)
+    assert not called
+    assert ctx.states.find() == []
+
+
+def test_duplicate_formation_installation_rejected_without_new_effects():
+    u = _make_unit("a1", "team_A")
+    ctx, systems = _make_context([u], attacker_team_id="team_A")
+    rt = SkillRuntime(_create_synthetic_formation_def_1(), "a1", SkillSlot.LEARNED_1)
+    ctx.skill_runtimes.register(rt)
+    ctx.current_phase = BattlePhase.PRE_BATTLE.value
+    first = admit_and_install_formation_skill(ctx, systems, rt)
+    assert first.status == FormationAdmissionStatus.SUCCESS
+    after_first_states = [x.instance_id for x in ctx.states.find()]
+    after_first_events = len(ctx.event_bus.history)
+
+    second = admit_and_install_formation_skill(ctx, systems, rt)
+    assert second.status == FormationAdmissionStatus.REJECTED_ALREADY_INSTALLED
+    assert [x.instance_id for x in ctx.states.find()] == after_first_states
+    assert len(ctx.event_bus.history) == after_first_events
+
+
+def test_registry_rejects_duplicate_canonical_formation_id():
+    with pytest.raises(ValueError, match="already registered"):
+        register_formation_skill_config(
+            FormationSkillConfig(
+                skill_id=SYNTHETIC_FORMATION_1_ID,
+                name="测试阵法壹",
+                applicable_troops=(TroopType.CAVALRY,),
+                definition_factory=_create_synthetic_formation_def_1,
+            )
+        )
+
+
+def test_provider_death_removes_cross_target_graph_nodes_and_keeps_other_skill():
+    """Provider has no resident state; dependent formation state on ally is removed."""
+    from sgs_v2.battle_core.dependency_evaluation import ProviderNode, StateNode
+    from sgs_v2.battle_core.provider_identity import SkillProviderRef
+
+    source = _make_unit("a1", "team_A", troops=500)
+    ally = _make_unit("a2", "team_A", lineup_position=LineupPosition.DEPUTY_1)
+    enemy = _make_unit("b1", "team_B")
+    ctx, systems = _make_context([source, ally, enemy], attacker_team_id="team_A")
+    ctx.current_phase = BattlePhase.PRE_BATTLE.value
+    ctx.skill_runtimes.register(
+        SkillRuntime(_create_synthetic_formation_def_1(), "a1", SkillSlot.LEARNED_1)
+    )
+    formation_effect = systems.state_lifecycle_system.apply(
+        ctx,
+        state_id=ATTRIBUTE_BONUS_STATE_ID,
+        owner_id="a2", source_id="a1",
+        source_skill_id=SYNTHETIC_FORMATION_1_ID,
+        source_skill_slot=SkillSlot.LEARNED_1,
+        runtime_params=AttributeBonusParams("attack", 30.0),
+    )
+    unrelated = systems.state_lifecycle_system.apply(
+        ctx,
+        state_id=ATTRIBUTE_BONUS_STATE_ID,
+        owner_id="b1", source_id="a1",
+        source_skill_id="OTHER_SKILL", source_skill_slot=SkillSlot.LEARNED_2,
+        runtime_params=AttributeBonusParams("defense", 7.0),
+    )
+    dep = systems.dependency_evaluation_support
+    node = StateNode(formation_effect.instance_id)
+    provider = ProviderNode(
+        SkillProviderRef("a1", SkillSlot.LEARNED_1, SYNTHETIC_FORMATION_1_ID)
+    )
+    dep.add_dependency(node, provider)
+    assert provider in dep.prerequisites(node)
+    assert ctx.states.find(owner_id="a1") == []
+
+    ctx.current_phase = BattlePhase.UNIT_ACTION.value
+    source.troops = 0
+    first = systems.defeat_cleanup_port.commit_defeat(ctx, "a1")
+    assert any(x.instance_id == formation_effect.instance_id for x in first.removed_states)
+    assert not ctx.states.has_instance(formation_effect.instance_id)
+    assert ctx.states.has_instance(unrelated.instance_id)
+    assert not dep.prerequisites(node)
+    assert not dep.dependents(provider)
+
+    event_count = len(ctx.event_bus.history)
+    second = systems.defeat_cleanup_port.commit_defeat(ctx, "a1")
+    assert second.removed_states == ()
+    assert len(ctx.event_bus.history) == event_count
