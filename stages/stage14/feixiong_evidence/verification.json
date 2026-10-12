@@ -1,0 +1,1799 @@
+{
+  "status": "USER_SPECIFIED_FINAL_ADDITIVE_MODEL / FULL_ENGINE_RUNS",
+  "provenance": "USER_RULE_2026_10_12; ENGINEERING_VALIDATION_ONLY; NOT_GAMEPLAY_FROZEN",
+  "formula": "final_damage = floor(ordinary_final_damage_at_64_percent + actual_team_recovery_snapshot / 10)",
+  "known_effect_cases": [
+    {
+      "commander": "ordinary",
+      "base_recovery": 100,
+      "modified_recovery": 116,
+      "actual_recovery": 116,
+      "states": 4,
+      "mode": "REAL_PRE_BATTLE_ADMISSION"
+    },
+    {
+      "commander": "董卓",
+      "base_recovery": 100,
+      "modified_recovery": 120,
+      "actual_recovery": 120,
+      "states": 4,
+      "mode": "REAL_PRE_BATTLE_ADMISSION"
+    }
+  ],
+  "shared_snapshot_cases": [
+    {
+      "event_kind": "ACCUMULATED_RECOVERY_SNAPSHOT",
+      "source_skill_id": "20247",
+      "provider_id": "a2",
+      "basis_model_key": "FEIXIONG_USER_ACTUAL_RECOVERY_FINAL_ADDITION_V1",
+      "actual_recovery_snapshot": 1000,
+      "recovery_event_sequences": [
+        5
+      ],
+      "through_sequence": 5,
+      "target_ids": [
+        "b3",
+        "b1"
+      ],
+      "coefficient": 0.64,
+      "final_additive_damage_per_target": 100.0,
+      "reset_policy": "CONSUME_BEFORE_DAMAGE; DURING_DAMAGE_RECOVERY_NEXT_BATCH"
+    },
+    {
+      "event_kind": "ACCUMULATED_RECOVERY_SNAPSHOT",
+      "source_skill_id": "20247",
+      "provider_id": "a2",
+      "basis_model_key": "FEIXIONG_USER_ACTUAL_RECOVERY_FINAL_ADDITION_V1",
+      "actual_recovery_snapshot": 200,
+      "recovery_event_sequences": [
+        9
+      ],
+      "through_sequence": 9,
+      "target_ids": [
+        "b1",
+        "b3"
+      ],
+      "coefficient": 0.64,
+      "final_additive_damage_per_target": 20.0,
+      "reset_policy": "CONSUME_BEFORE_DAMAGE; DURING_DAMAGE_RECOVERY_NEXT_BATCH"
+    }
+  ],
+  "first_damage_results": [
+    {
+      "target": "b3",
+      "coefficient": 0.64,
+      "unaugmented_final_damage": 236,
+      "addition": 100.0,
+      "final_damage": 336
+    },
+    {
+      "target": "b1",
+      "coefficient": 0.64,
+      "unaugmented_final_damage": 244,
+      "addition": 100.0,
+      "final_damage": 344
+    }
+  ],
+  "full_engine": {
+    "winner": "a",
+    "rounds_completed": 2,
+    "final_troops": {
+      "a1": 4072,
+      "a2": 4197,
+      "a3": 4095,
+      "b1": 3408,
+      "b2": 3879,
+      "b3": 4506
+    },
+    "events": [
+      {
+        "sequence": 1,
+        "type": "PHASE_ENTERED",
+        "round": 0,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "PRE_BATTLE"
+        }
+      },
+      {
+        "sequence": 2,
+        "type": "STATE_APPLIED",
+        "round": 0,
+        "actor": "a2",
+        "target": "a1",
+        "payload": {
+          "instance_id": "state-000001",
+          "state_id": "runtime_received_recovery_bonus",
+          "owner_id": "a1",
+          "source_id": "a2",
+          "source_skill_id": "20247",
+          "applied_round": 0,
+          "applied_phase": "PRE_BATTLE",
+          "expires_round": null,
+          "expires_phase": null,
+          "runtime_params_type": "ReceivedRecoveryBonusParams",
+          "runtime_params": {
+            "rate": {
+              "numerator": 4,
+              "denominator": 25
+            }
+          },
+          "source_skill_slot": 1
+        }
+      },
+      {
+        "sequence": 3,
+        "type": "STATE_APPLIED",
+        "round": 0,
+        "actor": "a2",
+        "target": "a2",
+        "payload": {
+          "instance_id": "state-000002",
+          "state_id": "runtime_received_recovery_bonus",
+          "owner_id": "a2",
+          "source_id": "a2",
+          "source_skill_id": "20247",
+          "applied_round": 0,
+          "applied_phase": "PRE_BATTLE",
+          "expires_round": null,
+          "expires_phase": null,
+          "runtime_params_type": "ReceivedRecoveryBonusParams",
+          "runtime_params": {
+            "rate": {
+              "numerator": 4,
+              "denominator": 25
+            }
+          },
+          "source_skill_slot": 1
+        }
+      },
+      {
+        "sequence": 4,
+        "type": "STATE_APPLIED",
+        "round": 0,
+        "actor": "a2",
+        "target": "a3",
+        "payload": {
+          "instance_id": "state-000003",
+          "state_id": "runtime_received_recovery_bonus",
+          "owner_id": "a3",
+          "source_id": "a2",
+          "source_skill_id": "20247",
+          "applied_round": 0,
+          "applied_phase": "PRE_BATTLE",
+          "expires_round": null,
+          "expires_phase": null,
+          "runtime_params_type": "ReceivedRecoveryBonusParams",
+          "runtime_params": {
+            "rate": {
+              "numerator": 4,
+              "denominator": 25
+            }
+          },
+          "source_skill_slot": 1
+        }
+      },
+      {
+        "sequence": 5,
+        "type": "STATE_APPLIED",
+        "round": 0,
+        "actor": "a2",
+        "target": "a1",
+        "payload": {
+          "instance_id": "state-000004",
+          "state_id": "runtime_action_start_recovery_damage",
+          "owner_id": "a1",
+          "source_id": "a2",
+          "source_skill_id": "20247",
+          "applied_round": 0,
+          "applied_phase": "PRE_BATTLE",
+          "expires_round": null,
+          "expires_phase": null,
+          "runtime_params_type": "ActionStartRecoveryDamageParams",
+          "runtime_params": {
+            "probability": 0.6,
+            "damage_type": "STRATEGY",
+            "coefficient": 0.64,
+            "target_count": 2,
+            "recovery_damage_ratio": {
+              "numerator": 1,
+              "denominator": 10
+            },
+            "basis_model_key": "FEIXIONG_USER_ACTUAL_RECOVERY_FINAL_ADDITION_V1",
+            "after_sequence": 1
+          },
+          "source_skill_slot": 1
+        }
+      },
+      {
+        "sequence": 6,
+        "type": "BATTLE_STARTED",
+        "round": 0,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "battle_id": "feixiong-user-model",
+          "max_rounds": 2,
+          "units": [
+            {
+              "unit_id": "a1",
+              "name": "ordinary",
+              "team_id": "a",
+              "max_troops": 10000,
+              "troops": 5000,
+              "attack": 180,
+              "defense": 120,
+              "intelligence": 200,
+              "speed": 50,
+              "is_commander": true,
+              "lineup_position": "COMMANDER",
+              "level": 50,
+              "morale": 100,
+              "troop_type": "CAVALRY",
+              "special_troop_id": "FEI_XIONG_JUN",
+              "wounded_troops": 5000,
+              "advancement_stars": 0,
+              "military_books_active": false,
+              "is_alive": true
+            },
+            {
+              "unit_id": "a2",
+              "name": "a2",
+              "team_id": "a",
+              "max_troops": 10000,
+              "troops": 5000,
+              "attack": 180,
+              "defense": 120,
+              "intelligence": 200,
+              "speed": 50,
+              "is_commander": false,
+              "lineup_position": "DEPUTY_1",
+              "level": 50,
+              "morale": 100,
+              "troop_type": "CAVALRY",
+              "special_troop_id": "FEI_XIONG_JUN",
+              "wounded_troops": 5000,
+              "advancement_stars": 0,
+              "military_books_active": false,
+              "is_alive": true
+            },
+            {
+              "unit_id": "a3",
+              "name": "a3",
+              "team_id": "a",
+              "max_troops": 10000,
+              "troops": 5000,
+              "attack": 180,
+              "defense": 120,
+              "intelligence": 200,
+              "speed": 50,
+              "is_commander": false,
+              "lineup_position": "DEPUTY_2",
+              "level": 50,
+              "morale": 100,
+              "troop_type": "CAVALRY",
+              "special_troop_id": "FEI_XIONG_JUN",
+              "wounded_troops": 5000,
+              "advancement_stars": 0,
+              "military_books_active": false,
+              "is_alive": true
+            },
+            {
+              "unit_id": "b1",
+              "name": "b1",
+              "team_id": "b",
+              "max_troops": 10000,
+              "troops": 5000,
+              "attack": 180,
+              "defense": 120,
+              "intelligence": 200,
+              "speed": 50,
+              "is_commander": true,
+              "lineup_position": "COMMANDER",
+              "level": 50,
+              "morale": 100,
+              "troop_type": "CAVALRY",
+              "special_troop_id": null,
+              "wounded_troops": 5000,
+              "advancement_stars": 0,
+              "military_books_active": false,
+              "is_alive": true
+            },
+            {
+              "unit_id": "b2",
+              "name": "b2",
+              "team_id": "b",
+              "max_troops": 10000,
+              "troops": 5000,
+              "attack": 180,
+              "defense": 120,
+              "intelligence": 200,
+              "speed": 50,
+              "is_commander": false,
+              "lineup_position": "DEPUTY_1",
+              "level": 50,
+              "morale": 100,
+              "troop_type": "CAVALRY",
+              "special_troop_id": null,
+              "wounded_troops": 5000,
+              "advancement_stars": 0,
+              "military_books_active": false,
+              "is_alive": true
+            },
+            {
+              "unit_id": "b3",
+              "name": "b3",
+              "team_id": "b",
+              "max_troops": 10000,
+              "troops": 5000,
+              "attack": 180,
+              "defense": 120,
+              "intelligence": 200,
+              "speed": 50,
+              "is_commander": false,
+              "lineup_position": "DEPUTY_2",
+              "level": 50,
+              "morale": 100,
+              "troop_type": "CAVALRY",
+              "special_troop_id": null,
+              "wounded_troops": 5000,
+              "advancement_stars": 0,
+              "military_books_active": false,
+              "is_alive": true
+            }
+          ]
+        }
+      },
+      {
+        "sequence": 7,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "ROUND_START"
+        }
+      },
+      {
+        "sequence": 8,
+        "type": "ROUND_STARTED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 9,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "ACTION_ORDER"
+        }
+      },
+      {
+        "sequence": 10,
+        "type": "ACTION_ORDER_DECIDED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "order": [
+            "a1",
+            "a2",
+            "a3",
+            "b1",
+            "b2",
+            "b3"
+          ]
+        }
+      },
+      {
+        "sequence": 11,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 12,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 1,
+        "actor": "a1",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 13,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 14,
+        "type": "NORMAL_ATTACK",
+        "round": 1,
+        "actor": "a1",
+        "target": "b1",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 473,
+          "scaled_damage": 473.0,
+          "requested_damage": 473,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_1",
+          "normal_attack_id": "na_1",
+          "target_resolution_id": "tr_1",
+          "intended_target": "b1",
+          "actual_target": "b1"
+        }
+      },
+      {
+        "sequence": 15,
+        "type": "DAMAGE_DEALT",
+        "round": 1,
+        "actor": "a1",
+        "target": "b1",
+        "payload": {
+          "damage": 473,
+          "requested_damage": 473,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 473,
+          "scaled_damage": 473.0,
+          "target_remaining_troops": 4527,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 16,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 17,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 1,
+        "actor": "a1",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 18,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 19,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 1,
+        "actor": "a2",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 20,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 21,
+        "type": "NORMAL_ATTACK",
+        "round": 1,
+        "actor": "a2",
+        "target": "b1",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 462,
+          "scaled_damage": 462.0,
+          "requested_damage": 462,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_2",
+          "normal_attack_id": "na_2",
+          "target_resolution_id": "tr_2",
+          "intended_target": "b1",
+          "actual_target": "b1"
+        }
+      },
+      {
+        "sequence": 22,
+        "type": "DAMAGE_DEALT",
+        "round": 1,
+        "actor": "a2",
+        "target": "b1",
+        "payload": {
+          "damage": 462,
+          "requested_damage": 462,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 462,
+          "scaled_damage": 462.0,
+          "target_remaining_troops": 4065,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 23,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 24,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 1,
+        "actor": "a2",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 25,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 26,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 1,
+        "actor": "a3",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 27,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 28,
+        "type": "NORMAL_ATTACK",
+        "round": 1,
+        "actor": "a3",
+        "target": "b3",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 494,
+          "scaled_damage": 494.0,
+          "requested_damage": 494,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_3",
+          "normal_attack_id": "na_3",
+          "target_resolution_id": "tr_3",
+          "intended_target": "b3",
+          "actual_target": "b3"
+        }
+      },
+      {
+        "sequence": 29,
+        "type": "DAMAGE_DEALT",
+        "round": 1,
+        "actor": "a3",
+        "target": "b3",
+        "payload": {
+          "damage": 494,
+          "requested_damage": 494,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 494,
+          "scaled_damage": 494.0,
+          "target_remaining_troops": 4506,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 30,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 31,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 1,
+        "actor": "a3",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 32,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 33,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 1,
+        "actor": "b1",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 34,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 35,
+        "type": "NORMAL_ATTACK",
+        "round": 1,
+        "actor": "b1",
+        "target": "a3",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 439,
+          "scaled_damage": 439.0,
+          "requested_damage": 439,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_4",
+          "normal_attack_id": "na_4",
+          "target_resolution_id": "tr_4",
+          "intended_target": "a3",
+          "actual_target": "a3"
+        }
+      },
+      {
+        "sequence": 36,
+        "type": "DAMAGE_DEALT",
+        "round": 1,
+        "actor": "b1",
+        "target": "a3",
+        "payload": {
+          "damage": 439,
+          "requested_damage": 439,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 439,
+          "scaled_damage": 439.0,
+          "target_remaining_troops": 4561,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 37,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 38,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 1,
+        "actor": "b1",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 39,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 40,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 1,
+        "actor": "b2",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 41,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 42,
+        "type": "NORMAL_ATTACK",
+        "round": 1,
+        "actor": "b2",
+        "target": "a1",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 457,
+          "scaled_damage": 457.0,
+          "requested_damage": 457,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_5",
+          "normal_attack_id": "na_5",
+          "target_resolution_id": "tr_5",
+          "intended_target": "a1",
+          "actual_target": "a1"
+        }
+      },
+      {
+        "sequence": 43,
+        "type": "DAMAGE_DEALT",
+        "round": 1,
+        "actor": "b2",
+        "target": "a1",
+        "payload": {
+          "damage": 457,
+          "requested_damage": 457,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 457,
+          "scaled_damage": 457.0,
+          "target_remaining_troops": 4543,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 44,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 45,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 1,
+        "actor": "b2",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 46,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 47,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 1,
+        "actor": "b3",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 48,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 49,
+        "type": "NORMAL_ATTACK",
+        "round": 1,
+        "actor": "b3",
+        "target": "a1",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 471,
+          "scaled_damage": 471.0,
+          "requested_damage": 471,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_6",
+          "normal_attack_id": "na_6",
+          "target_resolution_id": "tr_6",
+          "intended_target": "a1",
+          "actual_target": "a1"
+        }
+      },
+      {
+        "sequence": 50,
+        "type": "DAMAGE_DEALT",
+        "round": 1,
+        "actor": "b3",
+        "target": "a1",
+        "payload": {
+          "damage": 471,
+          "requested_damage": 471,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 471,
+          "scaled_damage": 471.0,
+          "target_remaining_troops": 4072,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 51,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 52,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 1,
+        "actor": "b3",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 53,
+        "type": "PHASE_ENTERED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "ROUND_END"
+        }
+      },
+      {
+        "sequence": 54,
+        "type": "ROUND_ENDED",
+        "round": 1,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "team_troops": {
+            "a": 13633,
+            "b": 13571
+          }
+        }
+      },
+      {
+        "sequence": 55,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "ROUND_START"
+        }
+      },
+      {
+        "sequence": 56,
+        "type": "ROUND_STARTED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 57,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "ACTION_ORDER"
+        }
+      },
+      {
+        "sequence": 58,
+        "type": "ACTION_ORDER_DECIDED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "order": [
+            "a1",
+            "a2",
+            "a3",
+            "b1",
+            "b2",
+            "b3"
+          ]
+        }
+      },
+      {
+        "sequence": 59,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 60,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 2,
+        "actor": "a1",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 61,
+        "type": "DAMAGE_RESOLVED",
+        "round": 2,
+        "actor": "a1",
+        "target": null,
+        "payload": {
+          "event_kind": "ACCUMULATED_RECOVERY_SNAPSHOT",
+          "source_skill_id": "20247",
+          "provider_id": "a2",
+          "basis_model_key": "FEIXIONG_USER_ACTUAL_RECOVERY_FINAL_ADDITION_V1",
+          "actual_recovery_snapshot": 0,
+          "recovery_event_sequences": [],
+          "through_sequence": 60,
+          "target_ids": [
+            "b1",
+            "b2"
+          ],
+          "coefficient": 0.64,
+          "final_additive_damage_per_target": 0.0,
+          "reset_policy": "CONSUME_BEFORE_DAMAGE; DURING_DAMAGE_RECOVERY_NEXT_BATCH"
+        }
+      },
+      {
+        "sequence": 62,
+        "type": "DAMAGE_DEALT",
+        "round": 2,
+        "actor": "a1",
+        "target": "b1",
+        "payload": {
+          "damage": 217,
+          "requested_damage": 217,
+          "damage_type": "STRATEGY",
+          "source_type": "SKILL",
+          "coefficient": 0.64,
+          "base_damage": 340,
+          "scaled_damage": 217.6,
+          "target_remaining_troops": 3848,
+          "source_skill_id": "20247",
+          "source_state_id": "runtime_action_start_recovery_damage",
+          "source_state_instance_id": "state-000004",
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 63,
+        "type": "DAMAGE_DEALT",
+        "round": 2,
+        "actor": "a1",
+        "target": "b2",
+        "payload": {
+          "damage": 220,
+          "requested_damage": 220,
+          "damage_type": "STRATEGY",
+          "source_type": "SKILL",
+          "coefficient": 0.64,
+          "base_damage": 344,
+          "scaled_damage": 220.16,
+          "target_remaining_troops": 4780,
+          "source_skill_id": "20247",
+          "source_state_id": "runtime_action_start_recovery_damage",
+          "source_state_instance_id": "state-000004",
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 64,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 65,
+        "type": "NORMAL_ATTACK",
+        "round": 2,
+        "actor": "a1",
+        "target": "b1",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 440,
+          "scaled_damage": 440.0,
+          "requested_damage": 440,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_7",
+          "normal_attack_id": "na_7",
+          "target_resolution_id": "tr_7",
+          "intended_target": "b1",
+          "actual_target": "b1"
+        }
+      },
+      {
+        "sequence": 66,
+        "type": "DAMAGE_DEALT",
+        "round": 2,
+        "actor": "a1",
+        "target": "b1",
+        "payload": {
+          "damage": 440,
+          "requested_damage": 440,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 440,
+          "scaled_damage": 440.0,
+          "target_remaining_troops": 3408,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 67,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 68,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 2,
+        "actor": "a1",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 69,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 70,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 2,
+        "actor": "a2",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 71,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 72,
+        "type": "NORMAL_ATTACK",
+        "round": 2,
+        "actor": "a2",
+        "target": "b2",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 462,
+          "scaled_damage": 462.0,
+          "requested_damage": 462,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_8",
+          "normal_attack_id": "na_8",
+          "target_resolution_id": "tr_8",
+          "intended_target": "b2",
+          "actual_target": "b2"
+        }
+      },
+      {
+        "sequence": 73,
+        "type": "DAMAGE_DEALT",
+        "round": 2,
+        "actor": "a2",
+        "target": "b2",
+        "payload": {
+          "damage": 462,
+          "requested_damage": 462,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 462,
+          "scaled_damage": 462.0,
+          "target_remaining_troops": 4318,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 74,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 75,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 2,
+        "actor": "a2",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 76,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 77,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 2,
+        "actor": "a3",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 78,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 79,
+        "type": "NORMAL_ATTACK",
+        "round": 2,
+        "actor": "a3",
+        "target": "b2",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 439,
+          "scaled_damage": 439.0,
+          "requested_damage": 439,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_9",
+          "normal_attack_id": "na_9",
+          "target_resolution_id": "tr_9",
+          "intended_target": "b2",
+          "actual_target": "b2"
+        }
+      },
+      {
+        "sequence": 80,
+        "type": "DAMAGE_DEALT",
+        "round": 2,
+        "actor": "a3",
+        "target": "b2",
+        "payload": {
+          "damage": 439,
+          "requested_damage": 439,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 439,
+          "scaled_damage": 439.0,
+          "target_remaining_troops": 3879,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 81,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 82,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 2,
+        "actor": "a3",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 83,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 84,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 2,
+        "actor": "b1",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 85,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 86,
+        "type": "NORMAL_ATTACK",
+        "round": 2,
+        "actor": "b1",
+        "target": "a2",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 382,
+          "scaled_damage": 382.0,
+          "requested_damage": 382,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_10",
+          "normal_attack_id": "na_10",
+          "target_resolution_id": "tr_10",
+          "intended_target": "a2",
+          "actual_target": "a2"
+        }
+      },
+      {
+        "sequence": 87,
+        "type": "DAMAGE_DEALT",
+        "round": 2,
+        "actor": "b1",
+        "target": "a2",
+        "payload": {
+          "damage": 382,
+          "requested_damage": 382,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 382,
+          "scaled_damage": 382.0,
+          "target_remaining_troops": 4618,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 88,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 89,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 2,
+        "actor": "b1",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 90,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 91,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 2,
+        "actor": "b2",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 92,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 93,
+        "type": "NORMAL_ATTACK",
+        "round": 2,
+        "actor": "b2",
+        "target": "a2",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 421,
+          "scaled_damage": 421.0,
+          "requested_damage": 421,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_11",
+          "normal_attack_id": "na_11",
+          "target_resolution_id": "tr_11",
+          "intended_target": "a2",
+          "actual_target": "a2"
+        }
+      },
+      {
+        "sequence": 94,
+        "type": "DAMAGE_DEALT",
+        "round": 2,
+        "actor": "b2",
+        "target": "a2",
+        "payload": {
+          "damage": 421,
+          "requested_damage": 421,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 421,
+          "scaled_damage": 421.0,
+          "target_remaining_troops": 4197,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 95,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 96,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 2,
+        "actor": "b2",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 97,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_START"
+        }
+      },
+      {
+        "sequence": 98,
+        "type": "UNIT_ACTION_STARTED",
+        "round": 2,
+        "actor": "b3",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 99,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION"
+        }
+      },
+      {
+        "sequence": 100,
+        "type": "NORMAL_ATTACK",
+        "round": 2,
+        "actor": "b3",
+        "target": "a3",
+        "payload": {
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 466,
+          "scaled_damage": 466.0,
+          "requested_damage": 466,
+          "prevented": false,
+          "prevented_by_state_id": null,
+          "action_id": "act_12",
+          "normal_attack_id": "na_12",
+          "target_resolution_id": "tr_12",
+          "intended_target": "a3",
+          "actual_target": "a3"
+        }
+      },
+      {
+        "sequence": 101,
+        "type": "DAMAGE_DEALT",
+        "round": 2,
+        "actor": "b3",
+        "target": "a3",
+        "payload": {
+          "damage": 466,
+          "requested_damage": 466,
+          "damage_type": "WEAPON",
+          "source_type": "NORMAL_ATTACK",
+          "coefficient": 1.0,
+          "base_damage": 466,
+          "scaled_damage": 466.0,
+          "target_remaining_troops": 4095,
+          "source_skill_id": null,
+          "source_state_id": null,
+          "source_state_instance_id": null,
+          "source_generation_id": null
+        }
+      },
+      {
+        "sequence": 102,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "UNIT_ACTION_END"
+        }
+      },
+      {
+        "sequence": 103,
+        "type": "UNIT_ACTION_ENDED",
+        "round": 2,
+        "actor": "b3",
+        "target": null,
+        "payload": {}
+      },
+      {
+        "sequence": 104,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "ROUND_END"
+        }
+      },
+      {
+        "sequence": 105,
+        "type": "ROUND_ENDED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "team_troops": {
+            "a": 12364,
+            "b": 11793
+          }
+        }
+      },
+      {
+        "sequence": 106,
+        "type": "STATE_CLEARED_ON_BATTLE_END",
+        "round": 2,
+        "actor": "a2",
+        "target": "a1",
+        "payload": {
+          "instance_id": "state-000001",
+          "state_id": "runtime_received_recovery_bonus",
+          "owner_id": "a1",
+          "source_id": "a2",
+          "source_skill_id": "20247",
+          "applied_round": 0,
+          "applied_phase": "PRE_BATTLE",
+          "expires_round": null,
+          "expires_phase": null,
+          "runtime_params_type": "ReceivedRecoveryBonusParams",
+          "runtime_params": {
+            "rate": {
+              "numerator": 4,
+              "denominator": 25
+            }
+          },
+          "source_skill_slot": 1,
+          "current_generation_id": "gen_1",
+          "application_generation_id": "gen_1",
+          "source_generation_id": "gen_1",
+          "state_instance_id": "state-000001",
+          "state_owner_id": "a1",
+          "round": 2,
+          "phase": "ROUND_END",
+          "clear_reason": "BATTLE_END",
+          "reason": "BATTLE_END",
+          "removal_reason": "BATTLE_END"
+        }
+      },
+      {
+        "sequence": 107,
+        "type": "STATE_CLEARED_ON_BATTLE_END",
+        "round": 2,
+        "actor": "a2",
+        "target": "a2",
+        "payload": {
+          "instance_id": "state-000002",
+          "state_id": "runtime_received_recovery_bonus",
+          "owner_id": "a2",
+          "source_id": "a2",
+          "source_skill_id": "20247",
+          "applied_round": 0,
+          "applied_phase": "PRE_BATTLE",
+          "expires_round": null,
+          "expires_phase": null,
+          "runtime_params_type": "ReceivedRecoveryBonusParams",
+          "runtime_params": {
+            "rate": {
+              "numerator": 4,
+              "denominator": 25
+            }
+          },
+          "source_skill_slot": 1,
+          "current_generation_id": "gen_2",
+          "application_generation_id": "gen_2",
+          "source_generation_id": "gen_2",
+          "state_instance_id": "state-000002",
+          "state_owner_id": "a2",
+          "round": 2,
+          "phase": "ROUND_END",
+          "clear_reason": "BATTLE_END",
+          "reason": "BATTLE_END",
+          "removal_reason": "BATTLE_END"
+        }
+      },
+      {
+        "sequence": 108,
+        "type": "STATE_CLEARED_ON_BATTLE_END",
+        "round": 2,
+        "actor": "a2",
+        "target": "a3",
+        "payload": {
+          "instance_id": "state-000003",
+          "state_id": "runtime_received_recovery_bonus",
+          "owner_id": "a3",
+          "source_id": "a2",
+          "source_skill_id": "20247",
+          "applied_round": 0,
+          "applied_phase": "PRE_BATTLE",
+          "expires_round": null,
+          "expires_phase": null,
+          "runtime_params_type": "ReceivedRecoveryBonusParams",
+          "runtime_params": {
+            "rate": {
+              "numerator": 4,
+              "denominator": 25
+            }
+          },
+          "source_skill_slot": 1,
+          "current_generation_id": "gen_3",
+          "application_generation_id": "gen_3",
+          "source_generation_id": "gen_3",
+          "state_instance_id": "state-000003",
+          "state_owner_id": "a3",
+          "round": 2,
+          "phase": "ROUND_END",
+          "clear_reason": "BATTLE_END",
+          "reason": "BATTLE_END",
+          "removal_reason": "BATTLE_END"
+        }
+      },
+      {
+        "sequence": 109,
+        "type": "STATE_CLEARED_ON_BATTLE_END",
+        "round": 2,
+        "actor": "a2",
+        "target": "a1",
+        "payload": {
+          "instance_id": "state-000004",
+          "state_id": "runtime_action_start_recovery_damage",
+          "owner_id": "a1",
+          "source_id": "a2",
+          "source_skill_id": "20247",
+          "applied_round": 0,
+          "applied_phase": "PRE_BATTLE",
+          "expires_round": null,
+          "expires_phase": null,
+          "runtime_params_type": "ActionStartRecoveryDamageParams",
+          "runtime_params": {
+            "probability": 0.6,
+            "damage_type": "STRATEGY",
+            "coefficient": 0.64,
+            "target_count": 2,
+            "recovery_damage_ratio": {
+              "numerator": 1,
+              "denominator": 10
+            },
+            "basis_model_key": "FEIXIONG_USER_ACTUAL_RECOVERY_FINAL_ADDITION_V1",
+            "after_sequence": 1
+          },
+          "source_skill_slot": 1,
+          "current_generation_id": "gen_4",
+          "application_generation_id": "gen_4",
+          "source_generation_id": "gen_4",
+          "state_instance_id": "state-000004",
+          "state_owner_id": "a1",
+          "round": 2,
+          "phase": "ROUND_END",
+          "clear_reason": "BATTLE_END",
+          "reason": "BATTLE_END",
+          "removal_reason": "BATTLE_END"
+        }
+      },
+      {
+        "sequence": 110,
+        "type": "PHASE_ENTERED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "phase": "BATTLE_END"
+        }
+      },
+      {
+        "sequence": 111,
+        "type": "BATTLE_ENDED",
+        "round": 2,
+        "actor": null,
+        "target": null,
+        "payload": {
+          "winner_team_id": "a",
+          "reason": "MAX_ROUNDS",
+          "rounds_completed": 2,
+          "final_troops": {
+            "a1": 4072,
+            "a2": 4197,
+            "a3": 4095,
+            "b1": 3408,
+            "b2": 3879,
+            "b3": 4506
+          }
+        }
+      }
+    ]
+  }
+}

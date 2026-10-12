@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from .damage_system import DamageRequest
-from .additive_damage import AdditiveDamageRequest
+from .additive_damage import AdditiveDamageRequest, FinalAdditiveDamageRequest
 from .enums import DamageCalculationBasis, DamageSourceType, DamageType
 from .numeric_validation import validate_nonnegative_finite
 from .operation_identity import SourceType
@@ -93,6 +93,7 @@ class DamageEffect:
     source_generation_id: StateApplicationGenerationId | None = None
     stage11_family: Stage11DamageFamily | None = None
     additive_damage: float = 0.0
+    final_additive_damage: float = 0.0
 
     def __post_init__(self) -> None:
         if not self.source_id:
@@ -107,6 +108,8 @@ class DamageEffect:
         object.__setattr__(self, "coefficient", coefficient)
         object.__setattr__(self, "additive_damage", validate_nonnegative_finite(
             self.additive_damage, "additive_damage"))
+        object.__setattr__(self, "final_additive_damage", validate_nonnegative_finite(
+            self.final_additive_damage, "final_additive_damage"))
         _validate_optional_id(self.source_state_id, "source_state_id")
         _validate_optional_id(
             self.source_state_instance_id,
@@ -147,7 +150,7 @@ class DamageEffect:
         _validate_execution_descriptor(self.execution_descriptor)
 
     def to_request(self) -> DamageRequest:
-        return AdditiveDamageRequest(
+        request = AdditiveDamageRequest(
             source_id=self.source_id,
             target_id=self.target_id,
             damage_type=self.damage_type,
@@ -162,6 +165,12 @@ class DamageEffect:
             source_generation_id=self.source_generation_id,
             stage11_family=self.stage11_family,
         )
+        if self.final_additive_damage:
+            from dataclasses import fields
+            return FinalAdditiveDamageRequest(
+                **{field.name: getattr(request, field.name) for field in fields(AdditiveDamageRequest)},
+                final_additive_damage=self.final_additive_damage)
+        return request
 
 
 @dataclass(frozen=True, slots=True)

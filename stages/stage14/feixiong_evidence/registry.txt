@@ -1,0 +1,1 @@
+PASS: clean-process canonical registry 20247; total= 14

@@ -23,6 +23,8 @@ from .enums import DamageType
 from .damage_rule_provider import DamageRuleCollection, DamageRuleProvider, StateDamageRuleProvider
 from .damage_rule_models import RuleContributionSource
 from .damage_modifiers import DamageModifierContribution, DamageModifierKind, DamageModifierOperation, DamageModifierPhase
+from .received_recovery_modifier import RECEIVED_RECOVERY_BONUS_STATE_ID, ReceivedRecoveryBonusParams
+from .action_start_recovery_damage import ACTION_START_RECOVERY_DAMAGE_STATE_ID, ActionStartRecoveryDamageParams
 
 if TYPE_CHECKING:
     from .damage_system import DamageRequest
@@ -95,6 +97,8 @@ class BoundedActivationRateBonusParams(ActivationRateBonusParams):
 
 
 MODIFIER_STATE_DEFINITIONS = (
+    StateDefinition(ACTION_START_RECOVERY_DAMAGE_STATE_ID, "行动开始恢复衍生伤害", runtime_params_type=ActionStartRecoveryDamageParams),
+    StateDefinition(RECEIVED_RECOVERY_BONUS_STATE_ID, "受到治疗提升", runtime_params_type=ReceivedRecoveryBonusParams),
     StateDefinition(INCOMING_DAMAGE_REDUCTION_STATE_ID, "受到伤害降低", runtime_params_type=IncomingDamageReductionParams),
     StateDefinition(ATTRIBUTE_BONUS_STATE_ID, "属性修饰", runtime_params_type=AttributeBonusParams),
     StateDefinition(ACTIVATION_RATE_BONUS_STATE_ID, "发动率修饰", runtime_params_type=ActivationRateBonusParams),
@@ -108,7 +112,7 @@ def modifier_conflict_rule(context: BattleContext, candidate: StateCandidate,
     This is an internal additive-contribution policy, not a general rule for
     stacking arbitrary official game states.
     """
-    if candidate.state_id not in (ATTRIBUTE_BONUS_STATE_ID, ACTIVATION_RATE_BONUS_STATE_ID, INCOMING_DAMAGE_REDUCTION_STATE_ID):
+    if candidate.state_id not in (ATTRIBUTE_BONUS_STATE_ID, ACTIVATION_RATE_BONUS_STATE_ID, INCOMING_DAMAGE_REDUCTION_STATE_ID, RECEIVED_RECOVERY_BONUS_STATE_ID, ACTION_START_RECOVERY_DAMAGE_STATE_ID):
         return None
     params = candidate.runtime_params_candidate
     dimension = getattr(params, "attribute", getattr(params, "skill_type", getattr(params, "damage_type", None)))

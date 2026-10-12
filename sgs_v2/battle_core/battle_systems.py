@@ -7,6 +7,8 @@ from .action_order_system import ActionOrderSystem
 from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
 from .state_modifiers import StateModifierSupport, modifier_conflict_rule, IncomingDamageReductionProvider
+from .received_recovery_modifier import ReceivedRecoveryModifierProvider
+from .action_start_recovery_damage import AccumulatedRecoveryRuleHookSystem, ActionStartRecoveryDamageSupport
 from .state_application_reaction import ReactingStateApplicationCoordinator, ReactingStateLifecycleSystem
 from .scheduled_skill import ScheduledSkillSupport
 from .scheduled_team_recovery import ScheduledTeamRecoverySupport
@@ -338,7 +340,9 @@ class BattleSystems:
         self.recovery_system = RecoverySystem(
             self.troop_system,
             self.stage11_state_runtime,
-            recovery_modifier_provider=self.recovery_modifier_provider,
+            recovery_modifier_provider=ReceivedRecoveryModifierProvider(
+                self.state_effectiveness_policy, self.recovery_modifier_provider,
+                self.equipment_effectiveness_policy),
             equipment_effectiveness_policy=self.equipment_effectiveness_policy,
             execution_prevention_policy=self.recovery_execution_prevention_policy,
         )
@@ -528,9 +532,10 @@ class BattleSystems:
             self.dependency_evaluation_support,
             lambda context, skill_id, owner_id: resolve_opening_troop_definition(context, self, skill_id, owner_id),
         )
-        self.rule_hook_system = RuleHookSystem(
+        self.rule_hook_system = AccumulatedRecoveryRuleHookSystem(
             self.trigger_system,
             self.effect_executor,
+            ActionStartRecoveryDamageSupport(self),
         )
         self.scheduled_team_recovery_support = ScheduledTeamRecoverySupport(
             self.pending_work_system,

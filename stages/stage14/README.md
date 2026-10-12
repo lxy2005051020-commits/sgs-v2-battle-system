@@ -1,5 +1,9 @@
 # Stage14 · Concrete Skill Integration
 
+飞熊军新增候选接入见 [飞熊军用户指定模型](FEI_XIONG_JUN_INTEGRATION.md)：
+满级受治疗提升16%／董卓主将20%，累计实际恢复H，两个目标各在最终伤害追加H/10，伤害期间恢复计入下一次。
+状态为 USER_SPECIFIED_FINAL_ADDITIVE_MODEL / LOCAL_RUNTIME_INTEGRATED，完整战斗可运行；未合入main，不增加下方已完成主线兵种计数。
+
 > Status: **ACTIVE / MAINLINE GATE OPEN / 10 BOUNDED-FROZEN + 2 USER-PROVISIONAL + 1 USER-FIT INTEGRATION**
 
 Stage14 在 Stage13 冻结的 Core Gameplay Engine 上进行具体战法接入。

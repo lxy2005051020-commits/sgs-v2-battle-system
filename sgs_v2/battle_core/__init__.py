@@ -896,6 +896,23 @@ __all__ += ["create_bai_er_bing_definition", "create_bai_er_bing_runtime",
             "create_da_ji_shi_definition", "create_da_ji_shi_runtime"]
 
 from .troop_skills.xie_fan_wei import create_xie_fan_wei_definition, create_xie_fan_wei_runtime
+from .troop_skills.fei_xiong_jun import (
+    create_fei_xiong_jun_definition, create_fei_xiong_jun_runtime,
+)
+from .received_recovery_modifier import (
+    ReceivedRecoveryBonusParams, ReceivedRecoveryModifierProvider, RECEIVED_RECOVERY_BONUS_STATE_ID,
+)
+from .action_start_recovery_damage import (
+    ActionStartRecoveryDamageParams, ActionStartRecoveryDamageSupport,
+    ACTION_START_RECOVERY_DAMAGE_STATE_ID, RecoveryDamageCursor,
+)
+from .additive_damage import FinalAdditiveDamageRequest, FinalAdditiveDamageResult
+__all__ += ["create_fei_xiong_jun_definition", "create_fei_xiong_jun_runtime",
+    "ReceivedRecoveryBonusParams",
+    "ReceivedRecoveryModifierProvider", "RECEIVED_RECOVERY_BONUS_STATE_ID"]
+__all__ += ["ActionStartRecoveryDamageParams", "ActionStartRecoveryDamageSupport",
+    "ACTION_START_RECOVERY_DAMAGE_STATE_ID", "RecoveryDamageCursor",
+    "FinalAdditiveDamageRequest", "FinalAdditiveDamageResult"]
 __all__ += ["create_xie_fan_wei_definition", "create_xie_fan_wei_runtime"]
 from .troop_skills.jin_fan_jun import create_jin_fan_jun_definition, create_jin_fan_jun_runtime
 __all__ += ["create_jin_fan_jun_definition", "create_jin_fan_jun_runtime"]
