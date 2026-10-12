@@ -28,7 +28,7 @@ from .skill_definition import (
     SkillTargetMode,
     SkillType,
 )
-from .skill_runtime import SkillRuntime
+from .skill_runtime import SkillRuntime, SkillSlot
 from .state_definition import StateDefinition
 from .state_effectiveness import StateEffectivenessPolicy
 from .state_registry import StateRegistry
@@ -79,6 +79,17 @@ def create_feng_shi_zhen_definition() -> SkillDefinition:
         target_mode=SkillTargetMode.SELF,
         effect_specs=(ApplyStateSkillEffectSpec(FENG_SHI_ZHEN_MODIFIER_STATE_ID),),
         skill_type=SkillType.FORMATION,
+    )
+
+
+def create_feng_shi_zhen_runtime(
+    owner_id: str, *, slot: SkillSlot
+) -> SkillRuntime:
+    """Load Feng Shi Zhen using a real canonical provider slot."""
+    return SkillRuntime(
+        create_feng_shi_zhen_definition(),
+        owner_id=owner_id,
+        skill_slot=slot,
     )
 
 
