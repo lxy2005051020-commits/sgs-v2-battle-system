@@ -2,7 +2,7 @@
 
 # 当前项目状态
 
-> Reconciled: 2026-10-05
+> Reconciled: 2026-10-12
 
 ## 总体完成度
 
@@ -25,7 +25,7 @@ Stage10    = FROZEN
 Stage11    = RUNTIME FROZEN / POST-FREEZE ACCEPTED
 Stage12    = FROZEN / COMPLETE
 Stage13    = COMPLETE / FROZEN
-Stage14    = ACTIVE / 10 BOUNDED-FROZEN + 2 USER-PROVISIONAL + 1 USER-FIT INTEGRATION
+Stage14    = ACTIVE / 10 BOUNDED-FROZEN + 4 USER-PROVISIONAL + 1 USER-FIT / FORMATION F0 PLANNING
 ```
 
 Stage13 当前已完成：
@@ -78,6 +78,17 @@ Research合同经PR #13进入main；暂定模型接入与上方八个bounded fre
 
 本次补回 **锦帆军20152**。旧 PR #51 因落后主线 23 个提交被关闭为 superseded；current-main 版本从 `main@2e38f3a` 重建并经 PR #60 合并。Research 合同 `MC-STAGE14-JIN-FAN-JUN-01` 保持 BOUNDED_FROZEN：溃逃武力缩放与甘宁概率公式继续使用显式 placeholder，恢复基数/CEIL/甘宁另外两名友军会心+6%保持冻结。merged-main CI `37358410369 / SUCCESS`。
 
+## 下一阶段：阵法战法（2026-10-12）
+
+用户裁决：象兵暂缓，保留 `stages/stage14/XIANG_BING_PREPARATION.md`，不影响开始阵法战法研究。
+
+- 飞熊军 PR #62 和丹阳兵 PR #63 已合入 `main`；两者的用户指定/暂定 Gameplay 细节不得升级为实证冻结。
+- 当前 `TROOP_SKILL_REGISTRY` 共 15 项，象兵未注册；`SkillType.FORMATION` 已有枚举，但 `BattleEngine` 的 PRE_BATTLE 仍仅自动调用 troop admission。
+- 阵法 F0 当前只有路线与架构缺口审计；尚未实现通用 FORMATION 准入或具体阵法。
+- 准备阶段研究证据记录 `PASSIVE -> FORMATION -> TROOP -> COMMAND`；在建 Runtime F0 前需完成 Research evidence/contract gate。
+
+[阵法 F0 Runtime 准备与门禁](stages/stage14/FORMATION_F0_RUNTIME_READINESS.md)
+
 后续单战法或机制家族进入 main 仍需同时满足：
 
 ```text
@@ -103,9 +114,13 @@ Research合同经PR #13进入main；暂定模型接入与上方八个bounded fre
 20246 先登死士 (USER_FIT_MODEL / OPENING_COMMAND_SNAPSHOT_FROZEN)
 20248 解烦卫 (BOUNDED_FROZEN / FINE_LINEAGE_OPEN)
 20152 锦帆军 (BOUNDED_FROZEN / FORMULA_PLACEHOLDERS)
+20247 飞熊军 (USER_SPECIFIED_FINAL_ADDITIVE_MODEL / NOT_GAMEPLAY_FROZEN)
+20245 丹阳兵 (USER_CONFIRMED_GENERATION_RATIO / GAMEPLAY_DETAILS_OPEN; ID PENDING)
 
-Troop Skills Registered      = 13 (10 bounded-frozen + 2 user-provisional + 1 user-fit)
+Troop Skills Registered      = 15 (10 bounded-frozen + 4 user-provisional + 1 user-fit)
 Latest Merged-main CI        = PASS
+Xiang Bing                    = DEFERRED / NOT_REGISTERED
+Formation F0                  = RESEARCH + RUNTIME READINESS PLANNED / NOT IMPLEMENTED
 Batch01-04 Runtime Audit     = PASS
 ```
 
@@ -114,7 +129,7 @@ Batch01-04 Runtime Audit     = PASS
 ```text
 Core Gameplay Engine      = FROZEN
 Skill Runtime Readiness   = READY
-Stage14 Troop Skills Registered = 13 (10 bounded-frozen + 2 user-provisional + 1 user-fit)
+Stage14 Troop Skills Registered = 15 (10 bounded-frozen + 4 user-provisional + 1 user-fit)
 Stage14 Mainline Gate        = OPEN
 Batch Integration             = ACTIVE / FAMILY-GATED
 ```
