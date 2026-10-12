@@ -271,3 +271,66 @@ def test_feng_shi_zhen_prebattle_scheduler_real_integration():
     run_pre_battle_preparation_phases(ctx, systems)
     assert len(ctx.states.find(state_id=FENG_SHI_ZHEN_MODIFIER_STATE_ID)) == 3
     assert _damage(ctx, systems, "a0", "b0") == pytest.approx(1300.0)
+
+
+@pytest.mark.parametrize("dtype", (DamageType.WEAPON, DamageType.STRATEGY))
+def test_feng_shi_zhen_real_damage_system_pipeline(dtype):
+    """Production DamageSystem must consume the formation adapter, not only a stand-alone pool."""
+    ctx, systems, runtime, _ = _scene()
+    _install(ctx, systems, runtime)
+    req = DamageRequest("a0", "b0", dtype, DamageSourceType.NORMAL_ATTACK)
+    result = systems.damage_system.calculate(ctx, req)
+    assert not result.prevented
+    assert result.final_damage > 0
+    assert result.pipeline_trace is not None
+    modifier = result.pipeline_trace.modifier_result
+    assert modifier is not None
+    feng_contributions = [
+        x.contribution for x in modifier.applied_modifiers
+        if x.contribution.source.source_skill_id == FENG_SHI_ZHEN_SKILL_ID
+    ]
+    assert len(feng_contributions) == 1
+    assert feng_contributions[0].kind is DamageModifierKind.OUTGOING_INCREASE
+    assert feng_contributions[0].operand == pytest.approx(1.30)
+    assert modifier.output_damage == pytest.approx(modifier.input_damage * 1.30)
+
+
+def test_feng_shi_zhen_real_damage_system_two_layers():
+    ctx, systems, rt_a, rt_b = _scene(both=True)
+    _install(ctx, systems, rt_a)
+    _install(ctx, systems, rt_b)
+    req = DamageRequest("a0", "b0", DamageType.WEAPON, DamageSourceType.SKILL)
+    result = systems.damage_system.calculate(ctx, req)
+    assert result.pipeline_trace is not None
+    modifier = result.pipeline_trace.modifier_result
+    assert modifier is not None
+    contributions = [
+        a.contribution for a in modifier.applied_modifiers
+        if a.contribution.source.source_skill_id == FENG_SHI_ZHEN_SKILL_ID
+    ]
+    assert [c.phase for c in contributions] == [
+        DamageModifierPhase.OUTGOING, DamageModifierPhase.INCOMING
+    ]
+    assert modifier.output_damage == pytest.approx(modifier.input_damage * 1.30 * 1.20)
+
+
+def test_feng_shi_zhen_actual_damage_after_provider_defeat():
+    ctx, systems, runtime, _ = _scene()
+    _install(ctx, systems, runtime)
+    req = DamageRequest("a0", "b0", DamageType.WEAPON, DamageSourceType.SKILL)
+    before = systems.damage_system.calculate(ctx, req)
+    assert before.pipeline_trace is not None
+    assert before.pipeline_trace.modifier_result is not None
+    assert any(
+        x.contribution.source.source_skill_id == FENG_SHI_ZHEN_SKILL_ID
+        for x in before.pipeline_trace.modifier_result.applied_modifiers
+    )
+    ctx.units[runtime.owner_id].troops = 0
+    systems.defeat_cleanup_port.commit_defeat(ctx, runtime.owner_id)
+    after = systems.damage_system.calculate(ctx, req)
+    assert after.pipeline_trace is not None
+    assert after.pipeline_trace.modifier_result is not None
+    assert all(
+        x.contribution.source.source_skill_id != FENG_SHI_ZHEN_SKILL_ID
+        for x in after.pipeline_trace.modifier_result.applied_modifiers
+    )
