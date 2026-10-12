@@ -919,3 +919,45 @@ __all__ += ["ActionStartRecoveryDamageParams", "ActionStartRecoveryDamageSupport
 __all__ += ["create_xie_fan_wei_definition", "create_xie_fan_wei_runtime"]
 from .troop_skills.jin_fan_jun import create_jin_fan_jun_definition, create_jin_fan_jun_runtime
 __all__ += ["create_jin_fan_jun_definition", "create_jin_fan_jun_runtime"]
+
+from .pre_battle_order import PreBattleOrderSystem
+from .formation_admission import (
+    FormationAdmissionRejectedError,
+    FormationAdmissionResult,
+    FormationAdmissionStatus,
+    FormationSkillConfig,
+    admit_and_install_formation_skill,
+    register_formation_skill_config,
+    unregister_formation_skill_config,
+    validate_team_formation_limits,
+)
+from .pre_battle_scheduler import (
+    process_pre_battle_command_skills,
+    process_pre_battle_formation_skills,
+    process_pre_battle_passive_skills,
+    register_pre_battle_command_processor,
+    register_pre_battle_passive_processor,
+    run_pre_battle_preparation_phases,
+    unregister_pre_battle_command_processor,
+    unregister_pre_battle_passive_processor,
+)
+
+__all__ += [
+    "PreBattleOrderSystem",
+    "FormationAdmissionRejectedError",
+    "FormationAdmissionResult",
+    "FormationAdmissionStatus",
+    "FormationSkillConfig",
+    "admit_and_install_formation_skill",
+    "register_formation_skill_config",
+    "unregister_formation_skill_config",
+    "validate_team_formation_limits",
+    "process_pre_battle_command_skills",
+    "process_pre_battle_formation_skills",
+    "process_pre_battle_passive_skills",
+    "register_pre_battle_command_processor",
+    "register_pre_battle_passive_processor",
+    "run_pre_battle_preparation_phases",
+    "unregister_pre_battle_command_processor",
+    "unregister_pre_battle_passive_processor",
+]
