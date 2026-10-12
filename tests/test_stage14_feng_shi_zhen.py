@@ -334,3 +334,25 @@ def test_feng_shi_zhen_actual_damage_after_provider_defeat():
         x.contribution.source.source_skill_id != FENG_SHI_ZHEN_SKILL_ID
         for x in after.pipeline_trace.modifier_result.applied_modifiers
     )
+
+
+def test_feng_shi_zhen_real_battle_engine_prebattle_applies_once():
+    """The production BattleEngine dispatch must install F1 through PRE_BATTLE."""
+    from sgs_v2.battle_core import BattleEngine, EventType
+
+    ctx, systems, runtime, _ = _scene()
+    applied = []
+
+    def on_applied(event):
+        if event.payload.get("state_id") == FENG_SHI_ZHEN_MODIFIER_STATE_ID:
+            applied.append((event.phase, event.actor_id, event.target_id))
+
+    ctx.event_bus.subscribe(EventType.STATE_APPLIED, on_applied)
+    # A new battle starts from the real engine's NOT_STARTED boundary.
+    ctx.current_phase = "NOT_STARTED"
+    result = BattleEngine(context=ctx, systems=systems).run()
+    assert result is not None
+    assert len(applied) == 3
+    assert all(phase == BattlePhase.PRE_BATTLE.value for phase, _, _ in applied)
+    assert {target for _, _, target in applied} == {"a0", "a1", "a2"}
+    assert all(actor == runtime.owner_id for _, actor, _ in applied)
