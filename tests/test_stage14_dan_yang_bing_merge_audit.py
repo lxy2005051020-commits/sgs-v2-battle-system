@@ -12,7 +12,7 @@ from sgs_v2.battle_core.temporary_damage_pool import pool_balance, TEMPORARY_DAM
 def charged():
     c, s, rt, state = installed()
     round_start(c, s, 1)
-    fixed_damage(c, s, 1000)
+    fixed_damage(c, s, 3000)
     round_start(c, s, 2)
     return c, s, rt, state
 
@@ -44,6 +44,7 @@ def test_partition_target_absorption_does_not_intercept_direct_participant_losse
     from sgs_v2.battle_core.stage9_state_params import DamageShareStateParams, DistributionStateParams
     from sgs_v2.battle_core.stage9_integerization import ExactRatio
     c, s, _, pool = charged()
+    pool = c.states.find(owner_id='a2', state_id=TEMPORARY_DAMAGE_POOL_STATE_ID)[0]
     if family == 'share':
         apply_state(c, s, OfficialStateId.DAMAGE_SHARE, 'a2', DamageShareStateParams('a3', ExactRatio(1, 2)))
     else:
@@ -91,6 +92,8 @@ def test_pool_event_ledger_conserves_generation_decay_and_consumption():
         if event.event_type is not EventType.TEMPORARY_POOL_UPDATED:
             continue
         p = event.payload
+        if p['state_instance_id'] != state.instance_id:
+            continue
         assert p['pool_before'] == balance
         if p['operation'] == 'ROUND_UPDATE':
             balance += p['generated'] - p['decayed']

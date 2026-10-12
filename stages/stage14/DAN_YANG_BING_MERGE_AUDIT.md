@@ -1,5 +1,7 @@
 # 丹阳兵合并审计
 
+> 此文记录PR #63的历史审计。后续用户纠正“在场武将平均分配、进一法”，共享兵池模型已由[个人兵池分配修正](DAN_YANG_BING_ALLOCATION_CORRECTION.md)覆盖；本文件中的旧口径及测试计数仅为历史证据。
+
 日期：2026-10-12。发布入口：[PR #63](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/63)。
 主线基线：`f189c8450b75ab380ecd622ff47df0aa0d05c9fa`。
 运行时代码：`4039474950007855621243e58a6f39c1015265cb`。
