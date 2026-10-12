@@ -3,7 +3,7 @@
 日期：2026-10-12。分支：`stage14/dan-yang-bing`。
 基线：GitHub main `f189c84`（飞熊军 PR #62 合并后）。
 状态：**RUNTIME_INTEGRATED / USER_CONFIRMED_GENERATION_RATIO / GAMEPLAY_DETAILS_OPEN**。
-此分支兵种注册表共15项；尚未合并main。
+兵种注册表共15项；发布入口为[PR #63](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/63)，合并前审计见[丹阳兵合并审计](DAN_YANG_BING_MERGE_AUDIT.md)。
 
 ## 参数和口径
 
@@ -46,7 +46,7 @@ PoolDamageResolutionSystem
 ## 验证
 
 - 丹阳兵专项：18 passed，覆盖准入原子性、身份、属性、提供者槽位、陶谦主将、上一回合口径、叠加、衰减、防重复、全队共享抵挡、耗尽、防止、实际兵力上限、直接扣兵、状态抑制恢复、正式许可及重放、完整BattleEngine。
-- 全量：2210 passed。
+- 合并审计追加9项对抗测试全部通过；全量：2219 passed。
 - 原demo.py：PASS；全新进程生产注册表解析：PASS，20245解析到CONFIG且工厂等于SKILL，无重复注册。
 - Stage13 D1冻结owner哈希及对抗测试结果保存在`dan_yang_bing_d1_audit.json`。
 - 上述是运行时回归，不代替原始战报实证或远端CI。
