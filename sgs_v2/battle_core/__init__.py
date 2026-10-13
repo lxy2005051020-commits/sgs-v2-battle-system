@@ -921,6 +921,14 @@ from .troop_skills.jin_fan_jun import create_jin_fan_jun_definition, create_jin_
 __all__ += ["create_jin_fan_jun_definition", "create_jin_fan_jun_runtime"]
 
 from .pre_battle_order import PreBattleOrderSystem
+from .ji_xing_zhen import (
+    JI_XING_ZHEN_SKILL_ID,
+    calculate_reduction_rate as calculate_ji_xing_reduction_rate,
+    create_ji_xing_zhen_definition,
+    create_ji_xing_zhen_runtime,
+)
+__all__ += ["JI_XING_ZHEN_SKILL_ID", "calculate_ji_xing_reduction_rate",
+            "create_ji_xing_zhen_definition", "create_ji_xing_zhen_runtime"]
 from .formation_admission import (
     FormationAdmissionRejectedError,
     FormationAdmissionResult,

@@ -326,6 +326,18 @@ def admit_and_install_formation_skill(
 
 
 # First production Formation skill (Stage14 F1). The registry is definition-only;
+from .ji_xing_zhen import (
+    JI_XING_ZHEN_SKILL_ID, JI_XING_ZHEN_NAME, JI_XING_ZHEN_APPLICABLE_TROOPS,
+    create_ji_xing_zhen_definition, install_ji_xing_zhen,
+)
+
+register_formation_skill_config(FormationSkillConfig(
+    skill_id=JI_XING_ZHEN_SKILL_ID, name=JI_XING_ZHEN_NAME,
+    applicable_troops=JI_XING_ZHEN_APPLICABLE_TROOPS,
+    definition_factory=create_ji_xing_zhen_definition,
+    requires_provider_slot=True, installer=install_ji_xing_zhen,
+))
+
 # it does not install any effect unless a team actually equips Skill ID 20066.
 from .feng_shi_zhen import (
     FENG_SHI_ZHEN_SKILL_ID,
