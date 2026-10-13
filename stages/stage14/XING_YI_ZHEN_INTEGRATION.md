@@ -1,7 +1,8 @@
 # 形一阵接入记录
 
 2026-10-13；分支 `stage14/xing-yi-zhen`；实时 fetch 的 origin/main 基线
-`c4724e7abef1f7e99eca65c9e09c4074fb43dd92`。满级实现通过独立分支发布；未合入 main。
+`c4724e7abef1f7e99eca65c9e09c4074fb43dd92`。满级实现通过独立分支发布；
+合并状态以[PR #72](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/72)及merged-main CI为准。
 状态：`IMPLEMENTED_STATIC_DESCRIPTION_AND_USER_CONFIRMED_CURVE / NOT_GAMEPLAY_FROZEN`。
 
 ## 原文与范围
@@ -65,6 +66,8 @@ FormationSkillConfig / FORMATION_SKILL_REGISTRY
 - 三人自带类型已知但不相同时合法携带但无效果；任一自带战法缺失时直接报错。
   判断装备类型不取决于自带战法 enabled 状态，不从学习槽推断。
 - 沿用现有阵法 V1 携带者阵亡清理与提供者有效性策略，不宣称证实客户端死亡/净化细节。
+  `enabled=False`在安装前阻止准入；安装后单独修改该标志不会撤回已存在的持续修饰，
+  状态仍由现有有效性/移除 owner 管理。依赖图登记不等于每次查询自动检查enabled。
 - 准备阶段 round=0 使用首回合修正值，进入战斗后按 current_round 读取。
   该机制不代表证实了更细的回合起始微事件顺序。
 - 低等级、当前版本变更、原始战报逐事件对照保持 OPEN。
@@ -77,8 +80,9 @@ FormationSkillConfig / FORMATION_SKILL_REGISTRY
 Stage13-D1冻结核心哈希和11项对抗审计见
 [冻结审计](xing_yi_evidence/frozen_owner_audit.json)。本地验证不代表远端 CI 或玩法实证冻结。
 
-本次结果（含用户确认的并列属性优先级）：形一阵专项 **62 passed**；相关阵法与同步专项 **170 passed**；
-全量 **2512 passed**（49.67秒）；21个冻结核心文件哈希一致，11项D1对抗审计PASS。
+本次结果（含用户确认的并列属性优先级与合并对抗审计）：形一阵专项 **62 passed**；
+新增对抗专项 **5 passed**；相关阵法与同步专项 **175 passed**；
+全量 **2517 passed**（13.92秒）；21个冻结核心文件哈希一致，11项D1对抗审计PASS。
 新进程registry恰含6项、22039唯一注册且解析为本模块SKILL。
 保存[专项输出](xing_yi_evidence/focused_tests.txt)、[全量输出](xing_yi_evidence/full_regression.txt)、
 [注册验证](xing_yi_evidence/registry_check.txt)。
