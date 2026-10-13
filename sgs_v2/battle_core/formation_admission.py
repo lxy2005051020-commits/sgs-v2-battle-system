@@ -386,3 +386,12 @@ register_formation_skill_config(FormationSkillConfig(
     applicable_troops=SAN_SHI_ZHEN_APPLICABLE_TROOPS,
     definition_factory=create_san_shi_zhen_definition,
     requires_provider_slot=True, installer=install_san_shi_zhen))
+
+from .xing_yi_zhen import (XING_YI_ZHEN_SKILL_ID, XING_YI_ZHEN_NAME,
+    XING_YI_ZHEN_APPLICABLE_TROOPS, create_xing_yi_zhen_definition, install_xing_yi_zhen)
+
+register_formation_skill_config(FormationSkillConfig(
+    skill_id=XING_YI_ZHEN_SKILL_ID, name=XING_YI_ZHEN_NAME,
+    applicable_troops=XING_YI_ZHEN_APPLICABLE_TROOPS,
+    definition_factory=create_xing_yi_zhen_definition,
+    requires_provider_slot=True, installer=install_xing_yi_zhen))
