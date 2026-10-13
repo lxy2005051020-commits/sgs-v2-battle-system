@@ -971,6 +971,9 @@ __all__ += [
 ]
 
 # Stage14 F1 official Formation gameplay API
+from .yu_lin_zhen import (YU_LIN_ZHEN_SKILL_ID,
+    create_yu_lin_zhen_definition, create_yu_lin_zhen_runtime)
+__all__ += ["YU_LIN_ZHEN_SKILL_ID", "create_yu_lin_zhen_definition", "create_yu_lin_zhen_runtime"]
 from .qian_long_zhen import (QIAN_LONG_ZHEN_SKILL_ID,
     create_qian_long_zhen_definition, create_qian_long_zhen_runtime)
 from .commander_effect import (CommanderEffectPolicy, CommanderEffectRoleParams,
