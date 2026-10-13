@@ -19,6 +19,9 @@
 | 22040 | 潜龙阵 | Lv1–10；通用主将效果资格与用户确认的有效属性快照；见[接入记录](QIAN_LONG_ZHEN_INTEGRATION.md) |
 | 20836 | 鱼鳞阵 | Lv1–10仅副将统率；显式command_only模式，完整模式缺失公式时报错；见[接入记录](YU_LIN_ZHEN_INTEGRATION.md) |
 
+鱼鳞阵武力、统率缩放加成按用户2026-10-13指令标记为
+`DEFERRED_BY_USER / NOT_IMPLEMENTED`，详见接入记录的用户指定暂缓项。
+
 [前五阵法同步记录与组合验证](FORMATION_COMPLETED_SYNC.md)。接入完成不代表客户端机制实证冻结；鱼鳞阵抵御与治疗分支仍未实现。
 
 ## Historical Formation F0/F1 snapshot (2026-10-13)
