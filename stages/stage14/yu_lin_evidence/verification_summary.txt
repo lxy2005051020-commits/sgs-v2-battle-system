@@ -1,0 +1,24 @@
+2026-10-13 local validation
+Baseline: 4357a6b0a46f379945193c0e203a1373dd1c6e03
+Branch: stage14/yu-lin-zhen
+Scope: USER_APPROVED_PARTIAL / COMMAND_ONLY / FULL_MODEL_FAIL_CLOSED
+
+python -m pytest -q tests/test_stage14_yu_lin_zhen.py tests/test_stage14_formation_sync.py tests/test_stage14_formation_f0_foundation.py
+184 passed in 2.64s (focused_tests.txt)
+
+python -m pytest -q
+2772 passed in 37.60s (full_tests.txt)
+
+python scripts/audit_stage13_d1.py --output stages/stage14/yu_lin_evidence/audit_stage13_d1.json
+verdict PASS; all frozen-owner hashes unchanged
+
+python scripts/audit_qingzhou.py --output stages/stage14/yu_lin_evidence/audit_qingzhou.json
+verdict PASS
+
+python demo.py
+exit 0 (demo_smoke.txt)
+
+Clean-process canonical registry: PASS; 8 definitions, 20836 factory == SKILL
+git diff --check: PASS
+
+No remote PR, remote CI, main merge or gameplay empirical freeze is claimed.

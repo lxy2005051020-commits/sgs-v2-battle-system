@@ -79,7 +79,7 @@ FormationSkillConfig / FORMATION_SKILL_REGISTRY[20836]
 
 ## 验证
 
-专项与全量计数见[验证记录](yu_lin_evidence/validation.txt)。
+专项与全量计数见[验证记录](yu_lin_evidence/verification_summary.txt)。
 覆盖十级静态值、各携带位置、五基础兵种、来源槽位、无RNG消耗、非法定义/编队原子拒绝、
 默认完整模式在直接安装/开场调度/引擎路径报错、disabled跳过、重复安装拒绝、
 双方隔离、固定加法增量、状态移除、provider阵亡清理、引擎自动安装以及通用validator。
