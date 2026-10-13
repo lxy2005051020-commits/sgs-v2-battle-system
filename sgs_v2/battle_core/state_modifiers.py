@@ -5,13 +5,13 @@ Mutation, expiry, provider suppression and finalization remain existing owners.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 from .context import BattleContext
 from .numeric_validation import validate_finite_number
 from .skill_definition import SkillType
-from .skill_runtime import SkillRuntime
+from .skill_runtime import SkillRuntime, SkillSlot
 from .state_definition import StateDefinition
 from .state_effectiveness import StateEffectivenessPolicy
 from .state_application import ApplicationDisposition, StateCandidate, StateConflictDecision
@@ -61,11 +61,14 @@ class AttributeBonusParams(StateRuntimeParams):
 class ActivationRateBonusParams(StateRuntimeParams):
     skill_type: SkillType
     amount: float
+    skill_slot: SkillSlot | None = field(default=None, kw_only=True)
 
     def __post_init__(self) -> None:
         if not isinstance(self.skill_type, SkillType) or self.skill_type not in (SkillType.ACTIVE, SkillType.ASSAULT):
             raise ValueError("activation bonus requires ACTIVE or ASSAULT")
         object.__setattr__(self, "amount", validate_finite_number(self.amount, "amount"))
+        if self.skill_slot is not None and not isinstance(self.skill_slot, SkillSlot):
+            raise TypeError("skill_slot must be SkillSlot or None")
 
 
 def _validate_stack(params):
@@ -107,6 +110,12 @@ MODIFIER_STATE_DEFINITIONS = (
 )
 
 
+def _modifier_dimension(params):
+    if isinstance(params, ActivationRateBonusParams):
+        return (params.skill_type, params.skill_slot)
+    return getattr(params, "attribute", getattr(params, "damage_type", None))
+
+
 def modifier_conflict_rule(context: BattleContext, candidate: StateCandidate,
                            residents: tuple[StateInstance, ...]) -> StateConflictDecision | None:
     """Distinct provider/dimension contributions coexist; duplicates cannot stack.
@@ -117,21 +126,20 @@ def modifier_conflict_rule(context: BattleContext, candidate: StateCandidate,
     if candidate.state_id not in (ATTRIBUTE_BONUS_STATE_ID, ACTIVATION_RATE_BONUS_STATE_ID, INCOMING_DAMAGE_REDUCTION_STATE_ID, RECEIVED_RECOVERY_BONUS_STATE_ID, ACTION_START_RECOVERY_DAMAGE_STATE_ID):
         return None
     params = candidate.runtime_params_candidate
-    dimension = getattr(params, "attribute", getattr(params, "skill_type", getattr(params, "damage_type", None)))
+    dimension = _modifier_dimension(params)
     if isinstance(params, (BoundedAttributeBonusParams, BoundedActivationRateBonusParams)):
         matches = tuple(r for r in residents
             if (r.source_id, r.source_skill_id, r.source_skill_slot) ==
                (candidate.source_id, candidate.source_skill_id, candidate.source_skill_slot)
             and getattr(r.runtime_params, "stack_group", None) == params.stack_group
-            and getattr(r.runtime_params, "attribute", getattr(r.runtime_params, "skill_type", None)) == dimension)
+            and _modifier_dimension(r.runtime_params) == dimension)
         if any(r.runtime_params.stack_key == params.stack_key for r in matches):
             return StateConflictDecision(ApplicationDisposition.REJECT_CONFLICT, "MODIFIER_DUPLICATE_STACK")
         if len(matches) >= params.max_stacks:
             return StateConflictDecision(ApplicationDisposition.REJECT_CONFLICT, "MODIFIER_STACK_CAP")
         return StateConflictDecision(ApplicationDisposition.CREATE, "MODIFIER_STACK_CREATE")
     for resident in residents:
-        resident_dimension = getattr(resident.runtime_params, "attribute",
-                                     getattr(resident.runtime_params, "skill_type", getattr(resident.runtime_params, "damage_type", None)))
+        resident_dimension = _modifier_dimension(resident.runtime_params)
         if (resident.source_id, resident.source_skill_id, resident.source_skill_slot, resident_dimension) == (
             candidate.source_id, candidate.source_skill_id, candidate.source_skill_slot, dimension,
         ):
@@ -169,6 +177,7 @@ class StateModifierSupport:
             for item in self._policy.effective_instances(context, runtime.owner_id, ACTIVATION_RATE_BONUS_STATE_ID)
             if isinstance(item.runtime_params, ActivationRateBonusParams)
             and item.runtime_params.skill_type is runtime.definition.skill_type
+            and (item.runtime_params.skill_slot is None or item.runtime_params.skill_slot is runtime.skill_slot)
         )
         return min(1.0, max(0.0, runtime.definition.activation_rate + bonus))
 

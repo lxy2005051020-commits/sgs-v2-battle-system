@@ -3,6 +3,12 @@
 ## 八门金锁阵本地接入候选（2026-10-13）
 
 `20025` 已在 `stage14/ba-men-jin-suo-zhen` 实现；使用用户指定缩放公式与用户确认的发动智力快照，支持 Lv1～10、前三回合敌军两人造成伤害降低及我军主将先攻。专项 50 PASS，全量 2317 PASS，冻结 Owner/青州审计 PASS。[接入说明及来源](BA_MEN_JIN_SUO_ZHEN_INTEGRATION.md)。尚未发布 PR 或合并 main；下节 mainline 阵法数量维持 1。
+## Local 三势阵 candidate (2026-10-13)
+
+三势阵 `22012` 已接入本地分支 `stage14/san-shi-zhen`，Lv1～10。
+用户确认平局减伤分配给副将1、重新分配清除旧效果；专项47项和全量2314项通过，
+Stage13-D1与青州兵审计通过。尚未推送或合并，不改变下列 main 历史状态。
+组件树、调用方式与未冻结假设见[三势阵接入记录](SAN_SHI_ZHEN_INTEGRATION.md)。
 
 ## Current Formation F0/F1 status (2026-10-13)
 

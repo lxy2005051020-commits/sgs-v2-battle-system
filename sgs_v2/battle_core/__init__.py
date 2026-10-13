@@ -976,6 +976,8 @@ from .feng_shi_zhen import (
     create_feng_shi_zhen_definition,
     create_feng_shi_zhen_runtime,
 )
+from .san_shi_zhen import create_san_shi_zhen_definition, create_san_shi_zhen_runtime
+__all__ += ["create_san_shi_zhen_definition", "create_san_shi_zhen_runtime"]
 __all__ += [
     "FENG_SHI_ZHEN_SKILL_ID",
     "create_feng_shi_zhen_definition",

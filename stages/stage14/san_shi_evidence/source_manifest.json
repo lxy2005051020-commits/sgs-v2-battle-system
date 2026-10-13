@@ -1,0 +1,53 @@
+{
+  "baseline": "74817c59325bcaf7fafd5fc67f40621174ec9d65",
+  "source_csv": "C:\\Users\\34187\\Documents\\ChatGPT\\三国志战略版战报逆向\\outputs\\skill_static_descriptions_full_20260808_1632\\merged\\skill_static_descriptions_named.csv",
+  "source_csv_sha256": "f71c098c0c387e32d7426eedaa663076298ab963f3bc21c98b646dd568c0766f",
+  "source_json": "C:\\Users\\34187\\Documents\\ChatGPT\\三国志战略版战报逆向\\outputs\\skill_static_descriptions_full_20260808_1632\\merged\\skill_static_descriptions.json",
+  "source_json_sha256": "68284bb0537af595f8a56270f031cd20e12c558e08f2fe07243735b9fb27cbef",
+  "static_row_count": 10,
+  "config": {
+    "skill_rub_type": 0,
+    "skill_conflict": {},
+    "arm_limit": {},
+    "commission": {},
+    "army_show": 0,
+    "times": 1,
+    "type_name": 0,
+    "jingling_show": 0,
+    "xiaomi_tips": 350470,
+    "extra_tips": 0,
+    "skillupexp_type": 105,
+    "resolve": 101,
+    "research": 107,
+    "grade": 5,
+    "target_tips": "我军群体(3人)",
+    "battle_effect_id": 0,
+    "skill_full_screen": 0,
+    "name": "三势阵",
+    "tips": 350,
+    "equip_answer": 0,
+    "id": 22012,
+    "answer": 0,
+    "old_s2_forbid": true,
+    "i18n_unlock_season": 3,
+    "short_tips": 152012,
+    "key": "三势阵",
+    "skill_type": 9,
+    "pin_yin": "SSZ",
+    "season": 2,
+    "show_rub_icon": 0,
+    "icon": 70042,
+    "effect_type": 9
+  },
+  "user_rules": [
+    "损失兵力相同时选择副将1",
+    "旧效果清除"
+  ],
+  "model_assumptions": [
+    "provider action start, after ordinary hooks",
+    "net troop loss = entry troops minus current troops",
+    "deputy redistribution continues beyond round 5; only activation bonus expires",
+    "missing living deputy pair: clear old split effects and skip redistribution"
+  ],
+  "provenance": "STATIC_DESCRIPTION + USER_CONFIRMED_TIE_AND_REPLACEMENT / NOT_CLIENT_FROZEN"
+}

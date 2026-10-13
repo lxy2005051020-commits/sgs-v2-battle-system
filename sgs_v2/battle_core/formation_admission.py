@@ -378,3 +378,11 @@ register_formation_skill_config(FormationSkillConfig(
     requires_provider_slot=True,
     installer=install_ba_men_jin_suo_zhen,
 ))
+from .san_shi_zhen import (SAN_SHI_ZHEN_SKILL_ID, SAN_SHI_ZHEN_NAME,
+    SAN_SHI_ZHEN_APPLICABLE_TROOPS, create_san_shi_zhen_definition, install_san_shi_zhen)
+
+register_formation_skill_config(FormationSkillConfig(
+    skill_id=SAN_SHI_ZHEN_SKILL_ID, name=SAN_SHI_ZHEN_NAME,
+    applicable_troops=SAN_SHI_ZHEN_APPLICABLE_TROOPS,
+    definition_factory=create_san_shi_zhen_definition,
+    requires_provider_slot=True, installer=install_san_shi_zhen))

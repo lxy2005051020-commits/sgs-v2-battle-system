@@ -14,6 +14,7 @@ from .probabilistic_target_priority import (TargetPrioritySkillResolver, QueryBo
 from .periodic_team_support import (PeriodicTeamSupport, PeriodicTeamSupportRuleHookSystem,
                                     periodic_support_effectiveness_adapter)
 from .outgoing_damage_reduction import OutgoingDamageReductionProvider
+from .action_start_role_split import RoleSplitRuleHookSystem, ActionStartRoleSplitSupport
 from .received_recovery_modifier import ReceivedRecoveryModifierProvider
 from .action_start_recovery_damage import AccumulatedRecoveryRuleHookSystem, ActionStartRecoveryDamageSupport
 from .state_application_reaction import ReactingStateApplicationCoordinator, ReactingStateLifecycleSystem
@@ -207,6 +208,7 @@ class BattleSystems:
         self.state_effectiveness_policy.register_rule_adapter(periodic_support_effectiveness_adapter)
         self.state_effectiveness_policy.register_rule_adapter(target_priority_effectiveness_adapter)
         self.state_modifier_support = StateModifierSupport(self.state_effectiveness_policy)
+        self.state_effectiveness_policy.register_rule_adapter(damage_rate_prerequisite_adapter)
         self.attribute_system.register_modifier_provider(self.state_modifier_support)
         self.provider_validity_policy = ProviderValidityPolicy(
             self.dependency_evaluation_support,
@@ -555,12 +557,13 @@ class BattleSystems:
             self.dependency_evaluation_support,
             lambda context, skill_id, owner_id: resolve_opening_troop_definition(context, self, skill_id, owner_id),
         )
-        self.rule_hook_system = PeriodicTeamSupportRuleHookSystem(
+        self.rule_hook_system = RoleSplitRuleHookSystem(
             self.trigger_system,
             self.effect_executor,
             ActionStartRecoveryDamageSupport(self),
             pool_support=TemporaryDamagePoolSupport(self.state_effectiveness_policy),
             periodic_support=PeriodicTeamSupport(self),
+            role_split_support=ActionStartRoleSplitSupport(self),
         )
         self.scheduled_team_recovery_support = ScheduledTeamRecoverySupport(
             self.pending_work_system,
