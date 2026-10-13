@@ -38,6 +38,42 @@ class DamageRateParams(StateRuntimeParams):
                 getattr(self, key), key, minimum=-1.0))
 
 
+@dataclass(frozen=True, slots=True)
+class RoundDamageRateParams(DamageRateParams):
+    """Opening round rates followed by an additive per-round ramp.
+
+    Round zero uses round one's opening rates for PRE_BATTLE visibility.
+    The curve is declarative; collection never mutates states or consumes RNG.
+    """
+
+    opening_rates: tuple[tuple[float, float], ...] = ()
+    outgoing_step: float = 0.0
+    incoming_step: float = 0.0
+
+    def __post_init__(self):
+        DamageRateParams.__post_init__(self)
+        if self.outgoing_rate != 0 or self.incoming_rate != 0:
+            raise ValueError("round curves require zero static rates")
+        rows = tuple(tuple(row) for row in self.opening_rates)
+        if not rows or any(len(row) != 2 for row in rows):
+            raise ValueError("opening_rates requires nonempty outgoing/incoming pairs")
+        object.__setattr__(self, "opening_rates", tuple(
+            tuple(validate_finite_number(v, "opening rate", minimum=-1.0) for v in row)
+            for row in rows))
+        for key in ("outgoing_step", "incoming_step"):
+            object.__setattr__(self, key, validate_finite_number(
+                getattr(self, key), key, minimum=0))
+
+    def rates_at(self, round_no: int) -> tuple[float, float]:
+        if type(round_no) is not int or round_no < 0:
+            raise ValueError("round_no must be a nonnegative integer")
+        index = max(1, round_no)
+        if index <= len(self.opening_rates):
+            return self.opening_rates[index - 1]
+        stacks = index - len(self.opening_rates)
+        return self.outgoing_step * stacks, self.incoming_step * stacks
+
+
 DAMAGE_RATE_DEFINITION = StateDefinition(DAMAGE_RATE_STATE_ID, "伤害增减修饰",
                                         runtime_params_type=DamageRateParams)
 
@@ -86,7 +122,9 @@ class DamageRateModifierProvider:
             for state in self._policy.effective_instances(context, unit_id, DAMAGE_RATE_STATE_ID):
                 if not isinstance(state.runtime_params, DamageRateParams):
                     raise TypeError("damage rate state requires DamageRateParams")
-                rate = getattr(state.runtime_params, key)
+                params = state.runtime_params
+                rate = (params.rates_at(context.current_round)[0 if key == "outgoing_rate" else 1]
+                        if isinstance(params, RoundDamageRateParams) else getattr(params, key))
                 if rate == 0:
                     continue
                 origin = f"damage_rate:{state.instance_id}:{phase.value}"

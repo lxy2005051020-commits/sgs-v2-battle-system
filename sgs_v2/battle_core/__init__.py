@@ -971,6 +971,10 @@ __all__ += [
 ]
 
 # Stage14 F1 official Formation gameplay API
+from .xing_yi_zhen import (XING_YI_ZHEN_SKILL_ID,
+    create_xing_yi_zhen_definition, create_xing_yi_zhen_runtime)
+__all__ += ["XING_YI_ZHEN_SKILL_ID", "create_xing_yi_zhen_definition",
+            "create_xing_yi_zhen_runtime"]
 from .feng_shi_zhen import (
     FENG_SHI_ZHEN_SKILL_ID,
     create_feng_shi_zhen_definition,
