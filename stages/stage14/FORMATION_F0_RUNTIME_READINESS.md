@@ -120,7 +120,7 @@ FORMATION_MAINLINE           = 0
 | Foundation tests | 15 in `tests/test_stage14_formation_f0_foundation.py`, part of full CI | PASS |
 | Full Regression | [merged-main Actions #38278028436](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38278028436): 2239 tests passed | PASS |
 | Demo + frozen owner audit | Demo PASS; Stage13-D1 hash/harness PASS; Qingzhou independent audit PASS | PASS |
-| Formation Gameplay | No `20066` actual registry or other formation Gameplay, only synthetic test formations | NOT_STARTED (intentional) |
+| Formation Gameplay (F0 退出时的历史快照) | F0 时尚无 `20066` 正式 Gameplay，只有合成测试；F1 后已实现首个阵法 | NOT_STARTED_AT_F0 (superseded by F1) |
 | F1 research preconditions | F1 research contract and adapter/test readiness document on Research main | READY |
 
 ### F0 Runtime capability frozen to accepted baseline
@@ -136,7 +136,7 @@ FORMATION_MAINLINE           = 0
 
 Research [锋矢阵合同](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/01_Skills/FENG_SHI_ZHEN_RESEARCH_CONTRACT.md) + [F1 接入前 Adapter/测试清单](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/00_Governance/F1_FENG_SHI_ZHEN_PREINTEGRATION_READINESS.md)。
 
-**F1_IMPLEMENTATION = READY_TO_START / NOT_STARTED**。必须单独功能分支 + Battle PR，严格验证 Lv10 主将 `OUTGOING +30%`/`INCOMING +20%`、副将 `OUTGOING -15%`/`INCOMING -25%`、两种伤害类型、同侧加算池、跨侧乘算层和阵亡后来源失效。不得将 F0 基础设施完成误记为 F1 已完成。
+**历史 F0 退出时：F1_IMPLEMENTATION = READY_TO_START / NOT_STARTED**。当前 F1 已在 Battle PR #68 完成并入 main，参见第 10 节。必须单独功能分支 + Battle PR，严格验证 Lv10 主将 `OUTGOING +30%`/`INCOMING +20%`、副将 `OUTGOING -15%`/`INCOMING -25%`、两种伤害类型、同侧加算池、跨侧乘算层和阵亡后来源失效。不得将 F0 基础设施完成误记为 F1 已完成。
 
 ## 10. F1 Stage14 锋矢阵后续发布补记（2026-10-13）
 
