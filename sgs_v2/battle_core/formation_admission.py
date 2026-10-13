@@ -345,3 +345,10 @@ register_formation_skill_config(
         installer=install_feng_shi_zhen,
     )
 )
+
+from .wu_feng_zhen import (WU_FENG_ZHEN_SKILL_ID, WU_FENG_ZHEN_NAME,
+    WU_FENG_ZHEN_APPLICABLE_TROOPS, create_wu_feng_zhen_definition, install_wu_feng_zhen)
+
+register_formation_skill_config(FormationSkillConfig(
+    WU_FENG_ZHEN_SKILL_ID, WU_FENG_ZHEN_NAME, WU_FENG_ZHEN_APPLICABLE_TROOPS,
+    create_wu_feng_zhen_definition, requires_provider_slot=True, installer=install_wu_feng_zhen))

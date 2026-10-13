@@ -59,3 +59,9 @@ Historical process -> Git history
 ```
 
 已被最终冻结记录取代的中间 prompt、repair report、round-by-round audit 与重复路线稿不再作为当前树中的权威文件。
+
+## 武锋阵接入（2026-10-13）
+
+武锋阵 `22031` 支持Lv10完整运行：前5回合概率优先选中主将及同次战法的实时统率减伤，携带者行动时触发奇数回合副将随机治疗另外两名队友、偶数回合叠加增伤。采用用户指定公式与选人规则，标记 `USER_SPECIFIED_MODEL / NOT_GAMEPLAY_FROZEN`；低等级统率缩放未推导。
+
+[接入记录、组件与验证证据](stages/stage14/WU_FENG_ZHEN_INTEGRATION.md)。

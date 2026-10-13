@@ -8,6 +8,11 @@ from .action_system import ActionSystem
 from .attribute_system import AttributeSystem
 from .state_modifiers import StateModifierSupport, modifier_conflict_rule, IncomingDamageReductionProvider
 from .feng_shi_zhen import FengShiZhenDamageRuleProvider
+from .damage_rate_modifier import DamageRateModifierProvider, damage_rate_prerequisite_adapter
+from .probabilistic_target_priority import (TargetPrioritySkillResolver, QueryBoundReductionProvider,
+                                           target_priority_effectiveness_adapter)
+from .periodic_team_support import (PeriodicTeamSupport, PeriodicTeamSupportRuleHookSystem,
+                                    periodic_support_effectiveness_adapter)
 from .received_recovery_modifier import ReceivedRecoveryModifierProvider
 from .action_start_recovery_damage import AccumulatedRecoveryRuleHookSystem, ActionStartRecoveryDamageSupport
 from .state_application_reaction import ReactingStateApplicationCoordinator, ReactingStateLifecycleSystem
@@ -197,6 +202,9 @@ class BattleSystems:
         self.state_effectiveness_policy.register_rule_adapter(
             stage11_legacy_effectiveness_adapter
         )
+        self.state_effectiveness_policy.register_rule_adapter(damage_rate_prerequisite_adapter)
+        self.state_effectiveness_policy.register_rule_adapter(periodic_support_effectiveness_adapter)
+        self.state_effectiveness_policy.register_rule_adapter(target_priority_effectiveness_adapter)
         self.state_modifier_support = StateModifierSupport(self.state_effectiveness_policy)
         self.attribute_system.register_modifier_provider(self.state_modifier_support)
         self.provider_validity_policy = ProviderValidityPolicy(
@@ -372,6 +380,10 @@ class BattleSystems:
         self.damage_rule_provider = FengShiZhenDamageRuleProvider(
             self.state_effectiveness_policy, self.damage_rule_provider
         )
+        self.damage_rule_provider = DamageRateModifierProvider(
+            self.state_effectiveness_policy, self.damage_rule_provider)
+        self.damage_rule_provider = QueryBoundReductionProvider(
+            self.state_effectiveness_policy, self.attribute_system, self.damage_rule_provider)
         self.damage_system = AdditiveDamageSystem(
             self.attribute_system,
             weapon_troop_function_table=self.weapon_troop_function_table,
@@ -526,8 +538,9 @@ class BattleSystems:
             self.state_lifecycle_system,
             self.recovery_system,
         )
-        self.skill_resolver = SkillResolver(
+        self.skill_resolver = TargetPrioritySkillResolver(
             self.target_system,
+            effectiveness_policy=self.state_effectiveness_policy,
             admission_coordinator=self.skill_operation_admission_coordinator,
             target_policy=self.skill_target_policy,
             activation_rate_provider=self.state_modifier_support.activation_rate,
@@ -538,11 +551,12 @@ class BattleSystems:
             self.dependency_evaluation_support,
             lambda context, skill_id, owner_id: resolve_opening_troop_definition(context, self, skill_id, owner_id),
         )
-        self.rule_hook_system = PoolRuleHookSystem(
+        self.rule_hook_system = PeriodicTeamSupportRuleHookSystem(
             self.trigger_system,
             self.effect_executor,
             ActionStartRecoveryDamageSupport(self),
             pool_support=TemporaryDamagePoolSupport(self.state_effectiveness_policy),
+            periodic_support=PeriodicTeamSupport(self),
         )
         self.scheduled_team_recovery_support = ScheduledTeamRecoverySupport(
             self.pending_work_system,
