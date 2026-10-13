@@ -3,7 +3,7 @@
 > 阶段：Stage14 F1（阵法 Gameplay 第一项）  
 > 战法：锋矢阵 / `SkillType.FORMATION` / Canonical ID `20066`  
 > 合同来源：Research main [Feng Shi Zhen Research Contract](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/01_Skills/FENG_SHI_ZHEN_RESEARCH_CONTRACT.md) 和 [F1 Preintegration Handoff](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/00_Governance/F1_FENG_SHI_ZHEN_PREINTEGRATION_READINESS.md)。  
-> 接入分支：`stage14-f1-feng-shi-zhen`，Battle PR #68；本文件为接入分支实现记录，最终 mainline 状态以 PR 合并记录及 merged-main CI 为准。  
+> 接入分支：`stage14-f1-feng-shi-zhen`，Battle PR #68 已合并；当前状态以第 6 节 mainline freeze 验收为准。  
 > 用户 V1 实现规则：四阶段 `PASSIVE → FORMATION → TROOP → COMMAND`；来源携带者阵亡效果立即失效；同队最多一个阵法；同速跨队进攻方优先。
 
 ## 1. 满级数值（Lv10）
@@ -46,6 +46,13 @@
 - 任何其他具体阵法的 Gameplay；象兵仍为 `DEFERRED`。
 - 用户 V1 实现规则不能反向当作客户端全局时序或携带者阵亡机制已被实证的证明。
 
-## 5. Freeze / Release Gate
+## 5. Freeze / Release Gate（接入前门禁，历史记录）
 
 Battle PR #68 必须全量 pytest、Stage13-D1 独立冻结审计、青州兵独立审计、Demo、PR CI 通过；实际发布以 merged-main CI 再次通过为准。合并与通过之前只允许标记为 `IMPLEMENTED_CANDIDATE`，不能宣称 `MAINLINE_FROZEN`。
+
+## 6. 正式 Mainline Freeze 结果（2026-10-13）
+
+- Battle PR [#68](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/68) **MERGED**：`975b44e67f7d1bfbb6a46fd12be6895e3c8a7cb4`。
+- [F1 merged-main Actions #38280765590](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38280765590) **SUCCESS**：`2267/2267` tests PASS、Demo PASS、Stage13-D1 frozen owner PASS（11 adversarial）、Qingzhou independent audit PASS。
+- `F1_LV10_RUNTIME_MAINLINE=FROZEN_TO_USER_APPROVED_V1_CONTRACT`; `F1_GAMEPLAY_CLIENT_TRUTH=BOUNDED_CONFIRMED_WITH_OPEN_BOUNDARIES`。不要将本版本的用户规则或等级插值缺失伪装为全客户端实证。
+- 该记录仅说明锋矢阵满级标准数值与来源生命周期已经实现，其他阵法、Lv1~9 等均不包括在此冻结范围。

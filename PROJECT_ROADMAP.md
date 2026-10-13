@@ -55,11 +55,19 @@ Stage13 当前权威入口：[stages/stage13/README.md](stages/stage13/README.md
 
 [FORMATION F0 Runtime Readiness](stages/stage14/FORMATION_F0_RUNTIME_READINESS.md)
 
-## Stage14 阵法 F0 mainline 收口与 F1 就绪（2026-10-13）
+## Stage14 阵法 F0 mainline 收口与 F1 接入前就绪（历史记录，2026-10-13）
 
 - **Research F0-R**：Research [PR #18](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/pull/18) MERGED；基线 `abd654a907019a16a61adefee97663b25b073dd2`。
 - **Battle F0-I-A**：[PR #66](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/66) MERGED；基线 `2238186848fee6c89a9e688174f2fe64d382c1a0`。
 - **merged-main CI**：[Actions #38278028436](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38278028436) SUCCESS：2239 pytest、demo、Stage13-D1 冻结 Owner 审计、青州独立审计均 PASS。
-- **下一独立 Gameplay 阶段**：Stage14 F1 `20066 锋矢阵`，尚未接入 Runtime。专项研究合同和 [F1 preintegration handoff](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/00_Governance/F1_FENG_SHI_ZHEN_PREINTEGRATION_READINESS.md) 已就绪。F1 需独立功能 PR、专项数值链测试及 mainline audit。
+- **当时拟开展的独立 Gameplay 阶段**：Stage14 F1 `20066 锋矢阵`，后已通过 Battle PR #68 接入 main（详见下节）。专项研究合同和 [F1 preintegration handoff](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/00_Governance/F1_FENG_SHI_ZHEN_PREINTEGRATION_READINESS.md) 已就绪。F1 当时要求独立功能 PR、专项数值链测试和 mainline audit，现已于 PR #68 完成。
 - **用户批准的 V1 规则**：PRE_BATTLE `PASSIVE -> FORMATION -> TROOP -> COMMAND`；携带者阵亡所属阵法持续效果立即失效；同队至多一个阵法；跨队同速进攻方优先。这些属于模拟器用户裁决，不得改写反向战报证据。
-- 兵种 `15/16`，象兵仍 `DEFERRED`，阵法 Gameplay 实装 `0`；基础设施存在不等于锋矢阵已经生效。
+- 兵种 `15/16`，象兵仍 `DEFERRED`，截至 F0 退出时阵法 Gameplay 实装 `0`（历史快照）；当前 F1 已接入 `1`（锋矢阵），见下节。
+
+## Stage14 F1 锋矢阵 Gameplay mainline 完成（2026-10-13）
+
+- Battle [PR #68](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/68) MERGED，Gameplay baseline `975b44e67f7d1bfbb6a46fd12be6895e3c8a7cb4`。
+- [F1 merged-main Actions #38280765590](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38280765590) **SUCCESS**，全量 `2267/2267` PASS，Demo PASS、Stage13-D1（含 11 条对抗测试）PASS、青州独立审计 PASS。
+- 官方 ID `20066`；骑/盾/枪；满级 Lv10 主将造成伤害 +30%、承伤 +20%，副将造成伤害 -15%、承伤 -25%。适用兵刃/谋略，标准核心分层结算，携带者阵亡后来源级立即清理。
+- 具体阵法 Gameplay 进 main `1`（锋矢阵），其他阵法 `DEFERRED_TO_PER_SKILL_RESEARCH`；象兵仍暂缓；Lv1~9 数值与客户端真实性边界仍 OPEN。
+- [锋矢阵独立接入记录](stages/stage14/FENG_SHI_ZHEN_INTEGRATION.md)。
