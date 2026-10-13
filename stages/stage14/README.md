@@ -14,7 +14,7 @@
 - F1 [PR #68](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/68) MERGED (`975b44e6`); [F1 merged-main Actions #38280765590](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38280765590) SUCCESS (2267 pytest, Stage13-D1/Qingzhou audits, demo). [Gameplay 接入说明](FENG_SHI_ZHEN_INTEGRATION.md)。Lv1~9 模型仍 OPEN，F1 当前仅 Lv10。
 - 兵种战法维持 `15/16`，象兵 `DEFERRED`。[象兵暂缓清单](XIANG_BING_PREPARATION.md)
 
-**Historical note:** 以下旧版 Stage14 批次测试计数、候选状态与原路线描述属于原批次审计快照，不代表当前 F0/F1 状态。最新 F0 状态以上文 merged-main CI 为准。参见 [F0 historical readiness and exit](FORMATION_F0_RUNTIME_READINESS.md)。
+**Historical note:** 以下旧版 Stage14 批次测试计数、候选状态与原路线描述属于原批次审计快照，不代表当前 F0/F1 状态。当前 F1 正式合并的 [Gameplay 接入记录](FENG_SHI_ZHEN_INTEGRATION.md) 和 [merged-main CI](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38280765590) 为最新依据。最新 F0 状态以上文 merged-main CI 为准。参见 [F0 historical readiness and exit](FORMATION_F0_RUNTIME_READINESS.md)。
 
 丹阳兵接入见[丹阳兵接入说明](DAN_YANG_BING_INTEGRATION.md)：
 生成比例按用户确认的1.0倍实现；全体统率+36，谋略抵挡36%／陶谦40%，每回合衰减10%。
