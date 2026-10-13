@@ -96,3 +96,6 @@ StateEffectivenessPolicy及所有既有冻结owner。
 架构及静态定义专项52项通过；全量 **2598 passed**；demo通过；
 21个冻结核心文件哈希一致、D1对抗11项通过，青州兵审计通过。
 新进程registry含7项，22040唯一解析为本模块SKILL。远端状态以PR与Actions为准。
+
+发布后合并前审计新增7项对抗测试，全量更新为 **2605 passed**；
+见[PR #73合并前审计](QIAN_LONG_ZHEN_MERGE_AUDIT.md)。
