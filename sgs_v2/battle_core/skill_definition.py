@@ -135,6 +135,7 @@ class SkillDefinition:
     preparation_mode: PreparationMode = PreparationMode.NONE
     target_count: int | None = None
     target_restriction_keys: tuple[str, ...] = ()
+    commander_effect_specs: tuple[SkillEffectSpec, ...] = ()
 
     def __post_init__(self) -> None:
         if not isinstance(self.skill_id, str) or not self.skill_id.strip():
@@ -197,3 +198,15 @@ class SkillDefinition:
 
         object.__setattr__(self, "activation_rate", float(self.activation_rate))
         object.__setattr__(self, "effect_specs", specs)
+        commander_specs = tuple(self.commander_effect_specs)
+        if any(not isinstance(spec, (DamageSkillEffectSpec, ApplyStateSkillEffectSpec,
+                                     RecoverySkillEffectSpec)) for spec in commander_specs):
+            raise TypeError("commander_effect_specs contains an unsupported spec type")
+        if self.skill_type in (SkillType.PASSIVE, SkillType.COMMAND) and any(
+                not isinstance(spec, ApplyStateSkillEffectSpec) for spec in commander_specs):
+            raise ValueError("opening commander effects must be persistent state specs")
+        ordinary_states = {spec.state_id for spec in specs if isinstance(spec, ApplyStateSkillEffectSpec)}
+        commander_states = {spec.state_id for spec in commander_specs if isinstance(spec, ApplyStateSkillEffectSpec)}
+        if ordinary_states & commander_states:
+            raise ValueError("ordinary and commander effects require distinct state IDs")
+        object.__setattr__(self, "commander_effect_specs", commander_specs)

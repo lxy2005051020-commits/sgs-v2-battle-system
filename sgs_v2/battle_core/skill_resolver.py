@@ -93,6 +93,7 @@ class SkillResolver:
         target_policy: SkillTargetPolicy | None = None,
         activation_rate_provider: Callable[[BattleContext, SkillRuntime], float] | None = None,
         continuous_damage_basis_producer=None,
+        commander_effect_policy=None,
     ) -> None:
         if not isinstance(target_system, TargetSystem):
             raise TypeError("target_system must be a TargetSystem")
@@ -112,6 +113,7 @@ class SkillResolver:
             raise TypeError("activation_rate_provider must be callable or None")
         self._activation_rate_provider = activation_rate_provider
         self._continuous_damage_basis_producer = continuous_damage_basis_producer
+        self._commander_effect_policy = commander_effect_policy
 
     def resolve(
         self,
@@ -124,6 +126,20 @@ class SkillResolver:
 
         if not self._admitted(context, runtime):
             return self._empty_result(runtime, SkillResolutionStatus.DISABLED)
+
+        # One admission, one activation roll and one selection for both branches.
+        # Persistent commander states may be installed while dormant; their
+        # effectiveness adapter owns qualification, including opening passives.
+        commander_specs = definition.commander_effect_specs
+        if commander_specs and (runtime.skill_slot is None or
+                context.skill_runtimes.get(runtime.owner_id, runtime.skill_slot) is not runtime):
+            raise ValueError("commander effects require a canonical loaded runtime and slot")
+        if commander_specs and self._commander_effect_policy is None:
+            raise NotImplementedError("commander effects require an explicit qualification policy")
+        enabled_commander = bool(commander_specs) and self._commander_effect_policy.enabled(context, runtime.owner_id)
+        effective_specs = definition.effect_specs + tuple(
+            spec for spec in commander_specs
+            if enabled_commander or isinstance(spec, ApplyStateSkillEffectSpec))
 
         owner = context.get_unit(runtime.owner_id)
 
@@ -193,7 +209,7 @@ class SkillResolver:
                 spec=spec,
             )
             for target in selected
-            for spec in definition.effect_specs
+            for spec in effective_specs
         )
 
         return SkillResolutionResult(
