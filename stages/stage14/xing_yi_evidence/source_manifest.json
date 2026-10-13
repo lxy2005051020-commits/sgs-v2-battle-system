@@ -9,10 +9,11 @@
     10
   ],
   "confirmed_rules": [
-    "R1/R2/R3 -30%/-20%/-10%; R4 onward +16% outgoing and +1% incoming per round"
+    "R1/R2/R3 -30%/-20%/-10%; R4 onward +16% outgoing and +1% incoming per round",
+    "Tied-highest attribute priority: attack > intelligence > defense > speed; only one attribute receives +60"
   ],
   "open_rules": [
-    "highest attribute read point; tied-highest attribute behavior"
+    "highest attribute read point"
   ],
   "config": {
     "base_id": 22039,

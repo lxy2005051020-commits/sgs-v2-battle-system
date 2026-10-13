@@ -105,10 +105,39 @@ def test_wrong_types_have_no_effect():
     assert not ctx.metadata["xing_yi_snapshots"][(rt.owner_id, rt.skill_slot)]["eligible"]
 
 
-@pytest.mark.parametrize("invalid", ["tie", "missing_intelligence", "missing_inherent", "dead", "noncanonical"])
+@pytest.mark.parametrize("tied,expected", [
+    (("attack", "intelligence"), "attack"),
+    (("attack", "defense"), "attack"),
+    (("attack", "speed"), "attack"),
+    (("intelligence", "defense"), "intelligence"),
+    (("intelligence", "speed"), "intelligence"),
+    (("defense", "speed"), "defense"),
+    (("attack", "intelligence", "defense"), "attack"),
+    (("attack", "intelligence", "speed"), "attack"),
+    (("attack", "defense", "speed"), "attack"),
+    (("intelligence", "defense", "speed"), "intelligence"),
+    (("attack", "intelligence", "defense", "speed"), "attack"),
+])
+def test_tied_highest_user_priority_selects_exactly_one_attribute(tied, expected):
+    ctx, s, rt = scene()
+    for attribute in ("attack", "intelligence", "defense", "speed"):
+        setattr(ctx.units["A1"], attribute, 300 if attribute in tied else 100)
+    rng = ctx.random._rng.getstate()
+    install(ctx, s, rt)
+    bonuses = ctx.states.find(owner_id="A1", state_id=ATTRIBUTE_BONUS_STATE_ID)
+    assert len(bonuses) == 1
+    assert bonuses[0].runtime_params == AttributeBonusParams(expected, 60)
+    for attribute in tied:
+        actual = getattr(s.attribute_system, f"get_{attribute}")(ctx, ctx.units["A1"])
+        assert actual == (360 if attribute == expected else 300)
+    assert ctx.metadata["xing_yi_snapshots"][(rt.owner_id, rt.skill_slot)]["highest_attribute"] == expected
+    assert ctx.random._rng.getstate() == rng
+    assert len(ctx.states.find(state_id=DAMAGE_RATE_STATE_ID)) == 2
+
+
+@pytest.mark.parametrize("invalid", ["missing_intelligence", "missing_inherent", "dead", "noncanonical"])
 def test_failures_before_effects_rng_or_install_marker(invalid):
     ctx, s, rt = scene()
-    if invalid == "tie": ctx.units["A1"].intelligence = 250
     if invalid == "missing_intelligence": ctx.units["A1"].intelligence = None
     if invalid == "missing_inherent":
         from sgs_v2.battle_core.skill_runtime_registry import SkillRuntimeRegistry

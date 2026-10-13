@@ -1,7 +1,7 @@
 """Lv10 形一阵: static description and user-confirmed round curve.
 
-The highest-attribute read uses an installation snapshot. Until a tie rule is
-confirmed, ties fail closed before any effect is applied. No hidden tie order.
+The highest-attribute read uses a provisional installation snapshot. Ties use
+the user-confirmed force > intelligence > command > speed priority.
 """
 from .context import BattleContext
 from .damage_rate_modifier import (DAMAGE_RATE_STATE_ID, RoundDamageRateParams,
@@ -20,6 +20,7 @@ from .state_modifiers import (ATTRIBUTE_BONUS_STATE_ID, AttributeBonusParams,
 XING_YI_ZHEN_SKILL_ID = "22039"
 XING_YI_ZHEN_NAME = "形一阵"
 XING_YI_ZHEN_APPLICABLE_TROOPS = tuple(TroopType)
+ATTRIBUTE_TIE_PRIORITY = ("attack", "intelligence", "defense", "speed")
 ROUND_CURVE = RoundDamageRateParams(
     opening_rates=((-0.30, -0.30), (-0.20, -0.20), (-0.10, -0.10)),
     outgoing_step=0.16, incoming_step=0.01)
@@ -62,17 +63,15 @@ def install_xing_yi_zhen(context: BattleContext, systems: object,
         return
     # Read all four EFFECTIVE attributes before installing the attribute bonus.
     attributes = {key: getattr(systems.attribute_system, f"get_{key}")(context, provider)
-                  for key in ("attack", "defense", "intelligence", "speed")}
-    maximum = max(attributes.values())
-    highest = [key for key, value in attributes.items() if value == maximum]
-    if len(highest) != 1:
-        raise NotImplementedError("形一阵 highest-attribute tie rule is unconfirmed")
+                  for key in ATTRIBUTE_TIE_PRIORITY}
+    # max retains the first key on equal values, using the explicit user order.
+    highest = max(ATTRIBUTE_TIE_PRIORITY, key=attributes.__getitem__)
     register_modifier_state_definitions(context.states)
     register_damage_rate_state(context.states)
     ref = SkillProviderRef(runtime.owner_id, runtime.skill_slot, XING_YI_ZHEN_SKILL_ID)
     source = EffectSourceRef(SourceType.ACTIVE_SKILL, ref.owner_id, ref.skill_id, ref.skill_slot)
     effects = [ApplyStateEffect(ATTRIBUTE_BONUS_STATE_ID, ref.owner_id, ref.owner_id,
-        ref.skill_id, runtime_params=AttributeBonusParams(highest[0], 60), source_ref=source)]
+        ref.skill_id, runtime_params=AttributeBonusParams(highest, 60), source_ref=source)]
     allies = [unit for unit in team if unit.unit_id != provider.unit_id]
     effects.extend(ApplyStateEffect(DAMAGE_RATE_STATE_ID, unit.unit_id, ref.owner_id,
         ref.skill_id, runtime_params=ROUND_CURVE, source_ref=source) for unit in allies)
@@ -81,7 +80,9 @@ def install_xing_yi_zhen(context: BattleContext, systems: object,
         systems.dependency_evaluation_support.add_dependency(
             StateNode(result.state_instance.instance_id), ProviderNode(ref))
     context.metadata.setdefault("xing_yi_snapshots", {})[(runtime.owner_id, runtime.skill_slot)] = {
-        "eligible": True, "attributes": attributes, "highest_attribute": highest[0],
+        "eligible": True, "attributes": attributes, "highest_attribute": highest,
         "target_ids": tuple(unit.unit_id for unit in allies),
         "curve_provenance": "USER_CONFIRMED_ROUND_CURVE / NOT_CLIENT_EMPIRICALLY_FROZEN",
-        "snapshot_provenance": "PROVISIONAL_INSTALLATION_EFFECTIVE_ATTRIBUTE_SNAPSHOT / TIE_FAIL_CLOSED"}
+        "tie_priority": ATTRIBUTE_TIE_PRIORITY,
+        "tie_provenance": "USER_CONFIRMED_ATTACK_INTELLIGENCE_DEFENSE_SPEED",
+        "snapshot_provenance": "PROVISIONAL_INSTALLATION_EFFECTIVE_ATTRIBUTE_SNAPSHOT"}

@@ -1,7 +1,7 @@
 # Stage14 · Concrete Skill Integration
 
 本地新增形一阵（22039）Lv10：见[形一阵接入记录](XING_YI_ZHEN_INTEGRATION.md)。
-本分支 registry 共6项；下文五阵法记录保留原合并基线口径。形一阵尚未发布或合入main。
+本分支 registry 共6项；下文五阵法记录保留原合并基线口径。形一阵通过独立分支发布，尚未合入main。
 
 ## 当前阵法实现（2026-10-13）
 
