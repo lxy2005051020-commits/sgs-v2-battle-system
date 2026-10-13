@@ -1,5 +1,9 @@
 # Stage14 · Concrete Skill Integration
 
+## 八门金锁阵本地接入候选（2026-10-13）
+
+`20025` 已在 `stage14/ba-men-jin-suo-zhen` 实现；使用用户指定缩放公式与用户确认的发动智力快照，支持 Lv1～10、前三回合敌军两人造成伤害降低及我军主将先攻。专项 50 PASS，全量 2317 PASS，冻结 Owner/青州审计 PASS。[接入说明及来源](BA_MEN_JIN_SUO_ZHEN_INTEGRATION.md)。尚未发布 PR 或合并 main；下节 mainline 阵法数量维持 1。
+
 ## Current Formation F0/F1 status (2026-10-13)
 
 **Stage14 F0 research and formation foundation have merged to both main branches.**

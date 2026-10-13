@@ -975,3 +975,14 @@ __all__ += [
 ]
 from .wu_feng_zhen import create_wu_feng_zhen_runtime, create_wu_feng_zhen_definition
 from .periodic_team_support import RecoveryTargetMode
+
+from .ba_men_jin_suo_zhen import (
+    BA_MEN_JIN_SUO_ZHEN_SKILL_ID,
+    create_ba_men_jin_suo_zhen_definition,
+    create_ba_men_jin_suo_zhen_runtime,
+)
+__all__ += [
+    "BA_MEN_JIN_SUO_ZHEN_SKILL_ID",
+    "create_ba_men_jin_suo_zhen_definition",
+    "create_ba_men_jin_suo_zhen_runtime",
+]

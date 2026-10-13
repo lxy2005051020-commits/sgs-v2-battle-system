@@ -65,7 +65,7 @@ class FormationSkillConfig:
 
 
 # Canonical Formation Registry: keyed strictly by canonical skill_id
-# F0-I-A registers no gameplay formations (Feng Shi Zhen, Ba Men, etc. are NOT registered here).
+# Gameplay configurations register below; effects require an equipped runtime.
 FORMATION_SKILL_REGISTRY: dict[str, FormationSkillConfig] = {}
 
 
@@ -352,3 +352,17 @@ from .wu_feng_zhen import (WU_FENG_ZHEN_SKILL_ID, WU_FENG_ZHEN_NAME,
 register_formation_skill_config(FormationSkillConfig(
     WU_FENG_ZHEN_SKILL_ID, WU_FENG_ZHEN_NAME, WU_FENG_ZHEN_APPLICABLE_TROOPS,
     create_wu_feng_zhen_definition, requires_provider_slot=True, installer=install_wu_feng_zhen))
+from .ba_men_jin_suo_zhen import (
+    BA_MEN_JIN_SUO_ZHEN_SKILL_ID, BA_MEN_JIN_SUO_ZHEN_NAME,
+    BA_MEN_APPLICABLE_TROOPS, create_ba_men_jin_suo_zhen_definition,
+    install_ba_men_jin_suo_zhen,
+)
+
+register_formation_skill_config(FormationSkillConfig(
+    skill_id=BA_MEN_JIN_SUO_ZHEN_SKILL_ID,
+    name=BA_MEN_JIN_SUO_ZHEN_NAME,
+    applicable_troops=BA_MEN_APPLICABLE_TROOPS,
+    definition_factory=create_ba_men_jin_suo_zhen_definition,
+    requires_provider_slot=True,
+    installer=install_ba_men_jin_suo_zhen,
+))

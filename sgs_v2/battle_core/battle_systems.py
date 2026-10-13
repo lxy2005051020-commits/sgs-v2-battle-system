@@ -13,6 +13,7 @@ from .probabilistic_target_priority import (TargetPrioritySkillResolver, QueryBo
                                            target_priority_effectiveness_adapter)
 from .periodic_team_support import (PeriodicTeamSupport, PeriodicTeamSupportRuleHookSystem,
                                     periodic_support_effectiveness_adapter)
+from .outgoing_damage_reduction import OutgoingDamageReductionProvider
 from .received_recovery_modifier import ReceivedRecoveryModifierProvider
 from .action_start_recovery_damage import AccumulatedRecoveryRuleHookSystem, ActionStartRecoveryDamageSupport
 from .state_application_reaction import ReactingStateApplicationCoordinator, ReactingStateLifecycleSystem
@@ -384,6 +385,9 @@ class BattleSystems:
             self.state_effectiveness_policy, self.damage_rule_provider)
         self.damage_rule_provider = QueryBoundReductionProvider(
             self.state_effectiveness_policy, self.attribute_system, self.damage_rule_provider)
+        self.damage_rule_provider = OutgoingDamageReductionProvider(
+            self.state_effectiveness_policy, self.damage_rule_provider
+        )
         self.damage_system = AdditiveDamageSystem(
             self.attribute_system,
             weapon_troop_function_table=self.weapon_troop_function_table,
