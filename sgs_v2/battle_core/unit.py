@@ -43,11 +43,14 @@ class UnitRuntime:
     wounded_troops: int | None = field(default=None, kw_only=True)
     advancement_stars: int = field(default=0, kw_only=True)
     military_books_active: bool = field(default=False, kw_only=True)
+    faction: str | None = field(default=None, kw_only=True)
     _wounded_pool_authoritative: bool = field(default=False, init=False, repr=False)
 
     def __post_init__(self) -> None:
         if self.troop_aptitude is not None and self.troop_aptitude not in ("S", "A", "B", "C"):
             raise ValueError("troop_aptitude must be S/A/B/C or None for current troop type")
+        if self.faction is not None and (not isinstance(self.faction, str) or not self.faction.strip() or self.faction != self.faction.strip()):
+            raise ValueError("faction must be a nonblank normalized string or None")
         if not self.unit_id:
             raise ValueError("unit_id cannot be empty")
         if not self.team_id:
@@ -95,6 +98,7 @@ class UnitRuntime:
             "unit_id": self.unit_id,
             "name": self.name,
             "team_id": self.team_id,
+            "faction": self.faction,
             "max_troops": self.max_troops,
             "troops": self.troops,
             "attack": self.attack,

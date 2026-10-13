@@ -921,6 +921,14 @@ from .troop_skills.jin_fan_jun import create_jin_fan_jun_definition, create_jin_
 __all__ += ["create_jin_fan_jun_definition", "create_jin_fan_jun_runtime"]
 
 from .pre_battle_order import PreBattleOrderSystem
+from .ji_xing_zhen import (
+    JI_XING_ZHEN_SKILL_ID,
+    calculate_reduction_rate as calculate_ji_xing_reduction_rate,
+    create_ji_xing_zhen_definition,
+    create_ji_xing_zhen_runtime,
+)
+__all__ += ["JI_XING_ZHEN_SKILL_ID", "calculate_ji_xing_reduction_rate",
+            "create_ji_xing_zhen_definition", "create_ji_xing_zhen_runtime"]
 from .formation_admission import (
     FormationAdmissionRejectedError,
     FormationAdmissionResult,
@@ -968,6 +976,8 @@ from .feng_shi_zhen import (
     create_feng_shi_zhen_definition,
     create_feng_shi_zhen_runtime,
 )
+from .san_shi_zhen import create_san_shi_zhen_definition, create_san_shi_zhen_runtime
+__all__ += ["create_san_shi_zhen_definition", "create_san_shi_zhen_runtime"]
 __all__ += [
     "FENG_SHI_ZHEN_SKILL_ID",
     "create_feng_shi_zhen_definition",
@@ -975,3 +985,14 @@ __all__ += [
 ]
 from .wu_feng_zhen import create_wu_feng_zhen_runtime, create_wu_feng_zhen_definition
 from .periodic_team_support import RecoveryTargetMode
+
+from .ba_men_jin_suo_zhen import (
+    BA_MEN_JIN_SUO_ZHEN_SKILL_ID,
+    create_ba_men_jin_suo_zhen_definition,
+    create_ba_men_jin_suo_zhen_runtime,
+)
+__all__ += [
+    "BA_MEN_JIN_SUO_ZHEN_SKILL_ID",
+    "create_ba_men_jin_suo_zhen_definition",
+    "create_ba_men_jin_suo_zhen_runtime",
+]

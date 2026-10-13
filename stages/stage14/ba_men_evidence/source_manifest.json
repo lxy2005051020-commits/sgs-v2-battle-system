@@ -1,0 +1,11 @@
+{
+  "formula_provenance": "USER_SPECIFIED_FORMULA",
+  "static_row_count": 10,
+  "static_source_sha256": "F71C098C0C387E32D7426EEDAA663076298AB963F3BC21C98B646DD568C0766F",
+  "screenshot_sha256": "BD9C1B53B707C2BF982E0338CBDD4FEE5BEEBFF75AC7ACC3AFD583F7625390ED",
+  "runtime_baseline": "74817c59325bcaf7fafd5fc67f40621174ec9d65",
+  "static_source_path": "C:/Users/34187/Documents/ChatGPT/三国志战略版战报逆向/outputs/skill_static_descriptions_full_20260808_1632/merged/skill_static_descriptions_named.csv",
+  "client_empirical_freeze": false,
+  "intelligence_timing": "USER_CONFIRMED_APPLICATION_SNAPSHOT",
+  "static_base_id": "20025"
+}

@@ -151,3 +151,7 @@ Batch Integration             = ACTIVE / FAMILY-GATED
 武锋阵 `22031` 支持Lv10完整运行：前5回合概率优先选中主将及同次战法的实时统率减伤，携带者行动时触发奇数回合副将随机治疗另外两名队友、偶数回合叠加增伤。采用用户指定公式与选人规则，标记 `USER_SPECIFIED_MODEL / NOT_GAMEPLAY_FROZEN`；低等级统率缩放未推导。
 
 [接入记录、组件与验证证据](stages/stage14/WU_FENG_ZHEN_INTEGRATION.md)。
+
+## 五个已完成阵法统一同步（2026-10-13）
+
+实现注册数为5：锋矢阵、八门金锁阵、箕形阵、三势阵、武锋阵。范围与保留的未决项见[同步记录](stages/stage14/FORMATION_COMPLETED_SYNC.md)。原本地候选记录属于历史验证快照；本次整合保留用户指定模型边界，不把实现合并等同于Gameplay实证冻结。

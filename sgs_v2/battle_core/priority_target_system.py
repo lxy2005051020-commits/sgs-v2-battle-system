@@ -2,6 +2,7 @@
 from .context import BattleContext
 from .target_system import TargetSystem
 from .unit import UnitRuntime
+from .enums import LineupPosition
 
 
 class PriorityTargetSystem(TargetSystem):
@@ -11,6 +12,15 @@ class PriorityTargetSystem(TargetSystem):
     def lowest_troop_allies(self, context: BattleContext, unit: UnitRuntime) -> list[UnitRuntime]:
         return sorted(self._targets.allies(context, unit, include_self=True),
                       key=lambda candidate: (candidate.troops, candidate.lineup_position))
+
+    def most_lost_troop_deputies(self, context: BattleContext, unit: UnitRuntime,
+                                initial_troops: dict[str, int]) -> list[UnitRuntime]:
+        """Descending net loss since entry; ties use the canonical deputy slot."""
+        candidates = [u for u in self._targets.allies(context, unit, include_self=True)
+                      if u.lineup_position in (LineupPosition.DEPUTY_1, LineupPosition.DEPUTY_2)
+                      and u.unit_id in initial_troops]
+        return sorted(candidates, key=lambda u: (-(initial_troops[u.unit_id] - u.troops),
+                                                 u.lineup_position, u.unit_id))
 
 
 class FastestTargetSystem(PriorityTargetSystem):
