@@ -1,30 +1,34 @@
 # Stage14 · Concrete Skill Integration
 
-## 八门金锁阵本地接入候选（2026-10-13）
+## 当前阵法实现（2026-10-13）
 
-`20025` 已在 `stage14/ba-men-jin-suo-zhen` 实现；使用用户指定缩放公式与用户确认的发动智力快照，支持 Lv1～10、前三回合敌军两人造成伤害降低及我军主将先攻。专项 50 PASS，全量 2317 PASS，冻结 Owner/青州审计 PASS。[接入说明及来源](BA_MEN_JIN_SUO_ZHEN_INTEGRATION.md)。尚未发布 PR 或合并 main；下节 mainline 阵法数量维持 1。
-## Local 三势阵 candidate (2026-10-13)
+canonical registry已包含 **5个具体阵法**。本次将三个本地完成阵法整合到已含锋矢阵、武锋阵的最新基线，公开完整代码、原始来源快照、用户规则、测试与待核实项。
 
-三势阵 `22012` 已接入本地分支 `stage14/san-shi-zhen`，Lv1～10。
-用户确认平局减伤分配给副将1、重新分配清除旧效果；专项47项和全量2314项通过，
-Stage13-D1与青州兵审计通过。尚未推送或合并，不改变下列 main 历史状态。
-组件树、调用方式与未冻结假设见[三势阵接入记录](SAN_SHI_ZHEN_INTEGRATION.md)。
+| ID | 阵法 | 已实现范围 |
+|---|---|---|
+| 20066 | 锋矢阵 | Lv10；已有main接入 |
+| 20025 | 八门金锁阵 | Lv1–10；用户指定智力缩放及发动时快照 |
+| 20178 | 箕形阵 | Lv10；用户指定武力缩放 |
+| 22012 | 三势阵 | Lv1–10；用户确认平局及旧效果清除规则 |
+| 22031 | 武锋阵 | Lv10完整模型；低等级仅显式副将模式 |
 
-## Current Formation F0/F1 status (2026-10-13)
+[本次同步记录与组合验证](FORMATION_COMPLETED_SYNC.md)。接入完成不代表客户端机制实证冻结；形一阵、潜龙阵、鱼鳞阵仍未实现。
+
+## Historical Formation F0/F1 snapshot (2026-10-13)
 
 **Stage14 F0 research and formation foundation have merged to both main branches.**
 
 - Research F0-R: [PR #18](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/pull/18) MERGED; main snapshot `abd654a907019a16a61adefee97663b25b073dd2`.
 - Battle F0-I-A: [PR #66](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/66) MERGED; main snapshot `2238186848fee6c89a9e688174f2fe64d382c1a0`.
 - Battle merged-main [CI #38278028436](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38278028436): SUCCESS, `2239 passed`, demo PASS, Stage13-D1 frozen audit PASS, Qingzhou audit PASS.
-- `SkillType.FORMATION` now has a real `PRE_BATTLE` scheduler, canonical admission and team exclusivity guard, speed/attacker order and provenance-based provider-death cleanup. Current actual **formation Gameplay = 1 (Feng Shi Zhen 20066)**, merged through Battle PR #68 and verified on main.
+- `SkillType.FORMATION` now has a real `PRE_BATTLE` scheduler, canonical admission and team exclusivity guard, speed/attacker order and provenance-based provider-death cleanup. At the F1 snapshot **formation Gameplay = 1 (Feng Shi Zhen 20066)**, merged through Battle PR #68 and verified on main.
 - Completed **Stage14 F1: Feng Shi Zhen (20066)**. [Research contract](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/01_Skills/FENG_SHI_ZHEN_RESEARCH_CONTRACT.md) and [F1 preintegration plan](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/00_Governance/F1_FENG_SHI_ZHEN_PREINTEGRATION_READINESS.md).
 - `PASSIVE -> FORMATION -> TROOP -> COMMAND` is USER_APPROVED simulator V1 scheduling; client prebattle logs contain counterexamples to universal four-stage order.
 - 阵法携带者阵亡后所属持续效果立即失效；每队最多一个阵法；同速双方进攻方优先。均为用户批准的实现规则，不能标注为实证游戏事实。
 - F1 [PR #68](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/68) MERGED (`975b44e6`); [F1 merged-main Actions #38280765590](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38280765590) SUCCESS (2267 pytest, Stage13-D1/Qingzhou audits, demo). [Gameplay 接入说明](FENG_SHI_ZHEN_INTEGRATION.md)。Lv1~9 模型仍 OPEN，F1 当前仅 Lv10。
 - 兵种战法维持 `15/16`，象兵 `DEFERRED`。[象兵暂缓清单](XIANG_BING_PREPARATION.md)
 
-**Historical note:** 以下旧版 Stage14 批次测试计数、候选状态与原路线描述属于原批次审计快照，不代表当前 F0/F1 状态。当前 F1 正式合并的 [Gameplay 接入记录](FENG_SHI_ZHEN_INTEGRATION.md) 和 [merged-main CI](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38280765590) 为最新依据。最新 F0 状态以上文 merged-main CI 为准。参见 [F0 historical readiness and exit](FORMATION_F0_RUNTIME_READINESS.md)。
+**Historical note:** 以下旧版 Stage14 批次测试计数、候选状态与原路线描述属于原批次审计快照，不代表当前 F0/F1 状态。当前 F1 正式合并的 [Gameplay 接入记录](FENG_SHI_ZHEN_INTEGRATION.md) 和 [merged-main CI](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38280765590) 为当时F1阶段的依据；当前五阵法状态以上方同步记录为准。F0历史状态以上文merged-main CI为准。参见 [F0 historical readiness and exit](FORMATION_F0_RUNTIME_READINESS.md)。
 
 丹阳兵接入见[丹阳兵接入说明](DAN_YANG_BING_INTEGRATION.md)：
 生成比例按用户确认的1.0倍实现；全体统率+36，谋略抵挡36%／陶谦40%，每回合衰减10%。

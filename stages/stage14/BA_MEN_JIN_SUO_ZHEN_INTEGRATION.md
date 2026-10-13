@@ -1,6 +1,6 @@
 # 八门金锁阵接入记录
 
-状态：`IMPLEMENTED_LOCAL_CANDIDATE`。分支 `stage14/ba-men-jin-suo-zhen`，基于远端 main `74817c59325bcaf7fafd5fc67f40621174ec9d65`。尚未发布 PR 或合并 main。
+状态：`IMPLEMENTED_USER_SPECIFIED_MODEL / NOT_GAMEPLAY_FROZEN`。分支 `stage14/ba-men-jin-suo-zhen`，基于远端 main `74817c59325bcaf7fafd5fc67f40621174ec9d65`。原工作树本地验证快照；本次统一发布见[阵法同步记录](FORMATION_COMPLETED_SYNC.md)。
 
 ## 来源与公式
 
@@ -65,4 +65,4 @@ context.skill_runtimes.register(create_ba_men_jin_suo_zhen_runtime(
 - 同侧锋矢增减伤叠加、智力快照、全部等级与兵种、目标不足两人、同队阵法冲突、关闭 runtime 和重复安装均有行为测试。
 - 等级常量逐行对照保留的静态 CSV；真实战斗行动顺序验证前三回合主将先攻、第 4 回合恢复速度排序。
 
-跨战法净化、震慑等更细的客户端交互未因此获得实证冻结。本记录仅验收本地分支；远端 CI、PR 发布与 main 合并尚未执行。
+跨战法净化、震慑等更细的客户端交互未因此获得实证冻结。原记录测试数为该分支的历史快照；本次组合后的测试与远端发布状态见[阵法同步记录](FORMATION_COMPLETED_SYNC.md)。

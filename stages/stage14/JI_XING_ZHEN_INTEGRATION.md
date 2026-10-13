@@ -40,4 +40,4 @@ OUTGOING_REDUCTION贡献；同池叠加、地板、穿透由原伤害系统负�
 全量回归：2289 passed（49.68s）。D1冻结owner哈希全部一致，独立对抗测试
 11 passed；报告为`ji_xing_evidence/d1_audit.json`，verdict=PASS。
 已通过新进程导入核对20178唯一注册及工厂定义一致性。
-交付为本地分支，未推送、未合并，不表示远端CI已通过。
+原交付为本地分支；本次统一发布见[阵法同步记录](FORMATION_COMPLETED_SYNC.md)，旧测试数不是当前main的回归计数。

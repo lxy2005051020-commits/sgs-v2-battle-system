@@ -1,9 +1,9 @@
 # 三势阵接入记录
 
-状态：`IMPLEMENTED_LOCAL_CANDIDATE`，2026-10-13。工作树
+状态：`IMPLEMENTED_USER_SPECIFIED_MODEL / NOT_GAMEPLAY_FROZEN`，2026-10-13。工作树
 `D:\模拟系统\stage14-san-shi-zhen`，分支 `stage14/san-shi-zhen`。
 基于本次实时 fetch 的 Battle origin/main `74817c59325bcaf7fafd5fc67f40621174ec9d65`。
-未推送、未发布 PR、未合并 main；本地验证不代表远端 CI。
+原工作树验证为历史快照；本次统一发布见[阵法同步记录](FORMATION_COMPLETED_SYNC.md)。本地验证不代表远端CI。
 
 ## 描述与规则来源
 
