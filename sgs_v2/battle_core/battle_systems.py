@@ -90,6 +90,7 @@ from .provocation_integration import register_provocation_integration
 from .capture_integration import register_capture_integration
 from .rule_hook_system import RuleHookSystem
 from .skill_resolver import SkillResolver
+from .commander_effect import CommanderEffectPolicy
 from .stage9_state_runtime import Stage9StateRuntime
 from .stage11_state_runtime import (
     Stage11StateRuntime,
@@ -153,6 +154,7 @@ class BattleSystems:
     damage_aftermath_system: DamageAftermathSystem = field(init=False)
     effect_executor: EffectExecutor = field(init=False)
     skill_resolver: SkillResolver = field(init=False)
+    commander_effect_policy: CommanderEffectPolicy = field(init=False)
     trigger_system: TriggerSystem = field(init=False)
     rule_hook_system: RuleHookSystem = field(init=False)
     finalization_coordinator: BattleFinalizationCoordinator = field(init=False)
@@ -544,6 +546,8 @@ class BattleSystems:
             self.state_lifecycle_system,
             self.recovery_system,
         )
+        self.commander_effect_policy = CommanderEffectPolicy(self.state_effectiveness_policy)
+        self.state_effectiveness_policy.register_rule_adapter(self.commander_effect_policy.state_adapter)
         self.skill_resolver = TargetPrioritySkillResolver(
             self.target_system,
             effectiveness_policy=self.state_effectiveness_policy,
@@ -551,6 +555,7 @@ class BattleSystems:
             target_policy=self.skill_target_policy,
             activation_rate_provider=self.state_modifier_support.activation_rate,
             continuous_damage_basis_producer=self.continuous_damage_basis_producer,
+            commander_effect_policy=self.commander_effect_policy,
         )
         self.scheduled_skill_support = ScheduledSkillSupport(
             self.pending_work_system, self.skill_resolver, self.effect_executor,

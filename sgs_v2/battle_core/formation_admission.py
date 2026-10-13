@@ -326,6 +326,13 @@ def admit_and_install_formation_skill(
 
 
 # First production Formation skill (Stage14 F1). The registry is definition-only;
+from .qian_long_zhen import (QIAN_LONG_ZHEN_SKILL_ID, QIAN_LONG_ZHEN_NAME,
+    QIAN_LONG_ZHEN_APPLICABLE_TROOPS, create_qian_long_zhen_definition, install_qian_long_zhen)
+
+register_formation_skill_config(FormationSkillConfig(
+    QIAN_LONG_ZHEN_SKILL_ID, QIAN_LONG_ZHEN_NAME, QIAN_LONG_ZHEN_APPLICABLE_TROOPS,
+    create_qian_long_zhen_definition, requires_provider_slot=True, installer=install_qian_long_zhen))
+
 from .ji_xing_zhen import (
     JI_XING_ZHEN_SKILL_ID, JI_XING_ZHEN_NAME, JI_XING_ZHEN_APPLICABLE_TROOPS,
     create_ji_xing_zhen_definition, install_ji_xing_zhen,

@@ -971,6 +971,13 @@ __all__ += [
 ]
 
 # Stage14 F1 official Formation gameplay API
+from .qian_long_zhen import (QIAN_LONG_ZHEN_SKILL_ID,
+    create_qian_long_zhen_definition, create_qian_long_zhen_runtime)
+from .commander_effect import (CommanderEffectPolicy, CommanderEffectRoleParams,
+    COMMANDER_EFFECT_ROLE_STATE_ID)
+__all__ += ["QIAN_LONG_ZHEN_SKILL_ID", "create_qian_long_zhen_definition",
+    "create_qian_long_zhen_runtime", "CommanderEffectPolicy", "CommanderEffectRoleParams",
+    "COMMANDER_EFFECT_ROLE_STATE_ID"]
 from .xing_yi_zhen import (XING_YI_ZHEN_SKILL_ID,
     create_xing_yi_zhen_definition, create_xing_yi_zhen_runtime)
 __all__ += ["XING_YI_ZHEN_SKILL_ID", "create_xing_yi_zhen_definition",

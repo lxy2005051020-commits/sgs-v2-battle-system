@@ -74,6 +74,7 @@ def test_skill_definition_has_only_explicit_schema_fields() -> None:
         "activation_rate",
         "target_mode",
         "effect_specs",
+        "commander_effect_specs",
         "skill_type",
         "preparation_mode",
         "target_count",
