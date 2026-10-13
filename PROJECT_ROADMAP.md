@@ -55,14 +55,14 @@ Stage13 当前权威入口：[stages/stage13/README.md](stages/stage13/README.md
 
 [FORMATION F0 Runtime Readiness](stages/stage14/FORMATION_F0_RUNTIME_READINESS.md)
 
-## Stage14 阵法 F0 mainline 收口与 F1 就绪（2026-10-13）
+## Stage14 阵法 F0 mainline 收口与 F1 接入前就绪（历史记录，2026-10-13）
 
 - **Research F0-R**：Research [PR #18](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/pull/18) MERGED；基线 `abd654a907019a16a61adefee97663b25b073dd2`。
 - **Battle F0-I-A**：[PR #66](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/66) MERGED；基线 `2238186848fee6c89a9e688174f2fe64d382c1a0`。
 - **merged-main CI**：[Actions #38278028436](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38278028436) SUCCESS：2239 pytest、demo、Stage13-D1 冻结 Owner 审计、青州独立审计均 PASS。
-- **下一独立 Gameplay 阶段**：Stage14 F1 `20066 锋矢阵`，已通过 Battle PR #68 实际接入 Runtime，正式进入 main。专项研究合同和 [F1 preintegration handoff](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/00_Governance/F1_FENG_SHI_ZHEN_PREINTEGRATION_READINESS.md) 已就绪。F1 需独立功能 PR、专项数值链测试及 mainline audit。
+- **当时拟开展的独立 Gameplay 阶段**：Stage14 F1 `20066 锋矢阵`，后已通过 Battle PR #68 接入 main（详见下节）。专项研究合同和 [F1 preintegration handoff](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/00_Governance/F1_FENG_SHI_ZHEN_PREINTEGRATION_READINESS.md) 已就绪。F1 当时要求独立功能 PR、专项数值链测试和 mainline audit，现已于 PR #68 完成。
 - **用户批准的 V1 规则**：PRE_BATTLE `PASSIVE -> FORMATION -> TROOP -> COMMAND`；携带者阵亡所属阵法持续效果立即失效；同队至多一个阵法；跨队同速进攻方优先。这些属于模拟器用户裁决，不得改写反向战报证据。
-- 兵种 `15/16`，象兵仍 `DEFERRED`，阵法 Gameplay 实装 `0`；基础设施存在不等于锋矢阵已经生效。
+- 兵种 `15/16`，象兵仍 `DEFERRED`，截至 F0 退出时阵法 Gameplay 实装 `0`（历史快照）；当前 F1 已接入 `1`（锋矢阵），见下节。
 
 ## Stage14 F1 锋矢阵 Gameplay mainline 完成（2026-10-13）
 
