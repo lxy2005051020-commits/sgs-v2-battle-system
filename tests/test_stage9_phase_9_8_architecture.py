@@ -762,21 +762,34 @@ class TestArch11EffectExecutorSourceTypeProducerCoverage:
     """
 
     def test_arch_11_production_damage_effect_constructors_are_100_percent_classified(self) -> None:
+        import ast
         target_dir = Path("sgs_v2")
         constructors = []
 
         for fpath in target_dir.rglob("*.py"):
             with open(fpath, "r", encoding="utf-8") as fh:
                 content = fh.read()
-            if "DamageEffect(" in content:
-                for idx, line in enumerate(content.splitlines(), 1):
-                    if "DamageEffect(" in line:
-                        constructors.append((fpath.name, idx, line.strip()))
-
-        # Exactly two production constructors: skill_resolver.py and trigger_system.py
-        assert len(constructors) == 2
-        file_names = {c[0] for c in constructors}
-        assert file_names == {"skill_resolver.py", "trigger_system.py"}
+            # Parse calls: subclass declarations are not effect producers.
+            for node in ast.walk(ast.parse(content)):
+                if (isinstance(node, ast.Call) and isinstance(node.func, ast.Name)
+                        and node.func.id.endswith("DamageEffect")):
+                    constructors.append((fpath.name, node.func.id, node))
+        assert len(constructors) == 3
+        assert {(name, kind) for name, kind, _ in constructors} == {
+            ("skill_resolver.py", "DamageEffect"),
+            ("trigger_system.py", "DamageEffect"),
+            ("probabilistic_target_priority.py", "QueryBoundDamageEffect"),
+        }
+        for _, kind, node in constructors:
+            if kind == "DamageEffect":
+                assert any(keyword.arg == "source_ref" for keyword in node.keywords)
+            else:
+                # Approved wrapper copies every canonical field (including
+                # source_ref); it adds only the immutable target-query receipt.
+                copies = [keyword.value for keyword in node.keywords if keyword.arg is None]
+                assert len(copies) == 1 and isinstance(copies[0], ast.DictComp)
+                assert ast.unparse(copies[0].value) == "getattr(effect, f.name)"
+                assert ast.unparse(copies[0].generators[0].iter) == "fields(DamageEffect)"
 
     def test_arch_11_effect_executor_rejects_damage_effect_without_source_ref(self) -> None:
         ctx = _create_test_context()

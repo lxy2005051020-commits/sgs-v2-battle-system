@@ -145,3 +145,9 @@ Batch Integration             = ACTIVE / FAMILY-GATED
 - [Stage14 Jinfan Runtime Audit](stages/stage14/JIN_FAN_JUN_RUNTIME_AUDIT.md)
 - [Stage13 Gap Ledger](stages/stage13/STAGE13_CORE_GAMEPLAY_GAP_LEDGER.md)
 - [Stage13 Owner Matrix](stages/stage13/STAGE13_CORE_RUNTIME_OWNER_MATRIX.md)
+
+## 武锋阵Runtime增量（2026-10-13）
+
+武锋阵 `22031` 支持Lv10完整运行：前5回合概率优先选中主将及同次战法的实时统率减伤，携带者行动时触发奇数回合副将随机治疗另外两名队友、偶数回合叠加增伤。采用用户指定公式与选人规则，标记 `USER_SPECIFIED_MODEL / NOT_GAMEPLAY_FROZEN`；低等级统率缩放未推导。
+
+[接入记录、组件与验证证据](stages/stage14/WU_FENG_ZHEN_INTEGRATION.md)。

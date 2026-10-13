@@ -71,3 +71,9 @@ Stage13 当前权威入口：[stages/stage13/README.md](stages/stage13/README.md
 - 官方 ID `20066`；骑/盾/枪；满级 Lv10 主将造成伤害 +30%、承伤 +20%，副将造成伤害 -15%、承伤 -25%。适用兵刃/谋略，标准核心分层结算，携带者阵亡后来源级立即清理。
 - 具体阵法 Gameplay 进 main `1`（锋矢阵），其他阵法 `DEFERRED_TO_PER_SKILL_RESEARCH`；象兵仍暂缓；Lv1~9 数值与客户端真实性边界仍 OPEN。
 - [锋矢阵独立接入记录](stages/stage14/FENG_SHI_ZHEN_INTEGRATION.md)。
+
+## Stage14武锋阵接入增量（2026-10-13）
+
+武锋阵 `22031` 支持Lv10完整运行：前5回合概率优先选中主将及同次战法的实时统率减伤，携带者行动时触发奇数回合副将随机治疗另外两名队友、偶数回合叠加增伤。采用用户指定公式与选人规则，标记 `USER_SPECIFIED_MODEL / NOT_GAMEPLAY_FROZEN`；低等级统率缩放未推导。
+
+[接入记录、组件与验证证据](stages/stage14/WU_FENG_ZHEN_INTEGRATION.md)。

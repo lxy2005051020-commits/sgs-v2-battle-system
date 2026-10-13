@@ -1,0 +1,61 @@
+{
+  "baseline": "74817c59325bcaf7fafd5fc67f40621174ec9d65",
+  "source_csv": "C:\\Users\\34187\\Documents\\ChatGPT\\三国志战略版战报逆向\\outputs\\skill_static_descriptions_full_20260808_1632\\merged\\skill_static_descriptions_named.csv",
+  "source_csv_sha256": "f71c098c0c387e32d7426eedaa663076298ab963f3bc21c98b646dd568c0766f",
+  "source_json": "C:\\Users\\34187\\Documents\\ChatGPT\\三国志战略版战报逆向\\outputs\\skill_static_descriptions_full_20260808_1632\\merged\\skill_static_descriptions.json",
+  "source_json_sha256": "68284bb0537af595f8a56270f031cd20e12c558e08f2fe07243735b9fb27cbef",
+  "static_row_count": 10,
+  "config": {
+    "skill_rub_type": 0,
+    "skill_conflict": {},
+    "arm_limit": {},
+    "commission": {},
+    "army_show": 0,
+    "times": 1,
+    "type_name": 0,
+    "jingling_show": 0,
+    "xiaomi_tips": 350547,
+    "extra_tips": 0,
+    "skillupexp_type": 105,
+    "resolve": 101,
+    "research": 107,
+    "grade": 5,
+    "target_tips": "我军群体(3人)",
+    "battle_effect_id": 0,
+    "skill_full_screen": 0,
+    "name": "武锋阵",
+    "tips": 369,
+    "equip_answer": 0,
+    "id": 22031,
+    "answer": 0,
+    "old_s2_forbid": false,
+    "i18n_unlock_season": 4,
+    "short_tips": 152031,
+    "key": "武锋阵",
+    "skill_type": 9,
+    "pin_yin": "WFZ",
+    "season": 6,
+    "show_rub_icon": 0,
+    "icon": 70042,
+    "effect_type": 9
+  },
+  "user_rules": [
+    "携带战法者行动时",
+    "降低伤害百分比=30%+0.1%×(主将实时统率−100)",
+    "治疗目标为副将另外两名队友，不包括自己，随机选一个人"
+  ],
+  "model_assumptions": [
+    "after ordinary provider action-start hooks",
+    "roles frozen at installation",
+    "stacked increases add",
+    "live performer troops and 2 percent per advancement star",
+    "neutral healing attribute; external recovery modifiers use existing owner"
+  ],
+  "open_questions": [
+    "below-Lv10 command scaling",
+    "recovery modifier read timing",
+    "role behavior after deaths",
+    "source-skill priority details lack dedicated raw-report freeze"
+  ],
+  "provenance": "STATIC_DESCRIPTION + USER_SPECIFIED_LIVE_COMMAND_FORMULA + USER_CONFIRMED_PROVIDER_ACTION_AND_RANDOM_TEAMMATES / NOT_CLIENT_FROZEN"
+}

@@ -39,12 +39,15 @@ class UnitRuntime:
     troop_type: TroopType | None = None
     special_troop_id: SpecialTroopId | None = field(default=None, kw_only=True)
     intelligence: float | None = field(default=None, kw_only=True)
+    troop_aptitude: str | None = field(default=None, kw_only=True)
     wounded_troops: int | None = field(default=None, kw_only=True)
     advancement_stars: int = field(default=0, kw_only=True)
     military_books_active: bool = field(default=False, kw_only=True)
     _wounded_pool_authoritative: bool = field(default=False, init=False, repr=False)
 
     def __post_init__(self) -> None:
+        if self.troop_aptitude is not None and self.troop_aptitude not in ("S", "A", "B", "C"):
+            raise ValueError("troop_aptitude must be S/A/B/C or None for current troop type")
         if not self.unit_id:
             raise ValueError("unit_id cannot be empty")
         if not self.team_id:
@@ -105,6 +108,7 @@ class UnitRuntime:
             "level": self.level,
             "morale": self.morale,
             "troop_type": self.troop_type.value if self.troop_type is not None else None,
+            "troop_aptitude": self.troop_aptitude,
             "special_troop_id": (
                 self.special_troop_id.value if self.special_troop_id is not None else None
             ),
