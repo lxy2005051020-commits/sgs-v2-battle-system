@@ -176,3 +176,48 @@ def test_opposing_real_feng_shi_and_ba_men_install_and_defeat_are_source_isolate
     assert any(s.source_skill_id == "20025" and s.owner_id == "B0" for s in remaining)
     assert context.skill_runtimes.get(feng.owner_id, feng.skill_slot) is feng
     assert context.skill_runtimes.get(ba_men.owner_id, ba_men.skill_slot) is ba_men
+
+
+
+@pytest.mark.parametrize("a_skill,b_skill", tuple(product(IDS, IDS)))
+def test_all_eighty_one_opposing_formation_pairs_install_in_real_prebattle(a_skill, b_skill):
+    """Actual install/dispatch across all 81 ordered pairs, not just 1/team preflight.
+
+    Every lineup satisfies relevant static constraints: full team, factions
+    distinct, aptitude S/A/B, same troop family and matching inherent types.
+    All nine factories use their explicitly supported default full Lv10/base
+    value modes. It does NOT assert external client accuracy.
+    """
+    from sgs_v2.battle_core.skill_definition import (
+        ApplyStateSkillEffectSpec,
+        SkillDefinition,
+        SkillTargetMode,
+    )
+
+    context, systems = _scene(seed=20261014)
+    inherent_definition = SkillDefinition(
+        skill_id="audit-unexecuted-inherent",
+        name="Audit inherent type identity",
+        activation_rate=1.0,
+        target_mode=SkillTargetMode.SELF,
+        effect_specs=(ApplyStateSkillEffectSpec("audit-unexecuted-state"),),
+        skill_type=SkillType.ACTIVE,
+    )
+    for unit in context.units.values():
+        context.skill_runtimes.register(
+            SkillRuntime(inherent_definition, unit.unit_id, SkillSlot.INHERENT)
+        )
+
+    a_runtime = _equip(context, a_skill, "A1")
+    b_runtime = _equip(context, b_skill, "B2")
+    run_pre_battle_preparation_phases(context, systems)
+    assert context.metadata["_stage14_installed_formation_keys"] == {
+        (a_runtime.owner_id, a_runtime.skill_slot, a_runtime.definition.skill_id),
+        (b_runtime.owner_id, b_runtime.skill_slot, b_runtime.definition.skill_id),
+    }
+    # Every formation owns at least one actual state when a fully legal
+    # three-person lineup supplies its explicitly required invariants.
+    assert any(s.source_skill_id == a_skill and s.source_id == "A1"
+               for s in context.states.find())
+    assert any(s.source_skill_id == b_skill and s.source_id == "B2"
+               for s in context.states.find())
