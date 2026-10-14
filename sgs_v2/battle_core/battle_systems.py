@@ -38,6 +38,7 @@ from .continuous_damage_basis_producer import ContinuousDamageBasisProducer
 from .counter_system import CounterSystem
 from .damage_aftermath_port import DamageAftermathPort, DamageAftermathSystem
 from .damage_received_reaction import DamageReceivedReactionPort
+from .after_damage_support import AfterDamageSupportPort
 from .selective_state_immunity import register_selective_immunity_support
 from .defeat_cleanup_port import DefeatCleanupPort
 from .hit_resolution_system import HitResolutionSystem
@@ -467,6 +468,7 @@ class BattleSystems:
         if self.damage_aftermath_port is None:
             self.damage_aftermath_port = self.damage_aftermath_system
         self.damage_aftermath_port = DamageReceivedReactionPort(self.damage_aftermath_port, self)
+        self.damage_aftermath_port = AfterDamageSupportPort(self.damage_aftermath_port, self)
 
         self.damage_instance_coordinator = DamageInstanceCoordinator(
             self.damage_system,

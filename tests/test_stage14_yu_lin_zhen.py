@@ -72,24 +72,24 @@ def test_levels_roles_provider_provenance_and_no_rng(level, provider, troop):
 
 
 @pytest.mark.parametrize("method", ["direct", "scheduler", "engine"])
-def test_full_mode_fails_before_states_events_rng_or_passives(method):
+def test_base_value_mode_installs_without_rng(method):
     ctx, s, rt = scene(command_only=False)
+    from sgs_v2.battle_core.state_modifiers import register_modifier_state_definitions
+    register_modifier_state_definitions(ctx.states)
     passive = SkillDefinition("fixture_passive", "passive", 1, SkillTargetMode.SELF,
         (ApplyStateSkillEffectSpec(ATTRIBUTE_BONUS_STATE_ID, AttributeBonusParams("attack", 30)),),
         skill_type=SkillType.PASSIVE)
     ctx.skill_runtimes.register(SkillRuntime(passive, "A0", SkillSlot.INHERENT))
     rng = ctx.random._rng.getstate()
     before = {uid: unit.snapshot() for uid, unit in ctx.units.items()}
-    with pytest.raises(NotImplementedError, match="触发概率.*治疗.*属性读取时点"):
-        if method == "direct": admit_and_install_formation_skill(ctx, s, rt)
-        elif method == "scheduler": run_pre_battle_preparation_phases(ctx, s)
-        else: BattleEngine(context=ctx, systems=s).run()
-    assert not ctx.states.find()
-    assert not ctx.metadata.get("_stage14_installed_formation_keys")
-    assert not ctx.metadata.get("yu_lin_admissions")
-    assert ctx.random._rng.getstate() == rng
-    assert {uid: unit.snapshot() for uid, unit in ctx.units.items()} == before
-    assert not [event for event in ctx.event_bus.history if event.event_type.value.startswith("STATE_")]
+    if method == "direct": admit_and_install_formation_skill(ctx, s, rt)
+    elif method == "scheduler": run_pre_battle_preparation_phases(ctx, s)
+    else: BattleEngine(context=ctx, systems=s).run()
+    assert ctx.metadata["yu_lin_admissions"][(rt.owner_id, rt.skill_slot)]["mode"] == "BASE_VALUE_REACTIONS"
+    if method != "engine":
+        assert ctx.random._rng.getstate() == rng
+        assert {uid: unit.snapshot() for uid, unit in ctx.units.items()} == before
+        assert len(ctx.states.find()) == (5 if method == "direct" else 6)
 
 
 @pytest.mark.parametrize("issue", ["dead", "position", "extra", "definition"])

@@ -1,0 +1,45 @@
+{
+  "battle_baseline": "6b97b86aab597c73978b11c9118b7b227e09d654",
+  "research_main": "d9d20e16c85355d7349bbb6df2b1b148d44292a4",
+  "contract_sha256": {
+    "resistance_contract.md": "22f007b86299196d954349c6b72bd875d97cc84b0e01d6bb9d453336522517a7",
+    "first_aid_contract.md": "44c8ca9bf095935c3c4a389d3976f7c6425cafb8c24d74333be4c8700fd620ae"
+  },
+  "seeds": [
+    {
+      "seed": 7,
+      "rounds": 8,
+      "barrier_grants": 2,
+      "total_actual_recovery": 303
+    },
+    {
+      "seed": 19,
+      "rounds": 8,
+      "barrier_grants": 0,
+      "total_actual_recovery": 0
+    },
+    {
+      "seed": 31,
+      "rounds": 8,
+      "barrier_grants": 4,
+      "total_actual_recovery": 157
+    },
+    {
+      "seed": 43,
+      "rounds": 8,
+      "barrier_grants": 1,
+      "total_actual_recovery": 0
+    }
+  ],
+  "user_confirmed": [
+    "provider troop basis",
+    "settled-zero damage eligible",
+    "attribute scaling deferred"
+  ],
+  "engineering_boundaries": [
+    "provider live troops read after existing aftermath reactions",
+    "no source-description barrier duration means retain until consumed or formation provider defeat",
+    "shared recovery eligibility excludes feedback/share/distribution and evasion miss"
+  ],
+  "provenance": "USER_APPROVED_BASE_VALUE_MODEL / NOT_GAMEPLAY_FROZEN"
+}
