@@ -1,0 +1,59 @@
+{
+  "baseline": "4357a6b0a46f379945193c0e203a1373dd1c6e03",
+  "source_csv": "C:\\Users\\34187\\Documents\\ChatGPT\\三国志战略版战报逆向\\outputs\\skill_static_descriptions_full_20260808_1632\\merged\\skill_static_descriptions_named.csv",
+  "source_csv_sha256": "f71c098c0c387e32d7426eedaa663076298ab963f3bc21c98b646dd568c0766f",
+  "source_json": "C:\\Users\\34187\\Documents\\ChatGPT\\三国志战略版战报逆向\\outputs\\skill_static_descriptions_full_20260808_1632\\merged\\skill_static_descriptions.json",
+  "source_json_sha256": "68284bb0537af595f8a56270f031cd20e12c558e08f2fe07243735b9fb27cbef",
+  "static_row_count": 10,
+  "config": {
+    "skill_rub_type": 0,
+    "skill_conflict": {},
+    "arm_limit": {},
+    "commission": {},
+    "army_show": 0,
+    "times": 1,
+    "type_name": 0,
+    "jingling_show": 0,
+    "xiaomi_tips": 351023,
+    "extra_tips": 0,
+    "skillupexp_type": 105,
+    "resolve": 101,
+    "research": 107,
+    "grade": 5,
+    "target_tips": "我军群体(3人)",
+    "battle_effect_id": 0,
+    "skill_full_screen": 1,
+    "name": "雁行阵",
+    "tips": 1152,
+    "equip_answer": 0,
+    "id": 20862,
+    "answer": 0,
+    "old_s2_forbid": false,
+    "i18n_unlock_season": 1,
+    "short_tips": 157056,
+    "key": "雁形阵",
+    "skill_type": 9,
+    "pin_yin": "YXZ",
+    "season": 1,
+    "show_rub_icon": 0,
+    "icon": 70041,
+    "effect_type": 9
+  },
+  "user_approved": [
+    "暂时按基础概率和基础偷取量运行",
+    "每回合开始执行",
+    "最低统率并列按主将、副将1、副将2",
+    "负面状态按种类抽取1至2种",
+    "转移后本回合结束过期"
+  ],
+  "deferred": [
+    "携带者统率对三种触发概率的缩放",
+    "携带者统率对偷取量的缩放"
+  ],
+  "boundaries": [
+    "continuous-damage snapshots and relationship-bearing negative states",
+    "query-bound reduction and round curves",
+    "same-kind destination coexistence follows canonical conflict policy"
+  ],
+  "provenance": "2026-08-08 STATIC_SNAPSHOT / USER_APPROVED_BASE_VALUE_MODEL / NOT_GAMEPLAY_FROZEN"
+}

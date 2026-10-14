@@ -1,0 +1,523 @@
+{
+  "provenance": "USER_APPROVED_BASE_VALUE_MODEL / NOT_GAMEPLAY_FROZEN",
+  "runs": [
+    {
+      "seed": 7,
+      "result": {
+        "winner": "A",
+        "reason": "MAX_ROUNDS",
+        "rounds": 8
+      },
+      "admission": [
+        {
+          "level": 10,
+          "probability": 0.35,
+          "amount_per_enemy": 10.0,
+          "provenance": "USER_APPROVED_BASE_VALUE_MODEL / ATTRIBUTE_SCALING_DEFERRED / NOT_GAMEPLAY_FROZEN",
+          "timing": "USER_APPROVED_ROUND_START",
+          "tie_break": "COMMANDER_DEPUTY_1_DEPUTY_2",
+          "expiry": "CURRENT_ROUND_END",
+          "deferred": [
+            "probability_command_scaling",
+            "steal_amount_command_scaling"
+          ],
+          "transfer_boundary": "complex_snapshots_and_relationships_fail_closed"
+        }
+      ],
+      "round_history": [
+        {
+          "round": 1,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            true,
+            true,
+            false
+          ],
+          "transfers": [],
+          "theft": null,
+          "negative_kinds": []
+        },
+        {
+          "round": 2,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            true
+          ],
+          "transfers": [],
+          "theft": {
+            "target_id": "A0",
+            "enemy_ids": [
+              "B0",
+              "B1",
+              "B2"
+            ],
+            "amount_per_enemy": 10.0,
+            "total": 30.0
+          }
+        },
+        {
+          "round": 3,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            false
+          ],
+          "transfers": [],
+          "theft": null
+        },
+        {
+          "round": 4,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            true,
+            true,
+            false
+          ],
+          "transfers": [],
+          "theft": null,
+          "negative_kinds": []
+        },
+        {
+          "round": 5,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            false
+          ],
+          "transfers": [],
+          "theft": null
+        },
+        {
+          "round": 6,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            false
+          ],
+          "transfers": [],
+          "theft": null
+        },
+        {
+          "round": 7,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            false
+          ],
+          "transfers": [],
+          "theft": null
+        },
+        {
+          "round": 8,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            true,
+            true
+          ],
+          "transfers": [],
+          "theft": {
+            "target_id": "A0",
+            "enemy_ids": [
+              "B0",
+              "B1",
+              "B2"
+            ],
+            "amount_per_enemy": 10.0,
+            "total": 30.0
+          },
+          "negative_kinds": []
+        }
+      ]
+    },
+    {
+      "seed": 41,
+      "result": {
+        "winner": "A",
+        "reason": "MAX_ROUNDS",
+        "rounds": 8
+      },
+      "admission": [
+        {
+          "level": 10,
+          "probability": 0.35,
+          "amount_per_enemy": 10.0,
+          "provenance": "USER_APPROVED_BASE_VALUE_MODEL / ATTRIBUTE_SCALING_DEFERRED / NOT_GAMEPLAY_FROZEN",
+          "timing": "USER_APPROVED_ROUND_START",
+          "tie_break": "COMMANDER_DEPUTY_1_DEPUTY_2",
+          "expiry": "CURRENT_ROUND_END",
+          "deferred": [
+            "probability_command_scaling",
+            "steal_amount_command_scaling"
+          ],
+          "transfer_boundary": "complex_snapshots_and_relationships_fail_closed"
+        }
+      ],
+      "round_history": [
+        {
+          "round": 1,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            true,
+            true
+          ],
+          "transfers": [],
+          "theft": {
+            "target_id": "A0",
+            "enemy_ids": [
+              "B0",
+              "B1",
+              "B2"
+            ],
+            "amount_per_enemy": 10.0,
+            "total": 30.0
+          },
+          "negative_kinds": []
+        },
+        {
+          "round": 2,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            true,
+            false
+          ],
+          "transfers": [],
+          "theft": null,
+          "negative_kinds": []
+        },
+        {
+          "round": 3,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            true
+          ],
+          "transfers": [],
+          "theft": {
+            "target_id": "A0",
+            "enemy_ids": [
+              "B0",
+              "B1",
+              "B2"
+            ],
+            "amount_per_enemy": 10.0,
+            "total": 30.0
+          }
+        },
+        {
+          "round": 4,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            false
+          ],
+          "transfers": [],
+          "theft": null
+        },
+        {
+          "round": 5,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            true
+          ],
+          "transfers": [],
+          "theft": {
+            "target_id": "A0",
+            "enemy_ids": [
+              "B0",
+              "B1",
+              "B2"
+            ],
+            "amount_per_enemy": 10.0,
+            "total": 30.0
+          }
+        },
+        {
+          "round": 6,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            false
+          ],
+          "transfers": [],
+          "theft": null
+        },
+        {
+          "round": 7,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            true,
+            true,
+            false
+          ],
+          "transfers": [],
+          "theft": null,
+          "negative_kinds": []
+        },
+        {
+          "round": 8,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            true
+          ],
+          "transfers": [],
+          "theft": {
+            "target_id": "A0",
+            "enemy_ids": [
+              "B0",
+              "B1",
+              "B2"
+            ],
+            "amount_per_enemy": 10.0,
+            "total": 30.0
+          }
+        }
+      ]
+    },
+    {
+      "seed": 127,
+      "result": {
+        "winner": "A",
+        "reason": "MAX_ROUNDS",
+        "rounds": 8
+      },
+      "admission": [
+        {
+          "level": 10,
+          "probability": 0.35,
+          "amount_per_enemy": 10.0,
+          "provenance": "USER_APPROVED_BASE_VALUE_MODEL / ATTRIBUTE_SCALING_DEFERRED / NOT_GAMEPLAY_FROZEN",
+          "timing": "USER_APPROVED_ROUND_START",
+          "tie_break": "COMMANDER_DEPUTY_1_DEPUTY_2",
+          "expiry": "CURRENT_ROUND_END",
+          "deferred": [
+            "probability_command_scaling",
+            "steal_amount_command_scaling"
+          ],
+          "transfer_boundary": "complex_snapshots_and_relationships_fail_closed"
+        }
+      ],
+      "round_history": [
+        {
+          "round": 1,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            true,
+            false,
+            false
+          ],
+          "transfers": [],
+          "theft": null
+        },
+        {
+          "round": 2,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            true,
+            false
+          ],
+          "transfers": [],
+          "theft": null,
+          "negative_kinds": []
+        },
+        {
+          "round": 3,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            true,
+            false,
+            false
+          ],
+          "transfers": [],
+          "theft": null
+        },
+        {
+          "round": 4,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            true,
+            false
+          ],
+          "transfers": [],
+          "theft": null,
+          "negative_kinds": []
+        },
+        {
+          "round": 5,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            true
+          ],
+          "transfers": [],
+          "theft": {
+            "target_id": "A0",
+            "enemy_ids": [
+              "B0",
+              "B1",
+              "B2"
+            ],
+            "amount_per_enemy": 10.0,
+            "total": 30.0
+          }
+        },
+        {
+          "round": 6,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            true
+          ],
+          "transfers": [],
+          "theft": {
+            "target_id": "A0",
+            "enemy_ids": [
+              "B0",
+              "B1",
+              "B2"
+            ],
+            "amount_per_enemy": 10.0,
+            "total": 30.0
+          }
+        },
+        {
+          "round": 7,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            true,
+            false,
+            false
+          ],
+          "transfers": [],
+          "theft": null
+        },
+        {
+          "round": 8,
+          "provider_id": "A1",
+          "provider_slot": 1,
+          "skill_id": "20862",
+          "probability": 0.35,
+          "attribute_amount": 10.0,
+          "decisions": [
+            false,
+            false,
+            false
+          ],
+          "transfers": [],
+          "theft": null
+        }
+      ]
+    }
+  ]
+}

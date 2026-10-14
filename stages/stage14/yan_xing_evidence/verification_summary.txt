@@ -1,0 +1,16 @@
+雁行阵 Lv1-10 USER_APPROVED_BASE_VALUE_MODEL / BOUNDED_TRANSFER / NOT_GAMEPLAY_FROZEN
+Branch: stage14/yan-xing-zhen
+Baseline origin/main: 4357a6b0a46f379945193c0e203a1373dd1c6e03
+Focused skill + formation composition: 56 passed
+Full regression: 2659 passed
+Independent Yan Xing structural/frozen-owner audit: PASS (25 checks)
+Stage13-D1 frozen-owner/adversarial audit: PASS (11 adversarial tests)
+Qingzhou independent audit: PASS
+Canonical registry clean-process import: PASS (20862 resolves, 8 definitions)
+Three full-engine seeds: 7/41/127; 8 rounds each; 2/4/2 theft executions
+Default demo.py smoke: PASS
+Source preservation: 10 static rows, full config, CSV/JSON SHA-256
+Frozen Engine, lifecycle, application/removal, targeting/RNG, damage/recovery owners: unchanged
+Deferred: command scaling of probability and stolen command
+Boundaries: complex snapshots/relationships/dynamic reduction transfer; canonical same-kind conflict
+Delivery: local branch; no remote PR/main merge or remote CI claimed
