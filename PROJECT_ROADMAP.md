@@ -81,3 +81,11 @@ Stage13 当前权威入口：[stages/stage13/README.md](stages/stage13/README.md
 ## 五个已完成阵法统一同步（2026-10-13）
 
 实现注册数为5：锋矢阵、八门金锁阵、箕形阵、三势阵、武锋阵。范围与保留的未决项见[同步记录](stages/stage14/FORMATION_COMPLETED_SYNC.md)。原本地候选记录属于历史验证快照；本次整合保留用户指定模型边界，不把实现合并等同于Gameplay实证冻结。
+
+## 2026-10-14 阵法九战法独立审计 / 有界退出门禁
+
+- 当前九阵法 `FORMATION_SKILL_REGISTRY=9/9`，包括鱼鳞阵基础值抵御/恢复和雁行阵非缩放状态转移，不再使用历史 F0“五阵法”的表述作为当前进度。
+- [独立审计文档](stages/stage14/FORMATION_NINE_SKILL_INDEPENDENT_FINAL_AUDIT_2026-10-14.md) 覆盖 210 个新增 pytest 参数测试，36同队非法双阵法、81跨队互斥及81个合法跨队真实PRE_BATTLE安装组合，另含来源清理、非装配回归与九定义核对。
+- 审计分支 [CI #38585912496](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38585912496) SUCCESS：3154 tests、demo、Stage13-D1 frozen audit、青州审计 PASS；merged-main CI待独立验收。
+- **Gameplay client full-freeze 不能宣称**：Research历史目录有8个与Runtime 2026-08静态源不同的ID、鱼鳞/雁行属性缩放用户DEFERRED、其他Lv1~9与状态微时序OPEN。Research专项差异审计单列，未经权威验证不得硬改任何目录ID。
+- 阵法已实现范围经有界工程审计后，下一主线建议进入 `Stage14 Command F0`：先指挥战法catalog/合同/证据审计，后Runtime逐个接入，不修改Stage13冻结核心。
