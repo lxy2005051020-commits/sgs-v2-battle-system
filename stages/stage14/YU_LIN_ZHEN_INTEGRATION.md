@@ -4,6 +4,7 @@
 `4357a6b0a46f379945193c0e203a1373dd1c6e03`。
 状态：`USER_APPROVED_PARTIAL / COMMAND_ONLY / FULL_MODEL_FAIL_CLOSED / NOT_GAMEPLAY_FROZEN`。
 本记录随独立分支发布到GitHub供审查；发布不表示远端CI或main合并完成。
+2026-10-14与雁行阵最新主线同步后的验证和合并门禁见[合并前审计](YU_LIN_ZHEN_MERGE_AUDIT.md)。
 
 用户指令：“暂时先保留报错,先完成其他部分”。
 
