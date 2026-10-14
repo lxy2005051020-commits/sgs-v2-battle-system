@@ -3,7 +3,7 @@
 ## 九阵法独立全审计（2026-10-14）
 
 - 目前 Battle main 已含 9/9 个实际阵法定义和适用的用户批准实现模型。鱼鳞阵基础概率抵御/治疗与雁行阵非属性缩放复杂状态转移，已于 2026-10-14 并入 main；旧“仅统率”“复杂转移尚未实现”审计文件是历史阶段快照。
-- 新增 [九阵法独立有界全审计](FORMATION_NINE_SKILL_INDEPENDENT_FINAL_AUDIT_2026-10-14.md)：逐个身份、36 种同队双阵法原子拒绝、81 种跨队互斥、81 种跨队真实效果安装，以及锋矢×八门跨来源阵亡清理。审计分支 [CI #38585912496](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38585912496) SUCCESS，3154 pytest、demo、Stage13-D1、青州审计 PASS；merged-main gate 在合并后独立核对。
+- 新增 [九阵法独立有界全审计](FORMATION_NINE_SKILL_INDEPENDENT_FINAL_AUDIT_2026-10-14.md)：逐个身份、36 种同队双阵法原子拒绝、81 种跨队互斥、81 种跨队真实效果安装，以及锋矢×八门跨来源阵亡清理。审计分支 [CI #38585912496](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38585912496) SUCCESS；独立审计 [PR #78](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/78) 已合并；[merged-main CI #38586800988](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38586800988) SUCCESS，3154 pytest、demo、Stage13-D1与青州审计 PASS。
 - **Research 历史目录与 Battle 当前注册有 8 个阵法 ID 不一致**；[跨仓 ID 审计](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/blob/main/Stage14_Formation_Skill_Research/00_Governance/FORMATION_CROSS_REPO_ID_AUDIT_2026-10-14.md) 单列版本/命名空间与反例调查，不通过运行时注册反向改写 Research 证据。
 - 本轮只判定 `BOUNDED_RUNTIME_AUDIT=PASS`；属性缩放和客户端微时序仍 `DEFERRED/OPEN`，不宣布九阵法全部客户端 Gameplay 冻结。
 
