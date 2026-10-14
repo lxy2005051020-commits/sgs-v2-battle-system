@@ -21,6 +21,7 @@ from .state_transfer_support import transfer_removal_adapter, transfer_effective
 from .received_recovery_modifier import ReceivedRecoveryModifierProvider
 from .action_start_recovery_damage import AccumulatedRecoveryRuleHookSystem, ActionStartRecoveryDamageSupport
 from .state_application_reaction import ReactingStateApplicationCoordinator, ReactingStateLifecycleSystem
+from .state_transfer_policy import TransferStateLifecycle
 from .scheduled_skill import ScheduledSkillSupport
 from .scheduled_team_recovery import ScheduledTeamRecoverySupport
 from .additive_treatment_formula import AdditiveTreatmentFormulaSystem
@@ -130,7 +131,7 @@ class BattleSystems:
     strategy_random_percent_range: tuple[int, int] = (86, 94)
     strategy_low_damage_floor_range: tuple[int, int] = (5, 15)
 
-    state_lifecycle_system: StateLifecycleSystem = field(default_factory=ReactingStateLifecycleSystem)
+    state_lifecycle_system: StateLifecycleSystem = field(default_factory=TransferStateLifecycle)
     # Effect owners supply evidence-backed policies. Official Stage8 DEFER states
     # are not silently activated by the Stage9 orchestration layer.
     cleave_hit_rules: object | None = None
@@ -257,9 +258,10 @@ class BattleSystems:
         )
         self.state_admission_policy = StateAdmissionPolicy()
         register_selective_immunity_support(self.state_admission_policy, self.state_effectiveness_policy)
-        self.state_conflict_policy = StateConflictPolicy()
+        from .state_transfer_policy import TransferConflictPolicy, TransferRemovalPolicy, TransferApplicationCoordinator
+        self.state_conflict_policy = TransferConflictPolicy()
         self.state_conflict_policy.register_rule_adapter(modifier_conflict_rule)
-        self.state_removal_policy = StateRemovalPolicy()
+        self.state_removal_policy = TransferRemovalPolicy()
         self.effectiveness_transition_coordinator = EffectivenessTransitionCoordinator(
             dependencies=self.dependency_evaluation_support,
             state_policy=self.state_effectiveness_policy,
@@ -269,7 +271,7 @@ class BattleSystems:
         self.effectiveness_transition_coordinator.register_state_public_fact_port(
             self.state_effectiveness_event_adapter
         )
-        self.state_application_coordinator = ReactingStateApplicationCoordinator(
+        self.state_application_coordinator = TransferApplicationCoordinator(
             admission_policy=self.state_admission_policy,
             conflict_policy=self.state_conflict_policy,
             lifecycle=self.state_lifecycle_system,

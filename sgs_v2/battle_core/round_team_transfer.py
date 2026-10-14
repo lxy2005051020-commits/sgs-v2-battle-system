@@ -129,12 +129,15 @@ class RoundTeamTransferSupport:
                     lambda state: is_incoming_reduction(state, context.current_round))
                 # Preflight schemas before moving any member of this bundle.
                 for state in states:
-                    self._transfer.split_params(state, reduction=True)
+                    self._transfer.split_params(state, reduction=True, context=context, systems=s)
                 if allies:
                     row["transfers"].extend(self._transfer.transfer(context, st, allies[0].unit_id,
                         ref, reduction=True) for st in states)
             if decisions[1]:
-                allies = self._targets_for(context, ref, prefix+":negative-source", TargetRelation.ALLY, single=False)
+                # Source inspection is a read of team state, not a friendly
+                # support application. A captured ally's negative state must
+                # remain transferable without making that ally a buff target.
+                allies = s.target_system.allies(context,context.get_unit(ref.owner_id))
                 states = self._states(context, allies,
                     lambda state: is_negative_state(state, context.current_round))
                 kinds = sorted({st.state_id for st in states})
@@ -142,7 +145,7 @@ class RoundTeamTransferSupport:
                 chosen = context.random.sample(kinds, count) if count and count < len(kinds) else kinds
                 states = [st for st in states if st.state_id in chosen]
                 for state in states:
-                    self._transfer.split_params(state, reduction=False)
+                    self._transfer.split_params(state, reduction=False, context=context, systems=s)
                 enemies = self._targets_for(context, ref, prefix+":negative-target", TargetRelation.ENEMY) if states else []
                 row["negative_kinds"] = chosen
                 if enemies:

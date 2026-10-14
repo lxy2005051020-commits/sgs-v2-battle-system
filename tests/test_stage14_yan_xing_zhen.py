@@ -144,7 +144,7 @@ def test_reduction_transfer_and_unrelated_dimension_preserved():
     new = ctx.states.find(owner_id="A2", state_id=DAMAGE_RATE_STATE_ID)[0]
     assert new.runtime_params == DamageRateParams(0, -.3)
     assert new.source_skill_id == "20862" and new.lifetime_spec.expires_round == 1
-    assert not ctx.states.has_instance(original.instance_id)
+    assert ctx.states.get(original.instance_id).runtime_params == DamageRateParams(.2, 0)
 
 
 def test_reduction_lane_random_target_once_and_multiple_damage_types():
@@ -160,7 +160,7 @@ def test_reduction_lane_random_target_once_and_multiple_damage_types():
     assert len(ctx.metadata["round_team_transfer_history"][0]["transfers"]) == len(states)
 
 
-def test_negative_kind_transfer_preserves_source_when_destination_conflicts():
+def test_negative_kind_transfer_refreshes_destination_without_stacking():
     ctx, s, rt = scene()
     install(ctx, s, rt)
     register_official_state_definitions(ctx.states)
@@ -169,10 +169,11 @@ def test_negative_kind_transfer_preserves_source_when_destination_conflicts():
     ctx.random.sample = lambda candidates, k: [ctx.units["B2"]]
     tick(ctx, s, decisions=(False, True, False))
     assert not ctx.states.find(owner_id="A0", state_id="silence")
-    assert ctx.states.find(owner_id="A1", state_id="silence")
+    assert not ctx.states.find(owner_id="A1", state_id="silence")
     assert ctx.states.find(owner_id="B2", state_id="silence")
     assert ctx.metadata["round_team_transfer_history"][0]["negative_kinds"] == ["silence"]
-    assert [r["status"] for r in ctx.metadata["round_team_transfer_history"][0]["transfers"]] == ["TRANSFERRED", "UNSUPPORTED_BOUNDARY"]
+    assert [r["status"] for r in ctx.metadata["round_team_transfer_history"][0]["transfers"]] == ["TRANSFERRED", "TRANSFERRED"]
+    assert len(ctx.states.find(owner_id="B2",state_id="silence"))==1
 
 
 def test_target_immunity_keeps_source_intact():
@@ -189,16 +190,17 @@ def test_target_immunity_keeps_source_intact():
     assert not ctx.states.find(owner_id="B1", state_id="silence")
 
 
-def test_unknown_snapshot_transfer_fails_before_source_removal():
+def test_taunt_transfer_rebinds_to_formation_provider():
     ctx, s, rt = scene()
     install(ctx, s, rt)
     register_official_state_definitions(ctx.states)
     original = s.state_lifecycle_system.apply(ctx, state_id="taunt", owner_id="A1", source_id="B1")
     ctx.current_round = 1
     ctx.current_phase = BattlePhase.ROUND_START.value
-    with pytest.raises(NotImplementedError, match="schema"):
-        StateTransferSupport(s).transfer(ctx, original, "B1", SkillProviderRef(rt.owner_id, rt.skill_slot, "20862"))
-    assert ctx.states.has_instance(original.instance_id)
+    result=StateTransferSupport(s).transfer(ctx, original, "B1", SkillProviderRef(rt.owner_id, rt.skill_slot, "20862"))
+    assert result['status']=='TRANSFERRED'
+    assert not ctx.states.has_instance(original.instance_id)
+    assert ctx.states.get(result['new_instance_id']).runtime_params.taunt_target_id==rt.owner_id
 
 
 def test_registry_and_actual_engine_seed_replay():

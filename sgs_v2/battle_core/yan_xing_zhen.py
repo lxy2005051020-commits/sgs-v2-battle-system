@@ -77,4 +77,6 @@ def install_yan_xing_zhen(context, systems, runtime):
         "provenance": PROVENANCE, "timing": "USER_APPROVED_ROUND_START",
         "tie_break": "COMMANDER_DEPUTY_1_DEPUTY_2", "expiry": "CURRENT_ROUND_END",
         "deferred": ["probability_command_scaling", "steal_amount_command_scaling"],
-        "transfer_boundary": "complex_snapshots_and_relationships_fail_closed"}
+        "transfer_model": "USER_APPROVED_COMPLETE_TRANSFER_WITHOUT_ATTRIBUTE_SCALING",
+        "snapshot_rule": "preserve_potency_rebind_provider; dynamic_reduction_snapshot_at_transfer",
+        "same_kind_rule": "replace_same_dimension; no_stacking; original_target_immunity"}

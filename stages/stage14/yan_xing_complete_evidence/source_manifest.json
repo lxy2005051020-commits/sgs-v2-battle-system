@@ -1,0 +1,23 @@
+{
+  "baseline": "3c23534ecd33ff8a72160bf106e4838daa6cdce2",
+  "status": "NOT_GAMEPLAY_FROZEN",
+  "scope": "complete user-approved non-scaling transfer model",
+  "source_evidence": "stages/stage14/yan_xing_evidence/source_manifest.json",
+  "deferred": [
+    "carrier command scaling of probability",
+    "carrier command scaling of theft amount"
+  ],
+  "normalized_sha256": {
+    "sgs_v2/battle_core/battle_systems.py": "404a7b01de5c3f56828c28111dcd648ea3787cf9581e30126052a68212031886",
+    "sgs_v2/battle_core/round_team_transfer.py": "172a532fee2d29f2869d51e7b56eaed4f608889120a513ad42b46cea51c6c8af",
+    "sgs_v2/battle_core/state_transfer_support.py": "0b87b3cc1b99bfb3b38e29797130175c7c3e10c0929c03b54900fdac785202b6",
+    "sgs_v2/battle_core/yan_xing_zhen.py": "0f05ab7f82ed5d908198dda37af23df41e33df1cd6871c178369269962d8e101",
+    "tests/test_stage14_yan_xing_merge_audit.py": "c85336db27680a346b241681901440def9fdc902289d45428de55a36f5054125",
+    "tests/test_stage14_yan_xing_zhen.py": "d57a94eafe940120a01d5213adfe14a79728137209cd1b0fe21f10858f3eae52",
+    "scripts/audit_yan_xing_complete.py": "83693220e2a96a53ce1d879eec763d4dc9cf9a937047d9a6cb6d46952cdfcb5f",
+    "sgs_v2/battle_core/state_transfer_policy.py": "6b7e0202c39818a68b0c0107fb6575434ae4bb77bc59938cbbeb6d9727dce6ad",
+    "sgs_v2/battle_core/transferred_potency.py": "30396e0c0a96466775b35341cd9fbc5089005377014a89013f59550af9acf5a2",
+    "tests/test_stage14_yan_xing_complete.py": "3e58b968c63edd7c50aa77f3bd139492cffbe988c2f0b74bba4e8299fa02b036",
+    "tests/test_stage14_yan_xing_complete_audit.py": "55a86854922796680a4ce8ac248108100f88be81f50cb379f5873c60899d446f"
+  }
+}

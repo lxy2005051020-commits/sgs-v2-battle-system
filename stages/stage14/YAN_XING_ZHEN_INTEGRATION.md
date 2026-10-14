@@ -1,98 +1,95 @@
 # 雁行阵接入记录
 
-2026-10-14；独立分支 `stage14/yan-xing-zhen`；远端main基线
-`4357a6b0a46f379945193c0e203a1373dd1c6e03`（本次通过OpenSSL后端fetch核对）。
-状态：`USER_APPROVED_BASE_VALUE_MODEL / ATTRIBUTE_SCALING_DEFERRED / BOUNDED_TRANSFER / NOT_GAMEPLAY_FROZEN`。
-本记录为独立分支实现，不表示已合入main或通过远端CI。
+2026-10-14；本次基线main `3c23534ecd33ff8a72160bf106e4838daa6cdce2`。
+状态：`USER_APPROVED_COMPLETE_TRANSFER_MODEL / ATTRIBUTE_SCALING_DEFERRED / NOT_GAMEPLAY_FROZEN`。
+本记录替换PR74的bounded转移范围；旧版来源、测试和审计保留在原证据目录及Git历史。
 
-## 用户裁决与来源
+## 已确认的暂定规则
 
-用户明确选择“暂时按基础概率和基础偷取量运行”，并批准：每回合开始执行；
-实时最低统率并列按主将→副将1→副将2；负面状态按种类抽取1–2种；效果本回合结束过期。
-携带者统率对三分支概率及偷取量的缩放继续留空，未应用、未拟合、未冻结。
+用户要求：“除了属性放缩部分的，其他全部接入”。随后明确批准：
 
-客户端静态ID `20862`，阵法，`arm_limit={}`；适用五种基础兵种。
-来源为2026-08-08静态快照：[十级原始行与HTML](yan_xing_evidence/static_levels.csv)、
-[原始配置与源文件SHA256](yan_xing_evidence/source_manifest.json)。这不是当前客户端机制实证。
+- 保留原效果数值和已冻结伤害快照；转移后的来源为雁行阵携带者。
+- 嘲讽、挑拨指向携带者；威慑通过既有组件在新目标的合法战法中重新绑定。
+- 同类状态覆盖/刷新，不叠加，持续到本回合结束；不同属性、发动率类型/槽位、伤害类型分开保留。
+- 动态减伤按转移瞬间原目标的属性/当前回合取值，转移后固定到本回合结束。
+  武锋阵仅移动减伤部分，原目标的优先选人机制保留。
 
-| 等级 | 三分支各自基础概率 | 每名敌军基础偷取统率 |
-|---|---|---|
-| 1 | 17.5% | 5 |
-| 2 | 19.4% | 5.6 |
-| 3 | 21.4% | 6.1 |
-| 4 | 23.3% | 6.7 |
-| 5 | 25.3% | 7.2 |
-| 6 | 27.2% | 7.8 |
-| 7 | 29.2% | 8.3 |
-| 8 | 31.1% | 8.9 |
-| 9 | 33.1% | 9.4 |
-| 10 | 35% | 10 |
+原先确认的回合开始触发、三个分支独立判定、实时最低统率、
+并列按主将→副将1→副将2、负面状态按种类抽1–2种继续保持。
+多个同类来源按编队/实例的确定顺序转移，后转入的覆盖先转入的，不累计数值。
 
-## 正式入口与组件树
+## 唯一暂缓的功能
 
-```python
-from sgs_v2.battle_core import create_yan_xing_zhen_runtime, SkillSlot
-runtime = create_yan_xing_zhen_runtime("holder", level=10, slot=SkillSlot.LEARNED_1)
-```
+**携带者属性放缩仍未实现：**
+
+1. 携带者统率对三个分支概率的放缩及其读取时点。
+2. 携带者统率对偷取量的放缩及其读取时点。
+
+继续使用静态等级基础值；满级每种分支35%，每名敌军偷取10统率。
+没有补入推测公式，也没有将暂定转移模型标记为客户端实证冻结。
+
+## 完整接入范围
+
+| 分支/能力 | 当前行为 |
+|---|---|
+| 静态受到伤害降低 | 移动指定伤害类型及负号修饰；不带走无关维度 |
+| 持续伤害 | 灼烧、水攻、中毒、溃逃、沙暴、叛逃均可迁移；保留源兵力/属性/等级/士气/进阶/修饰/会心快照和系数 |
+| 普通负面状态 | 计穷、缴械、混乱、虚弱、禁疗、震慑、遇袭及负面属性修饰等 |
+| 关系型负面状态 | 嘲讽、挑拨、捕获、铁索连环、伪报、破坏、威慑；复用正式准入和机制绑定 |
+| 动态减伤 | 武锋阵取实时原目标属性快照；形一阵等曲线取当前回合值；转入固定一回合减伤 |
+| 关联/依赖 | 显式StateNode边、参数内parent/prerequisite引用及持续伤害关联子状态递归迁移、拓扑重绑定 |
+| 同类覆盖 | 同类同维度覆盖；保留不同属性/伤害类型和无关正负修饰；覆盖前先通过目标免疫准入 |
+| 统率偷取 | 存活且合法敌军各减基础量，最低统率友军加总和；回合结束恢复 |
+
+读取友军负面状态属于团队状态查询，不把友军作为新增益的施加目标；
+因此被捕获的友军仍可提供待转移状态。新状态的敌军接收目标继续通过正式目标/免疫政策。
+目标免疫、没有合法战法可供威慑绑定、目标死亡或来源失效属于明确的准入/执行结果，
+不会删除未成功转移的原状态，也不属于缺少转移实现。
+
+## 来源、身份与生命周期
+
+静态客户端ID `20862`，阵法，五基础兵种；十级原文、HTML、完整配置和SHA256继续保存在
+[原始静态行](yan_xing_evidence/static_levels.csv)及[原始来源清单](yan_xing_evidence/source_manifest.json)。
+这些是2026-08-08静态来源，不代表新客户端实证。
+
+持续伤害原始快照不重算；新来源武将/战法/槽位、新physical ID和generation由现有组件建立。
+历史伤害来源随新代际重绑定，原来源与旧代际另记在transfer history/原移除事件。
+关联子状态保留原系数及快照，绑定到新的父状态；不额外制造一次新的施加反应。
+原状态有未转移的维度时，保留原physical ID、来源、期限及依赖，只删除对应维度。
+
+转移后的状态统一使用当前回合结束的typed期限。实际引擎的到期协调同时完成物理移除、
+依赖清理和来源有效性恢复；底层Lifecycle物理接口本身不替代该协调入口。
+携带者死亡或不可用继续按已批准的阵法来源规则失效/清理；跨队及来源槽位保持隔离。
+重复消费已移除的来源或旧代际不重放效果，也不消耗绑定RNG。
+
+## 组件树
 
 ```text
-FORMATION_SKILL_REGISTRY[20862] / create_yan_xing_zhen_definition / SKILL
-  PRE_BATTLE / 100%安装 / 无准备回合 / 每队唯一阵法
-  FormationSkillConfig.validator -> canonical定义与完整存活三人编队
-  ApplyStateEffect -> RoundTeamTransferParams(probability, attribute_amount)
-  StateNode -> ProviderNode（携带者 / ID / 槽位）
-  RoundStartHook -> RoundTeamTransferSupport（有效driver每回合仅一次）
-    三次独立chance，先判定三分支，再消耗选人随机数
-    分支1：随机敌军 + 随机友军 -> 静态受到伤害降低效果转移
-    分支2：友军群体 -> 随机抽1–2种负面状态 -> 同一随机敌军
-    分支3：实时最低统率友军 + 存活敌军全体 -> 加法属性修饰
-  StateTransferSupport -> StateCandidate / StateApplicationCoordinator
-    目标免疫/冲突拒绝时保留原状态
-    scoped removal permit -> StateRemovalCoordinator -> 既有Lifecycle
-  既有属性、伤害、生命周期、EffectExecutor、到期与阵亡清理owner
+FORMATION_SKILL_REGISTRY[20862] / SkillDefinition / PRE_BATTLE
+  RoundTeamTransferParams -> RoundStartHook / 一回合一次
+    3个独立基础概率
+    TargetSystem / SkillTargetPolicy
+    StateTransferSupport
+      StateCandidate -> StateAdmissionPolicy
+      TransferConflictPolicy（只对明确TRANSFER操作启用覆盖）
+      StateApplicationCoordinator -> TransferStateLifecycle参数准备
+        转移伤害快照绑定新identity -> canonical Lifecycle物理提交
+      StateRemovalCoordinator / TransferRemovalPolicy（操作内限定实例）
+      原关联子状态和StateNode依赖拓扑迁移
+      Typed ROUND_END期限 / 原Engine到期协调
+    AttributeSystem最低统率 -> 成对准入 -> 偷取守恒
 ```
 
-新增公共组件 `RoundTeamTransferSupport`、`StateTransferSupport`及其强类型参数和hook适配器；
-扩展已有 `PriorityTargetSystem.lowest_attribute_units`，按实时属性及编队顺序排序；
-为既有阵法准入配置补充可选纯校验器，复用于全局开场预检和单阵法安装。
-沿用仓库canonical注册方式，无另一套自动扫描器、注册表或Engine特殊分支。
+新增/扩展公共组件：`state_transfer_support.py`、`state_transfer_policy.py`、
+`transferred_potency.py`；BattleSystems仅配置组合。没有修改冻结的Engine、
+伤害/恢复/兵力、StateApplication、StateRemoval、StateLifecycle、RNG及TargetSystem源文件。
+普通状态的重施、免疫、净化和威慑选择仍沿用原有合同；转移例外仅限明确的操作上下文。
 
-统率偷取每名存活且通过目标准入的敌军减去基础量，选中的友军增加这些量之和。
-满级3名敌军时分别-10，受益者+30；不会只加10，也不按携带者统率再放缩。
-不改基础属性，不加额外取整或下限。当前回合结束全部还原。
+## 验证
 
-## 转移支持与明确边界
+[完成审计](YAN_XING_ZHEN_COMPLETION_AUDIT.md)记录独立测试、全量回归、冻结owner哈希、
+真实持续伤害与控制绑定、跨状态依赖、完整战斗及确定性回放。
+当前工程模型补齐了上述非属性放缩范围；客户端精细微时序仍需实证验证。
+GitHub发布/PR/main合并/CI状态以实际结果为准，不预写成功。
 
-已支持：`IncomingDamageReductionParams`（保留伤害类型）；静态 `DamageRateParams`；
-`FengShiZhenModifierParams`中对应符号的减益或减伤维度（转入通用伤害修饰）；
-普通负面属性加法修饰、静态造成伤害降低；Empty/TimedFlag/Disarm/Stun普通控制参数。
-混合伤害修饰只移动对应维度，剩余维度保留原来源、原期限和原依赖。
-
-原实例ID、generation、原来源武将/战法/槽位与新实例/目标均在转移记录中保留；
-新的转移效果以雁行阵携带者为provider。driver及转移效果在provider不可用时失效，
-携带者阵亡走既有清理。只迁移当前有效状态；无效果可转移时不创建状态。
-
-以下尚未实装，命中对应schema时明确 `NotImplementedError`，不会伪造拷贝：
-
-- 持续伤害及其冻结来源、伤害快照、关联子状态；
-- 嘲讽、挑拨、捕获、铁索连环、伪报、威慑等带专用关联或contract参数的转移；
-- 武锋阵按同次战法选人绑定的实时减伤；形一阵等回合动态曲线的转移；
-- 未在以上清单中的特殊参数、bounded叠层属性。
-- 有下游状态依赖原实例的转移：关联重绑定规则尚未确认，施加新状态前明确报错。
-
-合并前审计补充：动态曲线按当前回合实际符号分类；没有减伤或减益时不进入相应转移。
-通用转移入口拒绝不含对应维度的状态，不会删除无关增益。详见
-[合并前审计及独立对抗测试](YAN_XING_ZHEN_MERGE_AUDIT.md)。
-
-状态抽样中的种类目前按canonical `state_id`分组；选中种类的友军有效实例按编队顺序依次处理。
-1或2种等概率，在可选种类不足时截取；该抽样规则属于暂定工程模型。
-同种类多个来源转入同一目标时，继续服从既有冲突政策；拒绝或
-`UNSUPPORTED_BOUNDARY`明确记入history，原状态保持。不会强行叠加或删除未转移成功的状态。
-因此当前实现是带边界的三分支接入，并非任意状态全覆盖。
-
-## 验证与交付状态
-
-[验证汇总](yan_xing_evidence/verification_summary.txt)保留专项、全量、清洁进程注册核验、
-三种子完整引擎演示、Stage13-D1及青州兵独立审计结果。
-核心冻结owner保持哈希一致；工程测试和用户暂定模型不等同于Gameplay实证冻结。
-远端发布/PR/合并应作为后续独立步骤核验，本次不提前宣称完成。
+发动率降低（含有界叠层来源）也参与负面转移：保留当前单个效果数值，转入后按类型和槽位覆盖，正面发动率加成及其他槽位分别保留。
