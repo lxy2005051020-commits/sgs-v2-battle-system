@@ -1,5 +1,9 @@
 # 鱼鳞阵接入记录
 
+**当前行为更新（2026-10-14）**：用户要求补齐受击复杂机制，并确认携带者治疗兵力基数、
+零伤害触发。现已接入基础概率抵御和治疗，默认运行基础值模式；详见
+[受击分支记录](YU_LIN_ZHEN_REACTIONS.md)。下文仅统率、完整模式报错说明属于PR75历史版本。
+
 2026-10-13；独立分支 `stage14/yu-lin-zhen`；GitHub最新main核对基线
 `4357a6b0a46f379945193c0e203a1373dd1c6e03`。
 状态：`USER_APPROVED_PARTIAL / COMMAND_ONLY / FULL_MODEL_FAIL_CLOSED / NOT_GAMEPLAY_FROZEN`。

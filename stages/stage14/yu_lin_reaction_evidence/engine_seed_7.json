@@ -1,0 +1,134 @@
+{
+  "seed": 7,
+  "rounds": 8,
+  "history": [
+    {
+      "damage_instance_id": "dmg_2",
+      "round": 1,
+      "target_id": "A2",
+      "provider_id": "A1",
+      "provider_slot": 1,
+      "skill_id": "20836",
+      "driver_instance_id": "state-000004",
+      "actual_loss": 201,
+      "probability": 0.25,
+      "status": "PROBABILITY_FAILED"
+    },
+    {
+      "damage_instance_id": "dmg_6",
+      "round": 1,
+      "target_id": "A1",
+      "provider_id": "A1",
+      "provider_slot": 1,
+      "skill_id": "20836",
+      "driver_instance_id": "state-000003",
+      "actual_loss": 203,
+      "probability": 0.25,
+      "kind": "STATE_GRANT",
+      "state_id": "barrier",
+      "status": "APPLIED"
+    },
+    {
+      "damage_instance_id": "dmg_10",
+      "round": 2,
+      "target_id": "A2",
+      "provider_id": "A1",
+      "provider_slot": 1,
+      "skill_id": "20836",
+      "driver_instance_id": "state-000004",
+      "actual_loss": 207,
+      "probability": 0.25,
+      "status": "PROBABILITY_FAILED"
+    },
+    {
+      "damage_instance_id": "dmg_12",
+      "round": 2,
+      "target_id": "A1",
+      "provider_id": "A1",
+      "provider_slot": 1,
+      "skill_id": "20836",
+      "driver_instance_id": "state-000003",
+      "actual_loss": 0,
+      "probability": 0.25,
+      "status": "PROBABILITY_FAILED"
+    },
+    {
+      "damage_instance_id": "dmg_14",
+      "round": 3,
+      "target_id": "A1",
+      "provider_id": "A1",
+      "provider_slot": 1,
+      "skill_id": "20836",
+      "driver_instance_id": "state-000003",
+      "actual_loss": 207,
+      "probability": 0.25,
+      "kind": "STATE_GRANT",
+      "state_id": "barrier",
+      "status": "APPLIED"
+    },
+    {
+      "damage_instance_id": "dmg_30",
+      "round": 5,
+      "target_id": "A0",
+      "provider_id": "A1",
+      "provider_slot": 1,
+      "skill_id": "20836",
+      "driver_instance_id": "state-000005",
+      "actual_loss": 268,
+      "probability": 0.25,
+      "status": "PROBABILITY_FAILED"
+    },
+    {
+      "damage_instance_id": "dmg_40",
+      "round": 7,
+      "target_id": "A0",
+      "provider_id": "A1",
+      "provider_slot": 1,
+      "skill_id": "20836",
+      "driver_instance_id": "state-000005",
+      "actual_loss": 271,
+      "probability": 0.25,
+      "kind": "RECOVERY",
+      "source_troops": 8623,
+      "source_attribute": 0,
+      "base_rate": 0.3,
+      "nominal_recovery": 153,
+      "status": "EXECUTED"
+    },
+    {
+      "damage_instance_id": "dmg_48",
+      "round": 8,
+      "target_id": "A0",
+      "provider_id": "A1",
+      "provider_slot": 1,
+      "skill_id": "20836",
+      "driver_instance_id": "state-000005",
+      "actual_loss": 239,
+      "probability": 0.25,
+      "kind": "RECOVERY",
+      "source_troops": 8064,
+      "source_attribute": 0,
+      "base_rate": 0.3,
+      "nominal_recovery": 150,
+      "status": "EXECUTED"
+    }
+  ],
+  "recoveries": [
+    {
+      "sequence": 330,
+      "round": 7,
+      "source": "A1",
+      "target": "A0",
+      "actual_recovery": 153
+    },
+    {
+      "sequence": 393,
+      "round": 8,
+      "source": "A1",
+      "target": "A0",
+      "actual_recovery": 150
+    }
+  ],
+  "barrier_grants": 2,
+  "total_actual_recovery": 303
+}

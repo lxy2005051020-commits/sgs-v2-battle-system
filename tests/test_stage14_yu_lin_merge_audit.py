@@ -35,11 +35,13 @@ def test_provider_slot_and_fixed_bonus_survive_rounds_without_reaction_states(sl
     assert all(state.source_skill_slot is slot for state in ctx.states.find())
 
 
-def test_opposing_valid_formation_does_not_install_before_full_mode_rejection():
+def test_opposing_valid_formation_does_not_install_before_invalid_definition_rejection():
+    from dataclasses import replace
     ctx, s, rt = fixture(full=True)
+    rt.definition = replace(rt.definition, activation_rate=.5)
     ctx.skill_runtimes.register(create_yan_xing_zhen_runtime("blue0"))
     before = ctx.random._rng.getstate()
-    with pytest.raises(NotImplementedError, match="鱼鳞阵完整模式"):
+    with pytest.raises(ValueError, match="canonical definition"):
         run_pre_battle_preparation_phases(ctx, s)
     assert not ctx.states.find() and not ctx.metadata.get("yan_xing_admissions")
     assert ctx.random._rng.getstate() == before

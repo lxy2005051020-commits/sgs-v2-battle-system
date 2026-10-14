@@ -1,0 +1,1 @@
+clean-process canonical registry PASS: 9

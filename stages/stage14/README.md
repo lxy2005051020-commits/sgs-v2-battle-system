@@ -5,8 +5,9 @@
 
 ## 当前阵法实现（2026-10-14）
 
-canonical registry包含 **9个阵法定义（8个既有实现 + 鱼鳞阵部分接入）**。
-鱼鳞阵完整模式保留报错；合并审计见[鱼鳞阵审计记录](YU_LIN_ZHEN_MERGE_AUDIT.md)。
+canonical registry包含 **9个阵法定义**。
+鱼鳞阵现已扩展为基础值受击模型；见[受击分支接入记录](YU_LIN_ZHEN_REACTIONS.md)。
+原仅统率范围的合并审计见[历史审计记录](YU_LIN_ZHEN_MERGE_AUDIT.md)。
 各项公开代码、原始来源快照、用户规则、测试与待核实项。
 
 | ID | 阵法 | 已实现范围 |
@@ -18,13 +19,13 @@ canonical registry包含 **9个阵法定义（8个既有实现 + 鱼鳞阵部分
 | 22031 | 武锋阵 | Lv10完整模型；低等级仅显式副将模式 |
 | 22039 | 形一阵 | Lv10；用户确认回合曲线及武力→智力→统率→速度并列优先级 |
 | 22040 | 潜龙阵 | Lv1–10；通用主将效果资格与用户确认的有效属性快照；见[接入记录](QIAN_LONG_ZHEN_INTEGRATION.md) |
-| 20836 | 鱼鳞阵 | Lv1–10仅副将统率；显式command_only模式，完整模式缺失公式时报错；见[接入记录](YU_LIN_ZHEN_INTEGRATION.md) |
+| 20836 | 鱼鳞阵 | Lv1–10副将统率、前3回合受击抵御、第5回合起主将受击治疗；基础值模型，属性缩放暂缓；见[受击接入记录](YU_LIN_ZHEN_REACTIONS.md) |
 | 20862 | 雁行阵 | Lv1–10基础值模式；属性缩放暂缓；普通状态转移、静态减伤转移与统率偷取；复杂转移保留边界；见[接入记录](YAN_XING_ZHEN_INTEGRATION.md) |
 
 鱼鳞阵武力、统率缩放加成按用户2026-10-13指令标记为
 `DEFERRED_BY_USER / NOT_IMPLEMENTED`，详见接入记录的用户指定暂缓项。
 
-[前五阵法同步记录与组合验证](FORMATION_COMPLETED_SYNC.md)。接入完成不代表客户端机制实证冻结；鱼鳞阵抵御与治疗分支仍未实现。
+[前五阵法同步记录与组合验证](FORMATION_COMPLETED_SYNC.md)。接入完成不代表客户端机制实证冻结；鱼鳞阵属性缩放及专项微时序仍待核实。
 
 ## Historical Formation F0/F1 snapshot (2026-10-13)
 
