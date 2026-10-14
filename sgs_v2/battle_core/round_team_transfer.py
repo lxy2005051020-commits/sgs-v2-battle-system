@@ -125,7 +125,8 @@ class RoundTeamTransferSupport:
             if decisions[0]:
                 enemies = self._targets_for(context, ref, prefix+":reduction-source", TargetRelation.ENEMY)
                 allies = self._targets_for(context, ref, prefix+":reduction-target", TargetRelation.ALLY)
-                states = self._states(context, enemies, is_incoming_reduction)
+                states = self._states(context, enemies,
+                    lambda state: is_incoming_reduction(state, context.current_round))
                 # Preflight schemas before moving any member of this bundle.
                 for state in states:
                     self._transfer.split_params(state, reduction=True)
@@ -134,7 +135,8 @@ class RoundTeamTransferSupport:
                         ref, reduction=True) for st in states)
             if decisions[1]:
                 allies = self._targets_for(context, ref, prefix+":negative-source", TargetRelation.ALLY, single=False)
-                states = self._states(context, allies, is_negative_state)
+                states = self._states(context, allies,
+                    lambda state: is_negative_state(state, context.current_round))
                 kinds = sorted({st.state_id for st in states})
                 count = min(len(kinds), context.random.randint(1, 2)) if kinds else 0
                 chosen = context.random.sample(kinds, count) if count and count < len(kinds) else kinds

@@ -34,23 +34,29 @@ NEGATIVE_STATE_IDS = frozenset(e.state_id.value for e in OFFICIAL_STATE_CATALOG
         "burn", "flood", "poison", "rout", "sandstorm", "rebellion", "ambush", "chain_link"))
 
 
-def is_negative_state(state: StateInstance) -> bool:
+def is_negative_state(state: StateInstance, round_no: int | None = None) -> bool:
     p = state.runtime_params
+    if state.state_id == DAMAGE_RATE_STATE_ID and isinstance(p, RoundDamageRateParams):
+        outgoing, incoming = p.rates_at(state.applied_round if round_no is None else round_no)
+        return outgoing < 0 or incoming > 0
     return (state.state_id in NEGATIVE_STATE_IDS
         or (state.state_id == ATTRIBUTE_BONUS_STATE_ID and isinstance(p, AttributeBonusParams) and p.amount < 0)
         or (state.state_id == DAMAGE_RATE_STATE_ID and isinstance(p, DamageRateParams)
             and (p.outgoing_rate < 0 or p.incoming_rate > 0))
         or (state.state_id == FENG_SHI_ZHEN_MODIFIER_STATE_ID and isinstance(p, FengShiZhenModifierParams)
             and (p.outgoing_rate < 0 or p.incoming_rate > 0))
-        or state.state_id == OUTGOING_DAMAGE_REDUCTION_STATE_ID)
+        or (state.state_id == OUTGOING_DAMAGE_REDUCTION_STATE_ID
+            and isinstance(p, OutgoingDamageReductionParams) and p.rate > 0))
 
 
-def is_incoming_reduction(state: StateInstance) -> bool:
+def is_incoming_reduction(state: StateInstance, round_no: int | None = None) -> bool:
     p = state.runtime_params
+    if state.state_id == DAMAGE_RATE_STATE_ID and isinstance(p, RoundDamageRateParams):
+        return p.rates_at(state.applied_round if round_no is None else round_no)[1] < 0
     return ((state.state_id == INCOMING_DAMAGE_REDUCTION_STATE_ID
              and isinstance(p, IncomingDamageReductionParams) and p.rate > 0)
         or (state.state_id == DAMAGE_RATE_STATE_ID and isinstance(p, DamageRateParams)
-            and (p.incoming_rate < 0 or isinstance(p, RoundDamageRateParams)))
+            and p.incoming_rate < 0)
         or (state.state_id == FENG_SHI_ZHEN_MODIFIER_STATE_ID and isinstance(p, FengShiZhenModifierParams)
             and p.incoming_rate < 0)
         or state.state_id == TARGET_PRIORITY_STATE_ID)
@@ -117,7 +123,13 @@ class StateTransferSupport:
     def transfer(self, context: BattleContext, state: StateInstance, target_id: str,
                  provider: SkillProviderRef, *, reduction: bool = False) -> dict[str, object]:
         s = self._systems
+        eligible = (is_incoming_reduction(state, context.current_round) if reduction
+                    else is_negative_state(state, context.current_round))
+        if not eligible:
+            return {"status": "NO_ELIGIBLE_DIMENSION"}
         moved, remainder = self.split_params(state, reduction=reduction)
+        if s.dependency_evaluation_support.dependents(StateNode(state.instance_id)):
+            raise NotImplementedError("state transfer requires a confirmed dependent-state rebinding rule")
         new_state_id = DAMAGE_RATE_STATE_ID if type(state.runtime_params) is FengShiZhenModifierParams else state.state_id
         original_dependencies = s.dependency_evaluation_support.prerequisites(StateNode(state.instance_id))
         candidate = StateCandidate(new_state_id, target_id, moved,
