@@ -1,8 +1,8 @@
 # 三国志战略版 V2 战斗系统
 
-雁行阵 `20862` 本分支已接入Lv1–10基础值暂定模型，属性缩放继续暂缓。
-普通状态转移、静态减伤转移及统率偷取复用既有owner；复杂状态转移保留明确边界。
-见[接入与验证记录](stages/stage14/YAN_XING_ZHEN_INTEGRATION.md)。本条不表示已合入main或Gameplay实证冻结。
+雁行阵 `20862` 已接入Lv1–10非属性放缩暂定模型，概率和偷取量放缩继续暂缓。
+持续伤害、关系型控制、动态减伤快照、依赖迁移及同类覆盖复用既有owner。
+见[接入与验证记录](stages/stage14/YAN_XING_ZHEN_INTEGRATION.md)。发布状态由GitHub实际记录核验，不等同于Gameplay实证冻结。
 
 This repository owns runtime implementation.
 Runtime Implementation Owner = Battle Repository.

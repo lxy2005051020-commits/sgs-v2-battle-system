@@ -1,0 +1,15 @@
+{
+  "full_tests": 2944,
+  "focused_tests": 275,
+  "structural_audit": "PASS:31",
+  "stage13_d1": "PASS",
+  "qingzhou": "PASS",
+  "formations": 9,
+  "full_engine_demo_seeds": [
+    7,
+    41,
+    127
+  ],
+  "rounds_per_demo": 8,
+  "scope": "engineering verification only; NOT_GAMEPLAY_FROZEN"
+}

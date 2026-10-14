@@ -56,18 +56,18 @@ def test_inactive_curve_is_not_mistaken_for_transferable_reduction():
     assert context.metadata["round_team_transfer_history"][0]["transfers"] == []
 
 
-def test_active_dynamic_curve_still_fails_closed_without_removal():
+def test_active_dynamic_curve_transfers_current_round_snapshot():
     context, systems, ref = fixture()
     curve = put(context, systems, "blue0", RoundDamageRateParams(opening_rates=((0,-.2),)))
     context.current_round = 1
     context.current_phase = BattlePhase.ROUND_START.value
     before = tuple(context.states.find())
-    with pytest.raises(NotImplementedError, match="schema"):
-        StateTransferSupport(systems).transfer(context, curve, "red2", ref, reduction=True)
-    assert tuple(context.states.find()) == before
+    result=StateTransferSupport(systems).transfer(context, curve, "red2", ref, reduction=True)
+    assert result['status']=='TRANSFERRED'
+    assert context.states.get(result['new_instance_id']).runtime_params.incoming_rate==-.2
 
 
-def test_source_with_dependents_fails_before_any_state_or_generation_mutation():
+def test_split_source_preserves_original_identity_and_dependent_effects():
     context, systems, ref = fixture()
     source = put(context, systems, "blue0", DamageRateParams(.3,-.2))
     consumer = put(context, systems, "blue1", DamageRateParams(.1,0))
@@ -75,9 +75,9 @@ def test_source_with_dependents_fails_before_any_state_or_generation_mutation():
     context.current_round = 1
     context.current_phase = BattlePhase.ROUND_START.value
     before = tuple(context.states.find())
-    with pytest.raises(NotImplementedError, match="dependent-state"):
-        StateTransferSupport(systems).transfer(context, source, "red2", ref, reduction=True)
-    assert tuple(context.states.find()) == before
+    result=StateTransferSupport(systems).transfer(context, source, "red2", ref, reduction=True)
+    assert result['status']=='TRANSFERRED'
+    assert context.states.get(source.instance_id).runtime_params==DamageRateParams(.3,0)
     assert systems.dependency_evaluation_support.prerequisites(StateNode(consumer.instance_id)) == (StateNode(source.instance_id),)
 
 
