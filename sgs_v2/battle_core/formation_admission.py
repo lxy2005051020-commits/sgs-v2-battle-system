@@ -62,6 +62,7 @@ class FormationSkillConfig:
     requires_provider_slot: bool = False
     definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition] | None = None
     installer: Callable[[BattleContext, object, SkillRuntime], None] | None = None
+    validator: Callable[[BattleContext, SkillRuntime], None] | None = None
 
 
 # Canonical Formation Registry: keyed strictly by canonical skill_id
@@ -243,6 +244,9 @@ def _check_formation_admission(
             reason="formation already installed in this battle",
         )
 
+    if cfg.validator is not None:
+        cfg.validator(context, runtime)
+
     return FormationAdmissionResult(
         status=FormationAdmissionStatus.SUCCESS,
         skill_id=runtime.definition.skill_id,
@@ -402,3 +406,12 @@ register_formation_skill_config(FormationSkillConfig(
     applicable_troops=XING_YI_ZHEN_APPLICABLE_TROOPS,
     definition_factory=create_xing_yi_zhen_definition,
     requires_provider_slot=True, installer=install_xing_yi_zhen))
+
+from .yan_xing_zhen import (YAN_XING_ZHEN_SKILL_ID, YAN_XING_ZHEN_NAME,
+    YAN_XING_ZHEN_APPLICABLE_TROOPS, create_yan_xing_zhen_definition,
+    install_yan_xing_zhen, validate_yan_xing_zhen)
+
+register_formation_skill_config(FormationSkillConfig(
+    YAN_XING_ZHEN_SKILL_ID, YAN_XING_ZHEN_NAME, YAN_XING_ZHEN_APPLICABLE_TROOPS,
+    create_yan_xing_zhen_definition, requires_provider_slot=True,
+    installer=install_yan_xing_zhen, validator=validate_yan_xing_zhen))

@@ -995,6 +995,9 @@ __all__ += [
     "create_feng_shi_zhen_runtime",
 ]
 from .wu_feng_zhen import create_wu_feng_zhen_runtime, create_wu_feng_zhen_definition
+from .yan_xing_zhen import (YAN_XING_ZHEN_SKILL_ID,
+    create_yan_xing_zhen_definition, create_yan_xing_zhen_runtime)
+__all__ += ["YAN_XING_ZHEN_SKILL_ID", "create_yan_xing_zhen_definition", "create_yan_xing_zhen_runtime"]
 from .periodic_team_support import RecoveryTargetMode
 
 from .ba_men_jin_suo_zhen import (

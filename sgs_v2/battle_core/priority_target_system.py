@@ -13,6 +13,14 @@ class PriorityTargetSystem(TargetSystem):
         return sorted(self._targets.allies(context, unit, include_self=True),
                       key=lambda candidate: (candidate.troops, candidate.lineup_position))
 
+    def lowest_attribute_units(self, context, candidates, attributes, attribute):
+        """Live attribute priority; ties follow canonical lineup then unit ID."""
+        getters = {"attack": attributes.get_attack, "defense": attributes.get_defense,
+                   "intelligence": attributes.get_intelligence, "speed": attributes.get_speed}
+        if attribute not in getters:
+            raise ValueError("unsupported priority attribute")
+        return sorted(candidates, key=lambda u: (getters[attribute](context, u), u.lineup_position, u.unit_id))
+
     def most_lost_troop_deputies(self, context: BattleContext, unit: UnitRuntime,
                                 initial_troops: dict[str, int]) -> list[UnitRuntime]:
         """Descending net loss since entry; ties use the canonical deputy slot."""

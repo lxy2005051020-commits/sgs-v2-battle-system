@@ -14,7 +14,10 @@ from .probabilistic_target_priority import (TargetPrioritySkillResolver, QueryBo
 from .periodic_team_support import (PeriodicTeamSupport, PeriodicTeamSupportRuleHookSystem,
                                     periodic_support_effectiveness_adapter)
 from .outgoing_damage_reduction import OutgoingDamageReductionProvider
-from .action_start_role_split import RoleSplitRuleHookSystem, ActionStartRoleSplitSupport
+from .action_start_role_split import ActionStartRoleSplitSupport
+from .round_team_transfer import (RoundTeamTransferRuleHookSystem, RoundTeamTransferSupport,
+                                  round_transfer_effectiveness_adapter)
+from .state_transfer_support import transfer_removal_adapter, transfer_effectiveness_adapter
 from .received_recovery_modifier import ReceivedRecoveryModifierProvider
 from .action_start_recovery_damage import AccumulatedRecoveryRuleHookSystem, ActionStartRecoveryDamageSupport
 from .state_application_reaction import ReactingStateApplicationCoordinator, ReactingStateLifecycleSystem
@@ -562,13 +565,17 @@ class BattleSystems:
             self.dependency_evaluation_support,
             lambda context, skill_id, owner_id: resolve_opening_troop_definition(context, self, skill_id, owner_id),
         )
-        self.rule_hook_system = RoleSplitRuleHookSystem(
+        self.state_effectiveness_policy.register_rule_adapter(round_transfer_effectiveness_adapter)
+        self.state_effectiveness_policy.register_rule_adapter(transfer_effectiveness_adapter)
+        self.state_removal_policy.register_rule_adapter(transfer_removal_adapter)
+        self.rule_hook_system = RoundTeamTransferRuleHookSystem(
             self.trigger_system,
             self.effect_executor,
             ActionStartRecoveryDamageSupport(self),
             pool_support=TemporaryDamagePoolSupport(self.state_effectiveness_policy),
             periodic_support=PeriodicTeamSupport(self),
             role_split_support=ActionStartRoleSplitSupport(self),
+            round_transfer_support=RoundTeamTransferSupport(self),
         )
         self.scheduled_team_recovery_support = ScheduledTeamRecoverySupport(
             self.pending_work_system,
