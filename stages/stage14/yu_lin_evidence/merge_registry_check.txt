@@ -1,0 +1,1 @@
+PASS: clean-process registry contains 9 formations including Yu Lin and Yan Xing

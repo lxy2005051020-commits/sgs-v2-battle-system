@@ -1,0 +1,1 @@
+Canonical registry clean-process PASS: 8 definitions, 20836 matches SKILL

@@ -62,6 +62,7 @@ class FormationSkillConfig:
     requires_provider_slot: bool = False
     definition_resolver: Callable[[BattleContext, object, UnitRuntime], SkillDefinition] | None = None
     installer: Callable[[BattleContext, object, SkillRuntime], None] | None = None
+    # Pure configuration check, also called before any opening passive effects.
     validator: Callable[[BattleContext, SkillRuntime], None] | None = None
 
 
@@ -330,6 +331,15 @@ def admit_and_install_formation_skill(
 
 
 # First production Formation skill (Stage14 F1). The registry is definition-only;
+from .yu_lin_zhen import (YU_LIN_ZHEN_SKILL_ID, YU_LIN_ZHEN_NAME,
+    YU_LIN_ZHEN_APPLICABLE_TROOPS, create_yu_lin_zhen_definition,
+    install_yu_lin_zhen, validate_yu_lin_zhen)
+
+register_formation_skill_config(FormationSkillConfig(
+    YU_LIN_ZHEN_SKILL_ID, YU_LIN_ZHEN_NAME, YU_LIN_ZHEN_APPLICABLE_TROOPS,
+    create_yu_lin_zhen_definition, requires_provider_slot=True,
+    installer=install_yu_lin_zhen, validator=validate_yu_lin_zhen))
+
 from .qian_long_zhen import (QIAN_LONG_ZHEN_SKILL_ID, QIAN_LONG_ZHEN_NAME,
     QIAN_LONG_ZHEN_APPLICABLE_TROOPS, create_qian_long_zhen_definition, install_qian_long_zhen)
 

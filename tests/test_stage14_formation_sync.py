@@ -16,8 +16,8 @@ def dual_scene():
     return ctx, systems, san, wu
 
 
-def test_eight_canonical_definitions_and_two_opposing_action_drivers():
-    assert set(FORMATION_SKILL_REGISTRY) == {"20066", "20025", "20178", "22012", "22031", "22039", "22040", "20862"}
+def test_nine_canonical_definitions_and_two_opposing_action_drivers():
+    assert set(FORMATION_SKILL_REGISTRY) == {"20066", "20025", "20178", "22012", "22031", "22039", "22040", "20836", "20862"}
     ctx, s, san, wu = dual_scene()
     tick(ctx, s, round_no=2, actor=san.owner_id)
     tick(ctx, s, round_no=2, actor=wu.owner_id)
