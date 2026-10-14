@@ -86,6 +86,6 @@ Stage13 当前权威入口：[stages/stage13/README.md](stages/stage13/README.md
 
 - 当前九阵法 `FORMATION_SKILL_REGISTRY=9/9`，包括鱼鳞阵基础值抵御/恢复和雁行阵非缩放状态转移，不再使用历史 F0“五阵法”的表述作为当前进度。
 - [独立审计文档](stages/stage14/FORMATION_NINE_SKILL_INDEPENDENT_FINAL_AUDIT_2026-10-14.md) 覆盖 210 个新增 pytest 参数测试，36同队非法双阵法、81跨队互斥及81个合法跨队真实PRE_BATTLE安装组合，另含来源清理、非装配回归与九定义核对。
-- 审计分支 [CI #38585912496](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38585912496) SUCCESS：3154 tests、demo、Stage13-D1 frozen audit、青州审计 PASS；merged-main CI待独立验收。
+- 审计分支 [CI #38585912496](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38585912496) SUCCESS；独立审计 [PR #78](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/78) 已合并；[merged-main CI #38586800988](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38586800988) SUCCESS，3154 tests、demo、Stage13-D1 frozen audit、青州审计 PASS。
 - **Gameplay client full-freeze 不能宣称**：Research历史目录有8个与Runtime 2026-08静态源不同的ID、鱼鳞/雁行属性缩放用户DEFERRED、其他Lv1~9与状态微时序OPEN。Research专项差异审计单列，未经权威验证不得硬改任何目录ID。
 - 阵法已实现范围经有界工程审计后，下一主线建议进入 `Stage14 Command F0`：先指挥战法catalog/合同/证据审计，后Runtime逐个接入，不修改Stage13冻结核心。
