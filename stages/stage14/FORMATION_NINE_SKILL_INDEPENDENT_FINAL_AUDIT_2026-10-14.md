@@ -21,9 +21,9 @@
 | F-A09 全量 Runtime | pytest、demo、冻结/青州审计 | **PASS（审计分支 3154 pytest）** |
 | F-A10 Research↔Battle ID 权威一致性 | 历史目录与 2026-08 静态导出来源、当前 Runtime 的跨命名空间映射 | **OPEN：8 个具名差异** |
 | F-A11 客户端真实规则完整冻结 | 所有属性缩放、微时序、死亡与状态转移的实战证据 | **NOT FROZEN / OPEN** |
-| F-A12 最终合并主线验证 | 本审计 PR 合并 SHA 的 merged-main CI | **PENDING，合并后核验** |
+| F-A12 最终合并主线验证 | Battle PR #78 已合并；merged-main Actions #38586800988：3154 pytest、demo、D1/青州审计成功 | **PASS** |
 
-**结论**：`NINE_FORMATION_BOUNDED_RUNTIME_AUDIT=PASS_READY_FOR_MAINLINE`；`CLIENT_GAMEPLAY_FULL_FREEZE=BLOCKED_ON_OPEN_EVIDENCE`。这不是源码中所有可能错误都不存在的证明；不重开已有用户明确暂缓的缩放公式。
+**结论**：`NINE_FORMATION_BOUNDED_RUNTIME_AUDIT=PASS_ON_MERGED_MAIN`；`CLIENT_GAMEPLAY_FULL_FREEZE=BLOCKED_ON_OPEN_EVIDENCE`。这不是源码中所有可能错误都不存在的证明；不重开已有用户明确暂缓的缩放公式。
 
 ## B. 实际九阵法身份与等级范围（Battle 当前代码）
 
@@ -83,4 +83,12 @@
 - [x] 9×身份、36同队冲突、81跨队互斥、81跨队真实安装和来源死亡测试
 - [x] 独立分支全量3154、demo、Stage13-D1/青州审计 PASS
 - [x] Research 8 ID差异另记，未篡改历史目录
-- [ ] 本 PR 的最终 HEAD PR-CI及合并后的 merged-main CI 核验，待真实动作完成再填写，不提前宣称
+- [x] [Battle PR #78](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/78) 已合并；[merged-main CI #38586800988](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38586800988) SUCCESS：3154 pytest、demo、Stage13-D1、青州审计均 PASS。
+
+## G. 最终 merged-main 独立审计裁决（2026-10-14）
+
+- Research 跨仓 ID 治理审计：[PR #21](https://github.com/lxy2005051020-commits/sgs-state-mechanics-research/pull/21) MERGED，Research main `95995aa3cfb08fe834f4ca43572635e6d478e729`。
+- Battle 九阵法独立审计：[PR #78](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/pull/78) MERGED，测试/main 基线 `ac5dd094b7a3d27ffb7ab17b78a1ff5ad2e73b46`。
+- [Merged-main Actions #38586800988](https://github.com/lxy2005051020-commits/sgs-v2-battle-system/actions/runs/38586800988) **SUCCESS**：`3154 passed`；Demo PASS；Stage13-D1 independent runtime + 11 adversarial PASS；青州独立审计 PASS；审计产物上传成功。
+- `STAGE14_NINE_FORMATION_REGISTERED = 9/9`；`NINE_FORMATION_BOUNDED_RUNTIME_AUDIT = PASS`；`RESEARCH_GAMEPLAY_CLIENT_FULL_FREEZE = NOT_FROZEN`；`RESEARCH_BATTLE_ID_UNIFICATION = OPEN_8_SOURCE_MAPPING_DECISIONS`；`ATTRIBUTE_SCALING_USER_DEFERRED = YES`。
+- 可启动下一类战法的 **Research 阶段**，但绝不表示未完成 ID 映射的历史战报/旧队伍配置可以自动重放。
